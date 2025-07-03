@@ -129,7 +129,7 @@ javascript:(function(){
     'http://localhost:3000' : 
     window.location.origin.includes('sessionremind') ? 
     window.location.origin : 
-    'https://your-production-url.com';
+    'https://sessionremind.com';
   
   const targetUrl = `${baseUrl}/new?${params.toString()}`;
   

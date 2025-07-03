@@ -72,7 +72,7 @@
   // Get the current domain or use localhost for development
   const baseUrl = window.location.hostname === 'localhost' ? 
     'http://localhost:3000' : 
-    'https://your-app-url.com';
+    'https://sessionremind.com';
   
   const targetUrl = `${baseUrl}/new?${params.toString()}`;
   
