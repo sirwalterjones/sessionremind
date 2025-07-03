@@ -4,13 +4,13 @@ import fs from 'fs';
 
 export async function GET() {
   try {
-    const zipPath = path.join(process.cwd(), 'extension', 'session-reminder-extension-improved.zip');
+    const zipPath = path.join(process.cwd(), 'extension', 'session-reminder-extension-stone-theme.zip');
     const zipBuffer = fs.readFileSync(zipPath);
     
     return new NextResponse(zipBuffer, {
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': 'attachment; filename="session-reminder-extension.zip"',
+        'Content-Disposition': 'attachment; filename="session-reminder-extension-stone-theme.zip"',
       },
     });
   } catch (error) {
