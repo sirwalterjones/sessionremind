@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getScheduledMessages, addScheduledMessage } from '@/lib/storage'
 
 interface ScheduleRequest {
   name: string
@@ -24,9 +25,6 @@ interface ScheduledMessage {
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
 }
-
-// In a real app, this would be stored in a database
-let scheduledMessages: ScheduledMessage[] = []
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,8 +103,8 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Store scheduled messages
-    scheduledMessages.push(...reminders)
+    // Store scheduled messages persistently
+    reminders.forEach(reminder => addScheduledMessage(reminder))
 
     return NextResponse.json({
       success: true,
@@ -127,6 +125,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
+  const scheduledMessages = getScheduledMessages()
   return NextResponse.json({
     scheduledMessages: scheduledMessages.map(msg => ({
       id: msg.id,
