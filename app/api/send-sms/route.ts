@@ -46,18 +46,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Clean phone number - TextMagic expects full international format
-    let cleanPhone = body.phone.replace(/[^\d+]/g, '')
+    // Clean phone number - TextMagic expects numbers without + prefix
+    let cleanPhone = body.phone.replace(/[^\d]/g, '')
     
-    // Ensure phone has proper international format
-    if (!cleanPhone.startsWith('+')) {
-      // If no country code, assume US (+1)
-      if (cleanPhone.length === 10) {
-        cleanPhone = '+1' + cleanPhone
-      } else if (cleanPhone.length === 11 && cleanPhone.startsWith('1')) {
-        cleanPhone = '+' + cleanPhone
-      } else {
-        cleanPhone = '+1' + cleanPhone
+    // Ensure 10-digit US format (TextMagic doesn't want + prefix)
+    if (cleanPhone.length === 11 && cleanPhone.startsWith('1')) {
+      cleanPhone = cleanPhone.substring(1) // Remove leading 1
+    } else if (cleanPhone.length !== 10) {
+      // If not 10 digits, assume US and pad/trim as needed
+      if (cleanPhone.length > 10) {
+        cleanPhone = cleanPhone.substring(cleanPhone.length - 10)
       }
     }
     

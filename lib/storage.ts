@@ -1,13 +1,14 @@
-// Simple file-based storage for scheduled messages
-// In production, replace with a proper database
-
-import fs from 'fs'
-import path from 'path'
+// Temporary in-memory storage for scheduled messages
+// WARNING: This storage is not persistent across server restarts
+// In production, replace with a proper database (Redis, PostgreSQL, etc.)
 
 interface ScheduledMessage {
   id: string
   clientName: string
   phone: string
+  email: string
+  sessionTitle: string
+  sessionTime: string
   message: string
   scheduledFor: string
   sessionDate: string
@@ -16,37 +17,16 @@ interface ScheduledMessage {
   createdAt: string
 }
 
-const STORAGE_FILE = path.join(process.cwd(), 'data', 'scheduled-messages.json')
-
-// Ensure data directory exists
-function ensureDataDir() {
-  const dataDir = path.dirname(STORAGE_FILE)
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true })
-  }
-}
+// In-memory storage - will be lost on server restart
+let scheduledMessages: ScheduledMessage[] = []
 
 export function getScheduledMessages(): ScheduledMessage[] {
-  try {
-    ensureDataDir()
-    if (!fs.existsSync(STORAGE_FILE)) {
-      return []
-    }
-    const data = fs.readFileSync(STORAGE_FILE, 'utf8')
-    return JSON.parse(data)
-  } catch (error) {
-    console.error('Error reading scheduled messages:', error)
-    return []
-  }
+  return [...scheduledMessages] // Return a copy to prevent mutations
 }
 
 export function saveScheduledMessages(messages: ScheduledMessage[]): void {
-  try {
-    ensureDataDir()
-    fs.writeFileSync(STORAGE_FILE, JSON.stringify(messages, null, 2))
-  } catch (error) {
-    console.error('Error saving scheduled messages:', error)
-  }
+  scheduledMessages = [...messages]
+  console.log(`📝 Saved ${messages.length} scheduled messages to memory`)
 }
 
 export function addScheduledMessage(message: ScheduledMessage): void {

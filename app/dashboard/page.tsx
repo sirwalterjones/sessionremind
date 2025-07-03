@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [cronResult, setCronResult] = useState<string>('')
   const [showCronResult, setShowCronResult] = useState(false)
   const [scheduledCount, setScheduledCount] = useState(0)
+  const [showClearModal, setShowClearModal] = useState(false)
 
   useEffect(() => {
     // Load sent messages from localStorage
@@ -82,10 +83,13 @@ export default function Dashboard() {
   }
 
   const clearAllMessages = () => {
-    if (confirm('Are you sure you want to clear all sent messages?')) {
-      localStorage.removeItem('sentMessages')
-      setSentMessages([])
-    }
+    setShowClearModal(true)
+  }
+
+  const confirmClearAll = () => {
+    localStorage.removeItem('sentMessages')
+    setSentMessages([])
+    setShowClearModal(false)
   }
 
   if (loading) {
@@ -124,9 +128,15 @@ export default function Dashboard() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
             SMS Dashboard
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed">
             Track your session reminders and client communications with ease
           </p>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-2xl mx-auto mb-8">
+            <p className="text-amber-800 text-sm">
+              ⚠️ <strong>Note:</strong> Scheduled messages are stored temporarily and will be reset when the server restarts. 
+              For production use, consider implementing a persistent database solution.
+            </p>
+          </div>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button
@@ -331,6 +341,45 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Clear All Confirmation Modal */}
+        {showClearModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+              <div className="p-8">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-red-600 text-xl">⚠️</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Clear All Messages</h3>
+                    <p className="text-gray-600 text-sm">This action cannot be undone</p>
+                  </div>
+                </div>
+                
+                <p className="text-gray-700 mb-8 leading-relaxed">
+                  Are you sure you want to permanently delete all {sentMessages.length} sent message{sentMessages.length !== 1 ? 's' : ''}? 
+                  This will clear your entire message history and cannot be recovered.
+                </p>
+                
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setShowClearModal(false)}
+                    className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-full hover:bg-gray-200 transition-all duration-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmClearAll}
+                    className="flex-1 px-6 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-200"
+                  >
+                    Delete All
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
