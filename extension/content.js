@@ -56,18 +56,39 @@ function extractClientData() {
       '[class*="booking"]'
     ];
     
+    // First try to find the main session title (like "Sunflower Field Summer 2025")
     for (const selector of titleSelectors) {
       const elements = document.querySelectorAll(selector);
       for (const element of elements) {
         const text = element.textContent.trim();
-        // Look for session-related text that's not just generic
+        // Look for a meaningful title that's not generic UI text
         if (text && 
-            text.length > 5 && 
+            text.length > 10 && 
             text.length < 100 &&
             !text.match(/^[0-9]/) && // Not a time/date
             !text.includes('@') && // Not an email
             !text.includes('$') && // Not a price
-            (text.toLowerCase().includes('session') || 
+            !text.toLowerCase().includes('earnings') &&
+            !text.toLowerCase().includes('bookings') &&
+            !text.toLowerCase().includes('views') &&
+            !text.toLowerCase().includes('waitlist') &&
+            !text.toLowerCase().includes('balance') &&
+            // Look for session titles with year/season/descriptive words
+            (text.match(/\b20\d{2}\b/) || // Contains a year
+             text.toLowerCase().includes('field') ||
+             text.toLowerCase().includes('summer') ||
+             text.toLowerCase().includes('winter') ||
+             text.toLowerCase().includes('spring') ||
+             text.toLowerCase().includes('fall') ||
+             text.toLowerCase().includes('christmas') ||
+             text.toLowerCase().includes('holiday') ||
+             text.toLowerCase().includes('watermelon') ||
+             text.toLowerCase().includes('sunflower') ||
+             text.toLowerCase().includes('pumpkin') ||
+             text.toLowerCase().includes('beach') ||
+             text.toLowerCase().includes('studio') ||
+             // Or traditional session keywords
+             text.toLowerCase().includes('session') || 
              text.toLowerCase().includes('shoot') || 
              text.toLowerCase().includes('mini') ||
              text.toLowerCase().includes('portrait') ||
@@ -82,6 +103,11 @@ function extractClientData() {
     // Fallback: Look in text content for session patterns
     if (!sessionTitle) {
       const sessionPatterns = [
+        // Match titles with year patterns like "Sunflower Field Summer 2025"
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\s+20\d{2})/gi,
+        // Match seasonal/themed titles
+        /(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\s+[A-Z][a-z]+)*(?:\s+20\d{2})?/gi,
+        // Traditional session patterns
         /([A-Z][a-z\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\s]*)/gi,
         /(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi,
         /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:Mini|Session|Shoot|Portrait|Photo)/gi
