@@ -4,7 +4,7 @@ import fs from 'fs';
 
 export async function GET() {
   try {
-    const zipPath = path.join(process.cwd(), 'extension', 'session-reminder-extension.zip');
+    const zipPath = path.join(process.cwd(), 'extension', 'session-reminder-extension-latest.zip');
     const zipBuffer = fs.readFileSync(zipPath);
     
     return new NextResponse(zipBuffer, {
