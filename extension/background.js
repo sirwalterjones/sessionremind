@@ -5,7 +5,7 @@ console.log('Session Reminder background script loaded');
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'openReminderForm') {
     // Build URL with extracted data
-    const baseUrl = 'https://sessionremind.com/new';
+    const baseUrl = 'https://sessionremind-71cqwif5w-walter-jones-projects.vercel.app/new';
     const params = new URLSearchParams();
     
     if (request.data.name) params.set('name', request.data.name);
@@ -33,7 +33,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     
     // Open welcome page
     chrome.tabs.create({
-      url: 'https://sessionremind.com',
+      url: 'https://sessionremind-71cqwif5w-walter-jones-projects.vercel.app',
       active: true
     });
   }
