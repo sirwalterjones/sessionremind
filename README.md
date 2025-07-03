@@ -1,6 +1,8 @@
-# Session Reminder
+# Session Reminder 📱
 
 A modern web application for photographers to send SMS reminders to clients based on scraped data from booking pages like UseSession.com.
+
+> 🚀 **Now live at [sessionremind.com](https://sessionremind.com)**
 
 ## Features
 
