@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Test button - opens empty form
     testBtn.addEventListener('click', function() {
         chrome.tabs.create({
-            url: 'https://sessionremind-j9nhecj14-walter-jones-projects.vercel.app/new',
+            url: 'https://sessionremind.com/new',
             active: true
         });
         window.close();
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Help button - opens main page
     helpBtn.addEventListener('click', function() {
         chrome.tabs.create({
-            url: 'https://sessionremind-j9nhecj14-walter-jones-projects.vercel.app',
+            url: 'https://sessionremind.com',
             active: true
         });
         window.close();
