@@ -174,73 +174,79 @@ export default function NewReminder() {
   }
 
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-          Create New Reminder
-        </h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Send an SMS reminder to your photography client
-        </p>
-        
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-amber-50 to-orange-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-100 rounded-full mb-6">
+            <span className="text-2xl">✨</span>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            Create New Reminder
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Send personalized SMS reminders to your photography clients
+          </p>
+        </div>
 
-      <Form
-        initialData={initialData}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-      />
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <Form
+            initialData={initialData}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+          />
+        </div>
 
-      {/* Success Modal */}
-      {showSuccess && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
-                <span className="text-3xl">
-                  {successMessage.includes('❌') ? '⚠️' : 
-                   successMessage.includes('Opt-in') ? '📋' : '🎉'}
-                </span>
-              </div>
-              
-              <h3 className="text-2xl font-bold text-slate-800 mb-4">
-                {successMessage}
-              </h3>
-              
-              <p className="text-slate-600 mb-8 leading-relaxed">
-                {successDetails}
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button
-                  onClick={() => {
-                    setShowSuccess(false)
-                    if (successMessage.includes('🎉') || successMessage.includes('✅')) {
-                      router.push('/dashboard')
-                    }
-                  }}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  {successMessage.includes('🎉') || successMessage.includes('✅') ? 'View Dashboard' : 'Got it'}
-                </button>
+        {/* Success Modal */}
+        {showSuccess && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-rose-100 rounded-full flex items-center justify-center">
+                  <span className="text-3xl">
+                    {successMessage.includes('❌') ? '⚠️' : 
+                     successMessage.includes('Opt-in') ? '📋' : '🎉'}
+                  </span>
+                </div>
                 
-                {(successMessage.includes('🎉') || successMessage.includes('✅')) && (
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  {successMessage}
+                </h3>
+                
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  {successDetails}
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={() => {
                       setShowSuccess(false)
-                      // Reset form for another reminder
-                      window.location.reload()
+                      if (successMessage.includes('🎉') || successMessage.includes('✅')) {
+                        router.push('/dashboard')
+                      }
                     }}
-                    className="px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                    className="px-6 py-3 bg-rose-400 text-white font-medium rounded-full hover:bg-rose-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
-                    Send Another
+                    {successMessage.includes('🎉') || successMessage.includes('✅') ? 'View Dashboard' : 'Got it'}
                   </button>
-                )}
+                  
+                  {(successMessage.includes('🎉') || successMessage.includes('✅')) && (
+                    <button
+                      onClick={() => {
+                        setShowSuccess(false)
+                        // Reset form for another reminder
+                        window.location.reload()
+                      }}
+                      className="px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                    >
+                      Send Another
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
