@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+
 export default function Instructions() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
@@ -23,7 +25,7 @@ export default function Instructions() {
           {/* Browser Extension Option */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
             <div className="flex items-center mb-6">
-              <div className="flex-shrink-0 w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center font-bold text-white text-lg">
+              <div className="flex-shrink-0 w-12 h-12 bg-stone-800 rounded-full flex items-center justify-center font-bold text-white text-lg">
                 1
               </div>
               <div className="ml-4">
@@ -34,9 +36,9 @@ export default function Instructions() {
             
             <div className="ml-16 space-y-6">
               {/* Extension Option */}
-              <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6">
-                <h3 className="text-emerald-800 font-semibold mb-3">✨ Browser Extension (Best Experience)</h3>
-                <ul className="text-emerald-700 text-sm space-y-2 mb-4">
+              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6">
+                <h3 className="text-stone-800 font-semibold mb-3">✨ Browser Extension (Best Experience)</h3>
+                <ul className="text-stone-700 text-sm space-y-2 mb-4">
                   <li>• Floating button appears automatically on UseSession pages</li>
                   <li>• Extracts session titles like "Sunflower Field Summer 2025"</li>
                   <li>• One-click data extraction and form opening</li>
@@ -45,31 +47,33 @@ export default function Instructions() {
                 <div className="flex gap-3">
                   <a 
                     href="/extension"
-                    className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-medium rounded-full hover:bg-emerald-700 transition-all duration-200"
+                    className="inline-flex items-center px-4 py-2 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200"
                     download="session-reminder-extension.zip"
                   >
                     <span className="mr-2">⬇️</span>
                     Download Extension
                   </a>
-                  <span className="text-emerald-600 text-sm self-center">Install once, works everywhere!</span>
+                  <span className="text-stone-600 text-sm self-center">Install once, works everywhere!</span>
                 </div>
               </div>
 
               {/* Bookmarklet Option */}
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6">
-                <h3 className="text-stone-800 font-semibold mb-3">🔗 Bookmarklet (Quick Start)</h3>
-                <p className="text-stone-700 text-sm mb-4">
+              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                <h3 className="text-gray-800 font-semibold mb-3">🔗 Bookmarklet (Quick Start)</h3>
+                <p className="text-gray-700 text-sm mb-4">
                   Drag this button to your bookmarks bar for instant setup:
                 </p>
-                <a 
-                  href="javascript:(function(){try{const allText=document.body.innerText;let n='',e='',p='',s='',t='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);if(emails){e=emails[0];}const phones=allText.match(/[+]?[0-9]{10,15}/g);if(phones){p=phones[0];}const lines=allText.split('\\n').map(l=>l.trim()).filter(l=>l.length>0);if(window.location.href.includes('app.usesession.com/sessions/')){const nameMatch=allText.match(/([A-Z][a-z]+ [A-Z][a-z]+)(?=\\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/);if(nameMatch){n=nameMatch[1];}const timeMatch=allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);const dayMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);if(timeMatch && dayMatch){t=dayMatch[1]+', '+dayMatch[2]+' at '+timeMatch[1];}else if(dayMatch){t=dayMatch[1]+', '+dayMatch[2];}let sessionTitle='';const titleSelectors=['h1','h2','h3','[class*=\"title\"]','[class*=\"session\"]'];for(const sel of titleSelectors){const els=document.querySelectorAll(sel);for(const el of els){const txt=el.textContent.trim();if(txt && txt.length>5 && txt.length<100 && !txt.match(/^[0-9]/) && !txt.includes('@') && !txt.includes('$') && (txt.toLowerCase().includes('session')||txt.toLowerCase().includes('shoot')||txt.toLowerCase().includes('mini')||txt.toLowerCase().includes('portrait')||txt.toLowerCase().includes('photo'))){sessionTitle=txt;break;}}if(sessionTitle)break;}if(!sessionTitle){const patterns=[/([A-Z][a-z\\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\\s]*)/gi,/(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi];for(const pattern of patterns){const matches=allText.match(pattern);if(matches && matches[0].length>5 && matches[0].length<80){sessionTitle=matches[0].trim();break;}}}s=sessionTitle||'Photography Session';}else{for(let i=0;i<lines.length;i++){const line=lines[i];if(line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🍁🍂🍃]/g,'').trim();const parts=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);s=parts[0].trim();if(s.endsWith(' at')){s=s.replace(/ at$/,'');}break;}else if(line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();s=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();break;}}const dates=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(dates){t=dates[0];}else{const altDates=allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(altDates){t=altDates[0];}}const names=allText.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/gm);if(names){n=names[0];}}const params=new URLSearchParams();if(n)params.set('name',n);if(e)params.set('email',e);if(p)params.set('phone',p);if(s)params.set('sessionTitle',s);if(t)params.set('sessionTime',t);const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new?'+params.toString(),'_blank');}catch(err){const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new','_blank');}})();"
-                  className="inline-flex items-center px-4 py-2 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200 cursor-move"
-                  onClick={(e) => e.preventDefault()}
+                <button 
+                  onClick={() => {
+                    const bookmarkletCode = `javascript:(function(){try{const allText=document.body.innerText;let n='',e='',p='',s='',t='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);if(emails){e=emails[0];}const phones=allText.match(/[+]?[0-9]{10,15}/g);if(phones){p=phones[0];}const lines=allText.split('\\n').map(l=>l.trim()).filter(l=>l.length>0);if(window.location.href.includes('app.usesession.com/sessions/')){const nameMatch=allText.match(/([A-Z][a-z]+ [A-Z][a-z]+)(?=\\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/);if(nameMatch){n=nameMatch[1];}const timeMatch=allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);const dayMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);if(timeMatch && dayMatch){t=dayMatch[1]+', '+dayMatch[2]+' at '+timeMatch[1];}else if(dayMatch){t=dayMatch[1]+', '+dayMatch[2];}let sessionTitle='';const titleSelectors=['h1','h2','h3','[class*="title"]','[class*="session"]'];for(const sel of titleSelectors){const els=document.querySelectorAll(sel);for(const el of els){const txt=el.textContent.trim();if(txt && txt.length>5 && txt.length<100 && !txt.match(/^[0-9]/) && !txt.includes('@') && !txt.includes('$') && (txt.toLowerCase().includes('session')||txt.toLowerCase().includes('shoot')||txt.toLowerCase().includes('mini')||txt.toLowerCase().includes('portrait')||txt.toLowerCase().includes('photo'))){sessionTitle=txt;break;}}if(sessionTitle)break;}if(!sessionTitle){const patterns=[/([A-Z][a-z\\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\\s]*)/gi,/(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi];for(const pattern of patterns){const matches=allText.match(pattern);if(matches && matches[0].length>5 && matches[0].length<80){sessionTitle=matches[0].trim();break;}}}s=sessionTitle||'Photography Session';}else{for(let i=0;i<lines.length;i++){const line=lines[i];if(line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();const parts=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);s=parts[0].trim();if(s.endsWith(' at')){s=s.replace(/ at$/,'');}break;}else if(line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();s=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();break;}}const dates=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(dates){t=dates[0];}else{const altDates=allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(altDates){t=altDates[0];}}const names=allText.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/gm);if(names){n=names[0];}}const params=new URLSearchParams();if(n)params.set('name',n);if(e)params.set('email',e);if(p)params.set('phone',p);if(s)params.set('sessionTitle',s);if(t)params.set('sessionTime',t);const baseUrl='http://localhost:3001';window.open(baseUrl+'/new?'+params.toString(),'_blank');}catch(err){const baseUrl='http://localhost:3001';window.open(baseUrl+'/new','_blank');}})();`;
+                    alert('To use this bookmarklet:\n\n1. Copy this code\n2. Create a new bookmark in your browser\n3. Paste the code as the URL\n4. Name it "Session Reminder"\n5. Use it on UseSession pages!\n\nNote: This has been updated to use localhost:3001 for development.');
+                  }}
+                  className="inline-flex items-center px-4 py-2 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200"
                 >
                   <span className="mr-2">📱</span>
                   UseSession → Session Reminder
                   <span className="ml-2">✨</span>
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -77,7 +81,7 @@ export default function Instructions() {
           {/* Step 2 */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
             <div className="flex items-center mb-6">
-              <div className="flex-shrink-0 w-12 h-12 bg-stone-600 rounded-full flex items-center justify-center font-bold text-white text-lg">
+              <div className="flex-shrink-0 w-12 h-12 bg-stone-700 rounded-full flex items-center justify-center font-bold text-white text-lg">
                 2
               </div>
               <div className="ml-4">
@@ -93,19 +97,19 @@ export default function Instructions() {
                 <h3 className="font-semibold text-stone-800 mb-3">📍 Best pages to use:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-stone-600 rounded-full"></span>
                     <span className="text-stone-700">Individual session pages (app.usesession.com/sessions/...)</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-stone-600 rounded-full"></span>
                     <span className="text-stone-700">Calendar booking details</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-stone-600 rounded-full"></span>
                     <span className="text-stone-700">Client booking confirmations</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-stone-600 rounded-full"></span>
                     <span className="text-stone-700">Session management pages</span>
                   </div>
                 </div>
@@ -116,7 +120,7 @@ export default function Instructions() {
           {/* Step 3 */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
             <div className="flex items-center mb-6">
-              <div className="flex-shrink-0 w-12 h-12 bg-stone-500 rounded-full flex items-center justify-center font-bold text-white text-lg">
+              <div className="flex-shrink-0 w-12 h-12 bg-stone-600 rounded-full flex items-center justify-center font-bold text-white text-lg">
                 3
               </div>
               <div className="ml-4">
@@ -128,28 +132,28 @@ export default function Instructions() {
               <p className="text-gray-700 text-lg">
                 Click the extension button or bookmarklet while on the UseSession client page.
               </p>
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-                <h3 className="font-semibold text-emerald-800 mb-3">🎉 What gets automatically extracted:</h3>
+              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6">
+                <h3 className="font-semibold text-stone-800 mb-3">🎉 What gets automatically extracted:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="flex items-center space-x-3">
-                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
-                    <span className="text-emerald-700">Client name (e.g., "Emily Mico")</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
+                    <span className="text-stone-700">Client name (e.g., "Emily Mico")</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
-                    <span className="text-emerald-700">Phone number</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
+                    <span className="text-stone-700">Phone number</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
-                    <span className="text-emerald-700">Email address</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
+                    <span className="text-stone-700">Email address</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
-                    <span className="text-emerald-700">Session title (e.g., "Sunflower Field Summer 2025")</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
+                    <span className="text-stone-700">Session title (e.g., "Sunflower Field Summer 2025")</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
-                    <span className="text-emerald-700">Session date & time</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">✓</span>
+                    <span className="text-stone-700">Session date & time</span>
                   </div>
                 </div>
               </div>
@@ -159,7 +163,7 @@ export default function Instructions() {
           {/* Step 4 */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
             <div className="flex items-center mb-6">
-              <div className="flex-shrink-0 w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center font-bold text-white text-lg">
+              <div className="flex-shrink-0 w-12 h-12 bg-stone-500 rounded-full flex items-center justify-center font-bold text-white text-lg">
                 4
               </div>
               <div className="ml-4">
@@ -186,19 +190,19 @@ export default function Instructions() {
                   </div>
                   <p className="text-sm text-stone-700 ml-8">Personalize with {'{name}'}, {'{sessionTitle}'}, etc.</p>
                 </div>
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
-                    <span className="font-semibold text-emerald-800">Confirm opt-in</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                    <span className="font-semibold text-stone-800">Confirm opt-in</span>
                   </div>
-                  <p className="text-sm text-emerald-700 ml-8">Toggle "Client has opted in" switch ON</p>
+                  <p className="text-sm text-stone-700 ml-8">Toggle "Client has opted in" switch ON</p>
                 </div>
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
-                    <span className="font-semibold text-amber-800">Send or schedule</span>
+                    <span className="w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                    <span className="font-semibold text-stone-800">Send or schedule</span>
                   </div>
-                  <p className="text-sm text-amber-700 ml-8">Immediate or automatic 3-day/1-day reminders</p>
+                  <p className="text-sm text-stone-700 ml-8">Immediate or automatic 3-day/1-day reminders</p>
                 </div>
               </div>
             </div>
@@ -218,7 +222,7 @@ export default function Instructions() {
             <div className="ml-16">
               <div className="flex items-center space-x-4 text-gray-700">
                 <div className="flex items-center space-x-2">
-                  <span className="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                  <span className="w-8 h-8 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
                   <span>Enrollment Confirmation</span>
                 </div>
                 <span className="text-gray-400">→</span>
@@ -228,7 +232,7 @@ export default function Instructions() {
                 </div>
                 <span className="text-gray-400">→</span>
                 <div className="flex items-center space-x-2">
-                  <span className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                  <span className="w-8 h-8 bg-stone-400 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
                   <span>1-Day Reminder</span>
                 </div>
               </div>
@@ -236,9 +240,9 @@ export default function Instructions() {
           </div>
 
           {/* Troubleshooting */}
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-8">
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-stone-800 rounded-full flex items-center justify-center">
                 <span className="text-white text-xl">🔧</span>
               </div>
               <div className="ml-4">
@@ -247,19 +251,19 @@ export default function Instructions() {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl p-4 border border-red-100">
+              <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
                 <h3 className="font-semibold text-gray-800 mb-2">🤔 Missing session title</h3>
                 <p className="text-sm text-gray-600">Extension may show "Photography Session" - manually update with the actual session name.</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-red-100">
+              <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
                 <h3 className="font-semibold text-gray-800 mb-2">📱 SMS not sending</h3>
-                <p className="text-sm text-gray-600">Check opt-in toggle is ON and phone number is correct. Verify TextMagic credentials in Vercel.</p>
+                <p className="text-sm text-gray-600">Check opt-in toggle is ON and phone number is correct. Verify TextMagic credentials.</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-red-100">
+              <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
                 <h3 className="font-semibold text-gray-800 mb-2">🚫 Extension not working</h3>
                 <p className="text-sm text-gray-600">Make sure you're on an individual UseSession session page, not the main dashboard.</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-red-100">
+              <div className="bg-stone-50 rounded-xl p-4 border border-stone-200">
                 <h3 className="font-semibold text-gray-800 mb-2">⏰ Scheduled reminders not sending</h3>
                 <p className="text-sm text-gray-600">Use the manual "Run Cron Job" button in the dashboard to process scheduled messages.</p>
               </div>
@@ -269,7 +273,7 @@ export default function Instructions() {
           {/* CTA */}
           <div className="text-center pt-8">
             <a
-              href="/"
+              href="/new"
               className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-lg"
             >
               <span className="mr-3">🚀</span>
