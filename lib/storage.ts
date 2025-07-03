@@ -11,7 +11,7 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day'
+  reminderType: '3-day' | '1-day' | 'test-2min' | 'test-5min'
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
 }
