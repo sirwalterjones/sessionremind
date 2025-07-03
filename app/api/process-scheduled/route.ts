@@ -92,8 +92,16 @@ async function sendScheduledSMS(message: any): Promise<boolean> {
       }
     }
 
+    // Replace template variables in the message
+    let finalMessage = message.message
+      .replace(/{name}/g, message.clientName)
+      .replace(/{sessionTitle}/g, message.sessionTitle)
+      .replace(/{sessionTime}/g, message.sessionTime)
+      .replace(/{email}/g, message.email)
+      .replace(/{phone}/g, message.phone)
+
     const textMagicPayload = {
-      text: message.message,
+      text: finalMessage,
       phones: cleanPhone,
     }
 

@@ -19,6 +19,9 @@ interface ScheduledMessage {
   id: string
   clientName: string
   phone: string
+  email: string
+  sessionTitle: string
+  sessionTime: string
   message: string
   scheduledFor: string
   sessionDate: string
@@ -74,6 +77,9 @@ export async function POST(request: NextRequest) {
           id: generateId(),
           clientName: data.name,
           phone: data.phone,
+          email: data.email,
+          sessionTitle: data.sessionTitle,
+          sessionTime: data.sessionTime,
           message: `[TEST 2-MIN] ${personalizedMessage}`,
           scheduledFor: twoMinutesLater.toISOString(),
           sessionDate: sessionDate?.toISOString() || new Date().toISOString(),
@@ -92,6 +98,9 @@ export async function POST(request: NextRequest) {
           id: generateId(),
           clientName: data.name,
           phone: data.phone,
+          email: data.email,
+          sessionTitle: data.sessionTitle,
+          sessionTime: data.sessionTime,
           message: `[TEST 5-MIN] ${personalizedMessage}`,
           scheduledFor: fiveMinutesLater.toISOString(),
           sessionDate: sessionDate?.toISOString() || new Date().toISOString(),
@@ -121,6 +130,9 @@ export async function POST(request: NextRequest) {
           id: generateId(),
           clientName: data.name,
           phone: data.phone,
+          email: data.email,
+          sessionTitle: data.sessionTitle,
+          sessionTime: data.sessionTime,
           message: personalizedMessage,
           scheduledFor: threeDaysEarlier.toISOString(),
           sessionDate: sessionDate.toISOString(),
@@ -140,6 +152,9 @@ export async function POST(request: NextRequest) {
           id: generateId(),
           clientName: data.name,
           phone: data.phone,
+          email: data.email,
+          sessionTitle: data.sessionTitle,
+          sessionTime: data.sessionTime,
           message: personalizedMessage,
           scheduledFor: oneDayEarlier.toISOString(),
           sessionDate: sessionDate.toISOString(),

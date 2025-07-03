@@ -64,82 +64,50 @@ export async function POST(request: NextRequest) {
     console.log('Original phone:', body.phone)
     console.log('Cleaned phone:', cleanPhone)
 
-    // Send enrollment confirmation first
-    const enrollmentMessage = `✅ Your number has been successfully enrolled in text alerts for your Moments by Candice - Photography session. You'll receive reminders as your session approaches.`
-    
-    const enrollmentPayload = {
-      text: enrollmentMessage,
+    // Replace template variables in the message
+    let finalMessage = body.message
+      .replace(/{name}/g, body.name)
+      .replace(/{sessionTitle}/g, body.sessionTitle)
+      .replace(/{sessionTime}/g, body.sessionTime)
+      .replace(/{email}/g, body.email)
+      .replace(/{phone}/g, body.phone)
+
+    // Create single registration confirmation message with session details
+    const registrationMessage = `Hi ${body.name}! You're registered for text reminders from Moments by Candice Photography. Your ${body.sessionTitle} session is scheduled for ${body.sessionTime}. Looking forward to seeing you!`
+
+    const smsPayload = {
+      text: registrationMessage,
       phones: cleanPhone
     }
-    console.log('Sending enrollment confirmation:', enrollmentPayload)
+    console.log('Sending registration SMS:', smsPayload)
 
-    const enrollmentResponse = await fetch('https://rest.textmagic.com/api/v2/messages', {
+    const response = await fetch('https://rest.textmagic.com/api/v2/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-TM-Username': username,
         'X-TM-Key': apiKey,
       },
-      body: JSON.stringify(enrollmentPayload),
+      body: JSON.stringify(smsPayload),
     })
 
-    let enrollmentResult = null
-    if (!enrollmentResponse.ok) {
-      const enrollmentError = await enrollmentResponse.text()
-      console.error('Enrollment SMS failed:', enrollmentError)
-      // Continue with main message even if enrollment fails
-    } else {
-      enrollmentResult = await enrollmentResponse.json()
-      console.log('Enrollment SMS sent:', enrollmentResult)
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Registration SMS failed:', errorText)
+      return NextResponse.json(
+        { error: 'Failed to send SMS via TextMagic API' },
+        { status: response.status }
+      )
     }
 
-    // Send the main message if it's different from enrollment
-    let mainResult = null
-    if (body.message.trim() !== enrollmentMessage.trim()) {
-      const mainPayload = {
-        text: body.message,
-        phones: cleanPhone
-      }
-      console.log('Sending main message:', mainPayload)
-
-      const response = await fetch('https://rest.textmagic.com/api/v2/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-TM-Username': username,
-          'X-TM-Key': apiKey,
-        },
-        body: JSON.stringify(mainPayload),
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Main message TextMagic API error:', errorText)
-        // Don't fail completely if enrollment worked
-        if (enrollmentResult) {
-          console.log('Main message failed but enrollment succeeded')
-        } else {
-          return NextResponse.json(
-            { error: 'Failed to send SMS via TextMagic API' },
-            { status: response.status }
-          )
-        }
-      } else {
-        mainResult = await response.json()
-        console.log('Main SMS sent:', mainResult)
-      }
-    }
+    const result = await response.json()
+    console.log('Registration SMS sent:', result)
 
     return NextResponse.json({
       success: true,
-      id: mainResult?.id || enrollmentResult?.id,
-      message: 'SMS sent successfully',
-      enrollmentSent: !!enrollmentResult,
-      mainMessageSent: !!mainResult,
-      textMagicResponse: {
-        enrollment: enrollmentResult,
-        main: mainResult
-      },
+      id: result.id,
+      message: 'Registration SMS sent successfully',
+      textMagicResponse: result,
     })
   } catch (error) {
     console.error('SMS API error:', error)

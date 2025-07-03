@@ -5,19 +5,29 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
-    // Optional: Add basic authentication
+    // Verify Vercel cron job or allow with optional auth
+    const isVercelCron = request.headers.get('user-agent')?.includes('vercel')
     const authHeader = request.headers.get('authorization')
-    const expectedAuth = process.env.CRON_SECRET || 'your-secret-key'
+    const expectedAuth = process.env.CRON_SECRET
     
-    if (authHeader !== `Bearer ${expectedAuth}`) {
+    // Allow Vercel cron jobs automatically, otherwise check auth if secret is set
+    if (!isVercelCron && expectedAuth && authHeader !== `Bearer ${expectedAuth}`) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    // Call the background processor
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/process-scheduled`, {
+    console.log('=== CRON JOB TRIGGERED ===')
+    console.log('User Agent:', request.headers.get('user-agent'))
+    console.log('Timestamp:', new Date().toISOString())
+
+    // Call the background processor directly (internal call)
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
+    
+    const response = await fetch(`${baseUrl}/api/process-scheduled`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
