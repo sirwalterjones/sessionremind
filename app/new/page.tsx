@@ -174,10 +174,10 @@ export default function NewReminder() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-amber-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-100 rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6">
             <span className="text-2xl">✨</span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
@@ -188,7 +188,7 @@ export default function NewReminder() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
           <Form
             initialData={initialData}
             onSubmit={handleSubmit}
@@ -201,7 +201,7 @@ export default function NewReminder() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
               <div className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 bg-rose-100 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-stone-200 rounded-full flex items-center justify-center">
                   <span className="text-3xl">
                     {successMessage.includes('❌') ? '⚠️' : 
                      successMessage.includes('Opt-in') ? '📋' : '🎉'}
@@ -224,7 +224,7 @@ export default function NewReminder() {
                         router.push('/dashboard')
                       }
                     }}
-                    className="px-6 py-3 bg-rose-400 text-white font-medium rounded-full hover:bg-rose-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="px-6 py-3 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     {successMessage.includes('🎉') || successMessage.includes('✅') ? 'View Dashboard' : 'Got it'}
                   </button>
@@ -236,7 +236,7 @@ export default function NewReminder() {
                         // Reset form for another reminder
                         window.location.reload()
                       }}
-                      className="px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                      className="px-6 py-3 bg-white border border-stone-200 text-gray-700 font-medium rounded-full hover:bg-stone-50 hover:border-stone-300 transition-all duration-200"
                     >
                       Send Another
                     </button>
