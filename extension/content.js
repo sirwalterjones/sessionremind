@@ -1,0 +1,195 @@
+// Content script for UseSession pages
+console.log('Session Reminder extension loaded');
+
+// Function to extract client data from UseSession pages
+function extractClientData() {
+  const allText = document.body.innerText;
+  let clientData = {
+    name: '',
+    email: '',
+    phone: '',
+    sessionTitle: '',
+    sessionTime: ''
+  };
+
+  // Extract email
+  const emails = allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+  if (emails) {
+    clientData.email = emails[0];
+  }
+
+  // Extract phone
+  const phones = allText.match(/[+]?[0-9]{10,15}/g);
+  if (phones) {
+    clientData.phone = phones[0];
+  }
+
+  const lines = allText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+  // Check if we're on an individual session page
+  if (window.location.href.includes('app.usesession.com/sessions/')) {
+    // Extract name from individual session page
+    const nameMatch = allText.match(/([A-Z][a-z]+ [A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+    if (nameMatch) {
+      clientData.name = nameMatch[1];
+    }
+
+    // Extract time from individual session page
+    const timeMatch = allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);
+    const dayMatch = allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);
+    
+    if (timeMatch && dayMatch) {
+      clientData.sessionTime = dayMatch[1] + ', ' + dayMatch[2] + ' at ' + timeMatch[1];
+    } else if (dayMatch) {
+      clientData.sessionTime = dayMatch[1] + ', ' + dayMatch[2];
+    }
+
+    // Extract session title from individual session pages
+    // Try to find the session title from the page structure
+    let sessionTitle = '';
+    
+    // Look for session title in the page header/title area
+    const titleSelectors = [
+      'h1', 'h2', 'h3', // Common title elements
+      '[class*="title"]',
+      '[class*="session"]',
+      '[class*="booking"]'
+    ];
+    
+    for (const selector of titleSelectors) {
+      const elements = document.querySelectorAll(selector);
+      for (const element of elements) {
+        const text = element.textContent.trim();
+        // Look for session-related text that's not just generic
+        if (text && 
+            text.length > 5 && 
+            text.length < 100 &&
+            !text.match(/^[0-9]/) && // Not a time/date
+            !text.includes('@') && // Not an email
+            !text.includes('$') && // Not a price
+            (text.toLowerCase().includes('session') || 
+             text.toLowerCase().includes('shoot') || 
+             text.toLowerCase().includes('mini') ||
+             text.toLowerCase().includes('portrait') ||
+             text.toLowerCase().includes('photo'))) {
+          sessionTitle = text;
+          break;
+        }
+      }
+      if (sessionTitle) break;
+    }
+    
+    // Fallback: Look in text content for session patterns
+    if (!sessionTitle) {
+      const sessionPatterns = [
+        /([A-Z][a-z\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\s]*)/gi,
+        /(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi,
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+(?:Mini|Session|Shoot|Portrait|Photo)/gi
+      ];
+      
+      for (const pattern of sessionPatterns) {
+        const matches = allText.match(pattern);
+        if (matches && matches[0].length > 5 && matches[0].length < 80) {
+          sessionTitle = matches[0].trim();
+          break;
+        }
+      }
+    }
+    
+    // Set the session title
+    if (sessionTitle) {
+      clientData.sessionTitle = sessionTitle;
+    } else {
+      // Final fallback
+      clientData.sessionTitle = 'Photography Session';
+    }
+  } else {
+    // Original logic for calendar/listing pages
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)) {
+        const cleanLine = line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g, '').trim();
+        const parts = cleanLine.split(/\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);
+        clientData.sessionTitle = parts[0].trim();
+        if (clientData.sessionTitle.endsWith(' at')) {
+          clientData.sessionTitle = clientData.sessionTitle.replace(/ at$/, '');
+        }
+        break;
+      } else if (line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)) {
+        const cleanLine = line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g, '').trim();
+        clientData.sessionTitle = cleanLine.split(/\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();
+        break;
+      }
+    }
+
+    // Extract dates for calendar/listing pages
+    const dates = allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\n]*[0-9]{4}[^\n]*[0-9]{1,2}:[0-9]{2}[^\n]*(AM|PM)/gi);
+    if (dates) {
+      clientData.sessionTime = dates[0];
+    } else {
+      const altDates = allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\n]*[0-9]{4}[^\n]*[0-9]{1,2}:[0-9]{2}[^\n]*(AM|PM)/gi);
+      if (altDates) {
+        clientData.sessionTime = altDates[0];
+      }
+    }
+
+    // Extract names for calendar/listing pages
+    const names = allText.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/gm);
+    if (names) {
+      clientData.name = names[0];
+    }
+  }
+
+  return clientData;
+}
+
+// Function to create floating action button
+function createFloatingButton() {
+  // Remove existing button if it exists
+  const existingButton = document.getElementById('session-reminder-btn');
+  if (existingButton) {
+    existingButton.remove();
+  }
+
+  const button = document.createElement('div');
+  button.id = 'session-reminder-btn';
+  button.className = 'session-reminder-floating-btn';
+  button.innerHTML = `
+    <div class="session-reminder-btn-content">
+      <span class="session-reminder-icon">📱</span>
+      <span class="session-reminder-text">Send Reminder</span>
+    </div>
+  `;
+
+  button.addEventListener('click', function() {
+    const clientData = extractClientData();
+    
+    // Send message to background script to open new tab
+    chrome.runtime.sendMessage({
+      action: 'openReminderForm',
+      data: clientData
+    });
+  });
+
+  document.body.appendChild(button);
+}
+
+// Only create button on UseSession pages
+if (window.location.href.includes('app.usesession.com')) {
+  // Wait for page to load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createFloatingButton);
+  } else {
+    createFloatingButton();
+  }
+
+  // Also create button when navigating (for SPAs)
+  let lastUrl = location.href;
+  new MutationObserver(() => {
+    const url = location.href;
+    if (url !== lastUrl) {
+      lastUrl = url;
+      setTimeout(createFloatingButton, 1000); // Wait for page to update
+    }
+  }).observe(document, { subtree: true, childList: true });
+}

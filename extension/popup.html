@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Reminder</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <div class="header">
+            <div class="icon">📱</div>
+            <h1>Session Reminder</h1>
+        </div>
+        
+        <div class="content">
+            <div class="status" id="status">
+                <div class="status-indicator"></div>
+                <span id="status-text">Ready to use</span>
+            </div>
+            
+            <div class="instructions">
+                <h3>How to use:</h3>
+                <ol>
+                    <li>Go to any UseSession page</li>
+                    <li>Click the floating "Send Reminder" button</li>
+                    <li>Form opens with client data pre-filled</li>
+                </ol>
+            </div>
+            
+            <div class="actions">
+                <button id="test-btn" class="btn-primary">
+                    <span>📝</span>
+                    Test Form
+                </button>
+                <button id="help-btn" class="btn-secondary">
+                    <span>📖</span>
+                    Help
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>v1.0.0</p>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
