@@ -77,14 +77,19 @@ async function sendScheduledSMS(message: any): Promise<boolean> {
       return false
     }
 
-    // Clean phone number
+    // Clean phone number - TextMagic expects full international format
     let cleanPhone = message.phone.replace(/[^\d+]/g, '')
     
-    // Remove leading + if present, TextMagic will handle international format
-    if (cleanPhone.startsWith('+1')) {
-      cleanPhone = cleanPhone.substring(2) // Remove +1 for US numbers
-    } else if (cleanPhone.startsWith('+')) {
-      cleanPhone = cleanPhone.substring(1) // Remove + for international
+    // Ensure phone has proper international format
+    if (!cleanPhone.startsWith('+')) {
+      // If no country code, assume US (+1)
+      if (cleanPhone.length === 10) {
+        cleanPhone = '+1' + cleanPhone
+      } else if (cleanPhone.length === 11 && cleanPhone.startsWith('1')) {
+        cleanPhone = '+' + cleanPhone
+      } else {
+        cleanPhone = '+1' + cleanPhone
+      }
     }
 
     const textMagicPayload = {

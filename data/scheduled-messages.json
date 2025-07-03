@@ -1,0 +1,24 @@
+[
+  {
+    "id": "s90uvlcbv",
+    "clientName": "Test User",
+    "phone": "+1234567890",
+    "message": "[TEST 2-MIN] This is a test message for Test User",
+    "scheduledFor": "2025-07-03T23:33:55.061Z",
+    "sessionDate": "2024-07-10T18:00:00.000Z",
+    "reminderType": "test-2min",
+    "status": "failed",
+    "createdAt": "2025-07-03T23:31:55.061Z"
+  },
+  {
+    "id": "bu859pawy",
+    "clientName": "Test User",
+    "phone": "+1234567890",
+    "message": "[TEST 5-MIN] This is a test message for Test User",
+    "scheduledFor": "2025-07-03T23:36:55.061Z",
+    "sessionDate": "2024-07-10T18:00:00.000Z",
+    "reminderType": "test-5min",
+    "status": "scheduled",
+    "createdAt": "2025-07-03T23:31:55.061Z"
+  }
+]
