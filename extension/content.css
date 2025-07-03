@@ -3,25 +3,27 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #1c1917 0%, #57534e 100%);
   color: white;
   border: none;
   border-radius: 50px;
   padding: 12px 20px;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(28, 25, 23, 0.3);
   z-index: 9999;
   transition: all 0.3s ease;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   font-weight: 600;
   backdrop-filter: blur(10px);
+  animation: pulse 2s infinite;
 }
 
 .session-reminder-floating-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
-  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  box-shadow: 0 6px 25px rgba(28, 25, 23, 0.4);
+  background: linear-gradient(135deg, #0f0f0f 0%, #44403c 100%);
+  animation: none; /* Stop pulse animation on hover */
 }
 
 .session-reminder-floating-btn:active {
@@ -40,6 +42,22 @@
 
 .session-reminder-text {
   white-space: nowrap;
+}
+
+/* Pulse animation keyframes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 20px rgba(28, 25, 23, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 25px rgba(28, 25, 23, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 20px rgba(28, 25, 23, 0.3);
+  }
 }
 
 /* Responsive design */

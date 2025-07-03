@@ -183,7 +183,7 @@ function createFloatingButton() {
   button.innerHTML = `
     <div class="session-reminder-btn-content">
       <span class="session-reminder-icon">📱</span>
-      <span class="session-reminder-text">Send Reminder</span>
+      <span class="session-reminder-text">Send Text Reminder</span>
     </div>
   `;
 
