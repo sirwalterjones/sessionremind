@@ -22,6 +22,9 @@ export default function NewReminder() {
   const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [initialData, setInitialData] = useState<Partial<FormData>>({})
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [successDetails, setSuccessDetails] = useState('')
 
   useEffect(() => {
     const params = {
@@ -42,7 +45,9 @@ export default function NewReminder() {
     console.log('========================')
 
     if (!formData.optedIn) {
-      alert('Client must opt in to receive SMS reminders')
+      setSuccessMessage('Opt-in Required')
+      setSuccessDetails('Client must opt in to receive SMS reminders before you can send messages.')
+      setShowSuccess(true)
       return
     }
 
@@ -115,9 +120,10 @@ export default function NewReminder() {
         })
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
-        const enrollmentStatus = enrollmentResponse.ok ? ' Enrollment confirmation sent!' : ' (Enrollment failed)'
-        alert(`${result.scheduledReminders.length} reminder(s) scheduled successfully!${enrollmentStatus}`)
-        router.push('/dashboard')
+        const enrollmentStatus = enrollmentResponse.ok ? 'Enrollment confirmation sent successfully!' : 'Enrollment confirmation failed'
+        setSuccessMessage('🎉 Reminders Scheduled!')
+        setSuccessDetails(`${result.scheduledReminders.length} reminder(s) scheduled for ${formData.name}. ${enrollmentStatus}`)
+        setShowSuccess(true)
       } else {
         // Send immediate SMS
         const personalizedMessage = formData.message
@@ -153,12 +159,15 @@ export default function NewReminder() {
         })
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
-        alert('SMS reminder sent successfully!')
-        router.push('/dashboard')
+        setSuccessMessage('✅ SMS Sent!')
+        setSuccessDetails(`Reminder sent successfully to ${formData.name} at ${formData.phone}`)
+        setShowSuccess(true)
       }
     } catch (error) {
       console.error('Error processing request:', error)
-      alert('Failed to process request. Please try again.')
+      setSuccessMessage('❌ Error')
+      setSuccessDetails('Failed to process request. Please check your TextMagic credentials and try again.')
+      setShowSuccess(true)
     } finally {
       setIsSubmitting(false)
     }
@@ -181,6 +190,57 @@ export default function NewReminder() {
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
       />
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
+                <span className="text-3xl">
+                  {successMessage.includes('❌') ? '⚠️' : 
+                   successMessage.includes('Opt-in') ? '📋' : '🎉'}
+                </span>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-slate-800 mb-4">
+                {successMessage}
+              </h3>
+              
+              <p className="text-slate-600 mb-8 leading-relaxed">
+                {successDetails}
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={() => {
+                    setShowSuccess(false)
+                    if (successMessage.includes('🎉') || successMessage.includes('✅')) {
+                      router.push('/dashboard')
+                    }
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  {successMessage.includes('🎉') || successMessage.includes('✅') ? 'View Dashboard' : 'Got it'}
+                </button>
+                
+                {(successMessage.includes('🎉') || successMessage.includes('✅')) && (
+                  <button
+                    onClick={() => {
+                      setShowSuccess(false)
+                      // Reset form for another reminder
+                      window.location.reload()
+                    }}
+                    className="px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                  >
+                    Send Another
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
