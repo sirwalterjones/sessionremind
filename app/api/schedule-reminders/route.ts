@@ -65,8 +65,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Schedule 3-day reminder
-    if (data.threeDayReminder) {
+    // Calculate time differences
+    const now = new Date()
+    const timeUntilSession = sessionDate.getTime() - now.getTime()
+    const daysUntilSession = timeUntilSession / (1000 * 60 * 60 * 24)
+    
+    console.log('Days until session:', daysUntilSession)
+
+    // Schedule 3-day reminder (only if session is more than 3 days away)
+    if (data.threeDayReminder && daysUntilSession > 3) {
       const threeDaysEarlier = new Date(sessionDate)
       threeDaysEarlier.setDate(threeDaysEarlier.getDate() - 3)
       threeDaysEarlier.setHours(10, 0, 0, 0) // 10:00 AM
@@ -85,10 +92,13 @@ export async function POST(request: NextRequest) {
         status: 'scheduled',
         createdAt: new Date().toISOString(),
       })
+      console.log('✅ 3-day reminder scheduled (session is', daysUntilSession.toFixed(1), 'days away)')
+    } else if (data.threeDayReminder && daysUntilSession <= 3) {
+      console.log('⚠️ 3-day reminder NOT scheduled - session is only', daysUntilSession.toFixed(1), 'days away')
     }
 
-    // Schedule 1-day reminder
-    if (data.oneDayReminder) {
+    // Schedule 1-day reminder (only if session is more than 1 day away)
+    if (data.oneDayReminder && daysUntilSession > 1) {
       const oneDayEarlier = new Date(sessionDate)
       oneDayEarlier.setDate(oneDayEarlier.getDate() - 1)
       oneDayEarlier.setHours(10, 0, 0, 0) // 10:00 AM
@@ -107,6 +117,9 @@ export async function POST(request: NextRequest) {
         status: 'scheduled',
         createdAt: new Date().toISOString(),
       })
+      console.log('✅ 1-day reminder scheduled (session is', daysUntilSession.toFixed(1), 'days away)')
+    } else if (data.oneDayReminder && daysUntilSession <= 1) {
+      console.log('⚠️ 1-day reminder NOT scheduled - session is only', daysUntilSession.toFixed(1), 'days away')
     }
 
     // Store scheduled messages persistently
@@ -117,14 +130,32 @@ export async function POST(request: NextRequest) {
     }
     console.log('✅ All reminders stored successfully')
 
+    // Create detailed response about what was scheduled
+    const scheduledTypes = reminders.map(r => r.reminderType)
+    const skippedReminders = []
+    
+    if (data.threeDayReminder && !scheduledTypes.includes('3-day')) {
+      skippedReminders.push('3-day reminder (session too soon)')
+    }
+    if (data.oneDayReminder && !scheduledTypes.includes('1-day')) {
+      skippedReminders.push('1-day reminder (session too soon)')
+    }
+    
+    let message = `${reminders.length} reminder(s) scheduled successfully`
+    if (skippedReminders.length > 0) {
+      message += `. Skipped: ${skippedReminders.join(', ')}`
+    }
+
     return NextResponse.json({
       success: true,
-      message: `${reminders.length} reminder(s) scheduled successfully`,
+      message: message,
       scheduledReminders: reminders.map(r => ({
         id: r.id,
         type: r.reminderType,
         scheduledFor: r.scheduledFor,
       })),
+      skippedReminders: skippedReminders,
+      daysUntilSession: Math.round(daysUntilSession * 10) / 10, // Round to 1 decimal place
     })
   } catch (error) {
     console.error('Schedule API error:', error)

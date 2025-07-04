@@ -123,8 +123,20 @@ export default function NewReminder() {
         
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
+        // Create success message with details about scheduled/skipped reminders
+        const scheduledCount = scheduleResult.scheduledReminders?.length || 0
+        let successDetail = `${formData.name} has been registered and ${scheduledCount} reminder(s) scheduled.`
+        
+        if (scheduleResult.skippedReminders && scheduleResult.skippedReminders.length > 0) {
+          successDetail += ` ${scheduleResult.skippedReminders.join(', ')}.`
+        }
+        
+        if (scheduleResult.daysUntilSession !== undefined) {
+          successDetail += ` Session is ${scheduleResult.daysUntilSession} days away.`
+        }
+
         setSuccessMessage('✅ Registration & Reminders Scheduled!')
-        setSuccessDetails(`${formData.name} has been registered and ${scheduleResult.scheduledReminders?.length || 0} reminder(s) scheduled.`)
+        setSuccessDetails(successDetail)
         setShowSuccess(true)
       } else {
         // Just registration, no reminders
