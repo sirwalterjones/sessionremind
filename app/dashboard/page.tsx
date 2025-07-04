@@ -53,6 +53,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('')
   const [cancellingMessages, setCancellingMessages] = useState<Set<string>>(new Set())
   const [cancelledMessages, setCancelledMessages] = useState<Set<string>>(new Set())
+  const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
 
   useEffect(() => {
     // Check if password is already in sessionStorage
@@ -247,11 +248,32 @@ export default function Dashboard() {
     }
   }
 
-  const filteredClients = clientGroups.filter(client => 
+  // Helper function to check if a session has passed
+  const isSessionPassed = (sessionTime: string) => {
+    try {
+      const sessionDate = new Date(sessionTime)
+      const now = new Date()
+      return sessionDate < now
+    } catch {
+      return false
+    }
+  }
+
+  // Filter clients by active/archived status
+  const filteredByStatus = clientGroups.filter(client => {
+    const sessionPassed = isSessionPassed(client.sessionTime)
+    return activeTab === 'active' ? !sessionPassed : sessionPassed
+  })
+
+  const filteredClients = filteredByStatus.filter(client => 
     client.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.phone.includes(searchTerm) ||
     client.sessionTitle.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // Count active and archived clients
+  const activeClientsCount = clientGroups.filter(client => !isSessionPassed(client.sessionTime)).length
+  const archivedClientsCount = clientGroups.filter(client => isSessionPassed(client.sessionTime)).length
 
   // Calculate analytics
   const totalMessages = scheduledMessages.length
@@ -412,13 +434,40 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-8">
+        {/* Tabs and Search */}
+        <div className="mb-8 space-y-6">
+          {/* Tab Navigation */}
+          <div className="flex justify-center">
+            <div className="bg-stone-100 p-1 rounded-full">
+              <button
+                onClick={() => setActiveTab('active')}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+                  activeTab === 'active'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                Active ({activeClientsCount})
+              </button>
+              <button
+                onClick={() => setActiveTab('archived')}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+                  activeTab === 'archived'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                Archived ({archivedClientsCount})
+              </button>
+            </div>
+          </div>
+
+          {/* Search Bar */}
           <div className="relative max-w-md mx-auto">
             <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search clients, phone numbers, or session types..."
+              placeholder={`Search ${activeTab} clients, phone numbers, or session types...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-full focus:ring-2 focus:ring-stone-500 focus:border-transparent"
@@ -434,12 +483,19 @@ export default function Dashboard() {
                 {searchTerm ? <MagnifyingGlassIcon className="h-10 w-10 text-stone-400" /> : <ClockIcon className="h-10 w-10 text-stone-400" />}
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                {searchTerm ? 'No matching clients found' : 'No reminders scheduled yet'}
+                {searchTerm 
+                  ? 'No matching clients found' 
+                  : activeTab === 'active' 
+                    ? 'No active reminders' 
+                    : 'No archived sessions yet'
+                }
               </h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
                 {searchTerm 
                   ? 'Try adjusting your search terms or check the spelling.'
-                  : 'Start sending personalized SMS reminders to your photography clients and keep track of them here.'
+                  : activeTab === 'active'
+                    ? 'Start sending personalized SMS reminders to your photography clients and keep track of them here.'
+                    : 'Sessions will automatically appear here after their scheduled date has passed.'
                 }
               </p>
               {!searchTerm && (
@@ -460,7 +516,12 @@ export default function Dashboard() {
                     <span className="text-stone-600 text-sm font-bold">{filteredClients.length}</span>
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {searchTerm ? `Search Results` : 'Client Reminders'}
+                    {searchTerm 
+                      ? `Search Results` 
+                      : activeTab === 'active' 
+                        ? 'Active Client Reminders' 
+                        : 'Archived Sessions'
+                    }
                   </h2>
                 </div>
                 {searchTerm && (
@@ -478,11 +539,16 @@ export default function Dashboard() {
                 const sentMessages = client.messages.filter(msg => msg.status === 'sent')
                 const failedMessages = client.messages.filter(msg => msg.status === 'failed')
                 const cancelledMessages = client.messages.filter(msg => msg.status === 'cancelled')
+                const sessionPassed = isSessionPassed(client.sessionTime)
                 
                 return (
                   <div 
                     key={`${client.clientName}-${client.phone}`} 
-                    className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-all duration-200 cursor-pointer"
+                    className={`bg-white rounded-2xl p-6 shadow-sm border transition-all duration-200 cursor-pointer ${
+                      sessionPassed 
+                        ? 'border-stone-200 opacity-75 hover:opacity-100 hover:shadow-md' 
+                        : 'border-stone-100 hover:shadow-md'
+                    }`}
                     onClick={() => openClientModal(client)}
                   >
                     <div className="flex items-start justify-between mb-4">
@@ -491,8 +557,15 @@ export default function Dashboard() {
                           <span className="text-stone-600 text-xl">👤</span>
                         </div>
                         <div>
-                          <h4 className="text-xl font-bold text-gray-900">{client.clientName}</h4>
-                          <div className="flex flex-col text-gray-600 text-sm mt-1 space-y-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="text-xl font-bold text-gray-900">{client.clientName}</h4>
+                            {sessionPassed && (
+                              <span className="px-2 py-1 bg-stone-100 text-stone-600 text-xs font-medium rounded-full">
+                                ARCHIVED
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-col text-gray-600 text-sm space-y-1">
                             <div className="flex items-center">
                               <PhoneIcon className="h-4 w-4 mr-1" />
                               {client.phone}
