@@ -45,11 +45,59 @@ export default function Home() {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your Integration</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Extract client data from UseSession automatically with either option
+            Extract client data from UseSession automatically with these options
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid lg:grid-cols-3 gap-6 mb-16">
+          
+          {/* PWA - Best for Mobile */}
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
+                <span className="text-blue-600 text-2xl">📱</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Mobile App (PWA)</h3>
+              <p className="text-gray-600">
+                Install as an app - perfect for mobile users
+              </p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-6">
+              <h4 className="text-blue-800 font-medium mb-3">📲 Best for Mobile</h4>
+              <ul className="text-blue-700 text-sm space-y-2 mb-4">
+                <li>• Install as native app on phone</li>
+                <li>• Share UseSession pages directly to app</li>
+                <li>• Works offline</li>
+                <li>• No browser required</li>
+              </ul>
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => {
+                    if ('serviceWorker' in navigator) {
+                      // Show install prompt
+                      alert('To install:\n\n📱 iOS: Tap Share → Add to Home Screen\n🤖 Android: Tap menu → Install App')
+                    }
+                  }}
+                  className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-all duration-200"
+                >
+                  <span className="mr-2">📲</span>
+                  Install App
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">1</div>
+                <p className="text-xs text-stone-600">Install App</p>
+              </div>
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <div className="w-8 h-8 bg-stone-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">2</div>
+                <p className="text-xs text-stone-600">Share from UseSession</p>
+              </div>
+            </div>
+          </div>
           
           {/* Browser Extension */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">

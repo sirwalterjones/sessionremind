@@ -6,7 +6,18 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Session Reminder',
-  description: 'SMS reminder app for photography sessions',
+  description: 'SMS reminder app for photography sessions - works with UseSession',
+  manifest: '/manifest.json',
+  themeColor: '#1c1917',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Session Reminder'
+  },
+  other: {
+    'mobile-web-app-capable': 'yes'
+  }
 }
 
 export default function RootLayout({
@@ -16,7 +27,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/icon.svg" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
+      </head>
       <body className={inter.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                      console.log('ServiceWorker registration failed');
+                    });
+                });
+              }
+            `,
+          }}
+        />
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
           <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-stone-200 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -26,7 +26,34 @@ export default function NewReminder() {
   const [successMessage, setSuccessMessage] = useState('')
   const [successDetails, setSuccessDetails] = useState('')
 
+  const extractDataFromSharedUrl = async (url: string) => {
+    try {
+      // For now, just show that a URL was shared
+      // In a real implementation, you might fetch the page content server-side
+      console.log('Processing shared UseSession URL:', url)
+      
+      // Extract any obvious data from the URL itself
+      const urlObj = new URL(url)
+      if (urlObj.hostname.includes('usesession.com')) {
+        setInitialData(prev => ({
+          ...prev,
+          sessionTitle: 'Shared from UseSession'
+        }))
+      }
+    } catch (error) {
+      console.error('Error processing shared URL:', error)
+    }
+  }
+
   useEffect(() => {
+    // Check for PWA share target
+    const sharedUrl = searchParams.get('shared_url')
+    if (sharedUrl) {
+      console.log('Received shared URL:', sharedUrl)
+      // Extract data from UseSession URL if possible
+      extractDataFromSharedUrl(sharedUrl)
+    }
+    
     const params = {
       name: searchParams.get('name') || '',
       phone: searchParams.get('phone') || '',
