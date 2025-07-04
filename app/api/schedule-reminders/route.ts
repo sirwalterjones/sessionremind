@@ -166,9 +166,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Store scheduled messages persistently
+    console.log('📝 About to store reminders:', reminders)
     for (const reminder of reminders) {
+      console.log('💾 Storing reminder:', JSON.stringify(reminder, null, 2))
       await addScheduledMessage(reminder)
     }
+    console.log('✅ All reminders stored successfully')
 
     return NextResponse.json({
       success: true,
