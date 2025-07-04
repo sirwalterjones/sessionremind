@@ -28,6 +28,9 @@ export default function NewReminder() {
   const [showUrlExtractor, setShowUrlExtractor] = useState(false)
   const [urlInput, setUrlInput] = useState('')
   const [isExtracting, setIsExtracting] = useState(false)
+  const [showTextExtractor, setShowTextExtractor] = useState(false)
+  const [textInput, setTextInput] = useState('')
+  const [isExtractingText, setIsExtractingText] = useState(false)
 
   const handleManualUrlExtraction = async () => {
     if (!urlInput.trim()) return
@@ -37,6 +40,90 @@ export default function NewReminder() {
     setIsExtracting(false)
     setShowUrlExtractor(false)
     setUrlInput('')
+  }
+
+  const handleTextExtraction = () => {
+    if (!textInput.trim()) return
+    
+    setIsExtractingText(true)
+    
+    try {
+      // Use the same extraction logic as the bookmarklet, but on pasted text
+      const text = textInput
+      const extractedData = {
+        name: '',
+        email: '',
+        phone: '',
+        sessionTitle: '',
+        sessionTime: ''
+      }
+
+      // Extract email
+      const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
+      if (emailMatch) {
+        extractedData.email = emailMatch[0]
+      }
+
+      // Extract phone
+      const phoneMatch = text.match(/[+]?[0-9]{10,15}/)
+      if (phoneMatch) {
+        extractedData.phone = phoneMatch[0]
+      }
+
+      // Extract name (before email)
+      const nameMatch = text.match(/([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)*\s+[A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/)
+      if (nameMatch) {
+        extractedData.name = nameMatch[1]
+      }
+
+      // Extract time
+      const timeMatch = text.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/)
+      const dayMatch = text.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/)
+      
+      if (timeMatch && dayMatch) {
+        extractedData.sessionTime = `${dayMatch[1]}, ${dayMatch[2]} at ${timeMatch[1]}`
+      } else if (dayMatch) {
+        extractedData.sessionTime = `${dayMatch[1]}, ${dayMatch[2]}`
+      }
+
+      // Extract session title
+      const sessionPatterns = [
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\s+20\d{2})/gi,
+        /(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\s+[A-Z][a-z]+)*(?:\s+20\d{2})?/gi,
+        /([A-Z][a-z\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\s]*)/gi
+      ]
+      
+      for (const pattern of sessionPatterns) {
+        const matches = text.match(pattern)
+        if (matches && matches[0].length > 5 && matches[0].length < 80) {
+          extractedData.sessionTitle = matches[0].trim()
+          break
+        }
+      }
+
+      if (!extractedData.sessionTitle) {
+        extractedData.sessionTitle = 'Photography Session'
+      }
+
+      // Update form with extracted data
+      setInitialData(prev => ({
+        ...prev,
+        name: extractedData.name || prev.name,
+        email: extractedData.email || prev.email,
+        phone: extractedData.phone || prev.phone,
+        sessionTitle: extractedData.sessionTitle || prev.sessionTitle,
+        sessionTime: extractedData.sessionTime || prev.sessionTime
+      }))
+
+      console.log('✅ Successfully extracted data from text:', extractedData)
+      setShowTextExtractor(false)
+      setTextInput('')
+      
+    } catch (error) {
+      console.error('Error extracting from text:', error)
+    } finally {
+      setIsExtractingText(false)
+    }
   }
 
   const extractDataFromSharedUrl = async (url: string) => {
@@ -283,33 +370,97 @@ export default function NewReminder() {
           </p>
         </div>
 
-        {/* URL Extractor Section */}
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-8">
-          <div className="text-center mb-4">
-            <h3 className="text-xl font-bold text-blue-900 mb-2">📱 Extract from UseSession</h3>
-            <p className="text-blue-700 text-sm mb-4">
-              <strong>Mobile:</strong> Share UseSession page → Select "Session Reminder"<br/>
-              <strong>Manual:</strong> Copy URL and paste below
+        {/* Mobile Data Extraction Section */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 mb-8">
+          <div className="text-center mb-6">
+            <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Extract from UseSession</h3>
+            <p className="text-blue-700 text-sm">
+              Choose the easiest method for your device
             </p>
-            <button
-              onClick={() => setShowUrlExtractor(!showUrlExtractor)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors text-lg"
-            >
-              {showUrlExtractor ? '✕ Hide URL Extractor' : '🔗 Paste UseSession URL'}
-            </button>
           </div>
           
-          {showUrlExtractor && (
-            <div className="space-y-4">
-              <div>
-                <input
-                  type="url"
-                  placeholder="Paste UseSession URL here (e.g., https://app.usesession.com/sessions/...)"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* Copy-Paste Text Method */}
+            <div className="bg-white rounded-xl p-6 border border-blue-100">
+              <div className="text-center mb-4">
+                <span className="text-3xl mb-2 block">📋</span>
+                <h4 className="font-bold text-gray-900 mb-2">Copy & Paste Text</h4>
+                <p className="text-gray-600 text-sm">Select all text from UseSession page and paste here</p>
               </div>
+              <button
+                onClick={() => setShowTextExtractor(!showTextExtractor)}
+                className="w-full px-4 py-3 bg-green-600 text-white rounded-full font-medium hover:bg-green-700 transition-colors"
+              >
+                {showTextExtractor ? '✕ Hide' : '📋 Paste Text'}
+              </button>
+            </div>
+
+            {/* URL Method */}
+            <div className="bg-white rounded-xl p-6 border border-blue-100">
+              <div className="text-center mb-4">
+                <span className="text-3xl mb-2 block">🔗</span>
+                <h4 className="font-bold text-gray-900 mb-2">Paste URL</h4>
+                <p className="text-gray-600 text-sm">Copy UseSession URL from address bar and paste here</p>
+              </div>
+              <button
+                onClick={() => setShowUrlExtractor(!showUrlExtractor)}
+                className="w-full px-4 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
+              >
+                {showUrlExtractor ? '✕ Hide' : '🔗 Paste URL'}
+              </button>
+            </div>
+          </div>
+
+          {/* Text Extractor */}
+          {showTextExtractor && (
+            <div className="mt-6 bg-white rounded-xl p-6 border border-green-200">
+              <h5 className="font-bold text-green-900 mb-3">📋 Paste UseSession Page Text</h5>
+              <p className="text-green-700 text-sm mb-4">
+                1. Go to UseSession page → Select All (Ctrl/Cmd+A) → Copy<br/>
+                2. Paste the text below and click "Extract Data"
+              </p>
+              <textarea
+                placeholder="Paste all the text from the UseSession page here..."
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                rows={6}
+                className="w-full px-4 py-3 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 mb-4"
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={handleTextExtraction}
+                  disabled={!textInput.trim() || isExtractingText}
+                  className="px-6 py-3 bg-green-600 text-white rounded-full font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isExtractingText ? 'Extracting...' : 'Extract Data'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowTextExtractor(false)
+                    setTextInput('')
+                  }}
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* URL Extractor */}
+          {showUrlExtractor && (
+            <div className="mt-6 bg-white rounded-xl p-6 border border-blue-200">
+              <h5 className="font-bold text-blue-900 mb-3">🔗 Paste UseSession URL</h5>
+              <p className="text-blue-700 text-sm mb-4">
+                Copy the URL from your browser's address bar and paste it below
+              </p>
+              <input
+                type="url"
+                placeholder="https://app.usesession.com/sessions/..."
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
+              />
               <div className="flex gap-3">
                 <button
                   onClick={handleManualUrlExtraction}
