@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
   id: string | number
@@ -15,35 +15,103 @@ interface SentMessage {
   timestamp: string
 }
 
+interface ScheduledMessage {
+  id: string
+  clientName: string
+  phone: string
+  email: string
+  sessionTitle: string
+  sessionTime: string
+  message: string
+  scheduledFor: string
+  sessionDate: string
+  reminderType: '3-day' | '1-day' | 'test-2min' | 'test-5min'
+  status: 'scheduled' | 'sent' | 'failed'
+  createdAt: string
+  sentAt?: string
+}
+
+interface ClientGroup {
+  clientName: string
+  phone: string
+  sessionTitle: string
+  sessionTime: string
+  messages: ScheduledMessage[]
+}
+
 export default function Dashboard() {
   const [sentMessages, setSentMessages] = useState<SentMessage[]>([])
+  const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([])
+  const [clientGroups, setClientGroups] = useState<ClientGroup[]>([])
   const [loading, setLoading] = useState(true)
   const [cronRunning, setCronRunning] = useState(false)
   const [cronResult, setCronResult] = useState<string>('')
   const [showCronResult, setShowCronResult] = useState(false)
   const [scheduledCount, setScheduledCount] = useState(0)
   const [showClearModal, setShowClearModal] = useState(false)
+  const [selectedClient, setSelectedClient] = useState<ClientGroup | null>(null)
+  const [showClientModal, setShowClientModal] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    // Load sent messages from localStorage
-    const stored = localStorage.getItem('sentMessages')
-    if (stored) {
-      setSentMessages(JSON.parse(stored))
-    }
-    loadScheduledMessages()
-    setLoading(false)
+    loadAllData()
   }, [])
+
+  const loadAllData = async () => {
+    setLoading(true)
+    try {
+      // Load sent messages from localStorage
+      const stored = localStorage.getItem('sentMessages')
+      if (stored) {
+        setSentMessages(JSON.parse(stored))
+      }
+
+      // Load scheduled messages from API
+      await loadScheduledMessages()
+    } catch (error) {
+      console.error('Failed to load data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const loadScheduledMessages = async () => {
     try {
       const response = await fetch('/api/schedule-reminders')
       if (response.ok) {
         const data = await response.json()
-        setScheduledCount(data.scheduledMessages?.filter((msg: any) => msg.status === 'scheduled').length || 0)
+        const messages = data.scheduledMessages || []
+        setScheduledMessages(messages)
+        setScheduledCount(messages.filter((msg: ScheduledMessage) => msg.status === 'scheduled').length)
+        
+        // Group messages by client
+        const groups = groupMessagesByClient(messages)
+        setClientGroups(groups)
       }
     } catch (error) {
       console.error('Failed to load scheduled messages:', error)
     }
+  }
+
+  const groupMessagesByClient = (messages: ScheduledMessage[]): ClientGroup[] => {
+    const grouped = messages.reduce((acc, message) => {
+      const key = `${message.clientName}-${message.phone}`
+      if (!acc[key]) {
+        acc[key] = {
+          clientName: message.clientName,
+          phone: message.phone,
+          sessionTitle: message.sessionTitle,
+          sessionTime: message.sessionTime,
+          messages: []
+        }
+      }
+      acc[key].messages.push(message)
+      return acc
+    }, {} as Record<string, ClientGroup>)
+
+    return Object.values(grouped).sort((a, b) => 
+      new Date(b.messages[0]?.createdAt || 0).getTime() - new Date(a.messages[0]?.createdAt || 0).getTime()
+    )
   }
 
   const runCronJob = async () => {
@@ -63,7 +131,7 @@ export default function Dashboard() {
       
       if (response.ok) {
         setCronResult(`✅ Cron job completed successfully! Processed ${result.processed || 0} messages.`)
-        // Reload scheduled count
+        // Reload all data to get updated statuses
         await loadScheduledMessages()
       } else {
         setCronResult(`❌ Cron job failed: ${result.error || 'Unknown error'}`)
@@ -91,6 +159,70 @@ export default function Dashboard() {
     setSentMessages([])
     setShowClearModal(false)
   }
+
+  const cancelMessage = async (messageId: string) => {
+    try {
+      const response = await fetch(`/api/cancel-message/${messageId}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.ok) {
+        // Reload data to reflect cancellation
+        await loadScheduledMessages()
+        setCronResult(`✅ Message cancelled successfully`)
+        setShowCronResult(true)
+        setTimeout(() => setShowCronResult(false), 5000)
+      } else {
+        setCronResult(`❌ Failed to cancel message`)
+        setShowCronResult(true)
+        setTimeout(() => setShowCronResult(false), 5000)
+      }
+    } catch (error) {
+      setCronResult(`❌ Error cancelling message: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      setShowCronResult(true)
+      setTimeout(() => setShowCronResult(false), 5000)
+    }
+  }
+
+  const openClientModal = (client: ClientGroup) => {
+    setSelectedClient(client)
+    setShowClientModal(true)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    })
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'scheduled': return <ClockIcon className="h-4 w-4 text-amber-500" />
+      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-emerald-500" />
+      case 'failed': return <XMarkIcon className="h-4 w-4 text-red-500" />
+      default: return <ClockIcon className="h-4 w-4 text-gray-400" />
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled': return 'bg-amber-50 text-amber-700 border-amber-200'
+      case 'sent': return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+      case 'failed': return 'bg-red-50 text-red-700 border-red-200'
+      default: return 'bg-gray-50 text-gray-700 border-gray-200'
+    }
+  }
+
+  const filteredClients = clientGroups.filter(client => 
+    client.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.phone.includes(searchTerm) ||
+    client.sessionTitle.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   if (loading) {
     return (
@@ -261,83 +393,134 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Messages List */}
+        {/* Search Bar */}
+        <div className="mb-8">
+          <div className="relative max-w-md mx-auto">
+            <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search clients, phone numbers, or session types..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-full focus:ring-2 focus:ring-stone-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Client Groups */}
         <div>
-          {sentMessages.length === 0 ? (
+          {filteredClients.length === 0 ? (
             <div className="bg-white rounded-2xl p-16 shadow-sm border border-stone-100 text-center">
               <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-8">
-                <ClockIcon className="h-10 w-10 text-stone-400" />
+                {searchTerm ? <MagnifyingGlassIcon className="h-10 w-10 text-stone-400" /> : <ClockIcon className="h-10 w-10 text-stone-400" />}
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">No reminders sent yet</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {searchTerm ? 'No matching clients found' : 'No reminders scheduled yet'}
+              </h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
-                Start sending personalized SMS reminders to your photography clients and keep track of them here.
+                {searchTerm 
+                  ? 'Try adjusting your search terms or check the spelling.'
+                  : 'Start sending personalized SMS reminders to your photography clients and keep track of them here.'
+                }
               </p>
-              <a
-                href="/new"
-                className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-              >
-                <span className="mr-3 text-xl">🚀</span>
-                <span className="text-lg">Create Your First Reminder</span>
-              </a>
+              {!searchTerm && (
+                <a
+                  href="/new"
+                  className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                >
+                  <span className="mr-3 text-xl">🚀</span>
+                  <span className="text-lg">Create Your First Reminder</span>
+                </a>
+              )}
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="flex items-center mb-8">
-                <div className="w-8 h-8 bg-stone-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-stone-600 text-sm font-bold">{sentMessages.length}</span>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-stone-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-stone-600 text-sm font-bold">{filteredClients.length}</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {searchTerm ? `Search Results` : 'Client Reminders'}
+                  </h2>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Recent Reminders</h2>
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="text-stone-600 hover:text-stone-800 text-sm font-medium"
+                  >
+                    Clear search
+                  </button>
+                )}
               </div>
               
-              {sentMessages.map((message) => (
-                <div key={message.id} className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100 hover:shadow-md transition-all duration-200">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-6">
-                        <CheckCircleIcon className="h-6 w-6 text-stone-600" />
+              {filteredClients.map((client) => {
+                const scheduledMessages = client.messages.filter(msg => msg.status === 'scheduled')
+                const sentMessages = client.messages.filter(msg => msg.status === 'sent')
+                const failedMessages = client.messages.filter(msg => msg.status === 'failed')
+                
+                return (
+                  <div 
+                    key={`${client.clientName}-${client.phone}`} 
+                    className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-all duration-200 cursor-pointer"
+                    onClick={() => openClientModal(client)}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-4">
+                          <span className="text-stone-600 text-xl">👤</span>
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold text-gray-900">{client.clientName}</h4>
+                          <div className="flex items-center text-gray-600 text-sm mt-1">
+                            <PhoneIcon className="h-4 w-4 mr-1" />
+                            {client.phone}
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-gray-900">{message.name}</h4>
-                        <p className="text-gray-600">{message.phone}</p>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500 mb-1">{client.messages.length} message{client.messages.length !== 1 ? 's' : ''}</div>
+                        <div className="flex gap-2">
+                          {scheduledMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                              {scheduledMessages.length} scheduled
+                            </span>
+                          )}
+                          {sentMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                              {sentMessages.length} sent
+                            </span>
+                          )}
+                          {failedMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              {failedMessages.length} failed
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <span className="px-4 py-2 bg-stone-50 border border-stone-200 text-stone-800 text-sm font-medium rounded-full">
-                      ✅ {message.status}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-stone-50 border border-stone-200 rounded-xl p-6">
-                      <p className="text-sm font-medium text-stone-800 mb-2">📸 Session Type</p>
-                      <p className="text-stone-700 font-medium">{message.sessionTitle}</p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+                        <p className="text-xs font-medium text-stone-600 mb-1">📸 Session Type</p>
+                        <p className="text-stone-800 font-medium text-sm">{client.sessionTitle}</p>
+                      </div>
+                      <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+                        <p className="text-xs font-medium text-stone-600 mb-1">📅 Session Date</p>
+                        <p className="text-stone-800 font-medium text-sm">{formatDate(client.sessionTime)}</p>
+                      </div>
                     </div>
-                    <div className="bg-stone-50 border border-stone-200 rounded-xl p-6">
-                      <p className="text-sm font-medium text-stone-800 mb-2">📅 Session Date</p>
-                      <p className="text-stone-700 font-medium">{message.sessionTime}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
-                    <p className="text-sm font-medium text-gray-800 mb-3">💬 Message Sent</p>
-                    <p className="text-gray-700 leading-relaxed italic">"{message.message}"</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center text-sm text-gray-500">
-                    <div className="flex items-center space-x-6">
-                      <span className="flex items-center">
-                        <span className="mr-2">🕒</span>
-                        Sent: {formatDate(message.timestamp)}
-                      </span>
-                      {message.email && (
-                        <span className="flex items-center">
-                          <span className="mr-2">✉️</span>
-                          {message.email}
-                        </span>
-                      )}
+                    
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center">
+                        <CalendarIcon className="h-4 w-4 mr-1" />
+                        <span>Created {formatDate(client.messages[0]?.createdAt)}</span>
+                      </div>
+                      <span className="text-stone-600 font-medium">Click to view details →</span>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
@@ -375,6 +558,114 @@ export default function Dashboard() {
                   >
                     Delete All
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Client Detail Modal */}
+        {showClientModal && selectedClient && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+              <div className="p-6 border-b border-stone-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-4">
+                      <span className="text-stone-600 text-xl">👤</span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900">{selectedClient.clientName}</h3>
+                      <div className="flex items-center text-gray-600 text-sm mt-1">
+                        <PhoneIcon className="h-4 w-4 mr-1" />
+                        {selectedClient.phone}
+                        {selectedClient.messages[0]?.email && (
+                          <>
+                            <span className="mx-2">•</span>
+                            <span>📧 {selectedClient.messages[0].email}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowClientModal(false)}
+                    className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  >
+                    <XMarkIcon className="h-5 w-5 text-gray-600" />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+                    <p className="text-xs font-medium text-stone-600 mb-1">📸 Session Type</p>
+                    <p className="text-stone-800 font-medium">{selectedClient.sessionTitle}</p>
+                  </div>
+                  <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
+                    <p className="text-xs font-medium text-stone-600 mb-1">📅 Session Date</p>
+                    <p className="text-stone-800 font-medium">{formatDate(selectedClient.sessionTime)}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6 max-h-[60vh] overflow-y-auto">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">Message Timeline</h4>
+                
+                <div className="space-y-4">
+                  {selectedClient.messages
+                    .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
+                    .map((message) => (
+                    <div key={message.id} className="bg-stone-50 border border-stone-200 rounded-xl p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center">
+                          {getStatusIcon(message.status)}
+                          <div className="ml-3">
+                            <h5 className="font-semibold text-gray-900">
+                              {message.reminderType === '3-day' && '3-Day Reminder'}
+                              {message.reminderType === '1-day' && '1-Day Reminder'} 
+                              {message.reminderType === 'test-2min' && 'Test 2-Min Reminder'}
+                              {message.reminderType === 'test-5min' && 'Test 5-Min Reminder'}
+                            </h5>
+                            <div className="text-sm text-gray-600 mt-1">
+                              <div className="flex items-center gap-4">
+                                <span>🕒 Scheduled: {formatDate(message.scheduledFor)}</span>
+                                {message.sentAt && (
+                                  <span>✅ Sent: {formatDate(message.sentAt)}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(message.status)}`}>
+                            {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
+                          </span>
+                          {message.status === 'scheduled' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                cancelMessage(message.id)
+                              }}
+                              className="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full hover:bg-red-200 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white border border-stone-100 rounded-lg p-4">
+                        <p className="text-sm font-medium text-gray-800 mb-2">💬 Message Content</p>
+                        <p className="text-gray-700 leading-relaxed text-sm">"{message.message}"</p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
+                        <span>Created: {formatDate(message.createdAt)}</span>
+                        <span>ID: {message.id}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
