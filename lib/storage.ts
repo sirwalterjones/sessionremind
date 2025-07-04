@@ -1,6 +1,7 @@
-// Temporary in-memory storage for scheduled messages
-// WARNING: This storage is not persistent across server restarts
-// In production, replace with a proper database (Redis, PostgreSQL, etc.)
+// Persistent storage for scheduled messages using Vercel KV (Redis)
+// This ensures messages survive server restarts and work across serverless instances
+
+import { kv } from '@vercel/kv'
 
 interface ScheduledMessage {
   id: string
@@ -17,35 +18,44 @@ interface ScheduledMessage {
   createdAt: string
 }
 
-// In-memory storage - will be lost on server restart
-let scheduledMessages: ScheduledMessage[] = []
+const STORAGE_KEY = 'scheduled-messages'
 
-export function getScheduledMessages(): ScheduledMessage[] {
-  return [...scheduledMessages] // Return a copy to prevent mutations
-}
-
-export function saveScheduledMessages(messages: ScheduledMessage[]): void {
-  scheduledMessages = [...messages]
-  console.log(`📝 Saved ${messages.length} scheduled messages to memory`)
-}
-
-export function addScheduledMessage(message: ScheduledMessage): void {
-  const messages = getScheduledMessages()
-  messages.push(message)
-  saveScheduledMessages(messages)
-}
-
-export function updateMessageStatus(id: string, status: 'sent' | 'failed'): void {
-  const messages = getScheduledMessages()
-  const message = messages.find(m => m.id === id)
-  if (message) {
-    message.status = status
-    saveScheduledMessages(messages)
+export async function getScheduledMessages(): Promise<ScheduledMessage[]> {
+  try {
+    const messages = await kv.get<ScheduledMessage[]>(STORAGE_KEY)
+    return messages || []
+  } catch (error) {
+    console.error('Error reading scheduled messages from KV:', error)
+    return []
   }
 }
 
-export function getScheduledMessagesPendingDelivery(): ScheduledMessage[] {
-  const messages = getScheduledMessages()
+export async function saveScheduledMessages(messages: ScheduledMessage[]): Promise<void> {
+  try {
+    await kv.set(STORAGE_KEY, messages)
+    console.log(`📝 Saved ${messages.length} scheduled messages to Vercel KV`)
+  } catch (error) {
+    console.error('Error saving scheduled messages to KV:', error)
+  }
+}
+
+export async function addScheduledMessage(message: ScheduledMessage): Promise<void> {
+  const messages = await getScheduledMessages()
+  messages.push(message)
+  await saveScheduledMessages(messages)
+}
+
+export async function updateMessageStatus(id: string, status: 'sent' | 'failed'): Promise<void> {
+  const messages = await getScheduledMessages()
+  const message = messages.find(m => m.id === id)
+  if (message) {
+    message.status = status
+    await saveScheduledMessages(messages)
+  }
+}
+
+export async function getScheduledMessagesPendingDelivery(): Promise<ScheduledMessage[]> {
+  const messages = await getScheduledMessages()
   const now = new Date()
   
   return messages.filter(msg => {

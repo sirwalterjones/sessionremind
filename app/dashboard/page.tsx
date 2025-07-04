@@ -131,10 +131,10 @@ export default function Dashboard() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed">
             Track your session reminders and client communications with ease
           </p>
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-2xl mx-auto mb-8">
-            <p className="text-amber-800 text-sm">
-              ⚠️ <strong>Note:</strong> Scheduled messages are stored temporarily and will be reset when the server restarts. 
-              For production use, consider implementing a persistent database solution.
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 max-w-2xl mx-auto mb-8">
+            <p className="text-emerald-800 text-sm">
+              ✅ <strong>Persistent Storage:</strong> Scheduled messages are now stored in Vercel KV (Redis) and will survive server restarts. 
+              Your reminders will be sent at the correct times!
             </p>
           </div>
           

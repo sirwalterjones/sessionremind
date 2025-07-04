@@ -166,7 +166,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Store scheduled messages persistently
-    reminders.forEach(reminder => addScheduledMessage(reminder))
+    for (const reminder of reminders) {
+      await addScheduledMessage(reminder)
+    }
 
     return NextResponse.json({
       success: true,
@@ -187,7 +189,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  const scheduledMessages = getScheduledMessages()
+  const scheduledMessages = await getScheduledMessages()
   return NextResponse.json({
     scheduledMessages: scheduledMessages.map(msg => ({
       id: msg.id,

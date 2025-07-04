@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     console.log('=== MANUAL CRON JOB PROCESSING START ===')
     
     // Get messages that need to be sent
-    const messagesToSend = getScheduledMessagesPendingDelivery()
+    const messagesToSend = await getScheduledMessagesPendingDelivery()
     const now = new Date()
     const processedMessages = []
     
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       
       if (success) {
         // Update message status to 'sent' in persistent storage
-        updateMessageStatus(message.id, 'sent')
+        await updateMessageStatus(message.id, 'sent')
         processedMessages.push({
           id: message.id,
           clientName: message.clientName,
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         console.log(`✅ Message ${message.id} sent successfully`)
       } else {
         // Mark as failed in persistent storage
-        updateMessageStatus(message.id, 'failed')
+        await updateMessageStatus(message.id, 'failed')
         processedMessages.push({
           id: message.id,
           clientName: message.clientName,
