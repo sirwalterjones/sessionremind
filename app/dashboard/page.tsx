@@ -186,14 +186,26 @@ export default function Dashboard() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    })
+    try {
+      if (!dateString) return 'Not specified'
+      
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) {
+        // If it's not a valid date, return the original string
+        return dateString
+      }
+      
+      return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })
+    } catch (error) {
+      return dateString || 'Invalid date'
+    }
   }
 
   const getStatusIcon = (status: string) => {
@@ -499,7 +511,7 @@ export default function Dashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
                         <p className="text-xs font-medium text-stone-600 mb-1">📸 Session Type</p>
-                        <p className="text-stone-800 font-medium text-sm">{client.sessionTitle}</p>
+                        <p className="text-stone-800 font-medium text-sm">{client.sessionTitle || 'Photography Session'}</p>
                       </div>
                       <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
                         <p className="text-xs font-medium text-stone-600 mb-1">📅 Session Date</p>
@@ -595,7 +607,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
                     <p className="text-xs font-medium text-stone-600 mb-1">📸 Session Type</p>
-                    <p className="text-stone-800 font-medium">{selectedClient.sessionTitle}</p>
+                    <p className="text-stone-800 font-medium">{selectedClient.sessionTitle || 'Photography Session'}</p>
                   </div>
                   <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
                     <p className="text-xs font-medium text-stone-600 mb-1">📅 Session Date</p>
