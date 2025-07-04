@@ -28,6 +28,7 @@ interface ScheduledMessage {
   reminderType: '3-day' | '1-day' | 'test-2min' | 'test-5min'
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
+  sentAt?: string
 }
 
 export async function POST(request: NextRequest) {
