@@ -23,6 +23,7 @@ const STORAGE_KEY = 'scheduled-messages'
 export async function getScheduledMessages(): Promise<ScheduledMessage[]> {
   try {
     const messages = await kv.get<ScheduledMessage[]>(STORAGE_KEY)
+    console.log('🔍 Retrieved from KV:', JSON.stringify(messages, null, 2))
     return messages || []
   } catch (error) {
     console.error('Error reading scheduled messages from KV:', error)
@@ -40,9 +41,16 @@ export async function saveScheduledMessages(messages: ScheduledMessage[]): Promi
 }
 
 export async function addScheduledMessage(message: ScheduledMessage): Promise<void> {
+  console.log('🔍 Adding message to storage:', JSON.stringify(message, null, 2))
   const messages = await getScheduledMessages()
   messages.push(message)
+  console.log('🔍 All messages before save:', JSON.stringify(messages, null, 2))
   await saveScheduledMessages(messages)
+  
+  // Verify by reading back
+  const savedMessages = await getScheduledMessages()
+  const savedMessage = savedMessages.find(m => m.id === message.id)
+  console.log('🔍 Message after save verification:', JSON.stringify(savedMessage, null, 2))
 }
 
 export async function updateMessageStatus(id: string, status: 'sent' | 'failed'): Promise<void> {
