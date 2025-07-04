@@ -12,6 +12,7 @@ interface FormData {
   sessionTime: string
   message: string
   optedIn: boolean
+  sendRegistrationMessage: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
 }
@@ -53,24 +54,33 @@ export default function NewReminder() {
 
     setIsSubmitting(true)
     try {
-      // 1. Send registration confirmation immediately
-      console.log('Sending registration confirmation...')
+      // 1. Send registration confirmation immediately (if enabled)
+      let registrationSent = false
+      let registrationMessage = ''
       
-      const registrationMessage = `Hi ${formData.name}! You're registered for text reminders from Moments by Candice Photography. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. Looking forward to seeing you!`
+      if (formData.sendRegistrationMessage) {
+        console.log('Sending registration confirmation...')
+        
+        registrationMessage = `Hi ${formData.name}! You're registered for text reminders from Moments by Candice Photography. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. Looking forward to seeing you!`
 
-      const smsResponse = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          message: registrationMessage,
-        }),
-      })
+        const smsResponse = await fetch('/api/send-sms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            message: registrationMessage,
+          }),
+        })
 
-      if (!smsResponse.ok) {
-        throw new Error('Failed to send registration confirmation')
+        if (!smsResponse.ok) {
+          throw new Error('Failed to send registration confirmation')
+        }
+        
+        registrationSent = true
+      } else {
+        console.log('Skipping registration confirmation (disabled by user)')
       }
 
       // 2. Schedule reminders if selected
@@ -97,14 +107,16 @@ export default function NewReminder() {
         // Store the sent message and scheduled reminders in localStorage for dashboard
         const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
         
-        // Add registration message
-        sentMessages.push({
-          ...formData,
-          message: registrationMessage,
-          status: 'Sent (Registration)',
-          timestamp: new Date().toISOString(),
-          id: Date.now(),
-        })
+        // Add registration message (if sent)
+        if (registrationSent) {
+          sentMessages.push({
+            ...formData,
+            message: registrationMessage,
+            status: 'Sent (Registration)',
+            timestamp: new Date().toISOString(),
+            id: Date.now(),
+          })
+        }
 
         // Add scheduled reminders
         scheduleResult.scheduledReminders?.forEach((reminder: any) => {
@@ -125,7 +137,13 @@ export default function NewReminder() {
 
         // Create success message with details about scheduled/skipped reminders
         const scheduledCount = scheduleResult.scheduledReminders?.length || 0
-        let successDetail = `${formData.name} has been registered and ${scheduledCount} reminder(s) scheduled.`
+        let successDetail = ''
+        
+        if (registrationSent) {
+          successDetail = `${formData.name} has been registered and ${scheduledCount} reminder(s) scheduled.`
+        } else {
+          successDetail = `${scheduledCount} reminder(s) scheduled for ${formData.name}.`
+        }
         
         if (scheduleResult.skippedReminders && scheduleResult.skippedReminders.length > 0) {
           successDetail += ` ${scheduleResult.skippedReminders.join(', ')}.`
@@ -135,23 +153,29 @@ export default function NewReminder() {
           successDetail += ` Session is ${scheduleResult.daysUntilSession} days away.`
         }
 
-        setSuccessMessage('✅ Registration & Reminders Scheduled!')
+        setSuccessMessage(registrationSent ? '✅ Registration & Reminders Scheduled!' : '✅ Reminders Scheduled!')
         setSuccessDetails(successDetail)
         setShowSuccess(true)
       } else {
         // Just registration, no reminders
-        const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
-        sentMessages.push({
-          ...formData,
-          message: registrationMessage,
-          status: 'Sent (Registration)',
-          timestamp: new Date().toISOString(),
-          id: Date.now(),
-        })
-        localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
+        if (registrationSent) {
+          const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
+          sentMessages.push({
+            ...formData,
+            message: registrationMessage,
+            status: 'Sent (Registration)',
+            timestamp: new Date().toISOString(),
+            id: Date.now(),
+          })
+          localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
-        setSuccessMessage('✅ Registration Confirmed!')
-        setSuccessDetails(`${formData.name} has been registered and confirmation sent to ${formData.phone}`)
+          setSuccessMessage('✅ Registration Confirmed!')
+          setSuccessDetails(`${formData.name} has been registered and confirmation sent to ${formData.phone}`)
+        } else {
+          // No registration message, no reminders - just a confirmation
+          setSuccessMessage('✅ Setup Complete!')
+          setSuccessDetails(`${formData.name} has been set up in the system without any messages sent.`)
+        }
         setShowSuccess(true)
       }
     } catch (error) {

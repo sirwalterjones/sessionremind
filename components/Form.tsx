@@ -11,6 +11,7 @@ interface FormData {
   sessionTime: string
   message: string
   optedIn: boolean
+  sendRegistrationMessage: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
 }
@@ -30,6 +31,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     sessionTime: initialData.sessionTime || '',
     message: initialData.message || 'Hi {name}! This is a friendly reminder about your {sessionTitle} session scheduled for {sessionTime}. Looking forward to seeing you!',
     optedIn: initialData.optedIn || false,
+    sendRegistrationMessage: initialData.sendRegistrationMessage !== false,
     threeDayReminder: initialData.threeDayReminder || true,
     oneDayReminder: initialData.oneDayReminder || true,
   })
@@ -252,11 +254,31 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
               <div className="flex items-start">
                 <span className="text-blue-600 text-xl mr-3">📧</span>
-                <div>
+                <div className="flex-1">
                   <h4 className="text-blue-800 font-semibold mb-2">Registration Confirmation</h4>
                   <p className="text-blue-700 text-sm mb-4">
                     Send one confirmation text immediately to register the client and provide their session details.
                   </p>
+                  <div className="flex items-center">
+                    <Switch
+                      checked={formData.sendRegistrationMessage}
+                      onChange={(checked) => handleChange('sendRegistrationMessage', checked)}
+                      className={`${
+                        formData.sendRegistrationMessage ? 'bg-blue-600' : 'bg-gray-300'
+                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                    >
+                      <span className="sr-only">Send registration confirmation</span>
+                      <span
+                        aria-hidden="true"
+                        className={`${
+                          formData.sendRegistrationMessage ? 'translate-x-5' : 'translate-x-0'
+                        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                      />
+                    </Switch>
+                    <span className="ml-3 text-sm font-medium text-blue-800">
+                      {formData.sendRegistrationMessage ? 'Send registration confirmation' : 'Skip registration confirmation'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -325,7 +347,13 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
             ) : (
               <>
                 <span className="mr-3">🚀</span>
-                Send Registration & Schedule Reminders
+                {formData.sendRegistrationMessage && (formData.threeDayReminder || formData.oneDayReminder) 
+                  ? 'Send Registration & Schedule Reminders' 
+                  : formData.sendRegistrationMessage 
+                  ? 'Send Registration Confirmation' 
+                  : formData.threeDayReminder || formData.oneDayReminder 
+                  ? 'Schedule Reminders' 
+                  : 'Setup Complete'}
               </>
             )}
           </button>
