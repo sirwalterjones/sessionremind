@@ -25,23 +25,66 @@ export default function NewReminder() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [successDetails, setSuccessDetails] = useState('')
+  const [showUrlExtractor, setShowUrlExtractor] = useState(false)
+  const [urlInput, setUrlInput] = useState('')
+  const [isExtracting, setIsExtracting] = useState(false)
+
+  const handleManualUrlExtraction = async () => {
+    if (!urlInput.trim()) return
+    
+    setIsExtracting(true)
+    await extractDataFromSharedUrl(urlInput)
+    setIsExtracting(false)
+    setShowUrlExtractor(false)
+    setUrlInput('')
+  }
 
   const extractDataFromSharedUrl = async (url: string) => {
     try {
-      // For now, just show that a URL was shared
-      // In a real implementation, you might fetch the page content server-side
       console.log('Processing shared UseSession URL:', url)
       
-      // Extract any obvious data from the URL itself
-      const urlObj = new URL(url)
-      if (urlObj.hostname.includes('usesession.com')) {
-        setInitialData(prev => ({
-          ...prev,
-          sessionTitle: 'Shared from UseSession'
-        }))
+      // Show loading state
+      setInitialData(prev => ({
+        ...prev,
+        sessionTitle: 'Extracting data from UseSession...'
+      }))
+
+      // Call our server-side extraction API
+      const response = await fetch('/api/extract-usesession', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url })
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data) {
+          // Update form with extracted data
+          setInitialData(prev => ({
+            ...prev,
+            name: result.data.name || prev.name,
+            email: result.data.email || prev.email,
+            phone: result.data.phone || prev.phone,
+            sessionTitle: result.data.sessionTitle || prev.sessionTitle,
+            sessionTime: result.data.sessionTime || prev.sessionTime
+          }))
+          
+          console.log('✅ Successfully extracted data:', result.data)
+        } else {
+          throw new Error('Failed to extract data')
+        }
+      } else {
+        throw new Error('Server extraction failed')
       }
     } catch (error) {
       console.error('Error processing shared URL:', error)
+      // Fallback to manual entry
+      setInitialData(prev => ({
+        ...prev,
+        sessionTitle: 'Manual entry required - extraction failed'
+      }))
     }
   }
 
@@ -228,6 +271,54 @@ export default function NewReminder() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Send personalized SMS reminders to your photography clients
           </p>
+        </div>
+
+        {/* URL Extractor Section */}
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-bold text-blue-900">🔗 Extract from UseSession</h3>
+              <p className="text-blue-700 text-sm">Paste a UseSession URL to auto-fill client data</p>
+            </div>
+            <button
+              onClick={() => setShowUrlExtractor(!showUrlExtractor)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+            >
+              {showUrlExtractor ? 'Hide' : 'Extract Data'}
+            </button>
+          </div>
+          
+          {showUrlExtractor && (
+            <div className="space-y-4">
+              <div>
+                <input
+                  type="url"
+                  placeholder="Paste UseSession URL here (e.g., https://app.usesession.com/sessions/...)"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleManualUrlExtraction}
+                  disabled={!urlInput.trim() || isExtracting}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isExtracting ? 'Extracting...' : 'Extract Data'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUrlExtractor(false)
+                    setUrlInput('')
+                  }}
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
