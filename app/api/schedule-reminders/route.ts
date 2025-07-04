@@ -194,16 +194,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   const scheduledMessages = await getScheduledMessages()
   return NextResponse.json({
-    scheduledMessages: scheduledMessages.map(msg => ({
-      id: msg.id,
-      clientName: msg.clientName,
-      phone: msg.phone,
-      sessionDate: msg.sessionDate,
-      reminderType: msg.reminderType,
-      scheduledFor: msg.scheduledFor,
-      status: msg.status,
-      createdAt: msg.createdAt,
-    }))
+    scheduledMessages: scheduledMessages
   })
 }
 

@@ -81,13 +81,11 @@ export default function Dashboard() {
       if (response.ok) {
         const data = await response.json()
         const messages = data.scheduledMessages || []
-        console.log('📊 Loaded scheduled messages:', messages)
         setScheduledMessages(messages)
         setScheduledCount(messages.filter((msg: ScheduledMessage) => msg.status === 'scheduled').length)
         
         // Group messages by client
         const groups = groupMessagesByClient(messages)
-        console.log('👥 Grouped client data:', groups)
         setClientGroups(groups)
       }
     } catch (error) {
@@ -678,13 +676,6 @@ export default function Dashboard() {
                         <p className="text-gray-700 leading-relaxed text-sm">
                           "{message.message || 'No message content stored'}"
                         </p>
-                        <div className="text-xs text-gray-500 mt-2">
-                          Debug: {JSON.stringify({
-                            hasMessage: !!message.message,
-                            messageLength: message.message?.length || 0,
-                            messagePreview: message.message?.substring(0, 50) || 'empty'
-                          })}
-                        </div>
                       </div>
                       
                       <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
