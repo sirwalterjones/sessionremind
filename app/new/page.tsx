@@ -25,102 +25,131 @@ export default function NewReminder() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [successDetails, setSuccessDetails] = useState('')
-  const [showUrlExtractor, setShowUrlExtractor] = useState(false)
-  const [urlInput, setUrlInput] = useState('')
-  const [isExtracting, setIsExtracting] = useState(false)
-  const [showTextExtractor, setShowTextExtractor] = useState(false)
   const [textInput, setTextInput] = useState('')
   const [isExtractingText, setIsExtractingText] = useState(false)
+  const [showTextExtractor, setShowTextExtractor] = useState(false)
 
-  const handleManualUrlExtraction = async () => {
-    if (!urlInput.trim()) return
-    
-    setIsExtracting(true)
-    await extractDataFromSharedUrl(urlInput)
-    setIsExtracting(false)
-    setShowUrlExtractor(false)
-    setUrlInput('')
-  }
 
-  const handleTextExtraction = () => {
+  const handleSmartExtraction = async () => {
     if (!textInput.trim()) return
     
     setIsExtractingText(true)
     
     try {
-      // Use the same extraction logic as the bookmarklet, but on pasted text
-      const text = textInput
-      const extractedData = {
-        name: '',
-        email: '',
-        phone: '',
-        sessionTitle: '',
-        sessionTime: ''
-      }
-
-      // Extract email
-      const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
-      if (emailMatch) {
-        extractedData.email = emailMatch[0]
-      }
-
-      // Extract phone
-      const phoneMatch = text.match(/[+]?[0-9]{10,15}/)
-      if (phoneMatch) {
-        extractedData.phone = phoneMatch[0]
-      }
-
-      // Extract name (before email)
-      const nameMatch = text.match(/([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)*\s+[A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/)
-      if (nameMatch) {
-        extractedData.name = nameMatch[1]
-      }
-
-      // Extract time
-      const timeMatch = text.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/)
-      const dayMatch = text.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/)
+      const input = textInput.trim()
       
-      if (timeMatch && dayMatch) {
-        extractedData.sessionTime = `${dayMatch[1]}, ${dayMatch[2]} at ${timeMatch[1]}`
-      } else if (dayMatch) {
-        extractedData.sessionTime = `${dayMatch[1]}, ${dayMatch[2]}`
-      }
-
-      // Extract session title
-      const sessionPatterns = [
-        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\s+20\d{2})/gi,
-        /(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\s+[A-Z][a-z]+)*(?:\s+20\d{2})?/gi,
-        /([A-Z][a-z\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\s]*)/gi
-      ]
+      // Check if input looks like a URL
+      const isUrl = input.startsWith('http://') || input.startsWith('https://') || input.includes('usesession.com')
       
-      for (const pattern of sessionPatterns) {
-        const matches = text.match(pattern)
-        if (matches && matches[0].length > 5 && matches[0].length < 80) {
-          extractedData.sessionTitle = matches[0].trim()
-          break
+      if (isUrl) {
+        // Extract URL and try server-side extraction
+        const urlMatch = input.match(/(https?:\/\/[^\s]+)/i)
+        if (urlMatch) {
+          console.log('🔗 Detected URL, calling server extraction:', urlMatch[0])
+          await extractDataFromSharedUrl(urlMatch[0])
+        } else {
+          throw new Error('Invalid URL format')
         }
+      } else {
+        // Treat as text and extract locally
+        const extractedData = {
+          name: '',
+          email: '',
+          phone: '',
+          sessionTitle: '',
+          sessionTime: ''
+        }
+
+        // Extract email
+        const emailMatch = input.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
+        if (emailMatch) {
+          extractedData.email = emailMatch[0]
+        }
+
+        // Extract phone
+        const phoneMatch = input.match(/[+]?[0-9]{10,15}/)
+        if (phoneMatch) {
+          extractedData.phone = phoneMatch[0]
+        }
+
+        // Extract name - try multiple patterns for UseSession format
+        let nameMatch = null
+        
+        // Pattern 1: Name before email (most common)
+        nameMatch = input.match(/([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/)
+        
+        // Pattern 2: Full name patterns common in UseSession
+        if (!nameMatch) {
+          nameMatch = input.match(/\b([A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b(?=.*@)/)
+        }
+        
+        // Pattern 3: Name at start of lines
+        if (!nameMatch) {
+          nameMatch = input.match(/^([A-Z][a-z]+\s+[A-Z][a-z]+)/m)
+        }
+        
+        if (nameMatch) {
+          extractedData.name = nameMatch[1].trim()
+        }
+
+        // Extract time
+        const timeMatch = input.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/)
+        const dayMatch = input.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/)
+        
+        if (timeMatch && dayMatch) {
+          extractedData.sessionTime = `${dayMatch[1]}, ${dayMatch[2]} at ${timeMatch[1]}`
+        } else if (dayMatch) {
+          extractedData.sessionTime = `${dayMatch[1]}, ${dayMatch[2]}`
+        }
+
+        // Extract session title - try to infer from context
+        let sessionTitle = 'Photography Session'
+        
+        // Look for seasonal/themed session patterns
+        const sessionPatterns = [
+          // Seasonal with year
+          /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\s+20\d{2})/gi,
+          // Common session types
+          /(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\s+[A-Z][a-z]+)*(?:\s+20\d{2})?/gi,
+          // Session/shoot patterns
+          /([A-Z][a-z\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\s]*)/gi
+        ]
+        
+        for (const pattern of sessionPatterns) {
+          const matches = input.match(pattern)
+          if (matches && matches[0].length > 5 && matches[0].length < 80) {
+            sessionTitle = matches[0].trim()
+            break
+          }
+        }
+        
+        // If we found a date, create a more descriptive title
+        if (extractedData.sessionTime && sessionTitle === 'Photography Session') {
+          const monthMatch = extractedData.sessionTime.match(/(January|February|March|April|May|June|July|August|September|October|November|December)/i)
+          if (monthMatch) {
+            sessionTitle = `${monthMatch[1]} Photography Session`
+          }
+        }
+        
+        extractedData.sessionTitle = sessionTitle
+
+        // Update form with extracted data
+        setInitialData(prev => ({
+          ...prev,
+          name: extractedData.name || prev.name,
+          email: extractedData.email || prev.email,
+          phone: extractedData.phone || prev.phone,
+          sessionTitle: extractedData.sessionTitle || prev.sessionTitle,
+          sessionTime: extractedData.sessionTime || prev.sessionTime
+        }))
+
+        console.log('✅ Successfully extracted data from text:', extractedData)
       }
-
-      if (!extractedData.sessionTitle) {
-        extractedData.sessionTitle = 'Photography Session'
-      }
-
-      // Update form with extracted data
-      setInitialData(prev => ({
-        ...prev,
-        name: extractedData.name || prev.name,
-        email: extractedData.email || prev.email,
-        phone: extractedData.phone || prev.phone,
-        sessionTitle: extractedData.sessionTitle || prev.sessionTitle,
-        sessionTime: extractedData.sessionTime || prev.sessionTime
-      }))
-
-      console.log('✅ Successfully extracted data from text:', extractedData)
-      setShowTextExtractor(false)
+      
       setTextInput('')
       
     } catch (error) {
-      console.error('Error extracting from text:', error)
+      console.error('Error extracting data:', error)
     } finally {
       setIsExtractingText(false)
     }
@@ -128,7 +157,7 @@ export default function NewReminder() {
 
   const extractDataFromSharedUrl = async (url: string) => {
     try {
-      console.log('Processing shared UseSession URL:', url)
+      console.log('🔄 Processing shared UseSession URL:', url)
       
       // Show loading state
       setInitialData(prev => ({
@@ -137,6 +166,7 @@ export default function NewReminder() {
       }))
 
       // Call our server-side extraction API
+      console.log('📡 Making API call to /api/extract-usesession')
       const response = await fetch('/api/extract-usesession', {
         method: 'POST',
         headers: {
@@ -145,32 +175,45 @@ export default function NewReminder() {
         body: JSON.stringify({ url })
       })
 
+      console.log('📊 API Response status:', response.status)
+      
       if (response.ok) {
         const result = await response.json()
+        console.log('📋 API Response data:', result)
+        
         if (result.success && result.data) {
           // Update form with extracted data
+          const newData = {
+            name: result.data.name || '',
+            email: result.data.email || '',
+            phone: result.data.phone || '',
+            sessionTitle: result.data.sessionTitle || 'Photography Session',
+            sessionTime: result.data.sessionTime || ''
+          }
+          
+          console.log('🎯 Updating form with:', newData)
+          
           setInitialData(prev => ({
             ...prev,
-            name: result.data.name || prev.name,
-            email: result.data.email || prev.email,
-            phone: result.data.phone || prev.phone,
-            sessionTitle: result.data.sessionTitle || prev.sessionTitle,
-            sessionTime: result.data.sessionTime || prev.sessionTime
+            ...newData
           }))
           
-          console.log('✅ Successfully extracted data:', result.data)
+          console.log('✅ Successfully extracted and updated form data')
         } else {
-          throw new Error('Failed to extract data')
+          console.log('❌ API call succeeded but no data returned')
+          throw new Error('Failed to extract data - no data in response')
         }
       } else {
-        throw new Error('Server extraction failed')
+        const errorText = await response.text()
+        console.log('❌ API call failed:', errorText)
+        throw new Error(`Server extraction failed: ${response.status}`)
       }
     } catch (error) {
-      console.error('Error processing shared URL:', error)
-      // Fallback to manual entry
+      console.error('💥 Error processing shared URL:', error)
+      // Show error in the form
       setInitialData(prev => ({
         ...prev,
-        sessionTitle: 'Manual entry required - extraction failed'
+        sessionTitle: `❌ Extraction failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       }))
     }
   }
@@ -375,110 +418,164 @@ export default function NewReminder() {
           <div className="text-center mb-6">
             <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Extract from UseSession</h3>
             <p className="text-blue-700 text-sm">
-              Choose the easiest method for your device
+              Two easy ways to get your client data
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Copy-Paste Text Method */}
-            <div className="bg-white rounded-xl p-6 border border-blue-100">
-              <div className="text-center mb-4">
-                <span className="text-3xl mb-2 block">📋</span>
-                <h4 className="font-bold text-gray-900 mb-2">Copy & Paste Text</h4>
-                <p className="text-gray-600 text-sm">Select all text from UseSession page and paste here</p>
+          {/* Method Selection */}
+          <div className="grid gap-4 mb-6">
+            {/* Mobile Bookmarklet Method */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+              <div className="flex items-start space-x-3">
+                <span className="text-green-600 text-2xl">⚡</span>
+                <div className="flex-1">
+                  <h4 className="font-bold text-green-900 mb-2">Method 1: One-Tap Bookmarklet</h4>
+                  <p className="text-green-800 text-sm mb-3">
+                    Save this link to your bookmarks, then tap it while on any UseSession page
+                  </p>
+                  <div className="bg-white rounded-lg p-3 border border-green-200">
+                    <p className="text-xs text-gray-600 mb-2">Drag this to your bookmarks bar (or copy link):</p>
+                    <a 
+                      href={`javascript:(function(){
+                        const text = document.body.innerText;
+                        const email = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
+                        const phone = text.match(/[+]?[0-9]{10,15}/);
+                        const nameMatch = text.match(/([A-Z][a-z]+\\s+[A-Z][a-z]+)/);
+                        const timeMatch = text.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);
+                        const dayMatch = text.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);
+                        let sessionTime = '';
+                        if (timeMatch && dayMatch) {
+                          sessionTime = dayMatch[1] + ', ' + dayMatch[2] + ' at ' + timeMatch[1];
+                        } else if (dayMatch) {
+                          sessionTime = dayMatch[1] + ', ' + dayMatch[2];
+                        }
+                        const params = new URLSearchParams({
+                          name: nameMatch ? nameMatch[1] : '',
+                          email: email ? email[0] : '',
+                          phone: phone ? phone[0] : '',
+                          sessionTime: sessionTime,
+                          sessionTitle: sessionTime ? sessionTime.includes('July') ? 'July Photography Session' : 'Photography Session' : 'Photography Session'
+                        });
+                        window.open('${window.location.origin}/new?' + params.toString(), '_blank');
+                      })();`}
+                      className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg font-medium text-sm hover:bg-green-700 transition-colors"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      📚 UseSession → Reminder
+                    </a>
+                  </div>
+                  <p className="text-xs text-green-700 mt-2">
+                    ✨ One tap while on UseSession = instant form fill!
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={() => setShowTextExtractor(!showTextExtractor)}
-                className="w-full px-4 py-3 bg-green-600 text-white rounded-full font-medium hover:bg-green-700 transition-colors"
-              >
-                {showTextExtractor ? '✕ Hide' : '📋 Paste Text'}
-              </button>
             </div>
 
-            {/* URL Method */}
-            <div className="bg-white rounded-xl p-6 border border-blue-100">
-              <div className="text-center mb-4">
-                <span className="text-3xl mb-2 block">🔗</span>
-                <h4 className="font-bold text-gray-900 mb-2">Paste URL</h4>
-                <p className="text-gray-600 text-sm">Copy UseSession URL from address bar and paste here</p>
+            {/* Copy-Paste Method */}
+            <div className="bg-white border border-blue-200 rounded-xl p-4">
+              <div className="flex items-start space-x-3">
+                <span className="text-blue-600 text-2xl">📋</span>
+                <div className="flex-1">
+                  <h4 className="font-bold text-blue-900 mb-2">Method 2: Copy & Paste</h4>
+                  <p className="text-blue-800 text-sm mb-3">
+                    If bookmarklet doesn't work, copy the UseSession page text and paste below
+                  </p>
+                  <button
+                    onClick={() => setShowTextExtractor(true)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    📝 Open Text Paste
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => setShowUrlExtractor(!showUrlExtractor)}
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
-              >
-                {showUrlExtractor ? '✕ Hide' : '🔗 Paste URL'}
-              </button>
             </div>
           </div>
-
-          {/* Text Extractor */}
+          
+          {/* Text Extractor (shown when Copy & Paste is clicked) */}
           {showTextExtractor && (
-            <div className="mt-6 bg-white rounded-xl p-6 border border-green-200">
-              <h5 className="font-bold text-green-900 mb-3">📋 Paste UseSession Page Text</h5>
-              <p className="text-green-700 text-sm mb-4">
-                1. Go to UseSession page → Select All (Ctrl/Cmd+A) → Copy<br/>
-                2. Paste the text below and click "Extract Data"
-              </p>
-              <textarea
-                placeholder="Paste all the text from the UseSession page here..."
-                value={textInput}
-                onChange={(e) => setTextInput(e.target.value)}
-                rows={6}
-                className="w-full px-4 py-3 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 mb-4"
-              />
-              <div className="flex gap-3">
-                <button
-                  onClick={handleTextExtraction}
-                  disabled={!textInput.trim() || isExtractingText}
-                  className="px-6 py-3 bg-green-600 text-white rounded-full font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isExtractingText ? 'Extracting...' : 'Extract Data'}
-                </button>
-                <button
-                  onClick={() => {
-                    setShowTextExtractor(false)
-                    setTextInput('')
-                  }}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
+            <div className="bg-white rounded-xl p-6 border border-blue-100">
+            <div className="space-y-6">
+              {/* Mobile Instructions */}
+              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                <div className="flex items-start space-x-3">
+                  <span className="text-green-600 text-2xl">📱</span>
+                  <div>
+                    <h4 className="font-bold text-green-900 mb-3">Easy Mobile Steps:</h4>
+                    <div className="space-y-2 text-green-800 text-sm">
+                      <div className="flex items-start space-x-2">
+                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">1</span>
+                        <div>On the UseSession page, tap and hold to <strong>Select All</strong></div>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">2</span>
+                        <div>Tap <strong>Copy</strong> from the menu</div>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">3</span>
+                        <div>Come back here and tap <strong>Paste</strong> in the box below</div>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">4</span>
+                        <div>Tap <strong>"Extract Data"</strong></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
 
-          {/* URL Extractor */}
-          {showUrlExtractor && (
-            <div className="mt-6 bg-white rounded-xl p-6 border border-blue-200">
-              <h5 className="font-bold text-blue-900 mb-3">🔗 Paste UseSession URL</h5>
-              <p className="text-blue-700 text-sm mb-4">
-                Copy the URL from your browser's address bar and paste it below
-              </p>
-              <input
-                type="url"
-                placeholder="https://app.usesession.com/sessions/..."
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
-              />
-              <div className="flex gap-3">
-                <button
-                  onClick={handleManualUrlExtraction}
-                  disabled={!urlInput.trim() || isExtracting}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isExtracting ? 'Extracting...' : 'Extract Data'}
-                </button>
-                <button
-                  onClick={() => {
-                    setShowUrlExtractor(false)
-                    setUrlInput('')
-                  }}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
+              {/* Large mobile-friendly input */}
+              <div>
+                <label className="block text-lg font-medium text-gray-900 mb-3">
+                  📋 Paste UseSession Text Here:
+                </label>
+                <textarea
+                  placeholder="Tap here and paste all the text from your UseSession page...
+
+Looking for text like:
+• Client name (e.g., Melissa Comtois)
+• Email (melissaacomtois@gmail.com)  
+• Phone (+16035606316)
+• Date & time (Sunday, July 13th, 2025, 7:30 PM)"
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  rows={8}
+                  className="w-full px-4 py-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
+                />
+                {textInput.trim() && (
+                  <div className="mt-2 text-sm text-gray-600">
+                    ✓ {textInput.length} characters pasted - ready to extract!
+                  </div>
+                )}
               </div>
+
+              {/* Large mobile-friendly button */}
+              <button
+                onClick={handleSmartExtraction}
+                disabled={!textInput.trim() || isExtractingText}
+                className="w-full px-6 py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
+              >
+                {isExtractingText ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span>Extracting...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>🚀</span>
+                    <span>Extract Client Data</span>
+                  </div>
+                )}
+              </button>
+
+              {textInput && (
+                <button
+                  onClick={() => setTextInput('')}
+                  className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Clear & Start Over
+                </button>
+              )}
+            </div>
             </div>
           )}
         </div>

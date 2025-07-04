@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import MobileNav from '@/components/MobileNav'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -51,7 +52,7 @@ export default function RootLayout({
         />
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
           <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-stone-200 shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
               <div className="flex justify-between items-center h-20">
                 {/* Logo Section */}
                 <div className="flex items-center">
@@ -103,39 +104,7 @@ export default function RootLayout({
                   </a>
                 </div>
                 
-                {/* Mobile Menu Button */}
-                <div className="md:hidden">
-                  <button className="p-2 rounded-full bg-stone-50 text-stone-600 hover:text-gray-900 hover:bg-stone-100 transition-all duration-200">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              
-              {/* Mobile Menu - Hidden by default */}
-              <div className="md:hidden border-t border-stone-200 py-4 space-y-2">
-                <a 
-                  href="/instructions" 
-                  className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200"
-                >
-                  <span className="text-lg">📖</span>
-                  <span className="font-medium">How to Use</span>
-                </a>
-                <a 
-                  href="/dashboard" 
-                  className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200"
-                >
-                  <span className="text-lg">📊</span>
-                  <span className="font-medium">Dashboard</span>
-                </a>
-                <a 
-                  href="/new" 
-                  className="flex items-center space-x-3 px-4 py-3 bg-stone-800 text-white rounded-xl font-medium shadow-sm mx-2 hover:bg-stone-900 transition-all duration-200"
-                >
-                  <span className="text-lg">✨</span>
-                  <span>New Reminder</span>
-                </a>
+                <MobileNav />
               </div>
             </div>
           </nav>
