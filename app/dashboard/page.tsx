@@ -146,10 +146,6 @@ export default function Dashboard() {
     }
   }
 
-  const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString()
-  }
-
   const clearAllMessages = () => {
     setShowClearModal(true)
   }
