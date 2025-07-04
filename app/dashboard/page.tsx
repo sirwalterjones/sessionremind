@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
   id: string | number
@@ -25,7 +25,7 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day' | 'test-2min' | 'test-5min'
+  reminderType: '3-day' | '1-day'
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
   sentAt?: string
@@ -40,6 +40,9 @@ interface ClientGroup {
 }
 
 export default function Dashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [sentMessages, setSentMessages] = useState<SentMessage[]>([])
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([])
   const [clientGroups, setClientGroups] = useState<ClientGroup[]>([])
@@ -50,8 +53,27 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    loadAllData()
+    // Check if password is already in sessionStorage
+    const savedPassword = sessionStorage.getItem('dashboardPassword')
+    if (savedPassword === 'candice') {
+      setIsAuthenticated(true)
+      loadAllData()
+    } else {
+      setLoading(false)
+    }
   }, [])
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === 'candice') {
+      setIsAuthenticated(true)
+      sessionStorage.setItem('dashboardPassword', 'candice')
+      setPasswordError('')
+      loadAllData()
+    } else {
+      setPasswordError('Incorrect password')
+    }
+  }
 
   const loadAllData = async () => {
     setLoading(true)
@@ -195,6 +217,52 @@ export default function Dashboard() {
   const estimatedCost = (sentCount * 0.049).toFixed(2) // $0.049 per SMS based on TextMagic pricing
   const uniqueClients = new Set(scheduledMessages.map(msg => `${msg.clientName}-${msg.phone}`)).size
 
+  // Password login form
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
+        <div className="max-w-md w-full mx-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-stone-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <LockClosedIcon className="h-8 w-8 text-stone-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Access</h2>
+              <p className="text-gray-600">Enter password to view SMS dashboard</p>
+            </div>
+            
+            <form onSubmit={handlePasswordSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
+                  placeholder="Enter password"
+                  required
+                />
+                {passwordError && (
+                  <p className="mt-2 text-sm text-red-600">{passwordError}</p>
+                )}
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full bg-stone-800 text-white py-3 px-4 rounded-full font-medium hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                Access Dashboard
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
@@ -299,7 +367,6 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-
 
         {/* Search Bar */}
         <div className="mb-8">
@@ -500,9 +567,7 @@ export default function Dashboard() {
                           <div className="ml-3">
                             <h5 className="font-semibold text-gray-900">
                               {message.reminderType === '3-day' && '3-Day Reminder'}
-                              {message.reminderType === '1-day' && '1-Day Reminder'} 
-                              {message.reminderType === 'test-2min' && 'Test 2-Min Reminder'}
-                              {message.reminderType === 'test-5min' && 'Test 5-Min Reminder'}
+                              {message.reminderType === '1-day' && '1-Day Reminder'}
                             </h5>
                             <div className="text-sm text-gray-600 mt-1">
                               <div className="flex items-center gap-4">

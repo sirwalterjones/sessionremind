@@ -12,7 +12,6 @@ interface FormData {
   sessionTime: string
   message: string
   optedIn: boolean
-  schedulingEnabled: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
 }
@@ -41,7 +40,8 @@ export default function NewReminder() {
     console.log('=== FORM SUBMIT START ===')
     console.log('Form data:', formData)
     console.log('Opted in:', formData.optedIn)
-    console.log('Test mode enabled:', formData.schedulingEnabled)
+    console.log('3-Day reminder:', formData.threeDayReminder)
+    console.log('1-Day reminder:', formData.oneDayReminder)
     console.log('========================')
 
     if (!formData.optedIn) {
@@ -53,31 +53,61 @@ export default function NewReminder() {
 
     setIsSubmitting(true)
     try {
-      if (formData.schedulingEnabled) {
-        // TEST MODE: Schedule messages for 2 minutes and 5 minutes from now
-        console.log('TEST MODE: Scheduling test reminders...')
+      // 1. Send registration confirmation immediately
+      console.log('Sending registration confirmation...')
+      
+      const registrationMessage = `Hi ${formData.name}! You're registered for text reminders from Moments by Candice Photography. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. Looking forward to seeing you!`
+
+      const smsResponse = await fetch('/api/send-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          message: registrationMessage,
+        }),
+      })
+
+      if (!smsResponse.ok) {
+        throw new Error('Failed to send registration confirmation')
+      }
+
+      // 2. Schedule reminders if selected
+      if (formData.threeDayReminder || formData.oneDayReminder) {
+        console.log('Scheduling reminders...')
         
-        const response = await fetch('/api/schedule-reminders', {
+        const scheduleResponse = await fetch('/api/schedule-reminders', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             ...formData,
-            testMode: true, // Flag to indicate this is test mode
+            testMode: false, // Regular scheduling mode
           }),
         })
         
-        if (!response.ok) {
-          throw new Error('Failed to schedule test reminders')
+        if (!scheduleResponse.ok) {
+          throw new Error('Failed to schedule reminders')
         }
 
-        const result = await response.json()
+        const scheduleResult = await scheduleResponse.json()
         
-        // Store the scheduled test reminders in localStorage for dashboard
+        // Store the sent message and scheduled reminders in localStorage for dashboard
         const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
         
-        result.scheduledReminders.forEach((reminder: any) => {
+        // Add registration message
+        sentMessages.push({
+          ...formData,
+          message: registrationMessage,
+          status: 'Sent (Registration)',
+          timestamp: new Date().toISOString(),
+          id: Date.now(),
+        })
+
+        // Add scheduled reminders
+        scheduleResult.scheduledReminders?.forEach((reminder: any) => {
           sentMessages.push({
             ...formData,
             message: formData.message
@@ -90,42 +120,21 @@ export default function NewReminder() {
             id: reminder.id,
           })
         })
+        
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
-        setSuccessMessage('🧪 Test Reminders Scheduled!')
-        setSuccessDetails(`${result.scheduledReminders.length} test reminder(s) scheduled for ${formData.name}. Check your dashboard to see when they'll be sent.`)
+        setSuccessMessage('✅ Registration & Reminders Scheduled!')
+        setSuccessDetails(`${formData.name} has been registered and ${scheduleResult.scheduledReminders?.length || 0} reminder(s) scheduled.`)
         setShowSuccess(true)
       } else {
-        // NORMAL MODE: Send one registration confirmation text immediately
-        console.log('NORMAL MODE: Sending registration confirmation...')
-        
-        const registrationMessage = `✅ Welcome ${formData.name}! You're registered for text alerts from Moments by Candice Photography. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. ${formData.message}`
-
-        const response = await fetch('/api/send-sms', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...formData,
-            message: registrationMessage,
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to send registration confirmation')
-        }
-
-        const result = await response.json()
-        
-        // Store the sent message in localStorage for dashboard
+        // Just registration, no reminders
         const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
         sentMessages.push({
           ...formData,
           message: registrationMessage,
           status: 'Sent (Registration)',
           timestamp: new Date().toISOString(),
-          id: result.id || Date.now(),
+          id: Date.now(),
         })
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 

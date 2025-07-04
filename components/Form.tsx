@@ -11,7 +11,6 @@ interface FormData {
   sessionTime: string
   message: string
   optedIn: boolean
-  schedulingEnabled: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
 }
@@ -31,7 +30,6 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     sessionTime: initialData.sessionTime || '',
     message: initialData.message || 'Hi {name}! This is a friendly reminder about your {sessionTitle} session scheduled for {sessionTime}. Looking forward to seeing you!',
     optedIn: initialData.optedIn || false,
-    schedulingEnabled: initialData.schedulingEnabled || true,
     threeDayReminder: initialData.threeDayReminder || true,
     oneDayReminder: initialData.oneDayReminder || true,
   })
@@ -242,101 +240,69 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
         <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
           <div className="flex items-center mb-8">
             <div className="w-12 h-12 bg-stone-500 rounded-full flex items-center justify-center mr-4">
-              <span className="text-white text-xl">📱</span>
+              <span className="text-white text-xl">📅</span>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Delivery Options</h3>
-              <p className="text-gray-600">Send registration confirmation now or test scheduling</p>
+              <h3 className="text-2xl font-bold text-gray-900">Reminder Schedule</h3>
+              <p className="text-gray-600">Choose when to send session reminders</p>
             </div>
           </div>
           
           <div className="space-y-6">
-            <div className="bg-stone-100 border border-stone-300 rounded-2xl p-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
               <div className="flex items-start">
-                <Switch
-                  checked={formData.schedulingEnabled}
-                  onChange={(checked) => handleChange('schedulingEnabled', checked)}
-                  className={`${
-                    formData.schedulingEnabled ? 'bg-stone-600' : 'bg-gray-300'
-                  } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 mt-1`}
-                >
-                  <span className="sr-only">Enable scheduling test mode</span>
-                  <span
-                    aria-hidden="true"
-                    className={`${
-                      formData.schedulingEnabled ? 'translate-x-5' : 'translate-x-0'
-                    } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
-                  />
-                </Switch>
-                <div className="ml-4">
-                  <span className="text-base font-medium text-stone-800">
-                    🧪 Test Scheduling Feature
-                  </span>
-                  <p className="text-sm text-stone-700 mt-1">
-                    Schedule test reminders for 2 minutes and 5 minutes from now (instead of sending immediately)
+                <span className="text-blue-600 text-xl mr-3">📧</span>
+                <div>
+                  <h4 className="text-blue-800 font-semibold mb-2">Registration Confirmation</h4>
+                  <p className="text-blue-700 text-sm mb-4">
+                    Send one confirmation text immediately to register the client and provide their session details.
                   </p>
                 </div>
               </div>
             </div>
 
-            {formData.schedulingEnabled && (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-                <div className="flex items-start">
-                  <span className="text-amber-600 text-xl mr-3">🧪</span>
-                  <div>
-                    <h4 className="text-amber-800 font-semibold mb-2">Test Mode Active</h4>
-                    <p className="text-amber-700 text-sm mb-3">
-                      This will schedule your message to be sent in 2 minutes and 5 minutes from now for testing purposes.
-                    </p>
-                    <div className="bg-amber-100 border border-amber-300 rounded-xl p-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="threeDayReminder"
-                            checked={formData.threeDayReminder}
-                            onChange={(e) => handleChange('threeDayReminder', e.target.checked)}
-                            className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                          />
-                          <label htmlFor="threeDayReminder" className="ml-3">
-                            <span className="text-sm font-medium text-amber-800">Test Reminder #1</span>
-                            <p className="text-xs text-amber-700">Sent in 2 minutes</p>
-                          </label>
-                        </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+              <div className="flex items-start">
+                <span className="text-amber-600 text-xl mr-3">⏰</span>
+                <div>
+                  <h4 className="text-amber-800 font-semibold mb-2">Reminder Schedule</h4>
+                  <p className="text-amber-700 text-sm mb-4">
+                    Choose which automatic reminders to send before the session date.
+                  </p>
+                  <div className="bg-amber-100 border border-amber-300 rounded-xl p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="threeDayReminder"
+                          checked={formData.threeDayReminder}
+                          onChange={(e) => handleChange('threeDayReminder', e.target.checked)}
+                          className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="threeDayReminder" className="ml-3">
+                          <span className="text-sm font-medium text-amber-800">3-Day Reminder</span>
+                          <p className="text-xs text-amber-700">Sent 3 days before session at 10:00 AM</p>
+                        </label>
+                      </div>
 
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="oneDayReminder"
-                            checked={formData.oneDayReminder}
-                            onChange={(e) => handleChange('oneDayReminder', e.target.checked)}
-                            className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                          />
-                          <label htmlFor="oneDayReminder" className="ml-3">
-                            <span className="text-sm font-medium text-amber-800">Test Reminder #2</span>
-                            <p className="text-xs text-amber-700">Sent in 5 minutes</p>
-                          </label>
-                        </div>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="oneDayReminder"
+                          checked={formData.oneDayReminder}
+                          onChange={(e) => handleChange('oneDayReminder', e.target.checked)}
+                          className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="oneDayReminder" className="ml-3">
+                          <span className="text-sm font-medium text-amber-800">1-Day Reminder</span>
+                          <p className="text-xs text-amber-700">Sent 1 day before session at 10:00 AM</p>
+                        </label>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-
-            {!formData.schedulingEnabled && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-                <div className="flex items-start">
-                  <span className="text-emerald-600 text-xl mr-3">✅</span>
-                  <div>
-                    <h4 className="text-emerald-800 font-semibold mb-2">Send Registration Confirmation</h4>
-                    <p className="text-emerald-700 text-sm">
-                      Send one confirmation text immediately to register the client and provide their session details. This conserves text messages by only sending when they first register.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -359,7 +325,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
             ) : (
               <>
                 <span className="mr-3">🚀</span>
-                {formData.schedulingEnabled ? 'Schedule Reminders' : 'Send SMS Now'}
+                Send Registration & Schedule Reminders
               </>
             )}
           </button>

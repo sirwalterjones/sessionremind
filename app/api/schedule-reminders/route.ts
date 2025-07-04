@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getScheduledMessages, addScheduledMessage } from '@/lib/storage'
+import { addScheduledMessage, getScheduledMessages } from '@/lib/storage'
 
 interface ScheduleRequest {
   name: string
@@ -9,10 +9,8 @@ interface ScheduleRequest {
   sessionTime: string
   message: string
   optedIn: boolean
-  schedulingEnabled: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
-  testMode?: boolean // Flag for test mode
 }
 
 interface ScheduledMessage {
@@ -25,7 +23,7 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day' | 'test-2min' | 'test-5min'
+  reminderType: '3-day' | '1-day'
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
   sentAt?: string
@@ -34,136 +32,81 @@ interface ScheduledMessage {
 export async function POST(request: NextRequest) {
   try {
     const data: ScheduleRequest = await request.json()
+    
     console.log('Schedule API received data:', data)
-
+    
     if (!data.optedIn) {
-      console.log('Rejecting: Client not opted in')
       return NextResponse.json(
-        { error: 'Client has not opted in to SMS reminders' },
+        { error: 'Client must opt in to receive SMS reminders' },
         { status: 400 }
       )
     }
 
-    if (!data.schedulingEnabled) {
-      console.log('Rejecting: Scheduling not enabled')
-      return NextResponse.json(
-        { error: 'Scheduling is not enabled' },
-        { status: 400 }
-      )
-    }
-
-    // Parse session date
-    const sessionDate = parseSessionDate(data.sessionTime)
-    console.log('Session date parsed as:', sessionDate)
-
+    // Personalize the message
     const personalizedMessage = data.message
       .replace(/{name}/g, data.name)
       .replace(/{sessionTitle}/g, data.sessionTitle)
       .replace(/{sessionTime}/g, data.sessionTime)
+      .replace(/{email}/g, data.email)
+      .replace(/{phone}/g, data.phone)
 
     const reminders: ScheduledMessage[] = []
+    
+    // Parse session date
+    console.log('Parsing session time:', data.sessionTime)
+    const sessionDate = parseSessionDate(data.sessionTime)
+    console.log('Session date parsed as:', sessionDate)
+    
+    if (!sessionDate) {
+      console.log('Rejecting: Could not parse session date:', data.sessionTime)
+      return NextResponse.json(
+        { error: `Could not parse session date: "${data.sessionTime}". Please use format like "July 5th, 2025 at 7:30 PM"` },
+        { status: 400 }
+      )
+    }
 
-    if (data.testMode) {
-      // TEST MODE: Schedule for 2 minutes and 5 minutes from now
-      console.log('Test mode enabled - scheduling short-interval reminders')
-      
-      const now = new Date()
-      
-      // Schedule 2-minute test reminder
-      if (data.threeDayReminder) {
-        const twoMinutesLater = new Date(now)
-        twoMinutesLater.setMinutes(twoMinutesLater.getMinutes() + 2)
+    // Schedule 3-day reminder
+    if (data.threeDayReminder) {
+      const threeDaysEarlier = new Date(sessionDate)
+      threeDaysEarlier.setDate(threeDaysEarlier.getDate() - 3)
+      threeDaysEarlier.setHours(10, 0, 0, 0) // 10:00 AM
 
-        reminders.push({
-          id: generateId(),
-          clientName: data.name,
-          phone: data.phone,
-          email: data.email,
-          sessionTitle: data.sessionTitle,
-          sessionTime: data.sessionTime,
-          message: `[TEST 2-MIN] ${personalizedMessage}`,
-          scheduledFor: twoMinutesLater.toISOString(),
-          sessionDate: sessionDate?.toISOString() || new Date().toISOString(),
-          reminderType: 'test-2min',
-          status: 'scheduled',
-          createdAt: new Date().toISOString(),
-        })
-      }
+      reminders.push({
+        id: generateId(),
+        clientName: data.name,
+        phone: data.phone,
+        email: data.email,
+        sessionTitle: data.sessionTitle,
+        sessionTime: data.sessionTime,
+        message: personalizedMessage,
+        scheduledFor: threeDaysEarlier.toISOString(),
+        sessionDate: sessionDate.toISOString(),
+        reminderType: '3-day',
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+      })
+    }
 
-      // Schedule 5-minute test reminder
-      if (data.oneDayReminder) {
-        const fiveMinutesLater = new Date(now)
-        fiveMinutesLater.setMinutes(fiveMinutesLater.getMinutes() + 5)
+    // Schedule 1-day reminder
+    if (data.oneDayReminder) {
+      const oneDayEarlier = new Date(sessionDate)
+      oneDayEarlier.setDate(oneDayEarlier.getDate() - 1)
+      oneDayEarlier.setHours(10, 0, 0, 0) // 10:00 AM
 
-        reminders.push({
-          id: generateId(),
-          clientName: data.name,
-          phone: data.phone,
-          email: data.email,
-          sessionTitle: data.sessionTitle,
-          sessionTime: data.sessionTime,
-          message: `[TEST 5-MIN] ${personalizedMessage}`,
-          scheduledFor: fiveMinutesLater.toISOString(),
-          sessionDate: sessionDate?.toISOString() || new Date().toISOString(),
-          reminderType: 'test-5min',
-          status: 'scheduled',
-          createdAt: new Date().toISOString(),
-        })
-      }
-    } else {
-      // NORMAL MODE: Standard 3-day and 1-day reminders
-      // Parse session date
-      if (!sessionDate) {
-        console.log('Rejecting: Could not parse session date:', data.sessionTime)
-        return NextResponse.json(
-          { error: `Could not parse session date: "${data.sessionTime}". Please use format like "July 5th, 2025 at 7:30 PM"` },
-          { status: 400 }
-        )
-      }
-
-      // Schedule 3-day reminder
-      if (data.threeDayReminder) {
-        const threeDaysEarlier = new Date(sessionDate)
-        threeDaysEarlier.setDate(threeDaysEarlier.getDate() - 3)
-        threeDaysEarlier.setHours(10, 0, 0, 0) // 10:00 AM
-
-        reminders.push({
-          id: generateId(),
-          clientName: data.name,
-          phone: data.phone,
-          email: data.email,
-          sessionTitle: data.sessionTitle,
-          sessionTime: data.sessionTime,
-          message: personalizedMessage,
-          scheduledFor: threeDaysEarlier.toISOString(),
-          sessionDate: sessionDate.toISOString(),
-          reminderType: '3-day',
-          status: 'scheduled',
-          createdAt: new Date().toISOString(),
-        })
-      }
-
-      // Schedule 1-day reminder
-      if (data.oneDayReminder) {
-        const oneDayEarlier = new Date(sessionDate)
-        oneDayEarlier.setDate(oneDayEarlier.getDate() - 1)
-        oneDayEarlier.setHours(10, 0, 0, 0) // 10:00 AM
-
-        reminders.push({
-          id: generateId(),
-          clientName: data.name,
-          phone: data.phone,
-          email: data.email,
-          sessionTitle: data.sessionTitle,
-          sessionTime: data.sessionTime,
-          message: personalizedMessage,
-          scheduledFor: oneDayEarlier.toISOString(),
-          sessionDate: sessionDate.toISOString(),
-          reminderType: '1-day',
-          status: 'scheduled',
-          createdAt: new Date().toISOString(),
-        })
-      }
+      reminders.push({
+        id: generateId(),
+        clientName: data.name,
+        phone: data.phone,
+        email: data.email,
+        sessionTitle: data.sessionTitle,
+        sessionTime: data.sessionTime,
+        message: personalizedMessage,
+        scheduledFor: oneDayEarlier.toISOString(),
+        sessionDate: sessionDate.toISOString(),
+        reminderType: '1-day',
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+      })
     }
 
     // Store scheduled messages persistently
@@ -269,11 +212,10 @@ function parseSessionDate(sessionTime: string): Date | null {
       }
     }
     
-    console.error('All parsing strategies failed for:', sessionTime)
+    console.log('All parsing strategies failed')
     return null
-    
   } catch (error) {
-    console.error('Date parsing error:', error)
+    console.error('Parse error:', error)
     return null
   }
 }
