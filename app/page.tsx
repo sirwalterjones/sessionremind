@@ -75,7 +75,7 @@ export default function Home() {
                 <a 
                   href="/extension"
                   className="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-full hover:bg-emerald-700 transition-all duration-200"
-                  download="session-reminder-extension-stone-theme.zip"
+                  download="session-reminder-extension-improved-names.zip"
                 >
                   <span className="mr-2">⬇️</span>
                   Download Extension

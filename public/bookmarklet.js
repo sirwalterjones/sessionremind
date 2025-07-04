@@ -29,8 +29,9 @@
 
     // Check if we're on an individual session page
     if (window.location.href.includes('app.usesession.com/sessions/')) {
-      // Extract name from individual session page
-      const nameMatch = allText.match(/([A-Z][a-z]+ [A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+      // Extract name from individual session page (handles middle initials and middle names)
+      // Matches: "John Smith", "Stacey E Colston", "Stacey E. Colston", "Mary Elizabeth Johnson", "John A. B. Smith"
+      const nameMatch = allText.match(/([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)*\s+[A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
       if (nameMatch) {
         clientData.name = nameMatch[1];
       }
@@ -159,8 +160,9 @@
         }
       }
 
-      // Extract names for calendar/listing pages
-      const names = allText.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/gm);
+      // Extract names for calendar/listing pages (handles middle initials and middle names)
+      // Matches: "John Smith", "Stacey E Colston", "Stacey E. Colston", "Mary Elizabeth Johnson", "John A. B. Smith"
+      const names = allText.match(/^[A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)*\s+[A-Z][a-z]+$/gm);
       if (names) {
         clientData.name = names[0];
       }
