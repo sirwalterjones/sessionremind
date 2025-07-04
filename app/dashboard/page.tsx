@@ -103,7 +103,7 @@ export default function Dashboard() {
           clientName: message.clientName,
           phone: message.phone,
           sessionTitle: message.sessionTitle || 'Photography Session',
-          sessionTime: message.sessionTime || '',
+          sessionTime: message.sessionTime || message.sessionDate || '',
           messages: []
         }
       } else {
@@ -112,7 +112,7 @@ export default function Dashboard() {
           acc[key].sessionTitle = message.sessionTitle || acc[key].sessionTitle
         }
         if (!acc[key].sessionTime) {
-          acc[key].sessionTime = message.sessionTime || acc[key].sessionTime
+          acc[key].sessionTime = message.sessionTime || message.sessionDate || acc[key].sessionTime
         }
       }
       acc[key].messages.push(message)
