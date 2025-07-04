@@ -675,7 +675,16 @@ export default function Dashboard() {
                       
                       <div className="bg-white border border-stone-100 rounded-lg p-4">
                         <p className="text-sm font-medium text-gray-800 mb-2">💬 Message Content</p>
-                        <p className="text-gray-700 leading-relaxed text-sm">"{message.message}"</p>
+                        <p className="text-gray-700 leading-relaxed text-sm">
+                          "{message.message || 'No message content stored'}"
+                        </p>
+                        <div className="text-xs text-gray-500 mt-2">
+                          Debug: {JSON.stringify({
+                            hasMessage: !!message.message,
+                            messageLength: message.message?.length || 0,
+                            messagePreview: message.message?.substring(0, 50) || 'empty'
+                          })}
+                        </div>
                       </div>
                       
                       <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
