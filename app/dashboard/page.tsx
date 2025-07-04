@@ -26,7 +26,7 @@ interface ScheduledMessage {
   scheduledFor: string
   sessionDate: string
   reminderType: '3-day' | '1-day'
-  status: 'scheduled' | 'sent' | 'failed'
+  status: 'scheduled' | 'sent' | 'failed' | 'cancelled'
   createdAt: string
   sentAt?: string
 }
@@ -51,6 +51,8 @@ export default function Dashboard() {
   const [selectedClient, setSelectedClient] = useState<ClientGroup | null>(null)
   const [showClientModal, setShowClientModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [cancellingMessages, setCancellingMessages] = useState<Set<string>>(new Set())
+  const [cancelledMessages, setCancelledMessages] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     // Check if password is already in sessionStorage
@@ -144,22 +146,62 @@ export default function Dashboard() {
 
   const cancelMessage = async (messageId: string) => {
     try {
+      // Add to cancelling state
+      setCancellingMessages(prev => new Set(prev).add(messageId))
+      
       const response = await fetch(`/api/cancel-message/${messageId}`, {
         method: 'DELETE'
       })
       
       if (response.ok) {
-        // Reload data to reflect cancellation
+        // Remove from cancelling state and add to cancelled state
+        setCancellingMessages(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(messageId)
+          return newSet
+        })
+        setCancelledMessages(prev => new Set(prev).add(messageId))
+        
+        // Update the selectedClient state to reflect the cancellation
+        if (selectedClient) {
+          const updatedMessages = selectedClient.messages.map(msg => 
+            msg.id === messageId ? { ...msg, status: 'cancelled' as const } : msg
+          )
+          setSelectedClient({
+            ...selectedClient,
+            messages: updatedMessages
+          })
+        }
+        
+        // Reload data to reflect cancellation in the main view
         await loadScheduledMessages()
+        
+        // Auto-hide the success state after 3 seconds
+        setTimeout(() => {
+          setCancelledMessages(prev => {
+            const newSet = new Set(prev)
+            newSet.delete(messageId)
+            return newSet
+          })
+        }, 3000)
       }
     } catch (error) {
       console.error('Error cancelling message:', error)
+      // Remove from cancelling state on error
+      setCancellingMessages(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(messageId)
+        return newSet
+      })
     }
   }
 
   const openClientModal = (client: ClientGroup) => {
     setSelectedClient(client)
     setShowClientModal(true)
+    // Clear any lingering cancelled/cancelling states
+    setCancelledMessages(new Set())
+    setCancellingMessages(new Set())
   }
 
   const formatDate = (dateString: string) => {
@@ -190,6 +232,7 @@ export default function Dashboard() {
       case 'scheduled': return <ClockIcon className="h-4 w-4 text-amber-500" />
       case 'sent': return <CheckCircleIcon className="h-4 w-4 text-emerald-500" />
       case 'failed': return <XMarkIcon className="h-4 w-4 text-red-500" />
+      case 'cancelled': return <XMarkIcon className="h-4 w-4 text-gray-500" />
       default: return <ClockIcon className="h-4 w-4 text-gray-400" />
     }
   }
@@ -199,6 +242,7 @@ export default function Dashboard() {
       case 'scheduled': return 'bg-amber-50 text-amber-700 border-amber-200'
       case 'sent': return 'bg-emerald-50 text-emerald-700 border-emerald-200'
       case 'failed': return 'bg-red-50 text-red-700 border-red-200'
+      case 'cancelled': return 'bg-gray-50 text-gray-700 border-gray-200'
       default: return 'bg-gray-50 text-gray-700 border-gray-200'
     }
   }
@@ -241,7 +285,7 @@ export default function Dashboard() {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200 text-gray-900 placeholder-gray-500"
                   placeholder="Enter password"
                   required
                 />
@@ -433,6 +477,7 @@ export default function Dashboard() {
                 const scheduledMessages = client.messages.filter(msg => msg.status === 'scheduled')
                 const sentMessages = client.messages.filter(msg => msg.status === 'sent')
                 const failedMessages = client.messages.filter(msg => msg.status === 'failed')
+                const cancelledMessages = client.messages.filter(msg => msg.status === 'cancelled')
                 
                 return (
                   <div 
@@ -477,6 +522,11 @@ export default function Dashboard() {
                           {failedMessages.length > 0 && (
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                               {failedMessages.length} failed
+                            </span>
+                          )}
+                          {cancelledMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              {cancelledMessages.length} cancelled
                             </span>
                           )}
                         </div>
@@ -590,10 +640,26 @@ export default function Dashboard() {
                                 e.stopPropagation()
                                 cancelMessage(message.id)
                               }}
-                              className="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full hover:bg-red-200 transition-colors"
+                              disabled={cancellingMessages.has(message.id)}
+                              className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                                cancelledMessages.has(message.id)
+                                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                  : cancellingMessages.has(message.id)
+                                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                                  : 'bg-red-100 text-red-700 hover:bg-red-200'
+                              }`}
                             >
-                              Cancel
+                              {cancelledMessages.has(message.id)
+                                ? '✓ Cancelled'
+                                : cancellingMessages.has(message.id)
+                                ? 'Cancelling...'
+                                : 'Cancel'}
                             </button>
+                          )}
+                          {message.status === 'cancelled' && (
+                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                              Cancelled
+                            </span>
                           )}
                         </div>
                       </div>
