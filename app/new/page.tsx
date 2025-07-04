@@ -91,10 +91,20 @@ export default function NewReminder() {
   useEffect(() => {
     // Check for PWA share target
     const sharedUrl = searchParams.get('shared_url')
-    if (sharedUrl) {
-      console.log('Received shared URL:', sharedUrl)
+    const url = searchParams.get('url') // Alternative parameter name
+    
+    console.log('URL params:', Object.fromEntries(searchParams.entries()))
+    
+    const targetUrl = sharedUrl || url
+    if (targetUrl) {
+      console.log('Received shared URL:', targetUrl)
+      // Show that we received a shared URL
+      setInitialData(prev => ({
+        ...prev,
+        sessionTitle: 'Processing shared URL...'
+      }))
       // Extract data from UseSession URL if possible
-      extractDataFromSharedUrl(sharedUrl)
+      extractDataFromSharedUrl(targetUrl)
     }
     
     const params = {
@@ -275,16 +285,17 @@ export default function NewReminder() {
 
         {/* URL Extractor Section */}
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-bold text-blue-900">🔗 Extract from UseSession</h3>
-              <p className="text-blue-700 text-sm">Paste a UseSession URL to auto-fill client data</p>
-            </div>
+          <div className="text-center mb-4">
+            <h3 className="text-xl font-bold text-blue-900 mb-2">📱 Extract from UseSession</h3>
+            <p className="text-blue-700 text-sm mb-4">
+              <strong>Mobile:</strong> Share UseSession page → Select "Session Reminder"<br/>
+              <strong>Manual:</strong> Copy URL and paste below
+            </p>
             <button
               onClick={() => setShowUrlExtractor(!showUrlExtractor)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors text-lg"
             >
-              {showUrlExtractor ? 'Hide' : 'Extract Data'}
+              {showUrlExtractor ? '✕ Hide URL Extractor' : '🔗 Paste UseSession URL'}
             </button>
           </div>
           

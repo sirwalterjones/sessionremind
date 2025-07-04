@@ -29,7 +29,8 @@
     "method": "GET",
     "params": {
       "url": "shared_url"
-    }
+    },
+    "enctype": "application/x-www-form-urlencoded"
   },
   "shortcuts": [
     {
