@@ -81,11 +81,13 @@ export default function Dashboard() {
       if (response.ok) {
         const data = await response.json()
         const messages = data.scheduledMessages || []
+        console.log('📊 Loaded scheduled messages:', messages)
         setScheduledMessages(messages)
         setScheduledCount(messages.filter((msg: ScheduledMessage) => msg.status === 'scheduled').length)
         
         // Group messages by client
         const groups = groupMessagesByClient(messages)
+        console.log('👥 Grouped client data:', groups)
         setClientGroups(groups)
       }
     } catch (error) {
@@ -100,9 +102,17 @@ export default function Dashboard() {
         acc[key] = {
           clientName: message.clientName,
           phone: message.phone,
-          sessionTitle: message.sessionTitle,
-          sessionTime: message.sessionTime,
+          sessionTitle: message.sessionTitle || 'Photography Session',
+          sessionTime: message.sessionTime || '',
           messages: []
+        }
+      } else {
+        // Update with better data if current is empty/invalid
+        if (!acc[key].sessionTitle || acc[key].sessionTitle === 'Photography Session') {
+          acc[key].sessionTitle = message.sessionTitle || acc[key].sessionTitle
+        }
+        if (!acc[key].sessionTime) {
+          acc[key].sessionTime = message.sessionTime || acc[key].sessionTime
         }
       }
       acc[key].messages.push(message)
