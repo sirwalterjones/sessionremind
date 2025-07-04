@@ -44,11 +44,7 @@ export default function Dashboard() {
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([])
   const [clientGroups, setClientGroups] = useState<ClientGroup[]>([])
   const [loading, setLoading] = useState(true)
-  const [cronRunning, setCronRunning] = useState(false)
-  const [cronResult, setCronResult] = useState<string>('')
-  const [showCronResult, setShowCronResult] = useState(false)
   const [scheduledCount, setScheduledCount] = useState(0)
-  const [showClearModal, setShowClearModal] = useState(false)
   const [selectedClient, setSelectedClient] = useState<ClientGroup | null>(null)
   const [showClientModal, setShowClientModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -122,47 +118,7 @@ export default function Dashboard() {
     )
   }
 
-  const runCronJob = async () => {
-    setCronRunning(true)
-    setCronResult('')
-    setShowCronResult(false)
-    
-    try {
-      const response = await fetch('/api/process-scheduled', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      
-      const result = await response.json()
-      
-      if (response.ok) {
-        setCronResult(`✅ Cron job completed successfully! Processed ${result.processed || 0} messages.`)
-        // Reload all data to get updated statuses
-        await loadScheduledMessages()
-      } else {
-        setCronResult(`❌ Cron job failed: ${result.error || 'Unknown error'}`)
-      }
-    } catch (error) {
-      setCronResult(`❌ Error running cron job: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    } finally {
-      setCronRunning(false)
-      setShowCronResult(true)
-      // Hide result after 10 seconds
-      setTimeout(() => setShowCronResult(false), 10000)
-    }
-  }
 
-  const clearAllMessages = () => {
-    setShowClearModal(true)
-  }
-
-  const confirmClearAll = () => {
-    localStorage.removeItem('sentMessages')
-    setSentMessages([])
-    setShowClearModal(false)
-  }
 
   const cancelMessage = async (messageId: string) => {
     try {
@@ -173,18 +129,9 @@ export default function Dashboard() {
       if (response.ok) {
         // Reload data to reflect cancellation
         await loadScheduledMessages()
-        setCronResult(`✅ Message cancelled successfully`)
-        setShowCronResult(true)
-        setTimeout(() => setShowCronResult(false), 5000)
-      } else {
-        setCronResult(`❌ Failed to cancel message`)
-        setShowCronResult(true)
-        setTimeout(() => setShowCronResult(false), 5000)
       }
     } catch (error) {
-      setCronResult(`❌ Error cancelling message: ${error instanceof Error ? error.message : 'Unknown error'}`)
-      setShowCronResult(true)
-      setTimeout(() => setShowCronResult(false), 5000)
+      console.error('Error cancelling message:', error)
     }
   }
 
@@ -240,6 +187,14 @@ export default function Dashboard() {
     client.sessionTitle.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // Calculate analytics
+  const totalMessages = scheduledMessages.length
+  const sentCount = scheduledMessages.filter(msg => msg.status === 'sent').length
+  const failedCount = scheduledMessages.filter(msg => msg.status === 'failed').length
+  const deliveryRate = totalMessages > 0 ? ((sentCount / totalMessages) * 100).toFixed(1) : '0'
+  const estimatedCost = (sentCount * 0.049).toFixed(2) // $0.049 per SMS based on TextMagic pricing
+  const uniqueClients = new Set(scheduledMessages.map(msg => `${msg.clientName}-${msg.phone}`)).size
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
@@ -279,24 +234,10 @@ export default function Dashboard() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed">
             Track your session reminders and client communications with ease
           </p>
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 max-w-2xl mx-auto mb-8">
-            <p className="text-emerald-800 text-sm">
-              ✅ <strong>Persistent Storage:</strong> Scheduled messages are now stored in Vercel KV (Redis) and will survive server restarts. 
-              Your reminders will be sent at the correct times!
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button
-              onClick={clearAllMessages}
-              className="inline-flex items-center px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm"
-            >
-              <span className="mr-2">🗑️</span>
-              Clear All
-            </button>
+          <div className="flex justify-center">
             <a
               href="/new"
-              className="inline-flex items-center px-6 py-3 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+              className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
             >
               <PlusIcon className="h-5 w-5 mr-2" />
               New Reminder
@@ -305,109 +246,60 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-6">
-                <span className="text-stone-600 text-xl">📱</span>
+              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mr-4">
+                <span className="text-emerald-600 text-xl">📤</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Total Sent</p>
-                <p className="text-3xl font-bold text-gray-900">{sentMessages.length}</p>
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Messages Sent</p>
+                <p className="text-3xl font-bold text-gray-900">{sentCount}</p>
+                <p className="text-xs text-gray-500 mt-1">{totalMessages} total</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-stone-300 rounded-full flex items-center justify-center mr-6">
-                <span className="text-stone-700 text-xl">✅</span>
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                <span className="text-blue-600 text-xl">📊</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Success Rate</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {sentMessages.length > 0 ? '100%' : '0%'}
-                </p>
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Delivery Rate</p>
+                <p className="text-3xl font-bold text-gray-900">{deliveryRate}%</p>
+                <p className="text-xs text-gray-500 mt-1">{failedCount} failed</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-stone-400 rounded-full flex items-center justify-center mr-6">
-                <span className="text-white text-xl">⏰</span>
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <span className="text-green-600 text-xl">💰</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">SMS Cost</p>
+                <p className="text-3xl font-bold text-gray-900">${estimatedCost}</p>
+                <p className="text-xs text-gray-500 mt-1">$0.049/message</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mr-4">
+                <span className="text-amber-600 text-xl">⏰</span>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Scheduled</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {scheduledCount}
-                </p>
+                <p className="text-3xl font-bold text-gray-900">{scheduledCount}</p>
+                <p className="text-xs text-gray-500 mt-1">{uniqueClients} clients</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Cron Job Management */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100 mb-16">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-            <div className="flex items-center mb-4 lg:mb-0">
-              <div className="w-12 h-12 bg-stone-800 rounded-full flex items-center justify-center mr-6">
-                <CogIcon className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">Cron Job Management</h2>
-                <p className="text-gray-600">Manually process scheduled reminder messages</p>
-              </div>
-            </div>
-            
-            <button
-              onClick={runCronJob}
-              disabled={cronRunning}
-              className={`inline-flex items-center px-6 py-3 font-medium rounded-full transition-all duration-200 shadow-sm ${
-                cronRunning 
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                  : 'bg-stone-800 text-white hover:bg-stone-900 hover:shadow-md transform hover:-translate-y-0.5'
-              }`}
-            >
-              {cronRunning ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <PlayIcon className="h-5 w-5 mr-2" />
-                  Run Cron Job
-                </>
-              )}
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-stone-50 border border-stone-200 rounded-xl p-6">
-              <p className="text-sm font-medium text-stone-800 mb-2">📋 Workflow</p>
-              <p className="text-stone-700 text-sm leading-relaxed">Enrollment → First Message → Scheduled Reminders</p>
-            </div>
-            <div className="bg-stone-50 border border-stone-200 rounded-xl p-6">
-              <p className="text-sm font-medium text-stone-800 mb-2">⏰ Schedule</p>
-              <p className="text-stone-700 text-sm leading-relaxed">3-day and 1-day reminders at 10:00 AM</p>
-            </div>
-            <div className="bg-stone-50 border border-stone-200 rounded-xl p-6">
-              <p className="text-sm font-medium text-stone-800 mb-2">🔄 Status</p>
-              <p className="text-stone-700 text-sm leading-relaxed">{scheduledCount} pending reminders</p>
-            </div>
-          </div>
-          
-          {showCronResult && (
-            <div className={`p-6 rounded-xl border ${
-              cronResult.includes('✅') 
-                ? 'bg-stone-50 border-stone-200 text-stone-800' 
-                : 'bg-gray-50 border-gray-200 text-gray-800'
-            }`}>
-              <p className="font-medium">{cronResult}</p>
-            </div>
-          )}
-        </div>
 
         {/* Search Bar */}
         <div className="mb-8">
@@ -488,9 +380,17 @@ export default function Dashboard() {
                         </div>
                         <div>
                           <h4 className="text-xl font-bold text-gray-900">{client.clientName}</h4>
-                          <div className="flex items-center text-gray-600 text-sm mt-1">
-                            <PhoneIcon className="h-4 w-4 mr-1" />
-                            {client.phone}
+                          <div className="flex flex-col text-gray-600 text-sm mt-1 space-y-1">
+                            <div className="flex items-center">
+                              <PhoneIcon className="h-4 w-4 mr-1" />
+                              {client.phone}
+                            </div>
+                            {client.messages[0]?.email && (
+                              <div className="flex items-center">
+                                <span className="text-gray-400 mr-1">📧</span>
+                                {client.messages[0].email}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -541,44 +441,6 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Clear All Confirmation Modal */}
-        {showClearModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
-              <div className="p-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-red-600 text-xl">⚠️</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">Clear All Messages</h3>
-                    <p className="text-gray-600 text-sm">This action cannot be undone</p>
-                  </div>
-                </div>
-                
-                <p className="text-gray-700 mb-8 leading-relaxed">
-                  Are you sure you want to permanently delete all {sentMessages.length} sent message{sentMessages.length !== 1 ? 's' : ''}? 
-                  This will clear your entire message history and cannot be recovered.
-                </p>
-                
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => setShowClearModal(false)}
-                    className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-full hover:bg-gray-200 transition-all duration-200"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={confirmClearAll}
-                    className="flex-1 px-6 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-200"
-                  >
-                    Delete All
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Client Detail Modal */}
         {showClientModal && selectedClient && (

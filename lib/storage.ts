@@ -50,6 +50,9 @@ export async function updateMessageStatus(id: string, status: 'sent' | 'failed')
   const message = messages.find(m => m.id === id)
   if (message) {
     message.status = status
+    if (status === 'sent') {
+      message.sentAt = new Date().toISOString()
+    }
     await saveScheduledMessages(messages)
   }
 }
