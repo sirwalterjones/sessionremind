@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sessionremind.vercel.app'),
-  title: 'Session Reminder - SMS Reminders for Photography Sessions',
+  title: 'Session Remind - SMS Reminders for Photography Sessions',
   description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
   manifest: '/manifest.json',
   icons: {
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Session Reminder'
+    title: 'Session Remind'
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://sessionremind.vercel.app',
-    title: 'Session Reminder - SMS Reminders for Photography Sessions',
+    title: 'Session Remind - SMS Reminders for Photography Sessions',
     description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
-    siteName: 'Session Reminder',
+    siteName: 'Session Remind',
     images: [
       {
         url: '/logo.svg',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Session Reminder - SMS Reminders for Photography Sessions',
+    title: 'Session Remind - SMS Reminders for Photography Sessions',
     description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
     images: ['/logo.svg']
   },
@@ -56,7 +56,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: '#1c1917'
+  themeColor: '#000000'
 }
 
 export default function RootLayout({
@@ -69,8 +69,8 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="theme-color" content="#1c1917" />
-        <meta name="msapplication-TileColor" content="#1c1917" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className={inter.className}>
