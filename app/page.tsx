@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import MobileBookmarklet from '@/components/MobileBookmarklet'
 
 export default function Home() {
   const simpleBookmarkletCode = "javascript:window.open('https://sessionremind.com/new','_blank');"
@@ -9,17 +10,17 @@ export default function Home() {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         
         {/* Hero Section */}
         <div className="text-center mb-20">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-stone-200 rounded-full mb-8">
             <span className="text-3xl">📱</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
             Never Miss a Session Again
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12">
             Automatically send SMS reminders to your photography clients with just one click from UseSession
           </p>
           
@@ -49,7 +50,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
           
           {/* PWA - Best for Mobile */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
@@ -63,7 +64,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-6">
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 sm:p-6 mb-6">
               <h4 className="text-blue-800 font-medium mb-3">📲 Best for Mobile</h4>
               <ul className="text-blue-700 text-sm space-y-2 mb-4">
                 <li>• Install as native app on phone</li>
@@ -111,7 +112,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-6">
+            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 sm:p-6 mb-6">
               <h4 className="text-emerald-800 font-medium mb-3">✨ Best User Experience</h4>
               <ul className="text-emerald-700 text-sm space-y-2 mb-4">
                 <li>• Floating button appears automatically</li>
@@ -119,7 +120,7 @@ export default function Home() {
                 <li>• No bookmarks needed</li>
                 <li>• One-click data extraction</li>
               </ul>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col gap-3">
                 <a 
                   href="/extension"
                   className="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-full hover:bg-emerald-700 transition-all duration-200"
@@ -165,7 +166,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-3 bg-stone-50 rounded-xl">
                 <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">1</div>
                 <p className="text-xs text-stone-600">Download</p>
@@ -197,39 +198,16 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 mb-6">
+            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 sm:p-6 mb-6">
               <h4 className="text-stone-800 font-medium mb-3">🔗 Quick Start</h4>
               <p className="text-stone-700 text-sm mb-4">
-                Drag this button to your bookmarks bar and click it on any UseSession page
+                <span className="hidden sm:inline">Drag this button to your bookmarks bar and click it on any UseSession page</span>
+                <span className="sm:hidden">Save this link as a bookmark and use it on UseSession pages</span>
               </p>
-              <div className="text-center">
-                <a 
-                  href={dataExtractionBookmarkletCode}
-                  className="inline-flex items-center px-6 py-3 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200 cursor-move no-underline"
-                  draggable="true"
-                  title="Drag this to your bookmarks bar"
-                >
-                  <span className="mr-2">📱</span>
-                  UseSession → Session Reminder
-                  <span className="ml-2">✨</span>
-                </a>
-              </div>
-              <p className="text-center text-xs text-stone-600 mt-2">
-                👆 Drag this button to your bookmarks bar (don't click it)
-              </p>
-              
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                <p className="text-amber-800 font-medium text-sm mb-2">Can't drag? Manual setup:</p>
-                <ol className="text-amber-700 text-xs space-y-1">
-                  <li>1. Right-click the button above → "Copy link"</li>
-                  <li>2. Add new bookmark in your browser</li>
-                  <li>3. Paste the copied link as the URL</li>
-                  <li>4. Name it "Session Reminder"</li>
-                </ol>
-              </div>
+              <MobileBookmarklet bookmarkletCode={dataExtractionBookmarkletCode} />
             </div>
 
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
               <div className="text-center p-3 bg-stone-50 rounded-xl">
                 <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">1</div>
                 <p className="text-xs text-stone-600">Drag to Bookmarks</p>
@@ -261,8 +239,8 @@ export default function Home() {
 
         {/* Features */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12">How It Works</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 sm:mb-12">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6">
                 <span className="text-stone-600 text-2xl">📸</span>
@@ -294,11 +272,11 @@ export default function Home() {
         </div>
 
         {/* CTA */}
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-12 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sm:p-12 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             Ready to Never Miss Another Session?
           </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto">
             Start sending professional SMS reminders to your photography clients today
           </p>
           <a

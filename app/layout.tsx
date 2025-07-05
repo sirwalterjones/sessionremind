@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import MobileNav from '@/components/MobileNav'
 import './globals.css'
@@ -9,8 +9,6 @@ export const metadata: Metadata = {
   title: 'Session Reminder',
   description: 'SMS reminder app for photography sessions - works with UseSession',
   manifest: '/manifest.json',
-  themeColor: '#1c1917',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -21,6 +19,14 @@ export const metadata: Metadata = {
   }
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#1c1917'
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -29,8 +35,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/icon.svg" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
         <link rel="apple-touch-icon" href="/icon.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icon.svg" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={inter.className}>
         <script
@@ -56,12 +66,12 @@ export default function RootLayout({
               <div className="flex justify-between items-center h-20">
                 {/* Logo Section */}
                 <div className="flex items-center">
-                  <a href="/" className="flex items-center space-x-3 group">
-                    <div className="w-12 h-12 bg-stone-800 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
-                      <span className="text-white text-xl">📱</span>
+                  <a href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-stone-800 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
+                      <span className="text-white text-lg sm:text-xl">📱</span>
                     </div>
-                    <div>
-                      <h1 className="text-2xl font-bold text-gray-900">
+                    <div className="hidden sm:block">
+                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                         Session Reminder
                       </h1>
                       <p className="text-xs text-stone-500 font-medium">for photographers</p>
@@ -108,7 +118,7 @@ export default function RootLayout({
               </div>
             </div>
           </nav>
-          <main className="max-w-6xl mx-auto py-8 sm:px-6 lg:px-8">
+          <main className="max-w-6xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
             {children}
           </main>
         </div>
