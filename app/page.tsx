@@ -68,7 +68,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
             
             {/* Browser Extension */}
             <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
@@ -172,27 +172,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Manual Entry */}
-            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-900 mb-2">Manual Entry</h3>
-                <p className="text-gray-600 text-sm">
-                  Enter client details from UseSession manually
-                </p>
-              </div>
-
-              <div className="space-y-3 mb-8 text-sm text-gray-600">
-                <div>Works with UseSession modals</div>
-                <div>No browser dependencies</div>
-                <div>Touch-friendly on mobile</div>
-                <div>Quick-fill options available</div>
-                <div>Always reliable fallback</div>
-              </div>
-
-              <div className="mt-6">
-                <MobileManualEntry />
-              </div>
-            </div>
           </div>
         </div>
       </div>
