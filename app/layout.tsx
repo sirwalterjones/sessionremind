@@ -7,7 +7,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sessionremind.vercel.app'),
+  metadataBase: new URL('https://sessionremind.com'),
   title: 'Session Remind - SMS Reminders for Photography Sessions',
   description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
   manifest: '/manifest.json',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://sessionremind.vercel.app',
+    url: 'https://sessionremind.com',
     title: 'Session Remind - SMS Reminders for Photography Sessions',
     description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
     siteName: 'Session Remind',
