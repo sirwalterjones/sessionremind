@@ -42,15 +42,36 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Integration Methods */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your Integration</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Extract client data from UseSession automatically with these options
-          </p>
+        {/* Mobile Notice */}
+        <div className="block md:hidden mb-16">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-amber-600 text-2xl">📱</span>
+            </div>
+            <h3 className="text-xl font-bold text-amber-900 mb-2">Mobile Device Detected</h3>
+            <p className="text-amber-800 mb-4">
+              For best results, use a desktop or tablet-based browser with the full integration options.
+            </p>
+            <a
+              href="/new"
+              className="inline-flex items-center px-6 py-3 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200"
+            >
+              <span className="mr-2">📝</span>
+              Continue with Manual Entry
+            </a>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
+        {/* Integration Methods - Desktop/Tablet Only */}
+        <div className="hidden md:block">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your Integration</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Extract client data from UseSession automatically with these options
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
           
           {/* Browser Extension */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
@@ -200,6 +221,7 @@ export default function Home() {
 
             <MobileManualEntry />
           </div>
+        </div>
         </div>
 
         {/* Features */}

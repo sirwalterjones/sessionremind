@@ -70,11 +70,11 @@ export default function RootLayout({
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-stone-800 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
                       <span className="text-white text-lg sm:text-xl">📱</span>
                     </div>
-                    <div className="hidden sm:block">
-                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                    <div className="block">
+                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
                         Session Reminder
                       </h1>
-                      <p className="text-xs text-stone-500 font-medium">for photographers</p>
+                      <p className="text-xs text-stone-500 font-medium hidden sm:block">for photographers</p>
                     </div>
                   </a>
                 </div>

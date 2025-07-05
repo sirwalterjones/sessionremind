@@ -180,7 +180,8 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
           </div>
         </div>
 
-        {/* Message Section */}
+        {/* Message Section - Hidden when manual text is enabled */}
+        {!formData.sendManualText && (
         <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
           <div className="flex items-center mb-8">
             <div className="w-12 h-12 bg-stone-400 rounded-full flex items-center justify-center mr-4">
@@ -241,8 +242,10 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
             </div>
           </div>
         </div>
+        )}
 
-        {/* Scheduling Section */}
+        {/* Scheduling Section - Hidden when manual text is enabled */}
+        {!formData.sendManualText && (
         <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
           <div className="flex items-center mb-8">
             <div className="w-12 h-12 bg-stone-500 rounded-full flex items-center justify-center mr-4">
@@ -331,6 +334,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
             </div>
           </div>
         </div>
+        )}
 
         {/* Manual Text Section */}
         <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
@@ -353,6 +357,11 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                   <p className="text-purple-700 text-sm mb-4">
                     Send a custom text message right now, separate from the automated reminder schedule.
                   </p>
+                  <div className="bg-purple-100 border border-purple-200 rounded-lg p-3 mb-4">
+                    <p className="text-purple-800 text-xs font-medium">
+                      ⚠️ Note: Enabling manual text will automatically disable registration confirmation and scheduled reminders to avoid duplicate messages.
+                    </p>
+                  </div>
                   <div className="flex items-center mb-4">
                     <Switch
                       checked={formData.sendManualText}

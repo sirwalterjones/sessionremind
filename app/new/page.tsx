@@ -271,7 +271,7 @@ export default function NewReminder() {
       let registrationSent = false
       let registrationMessage = ''
       
-      if (formData.sendRegistrationMessage) {
+      if (formData.sendRegistrationMessage && !formData.sendManualText) {
         console.log('Sending registration confirmation...')
         
         registrationMessage = `Hi ${formData.name}! You're registered for text reminders from Moments by Candice Photography. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. Looking forward to seeing you!`
@@ -329,8 +329,8 @@ export default function NewReminder() {
         console.log('Skipping manual text (disabled by user)')
       }
 
-      // 3. Schedule reminders if selected
-      if (formData.threeDayReminder || formData.oneDayReminder) {
+      // 3. Schedule reminders if selected (but not if manual text was sent)
+      if ((formData.threeDayReminder || formData.oneDayReminder) && !manualTextSent) {
         console.log('Scheduling reminders...')
         
         const scheduleResponse = await fetch('/api/schedule-reminders', {
@@ -424,6 +424,11 @@ export default function NewReminder() {
           successDetail += ` Session is ${scheduleResult.daysUntilSession} days away.`
         }
 
+        // Add note if manual text disabled other services
+        if (manualTextSent && (formData.sendRegistrationMessage || formData.threeDayReminder || formData.oneDayReminder)) {
+          successDetail += ` Note: Registration and scheduled reminders were automatically disabled since a manual text was sent.`
+        }
+
         // Set appropriate success message
         let successMsg = '✅ '
         if (sentCount > 0 && scheduledCount > 0) {
@@ -472,8 +477,15 @@ export default function NewReminder() {
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
         if (sentCount > 0) {
+          let details = `${sentCount} message(s) sent (${sentTypes.join(', ')}) to ${formData.name}`
+          
+          // Add note if manual text disabled other services
+          if (manualTextSent && (formData.sendRegistrationMessage || formData.threeDayReminder || formData.oneDayReminder)) {
+            details += `. Note: Registration and scheduled reminders were automatically disabled since a manual text was sent.`
+          }
+          
           setSuccessMessage('✅ Messages Sent!')
-          setSuccessDetails(`${sentCount} message(s) sent (${sentTypes.join(', ')}) to ${formData.name}`)
+          setSuccessDetails(details)
         } else {
           // No messages sent at all
           setSuccessMessage('✅ Setup Complete!')

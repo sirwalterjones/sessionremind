@@ -402,7 +402,9 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Delivery Rate</p>
                 <p className="text-3xl font-bold text-gray-900">{deliveryRate}%</p>
-                <p className="text-xs text-gray-500 mt-1">{failedCount} failed</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {failedCount > 0 ? `${failedCount} failed` : 'No failures'}
+                </p>
               </div>
             </div>
           </div>

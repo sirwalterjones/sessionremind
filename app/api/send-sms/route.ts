@@ -70,14 +70,11 @@ export async function POST(request: NextRequest) {
       .replace(/{email}/g, body.email)
       .replace(/{phone}/g, body.phone)
 
-    // Create single registration confirmation message with session details
-    const registrationMessage = `Hi ${body.name}! You're registered for text reminders from Moments by Candice Photography. Your ${body.sessionTitle} session is scheduled for ${body.sessionTime}. Looking forward to seeing you!`
-
     const smsPayload = {
-      text: registrationMessage,
+      text: finalMessage,
       phones: cleanPhone
     }
-    console.log('Sending registration SMS:', smsPayload)
+    console.log('Sending SMS:', smsPayload)
 
     const response = await fetch('https://rest.textmagic.com/api/v2/messages', {
       method: 'POST',
@@ -91,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Registration SMS failed:', errorText)
+      console.error('SMS failed:', errorText)
       return NextResponse.json(
         { error: 'Failed to send SMS via TextMagic API' },
         { status: response.status }
@@ -99,12 +96,12 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await response.json()
-    console.log('Registration SMS sent:', result)
+    console.log('SMS sent:', result)
 
     return NextResponse.json({
       success: true,
       id: result.id,
-      message: 'Registration SMS sent successfully',
+      message: 'SMS sent successfully',
       textMagicResponse: result,
     })
   } catch (error) {
