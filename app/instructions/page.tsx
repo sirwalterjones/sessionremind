@@ -80,10 +80,19 @@ export default function Instructions() {
                     className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
                     draggable="true"
                     onDragStart={(e) => {
-                      e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
+                      // Create proper bookmark data with title
+                      const bookmarkHtml = `<a href="${dataExtractionBookmarkletCode}">🅂 Session Remind</a>`;
+                      const mozUrl = `${dataExtractionBookmarkletCode}\n🅂 Session Remind`;
+                      
+                      e.dataTransfer.setData('text/x-moz-url', mozUrl);
                       e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}" title="Session Remind">Session Remind</a>`);
+                      e.dataTransfer.setData('text/plain', mozUrl);
+                      e.dataTransfer.setData('text/html', bookmarkHtml);
+                      e.dataTransfer.setData('application/x-moz-place+json', JSON.stringify({
+                        type: 'text/x-moz-place',
+                        uri: dataExtractionBookmarkletCode,
+                        title: '🅂 Session Remind'
+                      }));
                       e.dataTransfer.effectAllowed = 'copy';
                     }}
                   >
