@@ -73,7 +73,7 @@ export default function RootLayout({
                     </div>
                     <div className="block">
                       <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                        Session Reminder
+                        Session Remind
                       </h1>
                       <p className="text-xs text-stone-500 font-medium hidden sm:block">for photographers</p>
                     </div>
