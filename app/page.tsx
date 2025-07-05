@@ -3,6 +3,9 @@
 import React from 'react'
 import MobileManualEntry from '@/components/MobileManualEntry'
 
+// Force dynamic rendering to prevent caching issues
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   const dataExtractionBookmarkletCode = "javascript:(function(){try{const allText=document.body.innerText;let n='',e='',p='',s='',t='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);if(emails){e=emails[0];}const phones=allText.match(/[+]?[0-9]{10,15}/g);if(phones){p=phones[0];}const lines=allText.split('\\n').map(l=>l.trim()).filter(l=>l.length>0);if(window.location.href.includes('app.usesession.com/sessions/')){const nameMatch=allText.match(/([A-Z][a-z]+(?:\\s+[A-Z]\\.?)*(?:\\s+[A-Z][a-z]+)*\\s+[A-Z][a-z]+)(?=\\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/);if(nameMatch){n=nameMatch[1];}const timeMatch=allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);const dayMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);if(timeMatch && dayMatch){t=dayMatch[1]+', '+dayMatch[2]+' at '+timeMatch[1];}else if(dayMatch){t=dayMatch[1]+', '+dayMatch[2];}let sessionTitle='';const titleSelectors=['h1','h2','h3','[class*=\"title\"]','[class*=\"session\"]','[class*=\"booking\"]'];for(const sel of titleSelectors){const els=document.querySelectorAll(sel);for(const el of els){const txt=el.textContent.trim();if(txt && txt.length>10 && txt.length<100 && !txt.match(/^[0-9]/) && !txt.includes('@') && !txt.includes('$') && !txt.toLowerCase().includes('earnings') && !txt.toLowerCase().includes('bookings') && !txt.toLowerCase().includes('views') && !txt.toLowerCase().includes('waitlist') && !txt.toLowerCase().includes('balance') && (txt.match(/\\b20\\d{2}\\b/) || txt.toLowerCase().includes('field') || txt.toLowerCase().includes('summer') || txt.toLowerCase().includes('winter') || txt.toLowerCase().includes('spring') || txt.toLowerCase().includes('fall') || txt.toLowerCase().includes('christmas') || txt.toLowerCase().includes('holiday') || txt.toLowerCase().includes('watermelon') || txt.toLowerCase().includes('sunflower') || txt.toLowerCase().includes('pumpkin') || txt.toLowerCase().includes('beach') || txt.toLowerCase().includes('studio') || txt.toLowerCase().includes('session') || txt.toLowerCase().includes('shoot') || txt.toLowerCase().includes('mini') || txt.toLowerCase().includes('portrait') || txt.toLowerCase().includes('photo'))){sessionTitle=txt;break;}}if(sessionTitle)break;}if(!sessionTitle){const patterns=[/([A-Z][a-z]+(?:\\s+[A-Z][a-z]+)*\\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\\s+20\\d{2})/gi,/(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\\s+[A-Z][a-z]+)*(?:\\s+20\\d{2})?/gi,/([A-Z][a-z\\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\\s]*)/gi,/(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi,/([A-Z][a-z]+(?:\\s+[A-Z][a-z]+)*)\\s+(?:Mini|Session|Shoot|Portrait|Photo)/gi];for(const pattern of patterns){const matches=allText.match(pattern);if(matches && matches[0].length>5 && matches[0].length<80){sessionTitle=matches[0].trim();break;}}}s=sessionTitle||'Photography Session';}else{for(let i=0;i<lines.length;i++){const line=lines[i];if(line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();const parts=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);s=parts[0].trim();if(s.endsWith(' at')){s=s.replace(/ at$/,'');}break;}else if(line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();s=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();break;}}const dates=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(dates){t=dates[0];}else{const altDates=allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(altDates){t=altDates[0];}}const names=allText.match(/^[A-Z][a-z]+(?:\\s+[A-Z]\\.?)*(?:\\s+[A-Z][a-z]+)*\\s+[A-Z][a-z]+$/gm);if(names){n=names[0];}}const params=new URLSearchParams();if(n)params.set('name',n);if(e)params.set('email',e);if(p)params.set('phone',p);if(s)params.set('sessionTitle',s);if(t)params.set('sessionTime',t);const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new?'+params.toString(),'_blank');}catch(err){const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new','_blank');}})();"
   
@@ -68,10 +71,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            
-            {/* Browser Extension */}
-            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
+          <div className="flex justify-center">
+            {/* Browser Extension - Centered */}
+            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200 max-w-md w-full text-center">
               <div className="mb-6">
                 <h3 className="text-xl font-medium text-gray-900 mb-2">Browser Extension</h3>
                 <p className="text-gray-600 text-sm">
@@ -137,71 +139,8 @@ export default function Home() {
                 </button>
               </div>
             </div>
-
-            {/* Bookmarklet */}
-            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-900 mb-2">Bookmarklet</h3>
-                <p className="text-gray-600 text-sm">
-                  Simple one-click solution for desktop browsers
-                </p>
-              </div>
-
-              <div className="space-y-3 mb-8 text-sm text-gray-600">
-                <div>No installation required</div>
-                <div>Works on desktop browsers</div>
-                <div>One-click bookmark</div>
-                <div>Automatic data extraction</div>
-                <div>Perfect for occasional use</div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <div className="mb-3">
-                    <span className="text-2xl">📖</span>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-2">Drag to Bookmarks Bar</h4>
-                  <a 
-                    href={dataExtractionBookmarkletCode}
-                    className="inline-block px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
-                    draggable="true"
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', 'Session Reminder');
-                    }}
-                  >
-                    📋 Session Reminder
-                  </a>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Drag this button to your bookmarks bar
-                  </p>
-                </div>
-                
-                <div className="text-center">
-                  <button
-                    onClick={() => {
-                      const bookmarkUrl = dataExtractionBookmarkletCode;
-                      const bookmarkName = 'Session Reminder';
-                      
-                      if (navigator.userAgent.includes('Chrome') || navigator.userAgent.includes('Edge')) {
-                        // For Chrome/Edge - copy to clipboard and show instructions
-                        navigator.clipboard.writeText(bookmarkUrl).then(() => {
-                          alert(`Bookmarklet copied to clipboard!\\n\\nTo install:\\n1. Press Ctrl+D (Cmd+D on Mac) to bookmark this page\\n2. Edit the bookmark name to "${bookmarkName}"\\n3. Replace the URL with the copied JavaScript code\\n4. Save the bookmark`);
-                        });
-                      } else {
-                        // Fallback for other browsers
-                        alert(`To install the bookmarklet:\\n\\n1. Show your bookmarks bar (Ctrl+Shift+B)\\n2. Drag the "${bookmarkName}" button above to your bookmarks bar\\n3. Visit any UseSession page and click the bookmark`);
-                      }
-                    }}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    Installation Help
-                  </button>
-                </div>
-              </div>
-            </div>
-
           </div>
+
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import Link from 'next/link'
 import MobileNav from '@/components/MobileNav'
 import './globals.css'
 
@@ -66,7 +67,7 @@ export default function RootLayout({
               <div className="flex justify-between items-center h-20">
                 {/* Logo Section */}
                 <div className="flex items-center">
-                  <a href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+                  <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-stone-800 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
                       <span className="text-white text-lg sm:text-xl">📱</span>
                     </div>
@@ -76,12 +77,12 @@ export default function RootLayout({
                       </h1>
                       <p className="text-xs text-stone-500 font-medium hidden sm:block">for photographers</p>
                     </div>
-                  </a>
+                  </Link>
                 </div>
                 
                 {/* Navigation Links */}
                 <div className="hidden md:flex items-center space-x-2">
-                  <a 
+                  <Link 
                     href="/instructions" 
                     className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
                   >
@@ -89,9 +90,9 @@ export default function RootLayout({
                       <span className="text-sm">📖</span>
                       <span>Guide</span>
                     </span>
-                  </a>
+                  </Link>
                   
-                  <a 
+                  <Link 
                     href="/dashboard" 
                     className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
                   >
@@ -99,11 +100,11 @@ export default function RootLayout({
                       <span className="text-sm">📊</span>
                       <span>Dashboard</span>
                     </span>
-                  </a>
+                  </Link>
                   
                   <div className="w-px h-6 bg-stone-300 mx-2"></div>
                   
-                  <a 
+                  <Link 
                     href="/new" 
                     className="group px-6 py-3 bg-stone-800 text-white font-medium rounded-full shadow-sm hover:shadow-md transition-all duration-200 hover:bg-stone-900 hover:scale-105"
                   >
@@ -111,7 +112,7 @@ export default function RootLayout({
                       <span className="text-sm">✨</span>
                       <span>New Reminder</span>
                     </span>
-                  </a>
+                  </Link>
                 </div>
                 
                 <MobileNav />

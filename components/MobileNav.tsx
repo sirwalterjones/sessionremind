@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,30 +23,30 @@ export default function MobileNav() {
       {/* Mobile Menu - Collapsible */}
       {isOpen && (
         <div className="absolute top-full left-0 right-0 bg-white border-t border-stone-200 py-4 space-y-2 shadow-lg">
-          <a 
+          <Link 
             href="/instructions" 
             className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
             onClick={() => setIsOpen(false)}
           >
             <span className="text-lg">📖</span>
             <span className="font-medium">How to Use</span>
-          </a>
-          <a 
+          </Link>
+          <Link 
             href="/dashboard" 
             className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
             onClick={() => setIsOpen(false)}
           >
             <span className="text-lg">📊</span>
             <span className="font-medium">Dashboard</span>
-          </a>
-          <a 
+          </Link>
+          <Link 
             href="/new" 
             className="flex items-center space-x-3 px-4 py-3 bg-stone-800 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-stone-900 transition-all duration-200"
             onClick={() => setIsOpen(false)}
           >
             <span className="text-lg">✨</span>
             <span>New Reminder</span>
-          </a>
+          </Link>
         </div>
       )}
     </>

@@ -89,14 +89,6 @@ export default function Instructions() {
                 </div>
               </div>
 
-              {/* Manual Entry */}
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="text-gray-800 font-semibold mb-3 text-sm sm:text-base">📋 Manual Entry</h3>
-                <p className="text-gray-700 text-xs sm:text-sm mb-4">
-                  Enter client details manually - works with UseSession modals
-                </p>
-                <MobileManualEntry />
-              </div>
             </div>
           </div>
 
