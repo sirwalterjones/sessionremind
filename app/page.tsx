@@ -168,100 +168,51 @@ export default function Home() {
                 {/* Simple Test Bookmarklet */}
                 <div className="bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-4 text-center">
                   <h4 className="font-medium text-blue-900 mb-2 text-sm">🧪 Test Bookmarklet (Simple)</h4>
-                  <div 
-                    title="Session Remind Test"
-                    data-bookmark-title="Session Remind Test"
-                    data-bookmarklet={simpleTestBookmarklet}
-                    className="inline-flex items-center px-3 py-2 bg-blue-600 text-white font-medium rounded text-sm hover:bg-blue-700 transition-colors duration-200 cursor-move"
-                    draggable="true"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      // Show copy instructions instead
-                      navigator.clipboard.writeText(simpleTestBookmarklet).then(() => {
-                        alert('✅ Test bookmarklet copied!\n\nTo install:\n1. Create a new bookmark\n2. Name it "Session Remind Test"\n3. Paste the copied code as the URL\n4. Save and test!');
-                      }).catch(() => {
-                        alert('Please manually copy this code:\n\n' + simpleTestBookmarklet);
-                      });
-                    }}
-                    onDragStart={(e) => {
-                      // Create a temporary link element with proper bookmark data
-                      const tempLink = document.createElement('a');
-                      tempLink.href = simpleTestBookmarklet;
-                      tempLink.textContent = 'Session Remind Test';
-                      tempLink.title = 'Session Remind Test';
-                      
-                      // Set comprehensive drag data with proper bookmark format
-                      e.dataTransfer.setData('text/uri-list', simpleTestBookmarklet);
-                      e.dataTransfer.setData('text/plain', simpleTestBookmarklet);
-                      e.dataTransfer.setData('text/x-moz-url', `${simpleTestBookmarklet}\nSession Remind Test`);
-                      e.dataTransfer.setData('text/html', `<a href="${simpleTestBookmarklet}">Session Remind Test</a>`);
-                      e.dataTransfer.setData('application/x-moz-file', '');
-                      e.dataTransfer.setData('text/x-moz-place', JSON.stringify({
-                        type: 'text/x-moz-place',
-                        title: 'Session Remind Test',
-                        uri: simpleTestBookmarklet
-                      }));
-                      
-                      // Try to set the drag image to the temp link
-                      e.dataTransfer.setDragImage(tempLink, 0, 0);
-                      e.dataTransfer.effectAllowed = 'copy';
-                    }}
-                                      >
-                      🧪 Session Remind Test
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 mb-3 text-sm">🧪 Test Bookmarklet</h4>
+                    <p className="text-xs text-blue-700 mb-3">
+                      Since drag-and-drop for JavaScript bookmarklets is problematic across browsers, we'll use the copy-and-paste method:
+                    </p>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(simpleTestBookmarklet).then(() => {
+                          alert('✅ Test bookmarklet copied!\n\nTo install:\n1. Create a new bookmark (Ctrl+D or Cmd+D)\n2. Name it "Session Remind Test"\n3. Replace the URL with the copied code\n4. Save and test!');
+                        }).catch(() => {
+                          alert('Please manually copy this code and save as a bookmark:\n\n' + simpleTestBookmarklet);
+                        });
+                      }}
+                                             className="inline-flex items-center px-3 py-2 bg-blue-600 text-white font-medium rounded text-sm hover:bg-blue-700 transition-colors duration-200"
+                      >
+                        🧪 Copy Test Bookmarklet
+                      </button>
                     </div>
                   <p className="text-xs text-blue-600 mt-1">
                     Try dragging this simple test first
                   </p>
                 </div>
 
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
-                  <div 
-                    title="Session Remind"
-                    data-bookmark-title="Session Remind"
-                    data-bookmarklet={dataExtractionBookmarkletCode}
-                    className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
-                    draggable="true"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      // Show copy instructions instead
+                                <div className="bg-gray-50 border border-gray-300 rounded-lg p-6 text-center">
+                  <h4 className="font-medium text-gray-900 mb-4">📚 Install Bookmarklet</h4>
+                  <p className="text-sm text-gray-700 mb-4">
+                    The most reliable way to install the bookmarklet is to copy and paste:
+                  </p>
+                  <button
+                    onClick={() => {
                       navigator.clipboard.writeText(dataExtractionBookmarkletCode).then(() => {
-                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark\n2. Name it "Session Remind"\n3. Paste the copied code as the URL\n4. Save and use on UseSession pages!');
+                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark (Ctrl+D or Cmd+D)\n2. Name it "Session Remind"\n3. Replace the URL with the copied code\n4. Save and use on UseSession pages!');
                       }).catch(() => {
                         alert('Please manually copy this code and save as a bookmark named "Session Remind":\n\n' + dataExtractionBookmarkletCode);
                       });
                     }}
-                    onDragStart={(e) => {
-                      // Create a temporary link element with proper bookmark data
-                      const tempLink = document.createElement('a');
-                      tempLink.href = dataExtractionBookmarkletCode;
-                      tempLink.textContent = 'Session Remind';
-                      tempLink.title = 'Session Remind';
-                      
-                      // Set comprehensive drag data with proper bookmark format
-                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}">Session Remind</a>`);
-                      e.dataTransfer.setData('application/x-moz-file', '');
-                      e.dataTransfer.setData('text/x-moz-place', JSON.stringify({
-                        type: 'text/x-moz-place',
-                        title: 'Session Remind',
-                        uri: dataExtractionBookmarkletCode
-                      }));
-                      
-                      // Try to set the drag image to the temp link
-                      e.dataTransfer.setDragImage(tempLink, 0, 0);
-                      e.dataTransfer.effectAllowed = 'copy';
-                    }}
-                                      >
-                      <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
-                        <span className="text-black text-xs font-bold">S</span>
-                      </div>
-                      Session Remind
+                    className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200"
+                  >
+                    <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
+                      <span className="text-black text-xs font-bold">S</span>
                     </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Drag this button to your bookmarks bar
+                    📋 Copy Session Remind Bookmarklet
+                  </button>
+                  <p className="text-xs text-gray-500 mt-3">
+                    Copy → Create new bookmark → Paste as URL → Save
                   </p>
                 </div>
                 

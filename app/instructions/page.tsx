@@ -63,61 +63,35 @@ export default function Instructions() {
               </div>
 
               {/* Bookmarklet Option */}
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6">
+                            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6">
                 <h3 className="text-amber-800 font-semibold mb-3 text-sm sm:text-base">⭐ Bookmarklet (Desktop)</h3>
                 <ul className="text-amber-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
                   <li>• No installation required</li>
                   <li>• Works on desktop browsers</li>
-                  <li>• One-click bookmark</li>
+                  <li>• Copy and paste installation</li>
                   <li>• Automatic data extraction</li>
                 </ul>
-                <div className="bg-amber-50 border-2 border-dashed border-amber-300 rounded-lg p-4 text-center">
-                  <h4 className="font-medium text-amber-900 mb-2 text-sm">Drag to Install</h4>
-                  <div 
-                    title="Session Remind"
-                    data-bookmark-title="Session Remind"
-                    data-bookmarklet={dataExtractionBookmarkletCode}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
-                    draggable="true"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      // Show copy instructions instead
+                <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 text-center">
+                  <h4 className="font-medium text-amber-900 mb-2 text-sm">📋 Copy to Install</h4>
+                  <p className="text-amber-700 text-xs mb-3">
+                    Since drag-and-drop is unreliable across browsers, use copy-and-paste:
+                  </p>
+                  <button
+                    onClick={() => {
                       navigator.clipboard.writeText(dataExtractionBookmarkletCode).then(() => {
-                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark\n2. Name it "Session Remind"\n3. Paste the copied code as the URL\n4. Save and use on UseSession pages!');
+                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark (Ctrl+D or Cmd+D)\n2. Name it "Session Remind"\n3. Replace the URL with the copied code\n4. Save and use on UseSession pages!');
                       }).catch(() => {
                         alert('Please manually copy this code and save as a bookmark named "Session Remind":\n\n' + dataExtractionBookmarkletCode);
                       });
                     }}
-                    onDragStart={(e) => {
-                      // Create a temporary link element with proper bookmark data
-                      const tempLink = document.createElement('a');
-                      tempLink.href = dataExtractionBookmarkletCode;
-                      tempLink.textContent = 'Session Remind';
-                      tempLink.title = 'Session Remind';
-                      
-                      // Set comprehensive drag data with proper bookmark format
-                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}">Session Remind</a>`);
-                      e.dataTransfer.setData('application/x-moz-file', '');
-                      e.dataTransfer.setData('text/x-moz-place', JSON.stringify({
-                        type: 'text/x-moz-place',
-                        title: 'Session Remind',
-                        uri: dataExtractionBookmarkletCode
-                      }));
-                      
-                      // Try to set the drag image to the temp link
-                      e.dataTransfer.setDragImage(tempLink, 0, 0);
-                      e.dataTransfer.effectAllowed = 'copy';
-                    }}
-                                      >
-                      <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
-                        <span className="text-amber-600 text-xs font-bold">S</span>
-                      </div>
-                      Session Remind
+                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
+                  >
+                    <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
+                      <span className="text-amber-600 text-xs font-bold">S</span>
                     </div>
-                  <p className="text-amber-700 text-xs mt-2">Drag to your bookmarks bar</p>
+                    Copy Session Remind
+                  </button>
+                  <p className="text-amber-700 text-xs mt-2">Copy → New bookmark → Paste as URL → Save</p>
                 </div>
               </div>
 
