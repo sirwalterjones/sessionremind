@@ -68,30 +68,53 @@ export default function Instructions() {
                 <ul className="text-amber-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
                   <li>• No installation required</li>
                   <li>• Works on desktop browsers</li>
-                  <li>• Copy and paste installation</li>
+                  <li>• One-click bookmark</li>
                   <li>• Automatic data extraction</li>
                 </ul>
-                <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 text-center">
-                  <h4 className="font-medium text-amber-900 mb-2 text-sm">📋 Copy to Install</h4>
-                  <p className="text-amber-700 text-xs mb-3">
-                    Since drag-and-drop is unreliable across browsers, use copy-and-paste:
-                  </p>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(dataExtractionBookmarkletCode).then(() => {
-                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark (Ctrl+D or Cmd+D)\n2. Name it "Session Remind"\n3. Replace the URL with the copied code\n4. Save and use on UseSession pages!');
-                      }).catch(() => {
-                        alert('Please manually copy this code and save as a bookmark named "Session Remind":\n\n' + dataExtractionBookmarkletCode);
-                      });
+                <div className="bg-amber-50 border-2 border-dashed border-amber-300 rounded-lg p-4 text-center">
+                  <h4 className="font-medium text-amber-900 mb-2 text-sm">Drag to Install</h4>
+                  <a 
+                    href={dataExtractionBookmarkletCode}
+                    title="Session Remind"
+                    data-bookmark-title="Session Remind"
+                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      // Set the drag image to include text
+                      const dragElement = document.createElement('div');
+                      dragElement.innerHTML = '📂 Session Remind';
+                      dragElement.style.position = 'absolute';
+                      dragElement.style.top = '-1000px';
+                      dragElement.style.background = 'white';
+                      dragElement.style.border = '1px solid #ccc';
+                      dragElement.style.padding = '4px 8px';
+                      dragElement.style.borderRadius = '4px';
+                      dragElement.style.fontSize = '12px';
+                      document.body.appendChild(dragElement);
+                      e.dataTransfer.setDragImage(dragElement, 0, 0);
+                      
+                      // Set multiple data formats for maximum compatibility
+                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
+                      e.dataTransfer.setData('text/plain', 'Session Remind');
+                      e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
+                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}" title="Session Remind">Session Remind</a>`);
+                      e.dataTransfer.setData('application/x-bookmark', `Session Remind\n${dataExtractionBookmarkletCode}`);
+                      e.dataTransfer.effectAllowed = 'copy';
+                      
+                      // Clean up the drag element after a short delay
+                      setTimeout(() => {
+                        if (document.body.contains(dragElement)) {
+                          document.body.removeChild(dragElement);
+                        }
+                      }, 100);
                     }}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
                   >
                     <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
                       <span className="text-amber-600 text-xs font-bold">S</span>
                     </div>
-                    Copy Session Remind
-                  </button>
-                  <p className="text-amber-700 text-xs mt-2">Copy → New bookmark → Paste as URL → Save</p>
+                    Session Remind
+                  </a>
+                  <p className="text-amber-700 text-xs mt-2">Drag to your bookmarks bar</p>
                 </div>
               </div>
 

@@ -10,8 +10,7 @@ export default function Home() {
   const [showBookmarkletModal, setShowBookmarkletModal] = useState(false)
   const [bookmarkletCopied, setBookmarkletCopied] = useState(false)
 
-  // Simple test bookmarklet
-  const simpleTestBookmarklet = "javascript:alert('Session Remind Test!');"
+
 
   const dataExtractionBookmarkletCode = "javascript:(function(){try{const allText=document.body.innerText;let n='',e='',p='',s='',t='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);if(emails){e=emails[0];}const phones=allText.match(/[+]?[0-9]{10,15}/g);if(phones){p=phones[0];}const lines=allText.split('\\n').map(l=>l.trim()).filter(l=>l.length>0);if(window.location.href.includes('app.usesession.com/sessions/')){const nameMatch=allText.match(/([A-Z][a-z]+(?:\\s+[A-Z]\\.?)*(?:\\s+[A-Z][a-z]+)*\\s+[A-Z][a-z]+)(?=\\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/);if(nameMatch){n=nameMatch[1];}const timeMatch=allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);const dayMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);if(timeMatch && dayMatch){t=dayMatch[1]+', '+dayMatch[2]+' at '+timeMatch[1];}else if(dayMatch){t=dayMatch[1]+', '+dayMatch[2];}let sessionTitle='';const titleSelectors=['h1','h2','h3','[class*=\"title\"]','[class*=\"session\"]','[class*=\"booking\"]'];for(const sel of titleSelectors){const els=document.querySelectorAll(sel);for(const el of els){const txt=el.textContent.trim();if(txt && txt.length>10 && txt.length<100 && !txt.match(/^[0-9]/) && !txt.includes('@') && !txt.includes('$') && !txt.toLowerCase().includes('earnings') && !txt.toLowerCase().includes('bookings') && !txt.toLowerCase().includes('views') && !txt.toLowerCase().includes('waitlist') && !txt.toLowerCase().includes('balance') && (txt.match(/\\b20\\d{2}\\b/) || txt.toLowerCase().includes('field') || txt.toLowerCase().includes('summer') || txt.toLowerCase().includes('winter') || txt.toLowerCase().includes('spring') || txt.toLowerCase().includes('fall') || txt.toLowerCase().includes('christmas') || txt.toLowerCase().includes('holiday') || txt.toLowerCase().includes('watermelon') || txt.toLowerCase().includes('sunflower') || txt.toLowerCase().includes('pumpkin') || txt.toLowerCase().includes('beach') || txt.toLowerCase().includes('studio') || txt.toLowerCase().includes('session') || txt.toLowerCase().includes('shoot') || txt.toLowerCase().includes('mini') || txt.toLowerCase().includes('portrait') || txt.toLowerCase().includes('photo'))){sessionTitle=txt;break;}}if(sessionTitle)break;}if(!sessionTitle){const sessionPatterns=[/([A-Z][a-z]+(?:\\s+[A-Z][a-z]+)*\\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\\s+20\\d{2})/gi,/(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\\s+[A-Z][a-z]+)*(?:\\s+20\\d{2})?/gi,/([A-Z][a-z\\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\\s]*)/gi,/(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi,/([A-Z][a-z]+(?:\\s+[A-Z][a-z]+)*)\\s+(?:Mini|Session|Shoot|Portrait|Photo)/gi];for(const pattern of sessionPatterns){const matches=allText.match(pattern);if(matches && matches[0].length>5 && matches[0].length<80){sessionTitle=matches[0].trim();break;}}}if(sessionTitle){s=sessionTitle;}else{s='Photography Session';}}else{for(let i=0;i<lines.length;i++){const line=lines[i];if(line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();const parts=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);s=parts[0].trim();if(s.endsWith(' at')){s=s.replace(/ at$/,'');}break;}else if(line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();s=cleanLine.split(/\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();break;}}const dates=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(dates){t=dates[0];}else{const altDates=allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\\n]*[0-9]{4}[^\\n]*[0-9]{1,2}:[0-9]{2}[^\\n]*(AM|PM)/gi);if(altDates){t=altDates[0];}}const names=allText.match(/^[A-Z][a-z]+(?:\\s+[A-Z]\\.?)*(?:\\s+[A-Z][a-z]+)*\\s+[A-Z][a-z]+$/gm);if(names){n=names[0];}}const params=new URLSearchParams();if(n)params.set('name',n);if(e)params.set('email',e);if(p)params.set('phone',p);if(s)params.set('sessionTitle',s);if(t)params.set('sessionTime',t);const baseUrl=window.location.hostname==='localhost'?'http://localhost:3000':'https://sessionremind.com';const targetUrl=`${baseUrl}/new?${params.toString()}`;console.log('Extracted:',{name:n,email:e,phone:p,sessionTitle:s,sessionTime:t});console.log('URL:',targetUrl);window.open(targetUrl,'_blank');alert(`✅ Session data extracted!\\n\\n📝 Name: ${n||'Not found'}\\n📞 Phone: ${p||'Not found'}\\n📧 Email: ${e||'Not found'}\\n📸 Session: ${s||'Not found'}\\n⏰ Time: ${t||'Not found'}\\n\\nThe Session Reminder form is now open in a new tab.`);}catch(err){console.error('Bookmarklet error:',err);alert('❌ Error extracting data. Please try again or use manual entry.');}})()"
   
@@ -165,54 +164,51 @@ export default function Home() {
               </div>
 
               <div className="space-y-4">
-                {/* Simple Test Bookmarklet */}
-                <div className="bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-4 text-center">
-                  <h4 className="font-medium text-blue-900 mb-2 text-sm">🧪 Test Bookmarklet (Simple)</h4>
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900 mb-3 text-sm">🧪 Test Bookmarklet</h4>
-                    <p className="text-xs text-blue-700 mb-3">
-                      Since drag-and-drop for JavaScript bookmarklets is problematic across browsers, we'll use the copy-and-paste method:
-                    </p>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(simpleTestBookmarklet).then(() => {
-                          alert('✅ Test bookmarklet copied!\n\nTo install:\n1. Create a new bookmark (Ctrl+D or Cmd+D)\n2. Name it "Session Remind Test"\n3. Replace the URL with the copied code\n4. Save and test!');
-                        }).catch(() => {
-                          alert('Please manually copy this code and save as a bookmark:\n\n' + simpleTestBookmarklet);
-                        });
-                      }}
-                                             className="inline-flex items-center px-3 py-2 bg-blue-600 text-white font-medium rounded text-sm hover:bg-blue-700 transition-colors duration-200"
-                      >
-                        🧪 Copy Test Bookmarklet
-                      </button>
-                    </div>
-                  <p className="text-xs text-blue-600 mt-1">
-                    Try dragging this simple test first
-                  </p>
-                </div>
-
-                                <div className="bg-gray-50 border border-gray-300 rounded-lg p-6 text-center">
-                  <h4 className="font-medium text-gray-900 mb-4">📚 Install Bookmarklet</h4>
-                  <p className="text-sm text-gray-700 mb-4">
-                    The most reliable way to install the bookmarklet is to copy and paste:
-                  </p>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(dataExtractionBookmarkletCode).then(() => {
-                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark (Ctrl+D or Cmd+D)\n2. Name it "Session Remind"\n3. Replace the URL with the copied code\n4. Save and use on UseSession pages!');
-                      }).catch(() => {
-                        alert('Please manually copy this code and save as a bookmark named "Session Remind":\n\n' + dataExtractionBookmarkletCode);
-                      });
+                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
+                  <a 
+                    href={dataExtractionBookmarkletCode}
+                    title="Session Remind"
+                    data-bookmark-title="Session Remind"
+                    className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      // Set the drag image to include text
+                      const dragElement = document.createElement('div');
+                      dragElement.innerHTML = '📂 Session Remind';
+                      dragElement.style.position = 'absolute';
+                      dragElement.style.top = '-1000px';
+                      dragElement.style.background = 'white';
+                      dragElement.style.border = '1px solid #ccc';
+                      dragElement.style.padding = '4px 8px';
+                      dragElement.style.borderRadius = '4px';
+                      dragElement.style.fontSize = '12px';
+                      document.body.appendChild(dragElement);
+                      e.dataTransfer.setDragImage(dragElement, 0, 0);
+                      
+                      // Set multiple data formats for maximum compatibility
+                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
+                      e.dataTransfer.setData('text/plain', 'Session Remind');
+                      e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
+                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}" title="Session Remind">Session Remind</a>`);
+                      e.dataTransfer.setData('application/x-bookmark', `Session Remind\n${dataExtractionBookmarkletCode}`);
+                      e.dataTransfer.effectAllowed = 'copy';
+                      
+                      // Clean up the drag element after a short delay
+                      setTimeout(() => {
+                        if (document.body.contains(dragElement)) {
+                          document.body.removeChild(dragElement);
+                        }
+                      }, 100);
                     }}
-                    className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200"
                   >
                     <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
                       <span className="text-black text-xs font-bold">S</span>
                     </div>
-                    📋 Copy Session Remind Bookmarklet
-                  </button>
-                  <p className="text-xs text-gray-500 mt-3">
-                    Copy → Create new bookmark → Paste as URL → Save
+                    Session Remind
+                  </a>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Drag this button to your bookmarks bar
                   </p>
                 </div>
                 
