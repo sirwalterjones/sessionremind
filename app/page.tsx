@@ -155,20 +155,49 @@ export default function Home() {
                 <div>Perfect for occasional use</div>
               </div>
 
-              <div className="space-y-3">
-                <a 
-                  href={`javascript:${dataExtractionBookmarkletCode}`}
-                  className="block text-center px-6 py-3 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('To install the bookmarklet:\\n\\n1. Right-click this button\\n2. Select \"Bookmark this link\" or \"Add to bookmarks\"\\n3. Visit any UseSession page\\n4. Click the bookmark to extract data');
-                  }}
-                >
-                  Add Bookmarklet
-                </a>
-                <p className="text-xs text-gray-500 text-center">
-                  Right-click → Bookmark this link
-                </p>
+              <div className="space-y-4">
+                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <div className="mb-3">
+                    <span className="text-2xl">📖</span>
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-2">Drag to Bookmarks Bar</h4>
+                  <a 
+                    href={dataExtractionBookmarkletCode}
+                    className="inline-block px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
+                      e.dataTransfer.setData('text/plain', 'Session Reminder');
+                    }}
+                  >
+                    📋 Session Reminder
+                  </a>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Drag this button to your bookmarks bar
+                  </p>
+                </div>
+                
+                <div className="text-center">
+                  <button
+                    onClick={() => {
+                      const bookmarkUrl = dataExtractionBookmarkletCode;
+                      const bookmarkName = 'Session Reminder';
+                      
+                      if (navigator.userAgent.includes('Chrome') || navigator.userAgent.includes('Edge')) {
+                        // For Chrome/Edge - copy to clipboard and show instructions
+                        navigator.clipboard.writeText(bookmarkUrl).then(() => {
+                          alert(`Bookmarklet copied to clipboard!\\n\\nTo install:\\n1. Press Ctrl+D (Cmd+D on Mac) to bookmark this page\\n2. Edit the bookmark name to "${bookmarkName}"\\n3. Replace the URL with the copied JavaScript code\\n4. Save the bookmark`);
+                        });
+                      } else {
+                        // Fallback for other browsers
+                        alert(`To install the bookmarklet:\\n\\n1. Show your bookmarks bar (Ctrl+Shift+B)\\n2. Drag the "${bookmarkName}" button above to your bookmarks bar\\n3. Visit any UseSession page and click the bookmark`);
+                      }
+                    }}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    Installation Help
+                  </button>
+                </div>
               </div>
             </div>
 

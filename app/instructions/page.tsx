@@ -71,19 +71,21 @@ export default function Instructions() {
                   <li>• One-click bookmark</li>
                   <li>• Automatic data extraction</li>
                 </ul>
-                <div className="flex flex-col gap-3">
+                <div className="bg-amber-50 border-2 border-dashed border-amber-300 rounded-lg p-4 text-center">
+                  <h4 className="font-medium text-amber-900 mb-2 text-sm">Drag to Install</h4>
                   <a 
                     href={dataExtractionBookmarkletCode}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert('To install the bookmarklet:\\n\\n1. Right-click this button\\n2. Select \"Bookmark this link\" or \"Add to bookmarks\"\\n3. Visit any UseSession page\\n4. Click the bookmark to extract data');
+                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
+                      e.dataTransfer.setData('text/plain', 'Session Reminder');
                     }}
                   >
-                    <span className="mr-2">⭐</span>
-                    Add Bookmarklet
+                    <span className="mr-2">📋</span>
+                    Session Reminder
                   </a>
-                  <span className="text-amber-600 text-xs sm:text-sm text-center">Right-click → Bookmark this link</span>
+                  <p className="text-amber-700 text-xs mt-2">Drag to your bookmarks bar</p>
                 </div>
               </div>
 
