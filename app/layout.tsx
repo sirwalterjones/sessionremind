@@ -75,7 +75,6 @@ export default function RootLayout({
                       <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
                         Session Remind
                       </h1>
-                      <p className="text-xs text-stone-500 font-medium hidden sm:block">for photographers</p>
                     </div>
                   </Link>
                 </div>
@@ -122,6 +121,17 @@ export default function RootLayout({
           <main className="max-w-6xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
             {children}
           </main>
+          
+          {/* Footer */}
+          <footer className="bg-white border-t border-stone-200 mt-auto">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="text-center">
+                <p className="text-sm text-stone-600">
+                  Made with <span className="text-red-500">❤️</span> by Jones Web Design & Development
+                </p>
+              </div>
+            </div>
+          </footer>
         </div>
       </body>
     </html>
