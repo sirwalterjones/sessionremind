@@ -117,12 +117,14 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
               
               {showExample && (
                 <div className="mt-2 text-blue-700 text-xs">
-                  <p className="font-medium mb-1">Example UseSession URLs:</p>
+                  <p className="font-medium mb-1">✅ UseSession URLs that work:</p>
                   <ul className="space-y-1 ml-2">
-                    <li>• https://app.usesession.com/sessions/abc123</li>
-                    <li>• https://app.usesession.com/bookings/xyz789</li>
-                    <li>• Any UseSession page with client details</li>
+                    <li>• <strong>Individual session pages:</strong> app.usesession.com/sessions/...</li>
+                    <li>• <strong>Client booking details:</strong> app.usesession.com/bookings/...</li>
+                    <li>• <strong>Calendar view pages:</strong> with client contact info visible</li>
+                    <li>• <strong>Session management pages:</strong> showing client details</li>
                   </ul>
+                  <p className="font-medium mt-2 text-blue-800">🎯 Best results from individual session pages!</p>
                 </div>
               )}
             </div>
@@ -158,14 +160,18 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
           
           {/* Instructions */}
           <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
-            <h5 className="font-medium text-green-900 mb-2">📱 How to get the URL:</h5>
-            <ol className="text-green-800 text-sm space-y-1">
-              <li>1. Open UseSession in your mobile browser</li>
-              <li>2. Navigate to the client's session page</li>
-              <li>3. Tap the address bar and copy the URL</li>
-              <li>4. Come back here and paste it above</li>
-              <li>5. Tap "Extract Data" and the form fills automatically!</li>
+            <h5 className="font-medium text-green-900 mb-2">📱 Step-by-Step Mobile Instructions:</h5>
+            <ol className="text-green-800 text-sm space-y-2">
+              <li><strong>1. Open UseSession:</strong> Go to app.usesession.com in your mobile browser</li>
+              <li><strong>2. Find your client:</strong> Navigate to the specific session page (app.usesession.com/sessions/...)</li>
+              <li><strong>3. Copy URL:</strong> Tap the address bar, select all, and copy the full URL</li>
+              <li><strong>4. Return here:</strong> Come back to Session Reminder and paste the URL above</li>
+              <li><strong>5. Extract:</strong> Tap "Extract Data" - name, email, phone, and session details fill automatically!</li>
             </ol>
+            
+            <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
+              <p className="text-yellow-800 text-xs font-medium">💡 Pro Tip: Individual session pages (with URLs like app.usesession.com/sessions/abc123) give the best extraction results!</p>
+            </div>
           </div>
         </div>
       </div>

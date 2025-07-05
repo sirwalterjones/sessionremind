@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import MobileSolution from '@/components/MobileSolution'
+import SimpleMobile from '@/components/SimpleMobile'
 
 export default function Home() {
   const simpleBookmarkletCode = "javascript:window.open('https://sessionremind.com/new','_blank');"
@@ -186,54 +186,19 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Bookmarklet */}
+          {/* Mobile & Desktop Solutions */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6">
                 <span className="text-stone-600 text-2xl">🔗</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Bookmarklet</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Quick Data Extraction</h3>
               <p className="text-gray-600">
-                Quick start - works instantly with any browser
+                Extract client data from UseSession easily
               </p>
             </div>
 
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 sm:p-6 mb-6">
-              <h4 className="text-stone-800 font-medium mb-3">🔗 Quick Start</h4>
-              <p className="text-stone-700 text-sm mb-4">
-                <span className="hidden sm:inline">Drag this button to your bookmarks bar and click it on any UseSession page</span>
-                <span className="sm:hidden">Save this link as a bookmark and use it on UseSession pages</span>
-              </p>
-              <MobileSolution />
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
-              <div className="text-center p-3 bg-stone-50 rounded-xl">
-                <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">1</div>
-                <p className="text-xs text-stone-600">Drag to Bookmarks</p>
-              </div>
-              <div className="text-center p-3 bg-stone-50 rounded-xl">
-                <div className="w-8 h-8 bg-stone-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">2</div>
-                <p className="text-xs text-stone-600">Visit UseSession</p>
-              </div>
-              <div className="text-center p-3 bg-stone-50 rounded-xl">
-                <div className="w-8 h-8 bg-stone-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold text-sm">3</div>
-                <p className="text-xs text-stone-600">Click & Done!</p>
-              </div>
-            </div>
-
-            <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
-              <div className="flex items-start space-x-3">
-                <span className="text-stone-600 text-lg">💡</span>
-                <div>
-                  <p className="text-stone-800 font-medium text-sm mb-1">Show bookmarks bar:</p>
-                  <p className="text-stone-700 text-xs">
-                    <kbd className="px-2 py-1 bg-stone-200 rounded text-xs font-mono">Ctrl+Shift+B</kbd> (Windows) or 
-                    <kbd className="px-2 py-1 bg-stone-200 rounded text-xs font-mono ml-1">Cmd+Shift+B</kbd> (Mac)
-                  </p>
-                </div>
-              </div>
-            </div>
+            <SimpleMobile />
           </div>
         </div>
 

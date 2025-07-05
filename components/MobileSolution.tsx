@@ -83,11 +83,12 @@ export default function MobileSolution() {
             <div className="bg-blue-50 rounded-lg p-3 mb-3">
               <h5 className="font-medium text-blue-900 mb-2">How it works:</h5>
               <ol className="text-blue-800 text-sm space-y-1">
-                <li>1. 📱 Open UseSession client page</li>
-                <li>2. 📋 Copy the URL from address bar</li>
-                <li>3. 🔗 Open Session Reminder (button below)</li>
-                <li>4. 📝 Paste URL in extraction field</li>
-                <li>5. ✨ Data fills automatically!</li>
+                <li>1. 📱 Open app.usesession.com on your phone</li>
+                <li>2. 🎯 Go to the specific client session page</li>
+                <li>3. 📋 Copy the full URL (app.usesession.com/sessions/...)</li>
+                <li>4. 🔗 Open Session Reminder (button below)</li>
+                <li>5. 📝 Paste URL in the "Extract from URL" field</li>
+                <li>6. ✨ Client data fills automatically!</li>
               </ol>
             </div>
             

@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Form from '@/components/Form'
-import MobileSolution from '@/components/MobileSolution'
-import URLExtractor from '@/components/URLExtractor'
+import SimpleMobile from '@/components/SimpleMobile'
 
 interface FormData {
   name: string
@@ -424,15 +423,9 @@ export default function NewReminder() {
             </p>
           </div>
           
-          <div className="space-y-6">
-            {/* URL Extraction - Works on all mobile devices */}
-            <URLExtractor onDataExtracted={(data) => {
-              setInitialData(prev => ({ ...prev, ...data }))
-            }} />
-            
-            {/* Mobile Solutions Component */}
-            <MobileSolution />
-          </div>
+          <SimpleMobile onDataExtracted={(data) => {
+            setInitialData(prev => ({ ...prev, ...data }))
+          }} />
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
