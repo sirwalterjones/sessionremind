@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Form from '@/components/Form'
+import MobileSolution from '@/components/MobileSolution'
+import URLExtractor from '@/components/URLExtractor'
 
 interface FormData {
   name: string
@@ -413,171 +415,24 @@ export default function NewReminder() {
           </p>
         </div>
 
-        {/* Mobile Data Extraction Section */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 mb-8">
+        {/* Working Mobile Solutions */}
+        <div className="mb-8">
           <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Extract from UseSession</h3>
+            <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Mobile Data Extraction</h3>
             <p className="text-blue-700 text-sm">
-              Two easy ways to get your client data
+              Choose the method that works best for your mobile device
             </p>
           </div>
           
-          {/* Method Selection */}
-          <div className="grid gap-4 mb-6">
-            {/* Mobile Bookmarklet Method */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
-              <div className="flex items-start space-x-3">
-                <span className="text-green-600 text-2xl">⚡</span>
-                <div className="flex-1">
-                  <h4 className="font-bold text-green-900 mb-2">Method 1: One-Tap Bookmarklet</h4>
-                  <p className="text-green-800 text-sm mb-3">
-                    Save this link to your bookmarks, then tap it while on any UseSession page
-                  </p>
-                  <div className="bg-white rounded-lg p-3 border border-green-200">
-                    <p className="text-xs text-gray-600 mb-2">Drag this to your bookmarks bar (or copy link):</p>
-                    <a 
-                      href={`javascript:(function(){
-                        const text = document.body.innerText;
-                        const email = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);
-                        const phone = text.match(/[+]?[0-9]{10,15}/);
-                        const nameMatch = text.match(/([A-Z][a-z]+\\s+[A-Z][a-z]+)/);
-                        const timeMatch = text.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);
-                        const dayMatch = text.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);
-                        let sessionTime = '';
-                        if (timeMatch && dayMatch) {
-                          sessionTime = dayMatch[1] + ', ' + dayMatch[2] + ' at ' + timeMatch[1];
-                        } else if (dayMatch) {
-                          sessionTime = dayMatch[1] + ', ' + dayMatch[2];
-                        }
-                        const params = new URLSearchParams({
-                          name: nameMatch ? nameMatch[1] : '',
-                          email: email ? email[0] : '',
-                          phone: phone ? phone[0] : '',
-                          sessionTime: sessionTime,
-                          sessionTitle: sessionTime ? sessionTime.includes('July') ? 'July Photography Session' : 'Photography Session' : 'Photography Session'
-                        });
-                        window.open('${window.location.origin}/new?' + params.toString(), '_blank');
-                      })();`}
-                      className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg font-medium text-sm hover:bg-green-700 transition-colors"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      📚 UseSession → Reminder
-                    </a>
-                  </div>
-                  <p className="text-xs text-green-700 mt-2">
-                    ✨ One tap while on UseSession = instant form fill!
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Copy-Paste Method */}
-            <div className="bg-white border border-blue-200 rounded-xl p-4">
-              <div className="flex items-start space-x-3">
-                <span className="text-blue-600 text-2xl">📋</span>
-                <div className="flex-1">
-                  <h4 className="font-bold text-blue-900 mb-2">Method 2: Copy & Paste</h4>
-                  <p className="text-blue-800 text-sm mb-3">
-                    If bookmarklet doesn't work, copy the UseSession page text and paste below
-                  </p>
-                  <button
-                    onClick={() => setShowTextExtractor(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors"
-                  >
-                    📝 Open Text Paste
-                  </button>
-                </div>
-              </div>
-            </div>
+          <div className="space-y-6">
+            {/* URL Extraction - Works on all mobile devices */}
+            <URLExtractor onDataExtracted={(data) => {
+              setInitialData(prev => ({ ...prev, ...data }))
+            }} />
+            
+            {/* Mobile Solutions Component */}
+            <MobileSolution />
           </div>
-          
-          {/* Text Extractor (shown when Copy & Paste is clicked) */}
-          {showTextExtractor && (
-            <div className="bg-white rounded-xl p-6 border border-blue-100">
-            <div className="space-y-6">
-              {/* Mobile Instructions */}
-              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                <div className="flex items-start space-x-3">
-                  <span className="text-green-600 text-2xl">📱</span>
-                  <div>
-                    <h4 className="font-bold text-green-900 mb-3">Easy Mobile Steps:</h4>
-                    <div className="space-y-2 text-green-800 text-sm">
-                      <div className="flex items-start space-x-2">
-                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">1</span>
-                        <div>On the UseSession page, tap and hold to <strong>Select All</strong></div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">2</span>
-                        <div>Tap <strong>Copy</strong> from the menu</div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">3</span>
-                        <div>Come back here and tap <strong>Paste</strong> in the box below</div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <span className="bg-green-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">4</span>
-                        <div>Tap <strong>"Extract Data"</strong></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Large mobile-friendly input */}
-              <div>
-                <label className="block text-lg font-medium text-gray-900 mb-3">
-                  📋 Paste UseSession Text Here:
-                </label>
-                <textarea
-                  placeholder="Tap here and paste all the text from your UseSession page...
-
-Looking for text like:
-• Client name (e.g., Melissa Comtois)
-• Email (melissaacomtois@gmail.com)  
-• Phone (+16035606316)
-• Date & time (Sunday, July 13th, 2025, 7:30 PM)"
-                  value={textInput}
-                  onChange={(e) => setTextInput(e.target.value)}
-                  rows={8}
-                  className="w-full px-4 py-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
-                />
-                {textInput.trim() && (
-                  <div className="mt-2 text-sm text-gray-600">
-                    ✓ {textInput.length} characters pasted - ready to extract!
-                  </div>
-                )}
-              </div>
-
-              {/* Large mobile-friendly button */}
-              <button
-                onClick={handleSmartExtraction}
-                disabled={!textInput.trim() || isExtractingText}
-                className="w-full px-6 py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
-              >
-                {isExtractingText ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Extracting...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center space-x-2">
-                    <span>🚀</span>
-                    <span>Extract Client Data</span>
-                  </div>
-                )}
-              </button>
-
-              {textInput && (
-                <button
-                  onClick={() => setTextInput('')}
-                  className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
-                >
-                  Clear & Start Over
-                </button>
-              )}
-            </div>
-            </div>
-          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import MobileBookmarklet from '@/components/MobileBookmarklet'
+import MobileSolution from '@/components/MobileSolution'
 
 export default function Home() {
   const simpleBookmarkletCode = "javascript:window.open('https://sessionremind.com/new','_blank');"
@@ -204,7 +204,7 @@ export default function Home() {
                 <span className="hidden sm:inline">Drag this button to your bookmarks bar and click it on any UseSession page</span>
                 <span className="sm:hidden">Save this link as a bookmark and use it on UseSession pages</span>
               </p>
-              <MobileBookmarklet bookmarkletCode={dataExtractionBookmarkletCode} />
+              <MobileSolution />
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
