@@ -179,17 +179,25 @@ function createFloatingButton() {
     existingButton.remove();
   }
 
+  // Check if user has a saved preference for button size
+  const isMinimized = localStorage.getItem('sessionReminderButtonMinimized') === 'true';
+
   const button = document.createElement('div');
   button.id = 'session-reminder-btn';
-  button.className = 'session-reminder-floating-btn';
+  button.className = isMinimized ? 'session-reminder-floating-btn minimized' : 'session-reminder-floating-btn';
   button.innerHTML = `
     <div class="session-reminder-btn-content">
       <span class="session-reminder-icon">📱</span>
       <span class="session-reminder-text">Send Text Reminder</span>
     </div>
+    <div class="session-reminder-resize-btn" title="${isMinimized ? 'Expand' : 'Minimize'} button">
+      <span class="resize-icon">${isMinimized ? '⬆️' : '⬇️'}</span>
+    </div>
   `;
 
-  button.addEventListener('click', function() {
+  // Main button click handler
+  const mainContent = button.querySelector('.session-reminder-btn-content');
+  mainContent.addEventListener('click', function() {
     const clientData = extractClientData();
     
     // Send message to background script to open new tab
@@ -197,6 +205,28 @@ function createFloatingButton() {
       action: 'openReminderForm',
       data: clientData
     });
+  });
+
+  // Resize button click handler
+  const resizeBtn = button.querySelector('.session-reminder-resize-btn');
+  resizeBtn.addEventListener('click', function(e) {
+    e.stopPropagation(); // Prevent main button click
+    
+    const currentlyMinimized = button.classList.contains('minimized');
+    const newMinimized = !currentlyMinimized;
+    
+    if (newMinimized) {
+      button.classList.add('minimized');
+      resizeBtn.querySelector('.resize-icon').textContent = '⬆️';
+      resizeBtn.title = 'Expand button';
+    } else {
+      button.classList.remove('minimized');
+      resizeBtn.querySelector('.resize-icon').textContent = '⬇️';
+      resizeBtn.title = 'Minimize button';
+    }
+    
+    // Save preference
+    localStorage.setItem('sessionReminderButtonMinimized', newMinimized.toString());
   });
 
   document.body.appendChild(button);

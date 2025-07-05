@@ -17,6 +17,25 @@
   font-weight: 600;
   backdrop-filter: blur(10px);
   animation: pulse 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Minimized state */
+.session-reminder-floating-btn.minimized {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 0;
+  justify-content: center;
+  animation: none;
+  opacity: 0.8;
+}
+
+.session-reminder-floating-btn.minimized:hover {
+  opacity: 1;
 }
 
 .session-reminder-floating-btn:hover {
@@ -34,14 +53,67 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.session-reminder-floating-btn.minimized .session-reminder-btn-content {
+  justify-content: center;
 }
 
 .session-reminder-icon {
   font-size: 16px;
 }
 
+.session-reminder-floating-btn.minimized .session-reminder-icon {
+  font-size: 20px;
+}
+
+/* Resize button styles */
+.session-reminder-resize-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.session-reminder-resize-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.session-reminder-floating-btn.minimized .session-reminder-resize-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  background: rgba(28, 25, 23, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.resize-icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.session-reminder-floating-btn.minimized .resize-icon {
+  font-size: 8px;
+}
+
 .session-reminder-text {
   white-space: nowrap;
+}
+
+.session-reminder-floating-btn.minimized .session-reminder-text {
+  display: none;
 }
 
 /* Pulse animation keyframes */
@@ -73,17 +145,45 @@
     display: none;
   }
   
-  .session-reminder-floating-btn {
+  .session-reminder-floating-btn:not(.minimized) {
     border-radius: 50%;
     width: 50px;
     height: 50px;
     padding: 0;
-    display: flex;
-    align-items: center;
     justify-content: center;
   }
   
   .session-reminder-icon {
     font-size: 20px;
+  }
+  
+  .session-reminder-floating-btn:not(.minimized) .session-reminder-resize-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 16px;
+    height: 16px;
+    background: rgba(28, 25, 23, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .session-reminder-floating-btn.minimized {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .session-reminder-floating-btn.minimized .session-reminder-icon {
+    font-size: 16px;
+  }
+  
+  .session-reminder-floating-btn.minimized .session-reminder-resize-btn {
+    top: -6px;
+    right: -6px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  .session-reminder-floating-btn.minimized .resize-icon {
+    font-size: 7px;
   }
 }

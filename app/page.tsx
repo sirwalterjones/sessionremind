@@ -122,9 +122,9 @@ export default function Home() {
               </ul>
               <div className="flex flex-col gap-3">
                 <a 
-                  href="/extension"
+                  href="/extension-resizable.zip"
                   className="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-full hover:bg-emerald-700 transition-all duration-200"
-                  download="session-reminder-extension-improved-names.zip"
+                  download="session-reminder-extension-resizable.zip"
                 >
                   <span className="mr-2">⬇️</span>
                   Download Extension
@@ -144,8 +144,15 @@ export default function Home() {
 
 ## What You'll See:
 - A floating "Send Text Reminder" button on UseSession pages
-- Click it to automatically extract client data
+- Click the main button to automatically extract client data
+- Click the small arrow button (⬇️/⬆️) to minimize/expand the button
+- Your size preference is remembered across page visits
 - New tab opens with reminder form pre-filled
+
+## New Features:
+✨ **Resizable Button**: Click the arrow to minimize button to avoid hiding other page elements
+✨ **Memory**: Your button size preference is saved automatically
+✨ **Mobile Optimized**: Smaller sizes on mobile devices
 
 ## Browser Support:
 ✅ Chrome, Edge, Brave, and other Chromium browsers`;

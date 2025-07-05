@@ -49,9 +49,9 @@ export default function Instructions() {
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a 
-                    href="/extension"
+                    href="/extension-resizable.zip"
                     className="inline-flex items-center justify-center px-4 py-2 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 text-sm"
-                    download="session-reminder-extension.zip"
+                    download="session-reminder-extension-resizable.zip"
                   >
                     <span className="mr-2">⬇️</span>
                     Download Extension
