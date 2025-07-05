@@ -167,7 +167,7 @@ export default function Home() {
                 <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
                   <a 
-                    href="/bookmarklet"
+                    href={dataExtractionBookmarkletCode}
                     className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
                     draggable="true"
                   >

@@ -74,7 +74,7 @@ export default function Instructions() {
                 <div className="bg-amber-50 border-2 border-dashed border-amber-300 rounded-lg p-4 text-center">
                   <h4 className="font-medium text-amber-900 mb-2 text-sm">Drag to Install</h4>
                   <a 
-                    href="/bookmarklet"
+                    href={dataExtractionBookmarkletCode}
                     className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
                     draggable="true"
                   >
