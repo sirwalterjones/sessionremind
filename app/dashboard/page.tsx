@@ -13,6 +13,9 @@ interface SentMessage {
   message: string
   status: string
   timestamp: string
+  createdAt?: string
+  scheduledFor?: string
+  sentAt?: string
 }
 
 interface ScheduledMessage {
@@ -25,7 +28,7 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day'
+  reminderType: '3-day' | '1-day' | 'registration' | 'manual'
   status: 'scheduled' | 'sent' | 'failed' | 'cancelled'
   createdAt: string
   sentAt?: string
@@ -36,7 +39,7 @@ interface ClientGroup {
   phone: string
   sessionTitle: string
   sessionTime: string
-  messages: ScheduledMessage[]
+  messages: (ScheduledMessage | SentMessage)[]
 }
 
 export default function Dashboard() {
@@ -105,8 +108,8 @@ export default function Dashboard() {
         setScheduledMessages(messages)
         setScheduledCount(messages.filter((msg: ScheduledMessage) => msg.status === 'scheduled').length)
         
-        // Group messages by client
-        const groups = groupMessagesByClient(messages)
+        // Group messages by client (combine scheduled and sent messages)
+        const groups = groupMessagesByClient(messages, sentMessages)
         setClientGroups(groups)
       }
     } catch (error) {
@@ -114,11 +117,14 @@ export default function Dashboard() {
     }
   }
 
-  const groupMessagesByClient = (messages: ScheduledMessage[]): ClientGroup[] => {
-    const grouped = messages.reduce((acc, message) => {
+  const groupMessagesByClient = (scheduledMessages: ScheduledMessage[], sentMessages: SentMessage[]): ClientGroup[] => {
+    const grouped = {} as Record<string, ClientGroup>
+    
+    // Process scheduled messages
+    scheduledMessages.forEach(message => {
       const key = `${message.clientName}-${message.phone}`
-      if (!acc[key]) {
-        acc[key] = {
+      if (!grouped[key]) {
+        grouped[key] = {
           clientName: message.clientName,
           phone: message.phone,
           sessionTitle: message.sessionTitle || 'Photography Session',
@@ -127,20 +133,62 @@ export default function Dashboard() {
         }
       } else {
         // Update with better data if current is empty/invalid
-        if (!acc[key].sessionTitle || acc[key].sessionTitle === 'Photography Session') {
-          acc[key].sessionTitle = message.sessionTitle || acc[key].sessionTitle
+        if (!grouped[key].sessionTitle || grouped[key].sessionTitle === 'Photography Session') {
+          grouped[key].sessionTitle = message.sessionTitle || grouped[key].sessionTitle
         }
-        if (!acc[key].sessionTime) {
-          acc[key].sessionTime = message.sessionTime || message.sessionDate || acc[key].sessionTime
+        if (!grouped[key].sessionTime) {
+          grouped[key].sessionTime = message.sessionTime || message.sessionDate || grouped[key].sessionTime
         }
       }
-      acc[key].messages.push(message)
-      return acc
-    }, {} as Record<string, ClientGroup>)
+      grouped[key].messages.push(message)
+    })
+    
+    // Process sent messages (registration and manual)
+    sentMessages.forEach(message => {
+      const key = `${message.name}-${message.phone}`
+      if (!grouped[key]) {
+        grouped[key] = {
+          clientName: message.name,
+          phone: message.phone,
+          sessionTitle: message.sessionTitle || 'Photography Session',
+          sessionTime: message.sessionTime || '',
+          messages: []
+        }
+      } else {
+        // Update with better data if current is empty/invalid
+        if (!grouped[key].sessionTitle || grouped[key].sessionTitle === 'Photography Session') {
+          grouped[key].sessionTitle = message.sessionTitle || grouped[key].sessionTitle
+        }
+        if (!grouped[key].sessionTime) {
+          grouped[key].sessionTime = message.sessionTime || grouped[key].sessionTime
+        }
+      }
+      
+      // Convert SentMessage to match ScheduledMessage format for display
+      const convertedMessage = {
+        id: message.id.toString(),
+        clientName: message.name,
+        phone: message.phone,
+        email: message.email,
+        sessionTitle: message.sessionTitle,
+        sessionTime: message.sessionTime,
+        message: message.message,
+        scheduledFor: message.timestamp,
+        sessionDate: message.sessionTime,
+        reminderType: message.status.includes('Registration') ? 'registration' as const : 'manual' as const,
+        status: message.status.includes('Sent') ? 'sent' as const : 'scheduled' as const,
+        createdAt: message.timestamp,
+        sentAt: message.status.includes('Sent') ? message.timestamp : undefined
+      }
+      
+      grouped[key].messages.push(convertedMessage)
+    })
 
-    return Object.values(grouped).sort((a, b) => 
-      new Date(b.messages[0]?.createdAt || 0).getTime() - new Date(a.messages[0]?.createdAt || 0).getTime()
-    )
+    return Object.values(grouped).sort((a, b) => {
+      const aLatest = Math.max(...a.messages.map(m => new Date(m.createdAt || (m as SentMessage).timestamp || 0).getTime()))
+      const bLatest = Math.max(...b.messages.map(m => new Date(m.createdAt || (m as SentMessage).timestamp || 0).getTime()))
+      return bLatest - aLatest
+    })
   }
 
 
@@ -541,6 +589,11 @@ export default function Dashboard() {
                 const sentMessages = client.messages.filter(msg => msg.status === 'sent')
                 const failedMessages = client.messages.filter(msg => msg.status === 'failed')
                 const cancelledMessages = client.messages.filter(msg => msg.status === 'cancelled')
+                
+                // Group sent messages by type
+                const registrationMessages = sentMessages.filter(msg => 'reminderType' in msg && msg.reminderType === 'registration')
+                const manualMessages = sentMessages.filter(msg => 'reminderType' in msg && msg.reminderType === 'manual')
+                const reminderMessages = sentMessages.filter(msg => 'reminderType' in msg && msg.reminderType !== 'registration' && msg.reminderType !== 'manual')
                 const sessionPassed = isSessionPassed(client.sessionTime)
                 
                 return (
@@ -583,25 +636,35 @@ export default function Dashboard() {
                       </div>
                       <div className="text-right">
                         <div className="text-sm text-gray-500 mb-1">{client.messages.length} message{client.messages.length !== 1 ? 's' : ''}</div>
-                        <div className="flex gap-2">
-                          {scheduledMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                              {scheduledMessages.length} scheduled
+                        <div className="flex gap-1 flex-wrap">
+                          {registrationMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              📧 {registrationMessages.length} registration
                             </span>
                           )}
-                          {sentMessages.length > 0 && (
+                          {manualMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                              💬 {manualMessages.length} manual
+                            </span>
+                          )}
+                          {reminderMessages.length > 0 && (
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                              {sentMessages.length} sent
+                              ⏰ {reminderMessages.length} reminder{reminderMessages.length !== 1 ? 's' : ''}
+                            </span>
+                          )}
+                          {scheduledMessages.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                              ⏳ {scheduledMessages.length} scheduled
                             </span>
                           )}
                           {failedMessages.length > 0 && (
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                              {failedMessages.length} failed
+                              ❌ {failedMessages.length} failed
                             </span>
                           )}
                           {cancelledMessages.length > 0 && (
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              {cancelledMessages.length} cancelled
+                              🚫 {cancelledMessages.length} cancelled
                             </span>
                           )}
                         </div>
@@ -622,7 +685,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <div className="flex items-center">
                         <CalendarIcon className="h-4 w-4 mr-1" />
-                        <span>Created {formatDate(client.messages[0]?.createdAt)}</span>
+                        <span>Created {formatDate(client.messages[0]?.createdAt || (client.messages[0] as SentMessage)?.timestamp || '')}</span>
                       </div>
                       <span className="text-stone-600 font-medium">Click to view details →</span>
                     </div>
@@ -683,7 +746,7 @@ export default function Dashboard() {
                 
                 <div className="space-y-4">
                   {selectedClient.messages
-                    .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
+                    .sort((a, b) => new Date(a.createdAt || a.scheduledFor || (a as SentMessage).timestamp || 0).getTime() - new Date(b.createdAt || b.scheduledFor || (b as SentMessage).timestamp || 0).getTime())
                     .map((message) => (
                     <div key={message.id} className="bg-stone-50 border border-stone-200 rounded-xl p-6">
                       <div className="flex items-start justify-between mb-4">
@@ -691,14 +754,23 @@ export default function Dashboard() {
                           {getStatusIcon(message.status)}
                           <div className="ml-3">
                             <h5 className="font-semibold text-gray-900">
-                              {message.reminderType === '3-day' && '3-Day Reminder'}
-                              {message.reminderType === '1-day' && '1-Day Reminder'}
+                              {'reminderType' in message && message.reminderType === 'registration' && '📧 Registration Confirmation'}
+                              {'reminderType' in message && message.reminderType === 'manual' && '💬 Manual Message'}
+                              {'reminderType' in message && message.reminderType === '3-day' && '⏰ 3-Day Reminder'}
+                              {'reminderType' in message && message.reminderType === '1-day' && '⏰ 1-Day Reminder'}
+                              {!('reminderType' in message) && '📅 Scheduled Reminder'}
                             </h5>
                             <div className="text-sm text-gray-600 mt-1">
                               <div className="flex items-center gap-4">
-                                <span>🕒 Scheduled: {formatDate(message.scheduledFor)}</span>
-                                {message.sentAt && (
-                                  <span>✅ Sent: {formatDate(message.sentAt)}</span>
+                                {'reminderType' in message && (message.reminderType === 'registration' || message.reminderType === 'manual') ? (
+                                  <span>✅ Sent: {formatDate(message.scheduledFor || '')}</span>
+                                ) : (
+                                  <>
+                                    <span>🕒 Scheduled: {formatDate(message.scheduledFor || '')}</span>
+                                    {message.sentAt && (
+                                      <span>✅ Sent: {formatDate(message.sentAt)}</span>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </div>
@@ -713,20 +785,20 @@ export default function Dashboard() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
-                                cancelMessage(message.id)
+                                cancelMessage(message.id.toString())
                               }}
-                              disabled={cancellingMessages.has(message.id)}
+                              disabled={cancellingMessages.has(message.id.toString())}
                               className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                                cancelledMessages.has(message.id)
+                                cancelledMessages.has(message.id.toString())
                                   ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                  : cancellingMessages.has(message.id)
+                                  : cancellingMessages.has(message.id.toString())
                                   ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
                                   : 'bg-red-100 text-red-700 hover:bg-red-200'
                               }`}
                             >
-                              {cancelledMessages.has(message.id)
+                              {cancelledMessages.has(message.id.toString())
                                 ? '✓ Cancelled'
-                                : cancellingMessages.has(message.id)
+                                : cancellingMessages.has(message.id.toString())
                                 ? 'Cancelling...'
                                 : 'Cancel'}
                             </button>
@@ -747,7 +819,7 @@ export default function Dashboard() {
                       </div>
                       
                       <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
-                        <span>Created: {formatDate(message.createdAt)}</span>
+                        <span>Created: {formatDate(message.createdAt || (message as SentMessage).timestamp || message.scheduledFor || '')}</span>
                         <span>ID: {message.id}</span>
                       </div>
                     </div>
