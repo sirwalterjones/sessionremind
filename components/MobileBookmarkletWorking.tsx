@@ -26,7 +26,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
   const handleCopyCode = async () => {
     try {
       await navigator.clipboard.writeText(bookmarkletCode)
-      alert('✅ Bookmarklet code copied!\n\nNow:\n1. Open your browser bookmarks\n2. Add new bookmark\n3. Paste the code as URL\n4. Name it "Session Reminder"\n5. Use it on UseSession pages!')
+      alert('✅ Bookmarklet code copied!\n\nNow:\n1. Open your browser bookmarks\n2. Add new bookmark\n3. Paste the code as URL\n4. Name it "Session Remind"\n5. Use it on UseSession pages!')
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea')
@@ -35,7 +35,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
       textArea.select()
       try {
         document.execCommand('copy')
-        alert('✅ Bookmarklet code copied!\n\nNow:\n1. Open your browser bookmarks\n2. Add new bookmark\n3. Paste the code as URL\n4. Name it "Session Reminder"\n5. Use it on UseSession pages!')
+        alert('✅ Bookmarklet code copied!\n\nNow:\n1. Open your browser bookmarks\n2. Add new bookmark\n3. Paste the code as URL\n4. Name it "Session Remind"\n5. Use it on UseSession pages!')
       } catch (fallbackErr) {
         alert('❌ Copy failed. Please manually copy the code from the text box below.')
         setShowFullInstructions(true)
@@ -52,7 +52,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
           "1. Tap 'Copy Code' button below",
           "2. Open Safari bookmarks (Bookmarks icon)",
           "3. Tap 'Edit' → '+' to add bookmark",
-          "4. Paste code as URL, name 'Session Reminder'",
+          "4. Paste code as URL, name 'Session Remind'",
           "5. Save and use on UseSession pages!"
         ],
         detailedSteps: [
@@ -61,7 +61,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
           "• Tap the share button (box with arrow up)",
           "• Scroll and tap 'Add Bookmark'",
           "• Change the URL to the copied bookmarklet code",
-          "• Name it 'Session Reminder'",
+          "• Name it 'Session Remind'",
           "• Choose 'Bookmarks' folder",
           "• Tap 'Save'",
           "• Access via Bookmarks menu on UseSession pages"
@@ -74,7 +74,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
           "1. Tap 'Copy Code' button below",
           "2. Open Chrome menu (⋮) → Bookmarks",
           "3. Tap '+' to add bookmark",
-          "4. Paste code as URL, name 'Session Reminder'",
+          "4. Paste code as URL, name 'Session Remind'",
           "5. Save and use on UseSession pages!"
         ],
         detailedSteps: [
@@ -84,7 +84,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
           "• Select 'Bookmarks'",
           "• Tap the '+' or 'Add' button",
           "• In 'URL' field, paste the bookmarklet code",
-          "• Name it 'Session Reminder'",
+          "• Name it 'Session Remind'",
           "• Tap 'Save'",
           "• Access via Bookmarks on UseSession pages"
         ]
@@ -152,7 +152,10 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
                 draggable="true"
                 onClick={(e) => e.preventDefault()}
               >
-                📱 Session Reminder ✨
+                <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
+                  <span className="text-blue-700 text-xs font-bold">S</span>
+                </div>
+                Session Remind
               </a>
             </div>
           )}
@@ -172,7 +175,7 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-yellow-800 font-medium text-xs mb-1">💡 Pro Tip:</p>
             <p className="text-yellow-700 text-xs">
-              After saving, go to any UseSession client page and tap your "Session Reminder" bookmark. 
+              After saving, go to any UseSession client page and tap your "Session Remind" bookmark. 
               It will automatically extract the client data and open the reminder form!
             </p>
           </div>

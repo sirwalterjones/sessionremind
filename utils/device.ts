@@ -49,7 +49,7 @@ export const getBookmarkletInstructions = () => {
       steps: [
         "1. Long-press the bookmarklet button",
         "2. Select 'Add to bookmarks'",
-        "3. Name it 'Session Reminder'",
+        "3. Name it 'Session Remind'",
         "4. Use from your bookmarks on UseSession pages"
       ]
     }

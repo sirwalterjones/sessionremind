@@ -168,14 +168,17 @@ export default function Home() {
                   <h4 className="font-medium text-gray-900 mb-2">Drag to Bookmarks Bar</h4>
                   <a 
                     href={dataExtractionBookmarkletCode}
-                    className="inline-block px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
+                    className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
                     draggable="true"
                     onDragStart={(e) => {
                       e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', 'Session Reminder');
+                      e.dataTransfer.setData('text/plain', 'Session Remind');
                     }}
                   >
-                    📋 Session Reminder
+                    <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
+                      <span className="text-black text-xs font-bold">S</span>
+                    </div>
+                    Session Remind
                   </a>
                   <p className="text-xs text-gray-500 mt-2">
                     Drag this button to your bookmarks bar
@@ -311,7 +314,7 @@ export default function Home() {
                     <li className="flex items-start">
                       <span className="flex-shrink-0 w-6 h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</span>
                       <div>
-                        <strong>Edit the bookmark:</strong> Change the bookmark name to "Session Reminder"
+                        <strong>Edit the bookmark:</strong> Change the bookmark name to "Session Remind"
                       </div>
                     </li>
                     <li className="flex items-start">
@@ -332,7 +335,7 @@ export default function Home() {
                     <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
                       <h5 className="font-semibold text-stone-800 mb-2">Option 1: Drag & Drop</h5>
                       <p className="text-stone-700 text-sm">
-                        Drag the "📋 Session Reminder" button above to your bookmarks bar
+                        Drag the "Session Remind" button above to your bookmarks bar
                       </p>
                     </div>
                     <div className="bg-stone-50 border border-stone-200 rounded-xl p-4">
@@ -340,7 +343,7 @@ export default function Home() {
                       <ol className="text-stone-700 text-sm space-y-1">
                         <li>1. Show your bookmarks bar (Ctrl+Shift+B)</li>
                         <li>2. Create a new bookmark</li>
-                        <li>3. Name it "Session Reminder"</li>
+                        <li>3. Name it "Session Remind"</li>
                         <li>4. Copy the JavaScript code from the button above</li>
                       </ol>
                     </div>

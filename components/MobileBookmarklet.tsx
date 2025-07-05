@@ -36,7 +36,7 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(bookmarkletCode)
-      alert('Bookmarklet copied to clipboard! Now create a new bookmark and paste this as the URL.')
+      alert('Bookmarklet copied to clipboard! Now create a new bookmark named "Session Remind" and paste this as the URL.')
     } catch (err) {
       console.error('Failed to copy:', err)
       alert('Please manually copy the bookmarklet code')
@@ -56,7 +56,7 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
         >
           <span className="mr-2">📱</span>
           <span className="truncate">
-            {deviceInfo.isMobile ? "Session Reminder" : "UseSession → Session Reminder"}
+            {deviceInfo.isMobile ? "Session Remind" : "UseSession → Session Remind"}
           </span>
           <span className="ml-2">✨</span>
         </a>
@@ -105,7 +105,7 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
                 <li>2. Open your browser's bookmark manager</li>
                 <li>3. Add a new bookmark</li>
                 <li>4. Paste the code as the URL</li>
-                <li>5. Name it "Session Reminder"</li>
+                <li>5. Name it "Session Remind"</li>
               </ol>
             </div>
             
@@ -124,7 +124,7 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
             <div className="bg-amber-100 border border-amber-300 rounded-lg p-3">
               <p className="font-medium text-amber-800">💡 Pro Tip:</p>
               <p className="text-amber-700 text-xs mt-1">
-                Once saved, visit any UseSession page and tap your "Session Reminder" bookmark to automatically extract client data!
+                Once saved, visit any UseSession page and tap your "Session Remind" bookmark to automatically extract client data!
               </p>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
             <li>1. Right-click the button above → "Copy link"</li>
             <li>2. Add new bookmark in your browser</li>
             <li>3. Paste the copied link as the URL</li>
-            <li>4. Name it "Session Reminder"</li>
+            <li>4. Name it "Session Remind"</li>
           </ol>
         </div>
       )}
