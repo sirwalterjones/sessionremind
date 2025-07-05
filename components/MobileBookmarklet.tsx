@@ -48,18 +48,28 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
       {/* Mobile-optimized bookmarklet button */}
       <div className="text-center">
         <a 
-          href={bookmarkletCode}
+          href={deviceInfo.isMobile ? "#" : "#"}
+          data-bookmarklet={bookmarkletCode}
           className="inline-flex items-center px-4 py-3 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200 text-sm break-words max-w-full"
           draggable="true"
           title={deviceInfo.isMobile ? "Tap for mobile instructions" : "Session Remind - Drag this to your bookmarks bar"}
           onClick={handleBookmarkletClick}
           onDragStart={(e) => {
             if (!deviceInfo.isMobile) {
+              // Override the href during drag with the bookmarklet
+              e.currentTarget.href = bookmarkletCode;
+              
               e.dataTransfer.setData('text/uri-list', bookmarkletCode);
               e.dataTransfer.setData('text/plain', 'Session Remind');
               e.dataTransfer.setData('text/x-moz-url', `${bookmarkletCode}\nSession Remind`);
-              e.dataTransfer.setData('text/html', `<a href="${bookmarkletCode}">Session Remind</a>`);
+              e.dataTransfer.setData('DownloadURL', `application/javascript:Session Remind.js:${bookmarkletCode}`);
               e.dataTransfer.effectAllowed = 'copy';
+            }
+          }}
+          onDragEnd={(e) => {
+            if (!deviceInfo.isMobile) {
+              // Reset href after drag
+              e.currentTarget.href = '#';
             }
           }}
         >

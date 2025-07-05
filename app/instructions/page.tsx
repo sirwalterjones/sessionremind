@@ -74,12 +74,25 @@ export default function Instructions() {
                 <div className="bg-amber-50 border-2 border-dashed border-amber-300 rounded-lg p-4 text-center">
                   <h4 className="font-medium text-amber-900 mb-2 text-sm">Drag to Install</h4>
                   <a 
-                    href={dataExtractionBookmarkletCode}
+                    href="#"
                     title="Session Remind"
                     data-bookmark-title="Session Remind"
+                    data-bookmarklet={dataExtractionBookmarkletCode}
                     className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
                     draggable="true"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // Show copy instructions instead
+                      navigator.clipboard.writeText(dataExtractionBookmarkletCode).then(() => {
+                        alert('✅ Bookmarklet copied!\n\nTo install:\n1. Create a new bookmark\n2. Name it "Session Remind"\n3. Paste the copied code as the URL\n4. Save and use on UseSession pages!');
+                      }).catch(() => {
+                        alert('Please manually copy this code and save as a bookmark named "Session Remind":\n\n' + dataExtractionBookmarkletCode);
+                      });
+                    }}
                     onDragStart={(e) => {
+                      // Override the href during drag with the bookmarklet
+                      e.currentTarget.href = dataExtractionBookmarkletCode;
+                      
                       // Set the drag image to include text
                       const dragElement = document.createElement('div');
                       dragElement.innerHTML = '📂 Session Remind';
@@ -97,8 +110,7 @@ export default function Instructions() {
                       e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
                       e.dataTransfer.setData('text/plain', 'Session Remind');
                       e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}" title="Session Remind">Session Remind</a>`);
-                      e.dataTransfer.setData('application/x-bookmark', `Session Remind\n${dataExtractionBookmarkletCode}`);
+                      e.dataTransfer.setData('DownloadURL', `application/javascript:Session Remind.js:${dataExtractionBookmarkletCode}`);
                       e.dataTransfer.effectAllowed = 'copy';
                       
                       // Clean up the drag element after a short delay
@@ -107,6 +119,10 @@ export default function Instructions() {
                           document.body.removeChild(dragElement);
                         }
                       }, 100);
+                    }}
+                    onDragEnd={(e) => {
+                      // Reset href after drag
+                      e.currentTarget.href = '#';
                     }}
                   >
                     <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
