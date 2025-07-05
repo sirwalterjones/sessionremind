@@ -81,7 +81,7 @@ export default function Instructions() {
                     <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
                       <span className="text-amber-600 text-xs font-bold">S</span>
                     </div>
-                    Session Remind
+                    ession Remind
                   </a>
                   <p className="text-amber-700 text-xs mt-2">Drag to your bookmarks bar</p>
                 </div>

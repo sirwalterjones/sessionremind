@@ -174,7 +174,7 @@ export default function Home() {
                     <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
                       <span className="text-black text-xs font-bold">S</span>
                     </div>
-                    Session Remind
+                    ession Remind
                   </a>
                   <p className="text-xs text-gray-500 mt-2">
                     Drag this button to your bookmarks bar
