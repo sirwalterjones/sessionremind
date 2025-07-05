@@ -16,6 +16,8 @@ interface FormData {
   sendRegistrationMessage: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
+  sendManualText: boolean
+  manualMessage: string
 }
 
 export default function NewReminder() {
@@ -294,7 +296,40 @@ export default function NewReminder() {
         console.log('Skipping registration confirmation (disabled by user)')
       }
 
-      // 2. Schedule reminders if selected
+      // 2. Send manual text immediately (if enabled)
+      let manualTextSent = false
+      let finalManualMessage = ''
+      
+      if (formData.sendManualText) {
+        console.log('Sending manual text...')
+        
+        // Replace placeholders in manual message
+        finalManualMessage = formData.manualMessage
+          .replace(/{name}/g, formData.name)
+          .replace(/{sessionTitle}/g, formData.sessionTitle)
+          .replace(/{sessionTime}/g, formData.sessionTime)
+
+        const manualSmsResponse = await fetch('/api/send-sms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            message: finalManualMessage,
+          }),
+        })
+
+        if (!manualSmsResponse.ok) {
+          throw new Error('Failed to send manual text')
+        }
+        
+        manualTextSent = true
+      } else {
+        console.log('Skipping manual text (disabled by user)')
+      }
+
+      // 3. Schedule reminders if selected
       if (formData.threeDayReminder || formData.oneDayReminder) {
         console.log('Scheduling reminders...')
         
@@ -329,6 +364,17 @@ export default function NewReminder() {
           })
         }
 
+        // Add manual text message (if sent)
+        if (manualTextSent) {
+          sentMessages.push({
+            ...formData,
+            message: finalManualMessage,
+            status: 'Sent (Manual)',
+            timestamp: new Date().toISOString(),
+            id: Date.now() + 1, // Ensure unique ID
+          })
+        }
+
         // Add scheduled reminders
         scheduleResult.scheduledReminders?.forEach((reminder: any) => {
           sentMessages.push({
@@ -346,14 +392,28 @@ export default function NewReminder() {
         
         localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
 
-        // Create success message with details about scheduled/skipped reminders
+        // Create success message with details about sent messages and scheduled reminders
         const scheduledCount = scheduleResult.scheduledReminders?.length || 0
         let successDetail = ''
+        let sentCount = 0
+        let sentTypes = []
         
         if (registrationSent) {
-          successDetail = `${formData.name} has been registered and ${scheduledCount} reminder(s) scheduled.`
-        } else {
-          successDetail = `${scheduledCount} reminder(s) scheduled for ${formData.name}.`
+          sentCount++
+          sentTypes.push('registration')
+        }
+        if (manualTextSent) {
+          sentCount++
+          sentTypes.push('manual text')
+        }
+        
+        if (sentCount > 0) {
+          successDetail = `${sentCount} message(s) sent (${sentTypes.join(', ')}) to ${formData.name}.`
+        }
+        
+        if (scheduledCount > 0) {
+          if (successDetail) successDetail += ` `
+          successDetail += `${scheduledCount} reminder(s) scheduled.`
         }
         
         if (scheduleResult.skippedReminders && scheduleResult.skippedReminders.length > 0) {
@@ -364,13 +424,27 @@ export default function NewReminder() {
           successDetail += ` Session is ${scheduleResult.daysUntilSession} days away.`
         }
 
-        setSuccessMessage(registrationSent ? '✅ Registration & Reminders Scheduled!' : '✅ Reminders Scheduled!')
+        // Set appropriate success message
+        let successMsg = '✅ '
+        if (sentCount > 0 && scheduledCount > 0) {
+          successMsg += 'Messages Sent & Reminders Scheduled!'
+        } else if (sentCount > 0) {
+          successMsg += 'Messages Sent!'
+        } else {
+          successMsg += 'Reminders Scheduled!'
+        }
+        
+        setSuccessMessage(successMsg)
         setSuccessDetails(successDetail)
         setShowSuccess(true)
       } else {
-        // Just registration, no reminders
+        // No scheduled reminders, but may have registration or manual text
+        const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
+        let sentCount = 0
+        let sentTypes = []
+        
+        // Add registration message (if sent)
         if (registrationSent) {
-          const sentMessages = JSON.parse(localStorage.getItem('sentMessages') || '[]')
           sentMessages.push({
             ...formData,
             message: registrationMessage,
@@ -378,12 +452,30 @@ export default function NewReminder() {
             timestamp: new Date().toISOString(),
             id: Date.now(),
           })
-          localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
+          sentCount++
+          sentTypes.push('registration')
+        }
 
-          setSuccessMessage('✅ Registration Confirmed!')
-          setSuccessDetails(`${formData.name} has been registered and confirmation sent to ${formData.phone}`)
+        // Add manual text message (if sent)
+        if (manualTextSent) {
+          sentMessages.push({
+            ...formData,
+            message: finalManualMessage,
+            status: 'Sent (Manual)',
+            timestamp: new Date().toISOString(),
+            id: Date.now() + 1,
+          })
+          sentCount++
+          sentTypes.push('manual text')
+        }
+        
+        localStorage.setItem('sentMessages', JSON.stringify(sentMessages))
+
+        if (sentCount > 0) {
+          setSuccessMessage('✅ Messages Sent!')
+          setSuccessDetails(`${sentCount} message(s) sent (${sentTypes.join(', ')}) to ${formData.name}`)
         } else {
-          // No registration message, no reminders - just a confirmation
+          // No messages sent at all
           setSuccessMessage('✅ Setup Complete!')
           setSuccessDetails(`${formData.name} has been set up in the system without any messages sent.`)
         }

@@ -14,6 +14,8 @@ interface FormData {
   sendRegistrationMessage: boolean
   threeDayReminder: boolean
   oneDayReminder: boolean
+  sendManualText: boolean
+  manualMessage: string
 }
 
 interface FormProps {
@@ -34,6 +36,8 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     sendRegistrationMessage: initialData.sendRegistrationMessage !== false,
     threeDayReminder: initialData.threeDayReminder || true,
     oneDayReminder: initialData.oneDayReminder || true,
+    sendManualText: initialData.sendManualText || false,
+    manualMessage: initialData.manualMessage || 'Hi {name}! Just wanted to reach out about your {sessionTitle} session. Let me know if you have any questions!',
   })
   
   // Update form data when initialData changes
@@ -328,6 +332,73 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
           </div>
         </div>
 
+        {/* Manual Text Section */}
+        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
+          <div className="flex items-center mb-8">
+            <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mr-4">
+              <span className="text-white text-xl">💬</span>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900">Send Manual Text</h3>
+              <p className="text-gray-600">Send a custom message immediately (outside of schedule)</p>
+            </div>
+          </div>
+          
+          <div className="space-y-6">
+            <div className="bg-purple-50 border border-purple-200 rounded-2xl p-6">
+              <div className="flex items-start">
+                <span className="text-purple-600 text-xl mr-3">⚡</span>
+                <div className="flex-1">
+                  <h4 className="text-purple-800 font-semibold mb-2">Instant Message</h4>
+                  <p className="text-purple-700 text-sm mb-4">
+                    Send a custom text message right now, separate from the automated reminder schedule.
+                  </p>
+                  <div className="flex items-center mb-4">
+                    <Switch
+                      checked={formData.sendManualText}
+                      onChange={(checked) => handleChange('sendManualText', checked)}
+                      className={`${
+                        formData.sendManualText ? 'bg-purple-600' : 'bg-gray-300'
+                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`}
+                    >
+                      <span className="sr-only">Send manual text message</span>
+                      <span
+                        aria-hidden="true"
+                        className={`${
+                          formData.sendManualText ? 'translate-x-5' : 'translate-x-0'
+                        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                      />
+                    </Switch>
+                    <span className="ml-3 text-sm font-medium text-purple-800">
+                      {formData.sendManualText ? 'Send manual text now' : 'Skip manual text'}
+                    </span>
+                  </div>
+                  
+                  {formData.sendManualText && (
+                    <div className="mt-4">
+                      <label htmlFor="manualMessage" className="block text-sm font-medium text-purple-800 mb-2">
+                        Custom Message
+                      </label>
+                      <textarea
+                        name="manualMessage"
+                        id="manualMessage"
+                        rows={3}
+                        value={formData.manualMessage}
+                        onChange={(e) => handleChange('manualMessage', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-purple-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-all duration-200 resize-none"
+                        placeholder="Your custom message..."
+                      />
+                      <div className="mt-2 text-sm text-purple-600">
+                        💡 Use {'{name}'}, {'{sessionTitle}'}, and {'{sessionTime}'} for personalization
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Submit Button */}
         <div className="flex justify-center pt-8">
           <button
@@ -347,13 +418,20 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
             ) : (
               <>
                 <span className="mr-3">🚀</span>
-                {formData.sendRegistrationMessage && (formData.threeDayReminder || formData.oneDayReminder) 
-                  ? 'Send Registration & Schedule Reminders' 
-                  : formData.sendRegistrationMessage 
-                  ? 'Send Registration Confirmation' 
-                  : formData.threeDayReminder || formData.oneDayReminder 
-                  ? 'Schedule Reminders' 
-                  : 'Setup Complete'}
+                {(() => {
+                  const actions = []
+                  if (formData.sendRegistrationMessage) actions.push('Registration')
+                  if (formData.sendManualText) actions.push('Manual Text')
+                  if (formData.threeDayReminder || formData.oneDayReminder) actions.push('Schedule Reminders')
+                  
+                  if (actions.length === 0) return 'Setup Complete'
+                  if (actions.length === 1) {
+                    if (actions[0] === 'Registration') return 'Send Registration Confirmation'
+                    if (actions[0] === 'Manual Text') return 'Send Manual Text'
+                    if (actions[0] === 'Schedule Reminders') return 'Schedule Reminders'
+                  }
+                  return `Send ${actions.join(' & ')}`
+                })()}
               </>
             )}
           </button>

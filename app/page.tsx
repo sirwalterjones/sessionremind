@@ -50,7 +50,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
           
           {/* Browser Extension */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
@@ -134,6 +134,57 @@ export default function Home() {
               </div>
               <div className="text-center p-3 bg-stone-50 rounded-xl">
                 <p className="text-xs text-stone-600">Click Button</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bookmarklet - Desktop Only */}
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Bookmarklet</h3>
+              <p className="text-gray-600">
+                Simple one-click solution for desktop browsers
+              </p>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 sm:p-6 mb-6">
+              <h4 className="text-amber-800 font-medium mb-3">Quick & Easy</h4>
+              <ul className="text-amber-700 text-sm space-y-2 mb-4">
+                <li>• No installation required</li>
+                <li>• Works on desktop browsers</li>
+                <li>• One-click bookmark</li>
+                <li>• Automatic data extraction</li>
+              </ul>
+              <div className="flex flex-col gap-3">
+                <a 
+                  href={`javascript:${dataExtractionBookmarkletCode}`}
+                  className="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('To install the bookmarklet:\\n\\n1. Right-click this button\\n2. Select \"Bookmark this link\" or \"Add to bookmarks\"\\n3. Visit any UseSession page\\n4. Click the bookmark to extract data');
+                  }}
+                >
+                  <span className="mr-2">⭐</span>
+                  Add Bookmarklet
+                </a>
+                <p className="text-xs text-amber-700 text-center">
+                  Right-click → Bookmark this link
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <p className="text-xs text-stone-600">Right-click</p>
+              </div>
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <p className="text-xs text-stone-600">Bookmark</p>
+              </div>
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <p className="text-xs text-stone-600">Visit UseSession</p>
+              </div>
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <p className="text-xs text-stone-600">Click Bookmark</p>
               </div>
             </div>
           </div>
