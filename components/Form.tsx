@@ -68,10 +68,10 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     handleChange(field, newValue)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await onSubmit(formData)
-  }
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    await onSubmit(formData);
+  };
 
   return (
     <div className="space-y-8">
@@ -480,7 +480,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                 Sending...
               </>
             ) : (
-              Send Messages
+              'Send Messages'
             )}
           </button>
         </div>
