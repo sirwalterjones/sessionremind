@@ -76,14 +76,37 @@ export default function Instructions() {
                   <a 
                     href={dataExtractionBookmarkletCode}
                     title="Session Remind"
+                    data-bookmark-title="Session Remind"
                     className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
                     draggable="true"
                     onDragStart={(e) => {
+                      // Set the drag image to include text
+                      const dragElement = document.createElement('div');
+                      dragElement.innerHTML = '📂 Session Remind';
+                      dragElement.style.position = 'absolute';
+                      dragElement.style.top = '-1000px';
+                      dragElement.style.background = 'white';
+                      dragElement.style.border = '1px solid #ccc';
+                      dragElement.style.padding = '4px 8px';
+                      dragElement.style.borderRadius = '4px';
+                      dragElement.style.fontSize = '12px';
+                      document.body.appendChild(dragElement);
+                      e.dataTransfer.setDragImage(dragElement, 0, 0);
+                      
+                      // Set multiple data formats for maximum compatibility
                       e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
                       e.dataTransfer.setData('text/plain', 'Session Remind');
                       e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}">Session Remind</a>`);
+                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}" title="Session Remind">Session Remind</a>`);
+                      e.dataTransfer.setData('application/x-bookmark', `Session Remind\n${dataExtractionBookmarkletCode}`);
                       e.dataTransfer.effectAllowed = 'copy';
+                      
+                      // Clean up the drag element after a short delay
+                      setTimeout(() => {
+                        if (document.body.contains(dragElement)) {
+                          document.body.removeChild(dragElement);
+                        }
+                      }, 100);
                     }}
                   >
                     <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
