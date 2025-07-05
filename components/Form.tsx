@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Switch } from '@headlessui/react'
 
 interface FormData {
@@ -245,16 +245,12 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                 <Switch
                   checked={formData.optedIn}
                   onChange={(checked) => handleChange('optedIn', checked)}
-                  className={`${
-                    formData.optedIn ? 'bg-stone-600' : 'bg-gray-300'
-                  } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 mt-1`}
+                  className={`${formData.optedIn ? 'bg-stone-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 mt-1`}
                 >
                   <span className="sr-only">Client has opted in to SMS</span>
                   <span
                     aria-hidden="true"
-                    className={`${
-                      formData.optedIn ? 'translate-x-5' : 'translate-x-0'
-                    } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                    className={`${formData.optedIn ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
                   />
                 </Switch>
                 <div className="ml-4">
@@ -297,16 +293,12 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                     <Switch
                       checked={formData.sendRegistrationMessage}
                       onChange={(checked) => handleChange('sendRegistrationMessage', checked)}
-                      className={`${
-                        formData.sendRegistrationMessage ? 'bg-blue-600' : 'bg-gray-300'
-                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                      className={`${formData.sendRegistrationMessage ? 'bg-blue-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                     >
                       <span className="sr-only">Send registration confirmation</span>
                       <span
                         aria-hidden="true"
-                        className={`${
-                          formData.sendRegistrationMessage ? 'translate-x-5' : 'translate-x-0'
-                        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                        className={`${formData.sendRegistrationMessage ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
                       />
                     </Switch>
                     <span className="ml-3 text-sm font-medium text-blue-800">
@@ -388,16 +380,12 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                     <Switch
                       checked={formData.sendManualText}
                       onChange={(checked) => handleChange('sendManualText', checked)}
-                      className={`${
-                        formData.sendManualText ? 'bg-purple-600' : 'bg-gray-300'
-                      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`}
+                      className={`${formData.sendManualText ? 'bg-purple-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`}
                     >
                       <span className="sr-only">Send manual text message</span>
                       <span
                         aria-hidden="true"
-                        className={`${
-                          formData.sendManualText ? 'translate-x-5' : 'translate-x-0'
-                        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                        className={`${formData.sendManualText ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
                       />
                     </Switch>
                     <span className="ml-3 text-sm font-medium text-purple-800">
@@ -450,16 +438,12 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                           <Switch
                             checked={formData.optedIn}
                             onChange={(checked) => handleChange('optedIn', checked)}
-                            className={`${
-                              formData.optedIn ? 'bg-purple-600' : 'bg-gray-300'
-                            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 mt-1`}
+                            className={`${formData.optedIn ? 'bg-purple-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 mt-1`}
                           >
                             <span className="sr-only">Client has opted in to SMS</span>
                             <span
                               aria-hidden="true"
-                              className={`${
-                                formData.optedIn ? 'translate-x-5' : 'translate-x-0'
-                              } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                              className={`${formData.optedIn ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
                             />
                           </Switch>
                           <div className="ml-4">
@@ -485,11 +469,10 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`inline-flex items-center px-8 py-4 font-medium rounded-full transition-all duration-200 shadow-sm text-lg ${
-              isSubmitting
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-stone-800 text-white hover:bg-stone-900 hover:shadow-md transform hover:-translate-y-0.5'
-            }`}
+            className={isSubmitting 
+              ? 'inline-flex items-center px-8 py-4 font-medium rounded-full transition-all duration-200 shadow-sm text-lg bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'inline-flex items-center px-8 py-4 font-medium rounded-full transition-all duration-200 shadow-sm text-lg bg-stone-800 text-white hover:bg-stone-900 hover:shadow-md transform hover:-translate-y-0.5'
+            }
           >
             {isSubmitting ? (
               <>
@@ -497,7 +480,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                 Sending...
               </>
             ) : (
-              Send Message(s)
+              Send Messages
             )}
           </button>
         </div>
