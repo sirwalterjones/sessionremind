@@ -6,7 +6,14 @@ export async function POST(request: NextRequest) {
     
     if (!url || !url.includes('usesession.com')) {
       return NextResponse.json(
-        { error: 'Invalid UseSession URL' },
+        { error: 'Please provide a valid UseSession URL (app.usesession.com)' },
+        { status: 400 }
+      )
+    }
+
+    if (url.includes('book.usesession.com')) {
+      return NextResponse.json(
+        { error: 'That\'s a booking URL. You need the session management URL from app.usesession.com instead.' },
         { status: 400 }
       )
     }

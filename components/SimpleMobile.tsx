@@ -27,6 +27,11 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
       return
     }
     
+    if (url.includes('book.usesession.com')) {
+      alert('❌ That\'s a booking URL!\n\nYou need the SESSION MANAGEMENT URL instead.\n\nGo to your UseSession dashboard (app.usesession.com) and find the client\'s session page.')
+      return
+    }
+    
     setIsExtracting(true)
     
     try {
@@ -97,20 +102,28 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
         </label>
         
         <div className="space-y-3">
-          <div className="flex space-x-2">
+          <div className="space-y-2">
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="Paste UseSession URL here..."
-              className="flex-1 px-3 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Paste app.usesession.com URL here..."
+              className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            <button
-              onClick={handlePaste}
-              className="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
-            >
-              📋
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={handlePaste}
+                className="flex-1 px-4 py-3 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm font-medium"
+              >
+                📋 Paste from Clipboard
+              </button>
+              <button
+                onClick={() => setUrl('')}
+                className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm"
+              >
+                Clear
+              </button>
+            </div>
           </div>
           
           <button
@@ -123,15 +136,39 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
         </div>
       </div>
       
-      {/* Simple Instructions */}
+      {/* Clear Instructions */}
       <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-        <h4 className="font-bold text-green-900 mb-2">How to use:</h4>
-        <ol className="text-green-800 text-sm space-y-1">
-          <li>1. Open UseSession on your phone</li>
-          <li>2. Go to a client's session page</li>
-          <li>3. Copy the URL from the address bar</li>
-          <li>4. Paste it above and tap "Extract"</li>
-        </ol>
+        <h4 className="font-bold text-green-900 mb-3">📍 What URL to use:</h4>
+        
+        <div className="space-y-3">
+          <div className="bg-white rounded-lg p-3 border border-green-200">
+            <p className="text-green-900 font-medium text-sm mb-1">✅ CORRECT URLs:</p>
+            <ul className="text-green-800 text-xs space-y-1">
+              <li>• app.usesession.com/sessions/...</li>
+              <li>• app.usesession.com/bookings/...</li>
+              <li>• Your UseSession dashboard pages</li>
+            </ul>
+          </div>
+          
+          <div className="bg-red-50 rounded-lg p-3 border border-red-200">
+            <p className="text-red-900 font-medium text-sm mb-1">❌ WRONG URLs:</p>
+            <ul className="text-red-800 text-xs space-y-1">
+              <li>• book.usesession.com/... (booking pages)</li>
+              <li>• Public client booking links</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="mt-3 pt-3 border-t border-green-200">
+          <h5 className="font-medium text-green-900 mb-2">How to find the right URL:</h5>
+          <ol className="text-green-800 text-sm space-y-1">
+            <li>1. 📱 Open app.usesession.com (log in)</li>
+            <li>2. 🔍 Find your client's session</li>
+            <li>3. 👆 Tap to open the session details</li>
+            <li>4. 📋 Copy URL from address bar</li>
+            <li>5. 📝 Paste here and extract!</li>
+          </ol>
+        </div>
       </div>
       
       {/* Alternative */}

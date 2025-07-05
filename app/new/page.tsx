@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Form from '@/components/Form'
-import SimpleMobile from '@/components/SimpleMobile'
+import MobileManualEntry from '@/components/MobileManualEntry'
 
 interface FormData {
   name: string
@@ -414,16 +414,16 @@ export default function NewReminder() {
           </p>
         </div>
 
-        {/* Working Mobile Solutions */}
+        {/* Mobile Quick Entry */}
         <div className="mb-8">
           <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Mobile Data Extraction</h3>
+            <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Quick Mobile Entry</h3>
             <p className="text-blue-700 text-sm">
-              Choose the method that works best for your mobile device
+              Fast way to enter client details from UseSession modals
             </p>
           </div>
           
-          <SimpleMobile onDataExtracted={(data) => {
+          <MobileManualEntry onDataExtracted={(data) => {
             setInitialData(prev => ({ ...prev, ...data }))
           }} />
         </div>

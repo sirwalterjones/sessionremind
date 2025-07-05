@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import SimpleMobile from '@/components/SimpleMobile'
+import MobileManualEntry from '@/components/MobileManualEntry'
 
 export default function Instructions() {
   return (
@@ -60,13 +60,13 @@ export default function Instructions() {
                 </div>
               </div>
 
-              {/* Simple Mobile/Desktop Solution */}
+              {/* Mobile Manual Entry */}
               <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="text-gray-800 font-semibold mb-3 text-sm sm:text-base">🔗 URL Copy Method</h3>
+                <h3 className="text-gray-800 font-semibold mb-3 text-sm sm:text-base">📱 Mobile Quick Entry</h3>
                 <p className="text-gray-700 text-xs sm:text-sm mb-4">
-                  Works on all devices - just copy and paste the UseSession URL
+                  Fast manual entry for mobile devices - works with UseSession modals
                 </p>
-                <SimpleMobile />
+                <MobileManualEntry />
               </div>
             </div>
           </div>

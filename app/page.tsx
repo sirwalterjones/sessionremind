@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import SimpleMobile from '@/components/SimpleMobile'
+import MobileManualEntry from '@/components/MobileManualEntry'
 
 export default function Home() {
   const simpleBookmarkletCode = "javascript:window.open('https://sessionremind.com/new','_blank');"
@@ -190,15 +190,15 @@ export default function Home() {
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6">
-                <span className="text-stone-600 text-2xl">🔗</span>
+                <span className="text-stone-600 text-2xl">📱</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Quick Data Extraction</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Quick Client Entry</h3>
               <p className="text-gray-600">
-                Extract client data from UseSession easily
+                Enter client details from UseSession quickly on mobile
               </p>
             </div>
 
-            <SimpleMobile />
+            <MobileManualEntry />
           </div>
         </div>
 
