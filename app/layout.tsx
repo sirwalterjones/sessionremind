@@ -7,16 +7,47 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Session Reminder',
-  description: 'SMS reminder app for photography sessions - works with UseSession',
+  metadataBase: new URL('https://sessionremind.vercel.app'),
+  title: 'Session Reminder - SMS Reminders for Photography Sessions',
+  description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
   manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' }
+    ],
+    apple: '/icon.svg'
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Session Reminder'
   },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://sessionremind.vercel.app',
+    title: 'Session Reminder - SMS Reminders for Photography Sessions',
+    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
+    siteName: 'Session Reminder',
+    images: [
+      {
+        url: '/logo.svg',
+        width: 512,
+        height: 512,
+        alt: 'Session Reminder Logo'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Session Reminder - SMS Reminders for Photography Sessions',
+    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
+    images: ['/logo.svg']
+  },
   other: {
-    'mobile-web-app-capable': 'yes'
+    'mobile-web-app-capable': 'yes',
+    'fb:app_id': '1234567890' // Replace with your Facebook App ID if you have one
   }
 }
 
@@ -36,12 +67,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-        <link rel="apple-touch-icon" href="/icon.svg" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icon.svg" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#1c1917" />
+        <meta name="msapplication-TileColor" content="#1c1917" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className={inter.className}>
         <script
