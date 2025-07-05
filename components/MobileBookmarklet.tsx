@@ -51,8 +51,17 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
           href={bookmarkletCode}
           className="inline-flex items-center px-4 py-3 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200 text-sm break-words max-w-full"
           draggable="true"
-          title={deviceInfo.isMobile ? "Tap for mobile instructions" : "Drag this to your bookmarks bar"}
+          title={deviceInfo.isMobile ? "Tap for mobile instructions" : "Session Remind - Drag this to your bookmarks bar"}
           onClick={handleBookmarkletClick}
+          onDragStart={(e) => {
+            if (!deviceInfo.isMobile) {
+              e.dataTransfer.setData('text/uri-list', bookmarkletCode);
+              e.dataTransfer.setData('text/plain', 'Session Remind');
+              e.dataTransfer.setData('text/x-moz-url', `${bookmarkletCode}\nSession Remind`);
+              e.dataTransfer.setData('text/html', `<a href="${bookmarkletCode}">Session Remind</a>`);
+              e.dataTransfer.effectAllowed = 'copy';
+            }
+          }}
         >
           <span className="mr-2">📱</span>
           <span className="truncate">

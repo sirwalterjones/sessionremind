@@ -148,9 +148,17 @@ export default function MobileBookmarkletWorking({ bookmarkletCode }: MobileBook
               <p className="text-blue-700 text-xs mb-2">Or drag this button to your bookmarks bar:</p>
               <a
                 href={bookmarkletCode}
+                title="Session Remind"
                 className="inline-flex items-center px-4 py-2 bg-blue-700 text-white rounded-lg font-medium text-sm hover:bg-blue-800 transition-colors"
                 draggable="true"
                 onClick={(e) => e.preventDefault()}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/uri-list', bookmarkletCode);
+                  e.dataTransfer.setData('text/plain', 'Session Remind');
+                  e.dataTransfer.setData('text/x-moz-url', `${bookmarkletCode}\nSession Remind`);
+                  e.dataTransfer.setData('text/html', `<a href="${bookmarkletCode}">Session Remind</a>`);
+                  e.dataTransfer.effectAllowed = 'copy';
+                }}
               >
                 <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
                   <span className="text-blue-700 text-xs font-bold">S</span>
