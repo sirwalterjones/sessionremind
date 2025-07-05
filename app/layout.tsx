@@ -68,8 +68,8 @@ export default function RootLayout({
                 {/* Logo Section */}
                 <div className="flex items-center">
                   <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-stone-800 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
-                      <span className="text-white text-lg sm:text-xl">📱</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
+                      <span className="text-white text-lg sm:text-xl font-bold">S</span>
                     </div>
                     <div className="block">
                       <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">

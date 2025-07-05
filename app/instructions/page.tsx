@@ -155,7 +155,7 @@ export default function Instructions() {
                 <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-start space-x-3">
                     <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Client name (e.g., "Emily Mico")</span>
+                    <span className="text-stone-700 text-xs sm:text-sm">Client name (e.g., "Jane Doe")</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
@@ -247,6 +247,11 @@ export default function Instructions() {
                 </div>
                 <span className="text-gray-400 hidden sm:inline">→</span>
                 <div className="flex items-center space-x-2">
+                  <span className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">⚡</span>
+                  <span className="text-xs sm:text-sm lg:text-base">Manual Message</span>
+                </div>
+                <span className="text-gray-400 hidden sm:inline">→</span>
+                <div className="flex items-center space-x-2">
                   <span className="w-6 h-6 sm:w-8 sm:h-8 bg-stone-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                   <span className="text-xs sm:text-sm lg:text-base">3-Day Reminder</span>
                 </div>
@@ -259,36 +264,6 @@ export default function Instructions() {
             </div>
           </div>
 
-          {/* Troubleshooting */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-stone-100">
-            <div className="flex items-start sm:items-center mb-6">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-stone-800 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-lg sm:text-xl">🔧</span>
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Troubleshooting</h2>
-                <p className="text-sm sm:text-base text-gray-600">Common issues and quick fixes</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:gap-6">
-              <div className="bg-stone-50 rounded-xl p-3 sm:p-4 border border-stone-200">
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">🤔 Missing session title</h3>
-                <p className="text-xs sm:text-sm text-gray-600">Extension may show "Photography Session" - manually update with the actual session name.</p>
-              </div>
-              <div className="bg-stone-50 rounded-xl p-3 sm:p-4 border border-stone-200">
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">📱 SMS not sending</h3>
-                <p className="text-xs sm:text-sm text-gray-600">Check opt-in toggle is ON and phone number is correct. Verify TextMagic credentials.</p>
-              </div>
-              <div className="bg-stone-50 rounded-xl p-3 sm:p-4 border border-stone-200">
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">🚫 Extension not working</h3>
-                <p className="text-xs sm:text-sm text-gray-600">Make sure you're on an individual UseSession session page, not the main dashboard.</p>
-              </div>
-              <div className="bg-stone-50 rounded-xl p-3 sm:p-4 border border-stone-200">
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">⏰ Scheduled reminders not sending</h3>
-                <p className="text-xs sm:text-sm text-gray-600">Use the manual "Run Cron Job" button in the dashboard to process scheduled messages.</p>
-              </div>
-            </div>
-          </div>
 
           {/* CTA */}
           <div className="text-center pt-8">
