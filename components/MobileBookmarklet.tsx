@@ -55,10 +55,19 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
           onClick={handleBookmarkletClick}
           onDragStart={(e) => {
             if (!deviceInfo.isMobile) {
+              // The most reliable way is to use text/x-moz-url format with proper title
+              // Format: URL\nTitle
+              const mozUrl = `${bookmarkletCode}\nSession Remind`;
+              
+              // Clear all data first
+              e.dataTransfer.clearData();
+              
+              // Set the essential formats for bookmark creation
+              e.dataTransfer.setData('text/x-moz-url', mozUrl);
               e.dataTransfer.setData('text/uri-list', bookmarkletCode);
-              e.dataTransfer.setData('text/plain', 'Session Remind');
-              e.dataTransfer.setData('text/x-moz-url', `${bookmarkletCode}\nSession Remind`);
+              e.dataTransfer.setData('text/plain', mozUrl);
               e.dataTransfer.setData('text/html', `<a href="${bookmarkletCode}">Session Remind</a>`);
+              
               e.dataTransfer.effectAllowed = 'copy';
             }
           }}

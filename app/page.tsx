@@ -168,14 +168,25 @@ export default function Home() {
                   <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
                   <a 
                     href={dataExtractionBookmarkletCode}
-                    title="Session Remind"
-                    data-bookmark-title="Session Remind"
                     className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
                     draggable="true"
                     onDragStart={(e) => {
-                      // Set the drag image to include text
+                      // The most reliable way is to use text/x-moz-url format with proper title
+                      // Format: URL\nTitle
+                      const mozUrl = `${dataExtractionBookmarkletCode}\nSession Remind`;
+                      
+                      // Clear all data first
+                      e.dataTransfer.clearData();
+                      
+                      // Set the essential formats for bookmark creation
+                      e.dataTransfer.setData('text/x-moz-url', mozUrl);
+                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
+                      e.dataTransfer.setData('text/plain', mozUrl);
+                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}">Session Remind</a>`);
+                      
+                      // Set the drag image
                       const dragElement = document.createElement('div');
-                      dragElement.innerHTML = '📂 Session Remind';
+                      dragElement.textContent = '📂 Session Remind';
                       dragElement.style.position = 'absolute';
                       dragElement.style.top = '-1000px';
                       dragElement.style.background = 'white';
@@ -183,18 +194,13 @@ export default function Home() {
                       dragElement.style.padding = '4px 8px';
                       dragElement.style.borderRadius = '4px';
                       dragElement.style.fontSize = '12px';
+                      dragElement.style.fontFamily = 'sans-serif';
                       document.body.appendChild(dragElement);
                       e.dataTransfer.setDragImage(dragElement, 0, 0);
                       
-                      // Set multiple data formats for maximum compatibility
-                      e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', 'Session Remind');
-                      e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}" title="Session Remind">Session Remind</a>`);
-                      e.dataTransfer.setData('application/x-bookmark', `Session Remind\n${dataExtractionBookmarkletCode}`);
                       e.dataTransfer.effectAllowed = 'copy';
                       
-                      // Clean up the drag element after a short delay
+                      // Clean up the drag element
                       setTimeout(() => {
                         if (document.body.contains(dragElement)) {
                           document.body.removeChild(dragElement);
