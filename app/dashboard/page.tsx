@@ -122,7 +122,7 @@ export default function Dashboard() {
     
     // Process scheduled messages
     scheduledMessages.forEach(message => {
-      const key = `${message.clientName}-${message.phone}`
+      const key = message.clientName.toLowerCase().trim()
       if (!grouped[key]) {
         grouped[key] = {
           clientName: message.clientName,
@@ -139,13 +139,17 @@ export default function Dashboard() {
         if (!grouped[key].sessionTime) {
           grouped[key].sessionTime = message.sessionTime || message.sessionDate || grouped[key].sessionTime
         }
+        // Keep the primary phone number (usually from scheduled messages)
+        if (!grouped[key].phone || grouped[key].phone.length < 10) {
+          grouped[key].phone = message.phone
+        }
       }
       grouped[key].messages.push(message)
     })
     
     // Process sent messages (registration and manual)
     sentMessages.forEach(message => {
-      const key = `${message.name}-${message.phone}`
+      const key = message.name.toLowerCase().trim()
       if (!grouped[key]) {
         grouped[key] = {
           clientName: message.name,
@@ -161,6 +165,10 @@ export default function Dashboard() {
         }
         if (!grouped[key].sessionTime) {
           grouped[key].sessionTime = message.sessionTime || grouped[key].sessionTime
+        }
+        // Keep the primary phone number (prefer longer/more complete numbers)
+        if (!grouped[key].phone || grouped[key].phone.length < message.phone.length) {
+          grouped[key].phone = message.phone
         }
       }
       
