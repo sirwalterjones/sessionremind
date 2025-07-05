@@ -67,15 +67,14 @@ export default function MobileManualEntry({ onDataExtracted }: MobileManualEntry
     <div className="space-y-4">
       {/* Header */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-        <h3 className="font-bold text-blue-900 text-lg mb-2">📱 Mobile: Quick Entry</h3>
+        <h3 className="font-bold text-blue-900 text-lg mb-2">📋 Client Details</h3>
         <p className="text-blue-800 text-sm">
-          Look at the UseSession modal and enter the client details below
+          Enter the client info from UseSession
         </p>
       </div>
       
-      {/* Quick Entry Form */}
+      {/* Entry Form */}
       <div className="bg-white border border-gray-200 rounded-xl p-4">
-        <h4 className="font-bold text-gray-900 mb-4">Client Details:</h4>
         
         <div className="space-y-4">
           {/* Name */}
@@ -188,19 +187,13 @@ export default function MobileManualEntry({ onDataExtracted }: MobileManualEntry
       
       {/* Instructions */}
       <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-        <h4 className="font-bold text-green-900 mb-2">📱 How to Use:</h4>
+        <h4 className="font-bold text-green-900 mb-2">💡 How it works:</h4>
         <ol className="text-green-800 text-sm space-y-1">
-          <li>1. Open UseSession on your phone</li>
-          <li>2. Find your client and tap to open their details modal</li>
-          <li>3. Look at the modal and type the info above</li>
-          <li>4. Scroll down to send the reminder</li>
+          <li>1. Open UseSession and find your client</li>
+          <li>2. Enter their details above</li>
+          <li>3. Form below fills automatically</li>
+          <li>4. Send your reminder!</li>
         </ol>
-        
-        <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-800 text-xs font-medium">
-            💡 Pro Tip: As you type, the form below automatically fills! No need to click "extract" or anything.
-          </p>
-        </div>
       </div>
     </div>
   )

@@ -186,15 +186,15 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Mobile & Desktop Solutions */}
+          {/* Data Entry */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6">
-                <span className="text-stone-600 text-2xl">📱</span>
+                <span className="text-stone-600 text-2xl">📋</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Quick Client Entry</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Client Data Entry</h3>
               <p className="text-gray-600">
-                Enter client details from UseSession quickly on mobile
+                Enter client details from UseSession
               </p>
             </div>
 

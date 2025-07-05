@@ -414,12 +414,12 @@ export default function NewReminder() {
           </p>
         </div>
 
-        {/* Mobile Quick Entry */}
+        {/* Quick Data Entry */}
         <div className="mb-8">
           <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold text-blue-900 mb-2">📱 Quick Mobile Entry</h3>
+            <h3 className="text-2xl font-bold text-blue-900 mb-2">📋 Extract Client Data</h3>
             <p className="text-blue-700 text-sm">
-              Fast way to enter client details from UseSession modals
+              Enter client details from UseSession
             </p>
           </div>
           
