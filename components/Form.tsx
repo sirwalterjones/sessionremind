@@ -62,6 +62,12 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     }))
   }
 
+  const insertPlaceholder = (field: 'message' | 'manualMessage', placeholder: string) => {
+    const currentValue = formData[field]
+    const newValue = currentValue + placeholder
+    handleChange(field, newValue)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await onSubmit(formData)
@@ -209,7 +215,28 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                 placeholder="Your personalized message..."
               />
               <div className="mt-2 text-sm text-gray-500">
-                💡 Use {'{name}'}, {'{sessionTitle}'}, and {'{sessionTime}'} for automatic personalization
+                💡 Click to insert: 
+                <button
+                  type="button"
+                  onClick={() => insertPlaceholder('message', '{name}')}
+                  className="mx-1 px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-150"
+                >
+                  {'{name}'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertPlaceholder('message', '{sessionTitle}')}
+                  className="mx-1 px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-150"
+                >
+                  {'{sessionTitle}'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertPlaceholder('message', '{sessionTime}')}
+                  className="mx-1 px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-150"
+                >
+                  {'{sessionTime}'}
+                </button>
               </div>
             </div>
 
@@ -357,11 +384,6 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                   <p className="text-purple-700 text-sm mb-4">
                     Send a custom text message right now, separate from the automated reminder schedule.
                   </p>
-                  <div className="bg-purple-100 border border-purple-200 rounded-lg p-3 mb-4">
-                    <p className="text-purple-800 text-xs font-medium">
-                      ⚠️ Note: Enabling manual text will automatically disable registration confirmation and scheduled reminders to avoid duplicate messages.
-                    </p>
-                  </div>
                   <div className="flex items-center mb-4">
                     <Switch
                       checked={formData.sendManualText}
@@ -398,7 +420,57 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                         placeholder="Your custom message..."
                       />
                       <div className="mt-2 text-sm text-purple-600">
-                        💡 Use {'{name}'}, {'{sessionTitle}'}, and {'{sessionTime}'} for personalization
+                        💡 Click to insert: 
+                        <button
+                          type="button"
+                          onClick={() => insertPlaceholder('manualMessage', '{name}')}
+                          className="mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors duration-150"
+                        >
+                          {'{name}'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertPlaceholder('manualMessage', '{sessionTitle}')}
+                          className="mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors duration-150"
+                        >
+                          {'{sessionTitle}'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertPlaceholder('manualMessage', '{sessionTime}')}
+                          className="mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors duration-150"
+                        >
+                          {'{sessionTime}'}
+                        </button>
+                      </div>
+                      
+                      {/* Opt-in toggle for manual text */}
+                      <div className="mt-6 bg-purple-100 border border-purple-300 rounded-xl p-4">
+                        <div className="flex items-start">
+                          <Switch
+                            checked={formData.optedIn}
+                            onChange={(checked) => handleChange('optedIn', checked)}
+                            className={`${
+                              formData.optedIn ? 'bg-purple-600' : 'bg-gray-300'
+                            } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 mt-1`}
+                          >
+                            <span className="sr-only">Client has opted in to SMS</span>
+                            <span
+                              aria-hidden="true"
+                              className={`${
+                                formData.optedIn ? 'translate-x-5' : 'translate-x-0'
+                              } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                            />
+                          </Switch>
+                          <div className="ml-4">
+                            <span className="text-base font-medium text-purple-800">
+                              ✅ Client has opted in to SMS reminders
+                            </span>
+                            <p className="text-sm text-purple-700 mt-1">
+                              Required for compliance with SMS regulations
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -425,23 +497,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                 Sending...
               </>
             ) : (
-              <>
-                <span className="mr-3">🚀</span>
-                {(() => {
-                  const actions = []
-                  if (formData.sendRegistrationMessage) actions.push('Registration')
-                  if (formData.sendManualText) actions.push('Manual Text')
-                  if (formData.threeDayReminder || formData.oneDayReminder) actions.push('Schedule Reminders')
-                  
-                  if (actions.length === 0) return 'Setup Complete'
-                  if (actions.length === 1) {
-                    if (actions[0] === 'Registration') return 'Send Registration Confirmation'
-                    if (actions[0] === 'Manual Text') return 'Send Manual Text'
-                    if (actions[0] === 'Schedule Reminders') return 'Schedule Reminders'
-                  }
-                  return `Send ${actions.join(' & ')}`
-                })()}
-              </>
+              Send Message(s)
             )}
           </button>
         </div>

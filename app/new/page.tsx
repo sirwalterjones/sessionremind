@@ -518,19 +518,6 @@ export default function NewReminder() {
           </p>
         </div>
 
-        {/* Quick Data Entry */}
-        <div className="mb-8">
-          <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold text-blue-900 mb-2">📋 Extract Client Data</h3>
-            <p className="text-blue-700 text-sm">
-              Enter client details from UseSession
-            </p>
-          </div>
-          
-          <MobileManualEntry onDataExtracted={(data) => {
-            setInitialData(prev => ({ ...prev, ...data }))
-          }} />
-        </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
           <Form
