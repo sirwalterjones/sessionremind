@@ -168,8 +168,7 @@ export default function Home() {
                 {/* Simple Test Bookmarklet */}
                 <div className="bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-4 text-center">
                   <h4 className="font-medium text-blue-900 mb-2 text-sm">🧪 Test Bookmarklet (Simple)</h4>
-                  <a 
-                    href="#"
+                  <div 
                     title="Session Remind Test"
                     data-bookmark-title="Session Remind Test"
                     data-bookmarklet={simpleTestBookmarklet}
@@ -185,23 +184,31 @@ export default function Home() {
                       });
                     }}
                     onDragStart={(e) => {
-                      // Override the href during drag with the bookmarklet
-                      e.currentTarget.href = simpleTestBookmarklet;
+                      // Create a temporary link element with proper bookmark data
+                      const tempLink = document.createElement('a');
+                      tempLink.href = simpleTestBookmarklet;
+                      tempLink.textContent = 'Session Remind Test';
+                      tempLink.title = 'Session Remind Test';
                       
-                      // Set comprehensive drag data
+                      // Set comprehensive drag data with proper bookmark format
                       e.dataTransfer.setData('text/uri-list', simpleTestBookmarklet);
-                      e.dataTransfer.setData('text/plain', 'Session Remind Test');
+                      e.dataTransfer.setData('text/plain', simpleTestBookmarklet);
                       e.dataTransfer.setData('text/x-moz-url', `${simpleTestBookmarklet}\nSession Remind Test`);
-                      e.dataTransfer.setData('DownloadURL', `application/javascript:Session Remind Test.js:${simpleTestBookmarklet}`);
+                      e.dataTransfer.setData('text/html', `<a href="${simpleTestBookmarklet}">Session Remind Test</a>`);
+                      e.dataTransfer.setData('application/x-moz-file', '');
+                      e.dataTransfer.setData('text/x-moz-place', JSON.stringify({
+                        type: 'text/x-moz-place',
+                        title: 'Session Remind Test',
+                        uri: simpleTestBookmarklet
+                      }));
+                      
+                      // Try to set the drag image to the temp link
+                      e.dataTransfer.setDragImage(tempLink, 0, 0);
                       e.dataTransfer.effectAllowed = 'copy';
                     }}
-                    onDragEnd={(e) => {
-                      // Reset href after drag
-                      e.currentTarget.href = '#';
-                    }}
-                  >
-                    🧪 Session Remind Test
-                  </a>
+                                      >
+                      🧪 Session Remind Test
+                    </div>
                   <p className="text-xs text-blue-600 mt-1">
                     Try dragging this simple test first
                   </p>
@@ -209,8 +216,7 @@ export default function Home() {
 
                 <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
-                  <a 
-                    href="#"
+                  <div 
                     title="Session Remind"
                     data-bookmark-title="Session Remind"
                     data-bookmarklet={dataExtractionBookmarkletCode}
@@ -226,46 +232,34 @@ export default function Home() {
                       });
                     }}
                     onDragStart={(e) => {
-                      // Override the href during drag with the bookmarklet
-                      e.currentTarget.href = dataExtractionBookmarkletCode;
+                      // Create a temporary link element with proper bookmark data
+                      const tempLink = document.createElement('a');
+                      tempLink.href = dataExtractionBookmarkletCode;
+                      tempLink.textContent = 'Session Remind';
+                      tempLink.title = 'Session Remind';
                       
-                      // Set the drag image to include text
-                      const dragElement = document.createElement('div');
-                      dragElement.innerHTML = '📂 Session Remind';
-                      dragElement.style.position = 'absolute';
-                      dragElement.style.top = '-1000px';
-                      dragElement.style.background = 'white';
-                      dragElement.style.border = '1px solid #ccc';
-                      dragElement.style.padding = '4px 8px';
-                      dragElement.style.borderRadius = '4px';
-                      dragElement.style.fontSize = '12px';
-                      document.body.appendChild(dragElement);
-                      e.dataTransfer.setDragImage(dragElement, 0, 0);
-                      
-                      // Set multiple data formats for maximum compatibility
+                      // Set comprehensive drag data with proper bookmark format
                       e.dataTransfer.setData('text/uri-list', dataExtractionBookmarkletCode);
-                      e.dataTransfer.setData('text/plain', 'Session Remind');
+                      e.dataTransfer.setData('text/plain', dataExtractionBookmarkletCode);
                       e.dataTransfer.setData('text/x-moz-url', `${dataExtractionBookmarkletCode}\nSession Remind`);
-                      e.dataTransfer.setData('DownloadURL', `application/javascript:Session Remind.js:${dataExtractionBookmarkletCode}`);
-                      e.dataTransfer.effectAllowed = 'copy';
+                      e.dataTransfer.setData('text/html', `<a href="${dataExtractionBookmarkletCode}">Session Remind</a>`);
+                      e.dataTransfer.setData('application/x-moz-file', '');
+                      e.dataTransfer.setData('text/x-moz-place', JSON.stringify({
+                        type: 'text/x-moz-place',
+                        title: 'Session Remind',
+                        uri: dataExtractionBookmarkletCode
+                      }));
                       
-                      // Clean up the drag element after a short delay
-                      setTimeout(() => {
-                        if (document.body.contains(dragElement)) {
-                          document.body.removeChild(dragElement);
-                        }
-                      }, 100);
+                      // Try to set the drag image to the temp link
+                      e.dataTransfer.setDragImage(tempLink, 0, 0);
+                      e.dataTransfer.effectAllowed = 'copy';
                     }}
-                    onDragEnd={(e) => {
-                      // Reset href after drag
-                      e.currentTarget.href = '#';
-                    }}
-                  >
-                    <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
-                      <span className="text-black text-xs font-bold">S</span>
+                                      >
+                      <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
+                        <span className="text-black text-xs font-bold">S</span>
+                      </div>
+                      Session Remind
                     </div>
-                    Session Remind
-                  </a>
                   <p className="text-xs text-gray-500 mt-2">
                     Drag this button to your bookmarks bar
                   </p>

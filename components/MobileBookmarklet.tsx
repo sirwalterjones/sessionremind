@@ -47,38 +47,44 @@ export default function MobileBookmarklet({ bookmarkletCode }: MobileBookmarklet
     <div className="space-y-4">
       {/* Mobile-optimized bookmarklet button */}
       <div className="text-center">
-        <a 
-          href={deviceInfo.isMobile ? "#" : "#"}
+        <div 
           data-bookmarklet={bookmarkletCode}
-          className="inline-flex items-center px-4 py-3 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200 text-sm break-words max-w-full"
+          className="inline-flex items-center px-4 py-3 bg-stone-700 text-white font-medium rounded-full hover:bg-stone-800 transition-all duration-200 text-sm break-words max-w-full cursor-pointer"
           draggable="true"
           title={deviceInfo.isMobile ? "Tap for mobile instructions" : "Session Remind - Drag this to your bookmarks bar"}
           onClick={handleBookmarkletClick}
           onDragStart={(e) => {
             if (!deviceInfo.isMobile) {
-              // Override the href during drag with the bookmarklet
-              e.currentTarget.href = bookmarkletCode;
+              // Create a temporary link element with proper bookmark data
+              const tempLink = document.createElement('a');
+              tempLink.href = bookmarkletCode;
+              tempLink.textContent = 'Session Remind';
+              tempLink.title = 'Session Remind';
               
+              // Set comprehensive drag data with proper bookmark format
               e.dataTransfer.setData('text/uri-list', bookmarkletCode);
-              e.dataTransfer.setData('text/plain', 'Session Remind');
+              e.dataTransfer.setData('text/plain', bookmarkletCode);
               e.dataTransfer.setData('text/x-moz-url', `${bookmarkletCode}\nSession Remind`);
-              e.dataTransfer.setData('DownloadURL', `application/javascript:Session Remind.js:${bookmarkletCode}`);
+              e.dataTransfer.setData('text/html', `<a href="${bookmarkletCode}">Session Remind</a>`);
+              e.dataTransfer.setData('application/x-moz-file', '');
+              e.dataTransfer.setData('text/x-moz-place', JSON.stringify({
+                type: 'text/x-moz-place',
+                title: 'Session Remind',
+                uri: bookmarkletCode
+              }));
+              
+              // Try to set the drag image to the temp link
+              e.dataTransfer.setDragImage(tempLink, 0, 0);
               e.dataTransfer.effectAllowed = 'copy';
             }
           }}
-          onDragEnd={(e) => {
-            if (!deviceInfo.isMobile) {
-              // Reset href after drag
-              e.currentTarget.href = '#';
-            }
-          }}
-        >
-          <span className="mr-2">📱</span>
-          <span className="truncate">
-            {deviceInfo.isMobile ? "Session Remind" : "UseSession → Session Remind"}
-          </span>
-          <span className="ml-2">✨</span>
-        </a>
+                  >
+            <span className="mr-2">📱</span>
+            <span className="truncate">
+              {deviceInfo.isMobile ? "Session Remind" : "UseSession → Session Remind"}
+            </span>
+            <span className="ml-2">✨</span>
+          </div>
       </div>
       
       {/* Mobile instructions */}
