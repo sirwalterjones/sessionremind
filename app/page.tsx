@@ -97,9 +97,9 @@ export default function Home() {
 
               <div className="space-y-3">
                 <a 
-                  href="/extension-resizable-with-s-logo.zip"
+                  href="/sessionremindext.zip"
                   className="block text-center px-6 py-3 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
-                  download="session-reminder-extension-with-s-logo.zip"
+                  download="sessionremindext.zip"
                 >
                   Download Extension
                 </a>
