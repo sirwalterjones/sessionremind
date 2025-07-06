@@ -97,52 +97,12 @@ export default function Home() {
 
               <div className="space-y-3">
                 <a 
-                  href="/extension-resizable.zip"
+                  href="/extension-resizable-with-s-logo.zip"
                   className="block text-center px-6 py-3 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
-                  download="session-reminder-extension-resizable.zip"
+                  download="session-reminder-extension-with-s-logo.zip"
                 >
                   Download Extension
                 </a>
-                <button 
-                  onClick={() => {
-                    const readme = `# Session Reminder Extension Installation
-
-## Quick Installation Steps:
-
-1. **Download the extension** (click the download button)
-2. **Extract the ZIP file** to a folder on your computer
-3. **Open Chrome** and go to chrome://extensions/
-4. **Enable Developer Mode** (toggle switch in top right)
-5. **Click "Load unpacked"** and select the extracted folder
-6. **Done!** Visit any UseSession page to see the floating button
-
-## What You'll See:
-- A floating "Send Text Reminder" button on UseSession pages
-- Click the main button to automatically extract client data
-- Click the small arrow button (⬇️/⬆️) to minimize/expand the button
-- Your size preference is remembered across page visits
-- New tab opens with reminder form pre-filled
-
-## New Features:
-✨ **Resizable Button**: Click the arrow to minimize button to avoid hiding other page elements
-✨ **Memory**: Your button size preference is saved automatically
-✨ **Mobile Optimized**: Smaller sizes on mobile devices
-
-## Browser Support:
-✅ Chrome, Edge, Brave, and other Chromium browsers`;
-                    
-                    const blob = new Blob([readme], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'installation-guide.txt';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="block text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200"
-                >
-                  Installation Help
-                </button>
               </div>
             </div>
 
@@ -181,28 +141,6 @@ export default function Home() {
                   </p>
                 </div>
                 
-                <div className="text-center">
-                  <button
-                    onClick={() => {
-                      const bookmarkUrl = dataExtractionBookmarkletCode;
-                      
-                      if (navigator.userAgent.includes('Chrome') || navigator.userAgent.includes('Edge')) {
-                        // For Chrome/Edge - copy to clipboard and show modal
-                        navigator.clipboard.writeText(bookmarkUrl).then(() => {
-                          setBookmarkletCopied(true);
-                          setShowBookmarkletModal(true);
-                        });
-                      } else {
-                        // For other browsers - show modal without copying
-                        setBookmarkletCopied(false);
-                        setShowBookmarkletModal(true);
-                      }
-                    }}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    Installation Help
-                  </button>
-                </div>
               </div>
             </div>
 
