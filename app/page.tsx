@@ -78,37 +78,12 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
             
-            {/* Browser Extension */}
-            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
-              <div className="mb-6">
-                <h3 className="text-xl font-medium text-gray-900 mb-2">Browser Extension</h3>
-                <p className="text-gray-600 text-sm">
-                  Premium experience with seamless integration
-                </p>
+            {/* Bookmarklet - Recommended */}
+            <div className="bg-white border-2 border-amber-400 p-8 hover:shadow-lg transition-shadow duration-200 relative">
+              <div className="absolute -top-3 left-4 bg-amber-400 text-amber-900 px-3 py-1 text-xs font-bold rounded-full">
+                RECOMMENDED
               </div>
-
-              <div className="space-y-3 mb-8 text-sm text-gray-600">
-                <div>Floating button appears automatically</div>
-                <div>Works on all UseSession pages</div>
-                <div>No bookmarks needed</div>
-                <div>One-click data extraction</div>
-                <div>Resizable button to avoid page conflicts</div>
-              </div>
-
-              <div className="space-y-3">
-                <a 
-                  href="/sessionremindext.zip"
-                  className="block text-center px-6 py-3 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
-                  download="sessionremindext.zip"
-                >
-                  Download Extension
-                </a>
-              </div>
-            </div>
-
-            {/* Bookmarklet */}
-            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
-              <div className="mb-6">
+              <div className="mb-6 pt-2">
                 <h3 className="text-xl font-medium text-gray-900 mb-2">Bookmarklet</h3>
                 <p className="text-gray-600 text-sm">
                   Simple one-click solution for desktop browsers
@@ -120,7 +95,7 @@ export default function Home() {
                 <div>Works on desktop browsers</div>
                 <div>One-click bookmark</div>
                 <div>Automatic data extraction</div>
-                <div>Perfect for occasional use</div>
+                <div>Perfect for everyday use</div>
               </div>
 
               <div className="space-y-4">
@@ -141,6 +116,86 @@ export default function Home() {
                   </p>
                 </div>
                 
+              </div>
+            </div>
+
+            {/* Browser Extension */}
+            <div className="bg-white border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-200">
+              <div className="mb-6">
+                <h3 className="text-xl font-medium text-gray-900 mb-2">Browser Extension</h3>
+                <p className="text-gray-600 text-sm">
+                  Advanced option with floating button interface
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-8 text-sm text-gray-600">
+                <div>Floating button appears automatically</div>
+                <div>Works on all UseSession pages</div>
+                <div>Resizable button to avoid page conflicts</div>
+                <div>Advanced features for power users</div>
+                <div>Requires manual installation</div>
+              </div>
+
+              <div className="space-y-3">
+                <a 
+                  href="/sessionremindext.zip"
+                  className="block text-center px-6 py-3 bg-gray-600 text-white font-medium hover:bg-gray-700 transition-colors duration-200"
+                  download="sessionremindext.zip"
+                >
+                  Download Extension
+                </a>
+                <button 
+                  onClick={() => {
+                    const instructions = `# Chrome Extension Installation Guide
+
+## Step-by-Step Instructions:
+
+1. **Download the Extension**
+   - Click the "Download Extension" button above
+   - Save the sessionremindext.zip file to your computer
+
+2. **Extract the ZIP File**
+   - Right-click on sessionremindext.zip
+   - Select "Extract All" or "Unzip"
+   - Remember the folder location
+
+3. **Enable Developer Mode in Chrome**
+   - Open Google Chrome
+   - Type chrome://extensions/ in the address bar
+   - Press Enter
+   - In the top-right corner, toggle "Developer mode" ON
+
+4. **Load the Extension**
+   - Click "Load unpacked" button (appears after enabling developer mode)
+   - Navigate to the extracted folder
+   - Select the "extension" folder inside
+   - Click "Select Folder"
+
+5. **Verify Installation**
+   - You should see "Session Reminder" in your extensions list
+   - Visit any UseSession page to see the floating button
+   - The button shows "S" icon with "Send Text Reminder" text
+
+## Troubleshooting:
+- If you don't see "Load unpacked", make sure Developer mode is enabled
+- Chrome may show security warnings - this is normal for unpacked extensions
+- The extension only works on app.usesession.com pages
+
+## Browser Support:
+✅ Chrome, Edge, Brave, and other Chromium browsers`;
+                    
+                    const blob = new Blob([instructions], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'chrome-extension-installation-guide.txt';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="block text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Download Installation Guide
+                </button>
               </div>
             </div>
 
