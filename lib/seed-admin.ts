@@ -15,7 +15,7 @@ export async function seedAdminUser() {
   const adminUser = await createUser(
     'walterjones', 
     adminEmail, 
-    'sessionremind123' // You should change this password
+    'candice' // Admin password
   )
 
   // Set admin flags
@@ -24,7 +24,9 @@ export async function seedAdminUser() {
     is_admin: true,
     subscription_tier: 'enterprise',
     sms_limit: 999999, // Unlimited for admin
-  })
+    stripe_customer_id: null, // No payment required for admin
+    subscription_status: 'active' // Always active for admin
+  } as unknown as Record<string, unknown>)
 
   console.log('Admin user created:', adminUser.id)
   return adminUser
