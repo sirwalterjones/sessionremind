@@ -58,6 +58,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
 
   useEffect(() => {
+    console.log('Dashboard useEffect - user:', user)
     if (user) {
       loadAllData()
     } else {

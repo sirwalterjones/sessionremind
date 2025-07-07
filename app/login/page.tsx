@@ -20,16 +20,21 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    const result = await login(email, password)
-    
-    if (result.success) {
-      // Small delay to ensure auth context is updated
-      setTimeout(() => {
-        const redirect = searchParams.get('redirect') || '/dashboard'
-        router.push(redirect)
-      }, 200)
-    } else {
-      setError(result.error || 'Login failed')
+    try {
+      const result = await login(email, password)
+      
+      if (result.success) {
+        // Force a full page reload to ensure cookies are set
+        setTimeout(() => {
+          const redirect = searchParams.get('redirect') || '/dashboard'
+          window.location.href = redirect
+        }, 500)
+      } else {
+        setError(result.error || 'Login failed')
+        setLoading(false)
+      }
+    } catch (error) {
+      setError('Login failed')
       setLoading(false)
     }
   }
@@ -100,7 +105,7 @@ export default function LoginPage() {
               disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Signing in... Please wait' : 'Sign in'}
             </button>
           </div>
 

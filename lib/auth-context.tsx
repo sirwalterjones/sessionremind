@@ -58,31 +58,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: 'include' // Include cookies
+        credentials: 'include'
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        // Update user state immediately
+        // Set user immediately
         setUser(data.user)
-        
-        // Wait for cookie to be set and verify auth
-        await new Promise(resolve => setTimeout(resolve, 300))
-        
-        // Verify the session is working
-        try {
-          const verifyResponse = await fetch('/api/auth/me', {
-            credentials: 'include'
-          })
-          if (verifyResponse.ok) {
-            const verifyData = await verifyResponse.json()
-            setUser(verifyData.user)
-          }
-        } catch (verifyError) {
-          console.log('Auth verification failed, but login succeeded')
-        }
-        
         return { success: true, user: data.user }
       } else {
         return { success: false, error: data.error }
