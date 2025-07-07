@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
+import { useSearchParams } from 'next/navigation'
 import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, UserIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
@@ -45,6 +46,7 @@ interface ClientGroup {
 
 export default function Dashboard() {
   const { user, logout } = useAuth()
+  const searchParams = useSearchParams()
   const [sentMessages, setSentMessages] = useState<SentMessage[]>([])
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([])
   const [clientGroups, setClientGroups] = useState<ClientGroup[]>([])
@@ -56,15 +58,27 @@ export default function Dashboard() {
   const [cancellingMessages, setCancellingMessages] = useState<Set<string>>(new Set())
   const [cancelledMessages, setCancelledMessages] = useState<Set<string>>(new Set())
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
+  const [paymentCancelled, setPaymentCancelled] = useState(false)
 
   useEffect(() => {
     console.log('Dashboard useEffect - user:', user)
+    
+    // Check payment status from URL
+    const payment = searchParams.get('payment')
+    if (payment === 'cancelled') {
+      setPaymentCancelled(true)
+    } else if (payment === 'success') {
+      // Payment successful - we should refresh user data to get updated subscription status
+      // For now, just show a success message and continue
+      console.log('Payment successful!')
+    }
+    
     if (user) {
       loadAllData()
     } else {
       setLoading(false)
     }
-  }, [user])
+  }, [user, searchParams])
 
 
   const loadAllData = async () => {
@@ -75,8 +89,8 @@ export default function Dashboard() {
         // Check if user has active subscription
         const hasActiveSubscription = user.subscription_status === 'active'
         
-        if (!hasActiveSubscription) {
-          // Redirect to payment
+        if (!hasActiveSubscription && !paymentCancelled) {
+          // Only auto-redirect to payment if user hasn't cancelled
           try {
             const response = await fetch('/api/stripe/create-checkout', {
               method: 'POST',
@@ -411,16 +425,31 @@ export default function Dashboard() {
         <div className="max-w-md w-full mx-4">
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-yellow-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💳</span>
+              <div className={`w-16 h-16 ${paymentCancelled ? 'bg-orange-200' : 'bg-yellow-200'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <span className="text-2xl">{paymentCancelled ? '⚠️' : '💳'}</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Subscription Required</h2>
-              <p className="text-gray-600">Subscribe to Session Remind for $20/month to access your dashboard</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {paymentCancelled ? 'Payment Cancelled' : 'Subscription Required'}
+              </h2>
+              <p className="text-gray-600">
+                {paymentCancelled 
+                  ? 'Your payment was cancelled. You need an active subscription to access Session Remind features.' 
+                  : 'Subscribe to Session Remind for $20/month to access your dashboard'
+                }
+              </p>
+              {paymentCancelled && (
+                <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-sm text-orange-800">
+                    No worries! You can try again anytime. Your account is safe.
+                  </p>
+                </div>
+              )}
             </div>
             
             <div className="space-y-4">
               <button
                 onClick={async () => {
+                  setPaymentCancelled(false) // Reset cancelled state
                   try {
                     const response = await fetch('/api/stripe/create-checkout', {
                       method: 'POST',
@@ -437,7 +466,7 @@ export default function Dashboard() {
                 }}
                 className="w-full bg-green-600 text-white py-3 px-4 rounded-full font-medium hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
               >
-                Subscribe Now - $20/month
+                {paymentCancelled ? 'Try Again - Subscribe for $20/month' : 'Subscribe Now - $20/month'}
               </button>
               <button
                 onClick={logout}
