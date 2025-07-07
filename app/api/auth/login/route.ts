@@ -36,7 +36,15 @@ export async function POST(request: NextRequest) {
       } }
     )
     
-    response.headers.set('Set-Cookie', setSessionCookie(sessionId))
+    // Set cookie using NextResponse.cookies API
+    response.cookies.set({
+      name: 'session',
+      value: sessionId,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 // 30 days
+    })
     
     return response
 

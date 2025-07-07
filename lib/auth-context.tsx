@@ -35,13 +35,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me')
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include' // Ensure cookies are sent
+      })
       if (response.ok) {
         const data = await response.json()
         setUser(data.user)
+      } else {
+        setUser(null)
       }
     } catch (error) {
       console.error('Auth check failed:', error)
+      setUser(null)
     } finally {
       setLoading(false)
     }
@@ -62,9 +67,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Update user state immediately
         setUser(data.user)
         
-        // Wait a moment for state to propagate, then verify with server
-        await new Promise(resolve => setTimeout(resolve, 100))
-        await checkAuth() // Verify with server
+        // Wait for cookie to be set and verify auth
+        await new Promise(resolve => setTimeout(resolve, 300))
+        
+        // Verify the session is working
+        try {
+          const verifyResponse = await fetch('/api/auth/me', {
+            credentials: 'include'
+          })
+          if (verifyResponse.ok) {
+            const verifyData = await verifyResponse.json()
+            setUser(verifyData.user)
+          }
+        } catch (verifyError) {
+          console.log('Auth verification failed, but login succeeded')
+        }
         
         return { success: true, user: data.user }
       } else {

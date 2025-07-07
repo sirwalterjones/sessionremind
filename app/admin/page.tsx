@@ -17,7 +17,7 @@ interface User {
 }
 
 export default function AdminPage() {
-  const { user, logout } = useAuth()
+  const { user, logout, loading: authLoading } = useAuth()
   const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,6 +29,11 @@ export default function AdminPage() {
   })
 
   useEffect(() => {
+    // Don't redirect while auth is still loading
+    if (authLoading) {
+      return
+    }
+    
     if (!user) {
       router.push('/login')
       return
@@ -40,7 +45,7 @@ export default function AdminPage() {
     }
 
     loadAdminData()
-  }, [user, router])
+  }, [user, authLoading, router])
 
   const loadAdminData = async () => {
     try {
@@ -72,7 +77,7 @@ export default function AdminPage() {
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
         <div className="text-center">

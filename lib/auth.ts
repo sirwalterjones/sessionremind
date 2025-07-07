@@ -148,7 +148,8 @@ export async function getCurrentUser(request?: NextRequest): Promise<User | null
 // Set session cookie
 export function setSessionCookie(sessionId: string): string {
   const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-  return `session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Expires=${expires.toUTCString()}`
+  const isProduction = process.env.NODE_ENV === 'production'
+  return `session=${sessionId}; Path=/; HttpOnly; SameSite=Lax; ${isProduction ? 'Secure; ' : ''}Expires=${expires.toUTCString()}`
 }
 
 // Clear session cookie
