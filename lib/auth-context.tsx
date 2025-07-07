@@ -7,6 +7,7 @@ interface User {
   username: string
   email: string
   subscription_tier: 'starter' | 'pro' | 'enterprise'
+  subscription_status: 'active' | 'inactive' | 'cancelled' | 'pending'
   sms_usage: number
   sms_limit: number
   is_admin?: boolean
@@ -58,12 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json()
 
       if (response.ok) {
+        // Update user state immediately
         setUser(data.user)
-        // Force a reload of auth state to make sure cookies are set
-        setTimeout(() => {
-          checkAuth()
-        }, 100)
-        return { success: true }
+        
+        // Wait a moment for state to propagate, then verify with server
+        await new Promise(resolve => setTimeout(resolve, 100))
+        await checkAuth() // Verify with server
+        
+        return { success: true, user: data.user }
       } else {
         return { success: false, error: data.error }
       }

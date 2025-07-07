@@ -8,6 +8,7 @@ export interface User {
   username: string
   email: string
   subscription_tier: 'starter' | 'pro' | 'enterprise'
+  subscription_status: 'active' | 'inactive' | 'cancelled' | 'pending'
   sms_usage: number
   sms_limit: number
   stripe_customer_id?: string
@@ -47,6 +48,7 @@ export async function createUser(username: string, email: string, password: stri
     username,
     email,
     subscription_tier: 'starter',
+    subscription_status: 'pending', // New users need to pay
     sms_usage: 0,
     sms_limit: 500,
     created_at: new Date().toISOString()

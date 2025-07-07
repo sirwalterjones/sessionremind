@@ -71,9 +71,8 @@ export default function Dashboard() {
     try {
       // Check subscription status for non-admin users
       if (user && !user.is_admin) {
-        // TODO: Check if user has active subscription
-        // For now, redirect to payment
-        const hasActiveSubscription = false // This should check actual subscription status
+        // Check if user has active subscription
+        const hasActiveSubscription = user.subscription_status === 'active'
         
         if (!hasActiveSubscription) {
           // Redirect to payment
@@ -87,9 +86,15 @@ export default function Dashboard() {
               const { url } = await response.json()
               window.location.href = url
               return
+            } else {
+              // Show payment required message
+              setLoading(false)
+              return
             }
           } catch (error) {
             console.error('Failed to create checkout session:', error)
+            setLoading(false)
+            return
           }
         }
       }
@@ -391,6 +396,54 @@ export default function Dashboard() {
               >
                 Create Account
               </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show subscription required message for non-admin users without active subscription
+  if (user && !user.is_admin && user.subscription_status !== 'active') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
+        <div className="max-w-md w-full mx-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-yellow-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">💳</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Subscription Required</h2>
+              <p className="text-gray-600">Subscribe to Session Remind for $20/month to access your dashboard</p>
+            </div>
+            
+            <div className="space-y-4">
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/stripe/create-checkout', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' }
+                    })
+                    
+                    if (response.ok) {
+                      const { url } = await response.json()
+                      window.location.href = url
+                    }
+                  } catch (error) {
+                    console.error('Payment error:', error)
+                  }
+                }}
+                className="w-full bg-green-600 text-white py-3 px-4 rounded-full font-medium hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
+              >
+                Subscribe Now - $20/month
+              </button>
+              <button
+                onClick={logout}
+                className="w-full bg-white text-stone-800 py-3 px-4 rounded-full font-medium border border-stone-200 hover:bg-stone-50 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>

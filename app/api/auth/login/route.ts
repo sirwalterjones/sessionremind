@@ -27,7 +27,13 @@ export async function POST(request: NextRequest) {
 
     // Set session cookie
     const response = NextResponse.json(
-      { user: { id: user.id, username: user.username, email: user.email, is_admin: user.is_admin } }
+      { user: { 
+        id: user.id, 
+        username: user.username, 
+        email: user.email, 
+        is_admin: user.is_admin,
+        subscription_status: user.subscription_status || 'pending'
+      } }
     )
     
     response.headers.set('Set-Cookie', setSessionCookie(sessionId))

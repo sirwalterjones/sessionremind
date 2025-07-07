@@ -18,8 +18,10 @@ export async function GET(request: NextRequest) {
         username: user.username,
         email: user.email,
         subscription_tier: user.subscription_tier,
+        subscription_status: user.subscription_status || 'pending',
         sms_usage: user.sms_usage,
-        sms_limit: user.sms_limit
+        sms_limit: user.sms_limit,
+        is_admin: user.is_admin
       }
     })
 

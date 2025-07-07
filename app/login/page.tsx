@@ -23,13 +23,15 @@ export default function LoginPage() {
     const result = await login(email, password)
     
     if (result.success) {
-      const redirect = searchParams.get('redirect') || '/dashboard'
-      router.push(redirect)
+      // Small delay to ensure auth context is updated
+      setTimeout(() => {
+        const redirect = searchParams.get('redirect') || '/dashboard'
+        router.push(redirect)
+      }, 200)
     } else {
       setError(result.error || 'Login failed')
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   return (
