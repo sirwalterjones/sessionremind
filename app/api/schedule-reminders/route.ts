@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addScheduledMessage, getScheduledMessages } from '@/lib/storage'
+import { getCurrentUser } from '@/lib/auth'
 
 interface ScheduleRequest {
   name: string
@@ -31,6 +32,15 @@ interface ScheduledMessage {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if user is authenticated
+    const user = await getCurrentUser(request)
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const data: ScheduleRequest = await request.json()
     
     console.log('Schedule API received data:', data)
@@ -166,10 +176,25 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Check if user is authenticated
+  const user = await getCurrentUser(request)
+  if (!user) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    )
+  }
+
+  // Get user-specific scheduled messages
   const scheduledMessages = await getScheduledMessages()
+  
+  // Filter messages by user ID (for now, return empty for non-admin users)
+  // TODO: Implement user-specific message storage
+  const userMessages = user.is_admin ? scheduledMessages : []
+  
   return NextResponse.json({
-    scheduledMessages: scheduledMessages
+    scheduledMessages: userMessages
   })
 }
 

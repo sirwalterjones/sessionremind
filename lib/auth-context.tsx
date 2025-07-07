@@ -51,13 +51,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        credentials: 'include' // Include cookies
       })
 
       const data = await response.json()
 
       if (response.ok) {
         setUser(data.user)
+        // Force a reload of auth state to make sure cookies are set
+        setTimeout(() => {
+          checkAuth()
+        }, 100)
         return { success: true }
       } else {
         return { success: false, error: data.error }

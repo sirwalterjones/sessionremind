@@ -69,6 +69,31 @@ export default function Dashboard() {
   const loadAllData = async () => {
     setLoading(true)
     try {
+      // Check subscription status for non-admin users
+      if (user && !user.is_admin) {
+        // TODO: Check if user has active subscription
+        // For now, redirect to payment
+        const hasActiveSubscription = false // This should check actual subscription status
+        
+        if (!hasActiveSubscription) {
+          // Redirect to payment
+          try {
+            const response = await fetch('/api/stripe/create-checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            })
+            
+            if (response.ok) {
+              const { url } = await response.json()
+              window.location.href = url
+              return
+            }
+          } catch (error) {
+            console.error('Failed to create checkout session:', error)
+          }
+        }
+      }
+      
       // Load sent messages from localStorage (user-specific)
       if (user) {
         const userKey = `sentMessages_${user.id}`
@@ -410,9 +435,17 @@ export default function Dashboard() {
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Welcome, {user.username}</span>
               {user.is_admin && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  Admin
-                </span>
+                <>
+                  <a
+                    href="/admin"
+                    className="inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 font-medium rounded-full hover:bg-purple-200 transition-all duration-200 text-sm"
+                  >
+                    Admin Console
+                  </a>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    Admin
+                  </span>
+                </>
               )}
               <button
                 onClick={logout}
