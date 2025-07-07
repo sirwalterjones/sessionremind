@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '@/lib/auth-context'
+import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, UserIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
   id: string | number
@@ -43,9 +44,7 @@ interface ClientGroup {
 }
 
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [password, setPassword] = useState('')
-  const [passwordError, setPasswordError] = useState('')
+  const { user, logout } = useAuth()
   const [sentMessages, setSentMessages] = useState<SentMessage[]>([])
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([])
   const [clientGroups, setClientGroups] = useState<ClientGroup[]>([])
@@ -59,35 +58,36 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
 
   useEffect(() => {
-    // Check if password is already in sessionStorage
-    const savedPassword = sessionStorage.getItem('dashboardPassword')
-    if (savedPassword === 'candice') {
-      setIsAuthenticated(true)
+    if (user) {
       loadAllData()
     } else {
       setLoading(false)
     }
-  }, [])
+  }, [user])
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password === 'candice') {
-      setIsAuthenticated(true)
-      sessionStorage.setItem('dashboardPassword', 'candice')
-      setPasswordError('')
-      loadAllData()
-    } else {
-      setPasswordError('Incorrect password')
-    }
-  }
 
   const loadAllData = async () => {
     setLoading(true)
     try {
-      // Load sent messages from localStorage
-      const stored = localStorage.getItem('sentMessages')
-      if (stored) {
-        setSentMessages(JSON.parse(stored))
+      // Load sent messages from localStorage (user-specific)
+      if (user) {
+        const userKey = `sentMessages_${user.id}`
+        const stored = localStorage.getItem(userKey)
+        if (stored) {
+          setSentMessages(JSON.parse(stored))
+        }
+        
+        // For admin user, also load legacy data if exists
+        if (user.is_admin) {
+          const legacyStored = localStorage.getItem('sentMessages')
+          if (legacyStored) {
+            const legacyMessages = JSON.parse(legacyStored)
+            // Migrate legacy messages to admin user
+            localStorage.setItem(userKey, JSON.stringify(legacyMessages))
+            localStorage.removeItem('sentMessages') // Clean up old data
+            setSentMessages(legacyMessages)
+          }
+        }
       }
 
       // Load scheduled messages from API
@@ -339,46 +339,34 @@ export default function Dashboard() {
   const estimatedCost = (sentCount * 0.049).toFixed(2) // $0.049 per SMS based on TextMagic pricing
   const uniqueClients = new Set(scheduledMessages.map(msg => `${msg.clientName}-${msg.phone}`)).size
 
-  // Password login form
-  if (!isAuthenticated) {
+  // Redirect to login if not authenticated
+  if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-stone-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <LockClosedIcon className="h-8 w-8 text-stone-600" />
+                <UserIcon className="h-8 w-8 text-stone-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Access</h2>
-              <p className="text-gray-600">Enter password to view SMS dashboard</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+              <p className="text-gray-600">Please log in to access your dashboard</p>
             </div>
             
-            <form onSubmit={handlePasswordSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200 text-gray-900 placeholder-gray-500"
-                  placeholder="Enter password"
-                  required
-                />
-                {passwordError && (
-                  <p className="mt-2 text-sm text-red-600">{passwordError}</p>
-                )}
-              </div>
-              
-              <button
-                type="submit"
-                className="w-full bg-stone-800 text-white py-3 px-4 rounded-full font-medium hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md"
+            <div className="space-y-4">
+              <a
+                href="/login"
+                className="w-full bg-stone-800 text-white py-3 px-4 rounded-full font-medium hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
               >
-                Access Dashboard
-              </button>
-            </form>
+                Go to Login
+              </a>
+              <a
+                href="/register"
+                className="w-full bg-white text-stone-800 py-3 px-4 rounded-full font-medium border border-stone-200 hover:bg-stone-50 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
+              >
+                Create Account
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -411,6 +399,32 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
+      {/* Top Navigation */}
+      <nav className="bg-white shadow-sm border-b border-stone-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <span className="text-2xl mr-3">📊</span>
+              <span className="text-xl font-bold text-gray-900">Session Remind</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">Welcome, {user.username}</span>
+              {user.is_admin && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Admin
+                </span>
+              )}
+              <button
+                onClick={logout}
+                className="inline-flex items-center px-4 py-2 bg-stone-100 text-stone-700 font-medium rounded-full hover:bg-stone-200 transition-all duration-200 text-sm"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Header */}

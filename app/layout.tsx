@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import MobileNav from '@/components/MobileNav'
+import { AuthProvider } from '@/lib/auth-context'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -94,7 +95,8 @@ export default function RootLayout({
             `,
           }}
         />
-        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
+        <AuthProvider>
+          <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
           <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-stone-200 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
               <div className="flex justify-between items-center h-20">
@@ -165,7 +167,8 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
-        </div>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   )
