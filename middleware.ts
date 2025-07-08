@@ -5,8 +5,8 @@ import { getCurrentUser } from '@/lib/auth'
 // Routes that require authentication
 const protectedRoutes = ['/dashboard', '/new', '/admin']
 
-// Public routes (auth pages)
-const publicRoutes = ['/login', '/register']
+// Public routes (auth pages and marketing pages)
+const publicRoutes = ['/login', '/register', '/']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -16,17 +16,10 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
   const isRootRoute = pathname === '/'
   
-  // Handle root route - redirect based on authentication status
+  // Handle root route - show homepage to everyone, but add login state awareness
   if (isRootRoute) {
-    const user = await getCurrentUser(request)
-    
-    if (user) {
-      // Authenticated users go to dashboard
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    } else {
-      // Non-authenticated users go to login
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
+    // Let the homepage handle its own logic for showing different content to logged in users
+    return NextResponse.next()
   }
   
   if (isProtectedRoute) {
