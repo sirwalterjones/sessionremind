@@ -14,6 +14,20 @@ export async function middleware(request: NextRequest) {
   // Check if route needs protection
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
+  const isRootRoute = pathname === '/'
+  
+  // Handle root route - redirect based on authentication status
+  if (isRootRoute) {
+    const user = await getCurrentUser(request)
+    
+    if (user) {
+      // Authenticated users go to dashboard
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    } else {
+      // Non-authenticated users go to login
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
   
   if (isProtectedRoute) {
     // Check authentication

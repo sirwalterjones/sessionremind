@@ -49,30 +49,44 @@ export default function AdminPage() {
 
   const loadAdminData = async () => {
     try {
-      // Mock data since we don't have a user list API yet
-      const mockUsers: User[] = [
-        {
-          id: user?.id || '1',
-          username: user?.username || 'walterjones',
-          email: user?.email || 'walterjonesjr@gmail.com',
-          subscription_tier: 'enterprise',
-          sms_usage: 145,
-          sms_limit: 999999,
-          created_at: new Date().toISOString(),
-          is_admin: true
-        }
-      ]
+      const response = await fetch('/api/admin/users', {
+        credentials: 'include'
+      })
 
-      setUsers(mockUsers)
-      setStats({
-        totalUsers: mockUsers.length,
-        totalRevenue: mockUsers.filter(u => !u.is_admin).length * 20, // $20/month per non-admin user
-        totalSmsUsage: mockUsers.reduce((sum, u) => sum + u.sms_usage, 0),
-        activeUsers: mockUsers.filter(u => u.sms_usage > 0).length
+      if (!response.ok) {
+        throw new Error('Failed to fetch admin data')
+      }
+
+      const data = await response.json()
+      setUsers(data.users || [])
+      setStats(data.stats || {
+        totalUsers: 0,
+        totalRevenue: 0,
+        totalSmsUsage: 0,
+        activeUsers: 0
       })
       setLoading(false)
     } catch (error) {
       console.error('Failed to load admin data:', error)
+      // Fallback to showing just the current admin user if API fails
+      if (user) {
+        setUsers([{
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          subscription_tier: 'enterprise',
+          sms_usage: 0,
+          sms_limit: 999999,
+          created_at: new Date().toISOString(),
+          is_admin: true
+        }])
+        setStats({
+          totalUsers: 1,
+          totalRevenue: 0,
+          totalSmsUsage: 0,
+          activeUsers: 0
+        })
+      }
       setLoading(false)
     }
   }
