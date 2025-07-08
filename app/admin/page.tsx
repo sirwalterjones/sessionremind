@@ -1037,27 +1037,27 @@ export default function AdminPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && userToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-2xl border border-gray-200">
             <div className="flex items-center mb-4">
               <ExclamationTriangleIcon className="h-8 w-8 text-red-600 mr-3" />
               <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
             </div>
             
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete the user <strong>{userToDelete.username}</strong>? 
+            <p className="text-gray-900 mb-6">
+              Are you sure you want to delete the user <strong className="text-gray-900">{userToDelete.username}</strong>? 
               This action cannot be undone and will permanently remove all user data.
             </p>
 
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-4 py-2 text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 border border-gray-300 font-medium"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteUser}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 border border-red-600 font-medium shadow-sm"
               >
                 Delete User
               </button>
@@ -1069,7 +1069,7 @@ export default function AdminPage() {
       {/* Password Reset Modal */}
       {showPasswordReset && userToResetPassword && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-2xl border border-gray-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <KeyIcon className="h-8 w-8 text-yellow-600 mr-3" />
@@ -1084,12 +1084,12 @@ export default function AdminPage() {
             </div>
             
             <div className="mb-6">
-              <p className="text-gray-600 mb-4">
-                Reset password for user <strong>{userToResetPassword.username}</strong> ({userToResetPassword.email})
+              <p className="text-gray-900 mb-4">
+                Reset password for user <strong className="text-gray-900">{userToResetPassword.username}</strong> ({userToResetPassword.email})
               </p>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   New Password
                 </label>
                 <input
@@ -1097,11 +1097,11 @@ export default function AdminPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter new password..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-400"
                   required
                   minLength={8}
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   Password must be at least 8 characters long
                 </p>
               </div>
@@ -1110,14 +1110,14 @@ export default function AdminPage() {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowPasswordReset(false)}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-4 py-2 text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 border border-gray-300 font-medium"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetPassword}
                 disabled={!newPassword || newPassword.length < 8 || isResettingPassword}
-                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed border border-yellow-600 font-medium shadow-sm"
               >
                 {isResettingPassword ? 'Resetting...' : 'Reset Password'}
               </button>
