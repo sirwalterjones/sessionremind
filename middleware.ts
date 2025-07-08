@@ -22,12 +22,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
   
+  // Skip middleware for API routes and static files
+  if (pathname.startsWith('/api/') || 
+      pathname.startsWith('/_next/') || 
+      pathname.includes('.')) {
+    return NextResponse.next()
+  }
+  
   if (isProtectedRoute) {
-    // Check authentication
-    const user = await getCurrentUser(request)
-    
-    if (!user) {
-      // Redirect to login
+    try {
+      // Check authentication
+      const user = await getCurrentUser(request)
+      
+      if (!user) {
+        // Redirect to login
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(loginUrl)
+      }
+    } catch (error) {
+      console.error('Middleware auth error:', error)
+      // If auth fails, redirect to login
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
@@ -35,12 +50,17 @@ export async function middleware(request: NextRequest) {
   }
   
   if (isPublicRoute) {
-    // Check if already authenticated
-    const user = await getCurrentUser(request)
-    
-    if (user) {
-      // Redirect to dashboard
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    try {
+      // Check if already authenticated
+      const user = await getCurrentUser(request)
+      
+      if (user) {
+        // Redirect to dashboard
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+    } catch (error) {
+      // If auth check fails, just continue to the public route
+      console.error('Middleware auth check error:', error)
     }
   }
   

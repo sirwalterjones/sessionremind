@@ -122,27 +122,32 @@ export async function deleteSession(sessionId: string): Promise<void> {
 
 // Get current user from request
 export async function getCurrentUser(request?: NextRequest): Promise<User | null> {
-  let sessionId: string | undefined
+  try {
+    let sessionId: string | undefined
 
-  if (request) {
-    sessionId = request.cookies.get('session')?.value
-  } else {
-    const cookieStore = cookies()
-    sessionId = cookieStore.get('session')?.value
-  }
+    if (request) {
+      sessionId = request.cookies.get('session')?.value
+    } else {
+      const cookieStore = cookies()
+      sessionId = cookieStore.get('session')?.value
+    }
 
-  if (!sessionId) return null
+    if (!sessionId) return null
 
-  const session = await getSession(sessionId)
-  if (!session) return null
+    const session = await getSession(sessionId)
+    if (!session) return null
 
-  // Check if session is expired
-  if (new Date(session.expires_at) < new Date()) {
-    await deleteSession(sessionId)
+    // Check if session is expired
+    if (new Date(session.expires_at) < new Date()) {
+      await deleteSession(sessionId)
+      return null
+    }
+
+    return getUserById(session.user_id)
+  } catch (error) {
+    console.error('getCurrentUser error:', error)
     return null
   }
-
-  return getUserById(session.user_id)
 }
 
 // Set session cookie
