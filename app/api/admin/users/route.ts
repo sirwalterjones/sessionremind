@@ -30,6 +30,16 @@ export async function GET(request: NextRequest) {
             userPublicData.subscription_status = 'active'
           }
           
+          // Add payment override status if not present
+          if (!userPublicData.payment_override) {
+            userPublicData.payment_override = false
+          }
+          
+          // Add Stripe customer ID if not present
+          if (!userPublicData.stripe_customer_id) {
+            userPublicData.stripe_customer_id = null
+          }
+          
           // Ensure numeric fields are numbers
           userPublicData.sms_usage = Number(userPublicData.sms_usage) || 0
           userPublicData.sms_limit = Number(userPublicData.sms_limit) || 0
@@ -52,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
     
     const totalRevenue = users
-      .filter(u => !u.is_admin && u.subscription_status === 'active')
+      .filter(u => !u.is_admin && u.subscription_status === 'active' && !u.payment_override)
       .reduce((sum, u) => {
         const tier = (u.subscription_tier as string)?.toLowerCase() || 'starter'
         return sum + (tierPricing[tier] || 20)
@@ -91,7 +101,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate revenue metrics
     const subscriberCount = users.filter(u => !u.is_admin && u.subscription_status === 'active').length
-    const averageRevenuePerUser = subscriberCount > 0 ? totalRevenue / subscriberCount : 0
+    const paidSubscribers = users.filter(u => !u.is_admin && u.subscription_status === 'active' && !u.payment_override).length
+    const overrideUsers = users.filter(u => !u.is_admin && u.payment_override).length
+    const averageRevenuePerUser = paidSubscribers > 0 ? totalRevenue / paidSubscribers : 0
     const estimatedAnnualRevenue = totalRevenue * 12
     
     // Mock some additional metrics that would come from payment processor
@@ -111,6 +123,8 @@ export async function GET(request: NextRequest) {
         totalSmsUsage,
         activeUsers,
         subscriberCount,
+        paidSubscribers,
+        overrideUsers,
         averageRevenuePerUser,
         estimatedAnnualRevenue
       },
@@ -158,7 +172,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { username, email, password, subscription_tier = 'starter', subscription_status = 'active', is_admin = false } = await request.json()
+    const { 
+      username, 
+      email, 
+      password, 
+      subscription_tier = 'starter', 
+      subscription_status = 'active', 
+      is_admin = false,
+      payment_override = false,
+      stripe_customer_id = null
+    } = await request.json()
 
     // Validate input
     if (!username || !email || !password) {
@@ -192,6 +215,8 @@ export async function POST(request: NextRequest) {
       subscription_tier,
       subscription_status,
       is_admin,
+      payment_override,
+      stripe_customer_id,
       sms_usage: 0,
       sms_limit: subscription_tier === 'enterprise' ? 999999 : subscription_tier === 'pro' ? 1000 : 100
     })
@@ -204,7 +229,9 @@ export async function POST(request: NextRequest) {
         email: user.email,
         subscription_tier,
         subscription_status,
-        is_admin
+        is_admin,
+        payment_override,
+        stripe_customer_id
       }
     }, { status: 201 })
 
@@ -229,7 +256,17 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const { userId, username, email, subscription_tier, subscription_status, is_admin, sms_limit } = await request.json()
+    const { 
+      userId, 
+      username, 
+      email, 
+      subscription_tier, 
+      subscription_status, 
+      is_admin, 
+      sms_limit,
+      payment_override,
+      stripe_customer_id 
+    } = await request.json()
 
     if (!userId) {
       return NextResponse.json(
@@ -276,6 +313,8 @@ export async function PUT(request: NextRequest) {
     }
     if (subscription_status) updateData.subscription_status = subscription_status
     if (typeof is_admin === 'boolean') updateData.is_admin = is_admin
+    if (typeof payment_override === 'boolean') updateData.payment_override = payment_override
+    if (stripe_customer_id !== undefined) updateData.stripe_customer_id = stripe_customer_id
     if (sms_limit) updateData.sms_limit = Number(sms_limit)
 
     // Update user

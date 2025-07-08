@@ -1,29 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import { 
   UserIcon, 
-  ChartBarIcon, 
-  CreditCardIcon, 
-  PhoneIcon,
-  ArrowTrendingUpIcon,
-  DocumentChartBarIcon,
-  UsersIcon,
-  CalendarIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  PencilSquareIcon,
+  CurrencyDollarIcon, 
+  ChatBubbleLeftRightIcon, 
+  ChartBarIcon,
+  PlusIcon,
+  PencilIcon,
   TrashIcon,
   MagnifyingGlassIcon,
-  EyeIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  BanknotesIcon,
-  SignalIcon,
-  CpuChipIcon
+  XMarkIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+  GiftIcon,
+  CreditCardIcon,
+  LinkIcon
 } from '@heroicons/react/24/outline'
 
 interface User {
@@ -32,692 +25,586 @@ interface User {
   email: string
   subscription_tier: string
   subscription_status: string
+  is_admin: boolean
+  payment_override: boolean
+  stripe_customer_id: string | null
   sms_usage: number
   sms_limit: number
-  created_at: string
-  is_admin?: boolean
-  last_login?: string
-  total_spent?: number
 }
 
-interface RevenueData {
-  monthly: number
-  yearly: number
-  growth: number
-  subscribers: number
-  churn: number
-  arpu: number
-  mrr: number
-  ltv: number
-}
-
-interface SmsUsageData {
-  total: number
-  thisMonth: number
-  lastMonth: number
-  byTier: Record<string, number>
-  topUsers: Array<{
-    username: string
-    email: string
-    usage: number
-    tier: string
-  }>
-  dailyUsage: Array<{
-    date: string
-    usage: number
-  }>
+interface AdminData {
+  users: User[]
+  stats: {
+    totalUsers: number
+    totalRevenue: number
+    totalSmsUsage: number
+    activeUsers: number
+    subscriberCount: number
+    paidSubscribers: number
+    overrideUsers: number
+    averageRevenuePerUser: number
+    estimatedAnnualRevenue: number
+  }
+  analytics: {
+    subscriptionBreakdown: Record<string, number>
+    smsUsageByTier: Record<string, number>
+    topSmsUsers: Array<{
+      id: string
+      username: string
+      email: string
+      sms_usage: number
+      subscription_tier: string
+    }>
+    revenueMetrics: {
+      monthlyRecurringRevenue: number
+      annualRecurringRevenue: number
+      averageRevenuePerUser: number
+      customerLifetimeValue: number
+      monthlyGrowthRate: number
+      churnRate: number
+    }
+    smsMetrics: {
+      totalSent: number
+      thisMonth: number
+      lastMonth: number
+      dailyAverage: number
+      successRate: number
+      byTier: Record<string, number>
+    }
+  }
 }
 
 export default function AdminPage() {
-  const { user, logout, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [users, setUsers] = useState<User[]>([])
+  const [data, setData] = useState<AdminData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'revenue' | 'sms' | 'users'>('overview')
+  const [error, setError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'analytics' | 'sms' | 'users'>('analytics')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showUserModal, setShowUserModal] = useState(false)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalRevenue: 0,
-    totalSmsUsage: 0,
-    activeUsers: 0
-  })
-  const [revenueData, setRevenueData] = useState<RevenueData>({
-    monthly: 0,
-    yearly: 0,
-    growth: 0,
-    subscribers: 0,
-    churn: 0,
-    arpu: 0,
-    mrr: 0,
-    ltv: 0
-  })
-  const [smsData, setSmsData] = useState<SmsUsageData>({
-    total: 0,
-    thisMonth: 0,
-    lastMonth: 0,
-    byTier: {},
-    topUsers: [],
-    dailyUsage: []
+  const [isCreating, setIsCreating] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+  const [filterTier, setFilterTier] = useState<string>('')
+  const [filterStatus, setFilterStatus] = useState<string>('')
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null)
+
+  // Form states
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    subscription_tier: 'starter',
+    subscription_status: 'active',
+    is_admin: false,
+    payment_override: false,
+    stripe_customer_id: '',
+    sms_limit: 100
   })
 
   useEffect(() => {
-    if (authLoading) return
-    
-    if (!user) {
-      router.push('/login')
-      return
-    }
-    
-    if (!user.is_admin) {
-      router.push('/dashboard')
-      return
-    }
+    fetchAdminData()
+  }, [])
 
-    loadAdminData()
-  }, [user, authLoading, router])
-
-  const loadAdminData = async () => {
+  const fetchAdminData = async () => {
     try {
-      const response = await fetch('/api/admin/users', {
-        credentials: 'include'
-      })
-
+      const response = await fetch('/api/admin/users')
       if (!response.ok) {
+        if (response.status === 401) {
+          router.push('/login')
+          return
+        }
         throw new Error('Failed to fetch admin data')
       }
-
-      const data = await response.json()
-      setUsers(data.users || [])
-      setStats(data.stats || {
-        totalUsers: 0,
-        totalRevenue: 0,
-        totalSmsUsage: 0,
-        activeUsers: 0
-      })
-      
-      // Generate mock revenue data based on actual user data
-      const mockRevenueData: RevenueData = {
-        monthly: data.stats?.totalRevenue || 0,
-        yearly: (data.stats?.totalRevenue || 0) * 12,
-        growth: 15.3,
-        subscribers: data.users?.filter((u: User) => !u.is_admin).length || 0,
-        churn: 5.2,
-        arpu: data.stats?.totalRevenue > 0 ? (data.stats.totalRevenue / Math.max(1, data.users?.filter((u: User) => !u.is_admin).length || 1)) : 20,
-        mrr: data.stats?.totalRevenue || 0,
-        ltv: (data.stats?.totalRevenue || 20) * 24 // 2 years average
-      }
-      setRevenueData(mockRevenueData)
-      
-      // Generate mock SMS data
-      const totalSms = data.stats?.totalSmsUsage || 0
-      const mockSmsData: SmsUsageData = {
-        total: totalSms,
-        thisMonth: Math.floor(totalSms * 0.3),
-        lastMonth: Math.floor(totalSms * 0.25),
-        byTier: {
-          'starter': Math.floor(totalSms * 0.4),
-          'pro': Math.floor(totalSms * 0.45),
-          'enterprise': Math.floor(totalSms * 0.15)
-        },
-        topUsers: data.users?.filter((u: User) => !u.is_admin)
-          .sort((a: User, b: User) => b.sms_usage - a.sms_usage)
-          .slice(0, 5)
-          .map((u: User) => ({
-            username: u.username,
-            email: u.email,
-            usage: u.sms_usage,
-            tier: u.subscription_tier
-          })) || [],
-        dailyUsage: Array.from({ length: 30 }, (_, i) => ({
-          date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          usage: Math.floor(Math.random() * 100) + 50
-        }))
-      }
-      setSmsData(mockSmsData)
-      
-      setLoading(false)
+      const adminData = await response.json()
+      setData(adminData)
     } catch (error) {
-      console.error('Failed to load admin data:', error)
+      console.error('Error fetching admin data:', error)
+      setError('Failed to load admin data')
+    } finally {
       setLoading(false)
     }
   }
 
-  const filteredUsers = users.filter(user => 
-    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0
-    }).format(amount)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'active':
-        return 'bg-green-100 text-green-800'
-      case 'cancelled':
-        return 'bg-red-100 text-red-800'
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getTierColor = (tier: string) => {
-    switch (tier?.toLowerCase()) {
-      case 'enterprise':
-        return 'bg-purple-100 text-purple-800'
-      case 'pro':
-        return 'bg-blue-100 text-blue-800'
-      case 'starter':
-        return 'bg-gray-100 text-gray-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const createUser = async (userData: any) => {
-    setIsSubmitting(true)
+  const handleCreateUser = async () => {
     try {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-        credentials: 'include'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       })
 
-      const result = await response.json()
-      
-      if (response.ok) {
-        setShowCreateModal(false)
-        await loadAdminData() // Refresh data
-        alert('User created successfully!')
-      } else {
-        alert(result.error || 'Failed to create user')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create user')
       }
+
+      await fetchAdminData()
+      setShowUserModal(false)
+      resetForm()
+      showNotification('success', 'User created successfully!')
     } catch (error) {
-      console.error('Create user error:', error)
-      alert('Failed to create user')
-    } finally {
-      setIsSubmitting(false)
+      console.error('Error creating user:', error)
+      showNotification('error', error instanceof Error ? error.message : 'Failed to create user')
     }
   }
 
-  const updateUser = async (userData: any) => {
-    setIsSubmitting(true)
+  const handleUpdateUser = async () => {
+    if (!selectedUser) return
+
     try {
       const response = await fetch('/api/admin/users', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-        credentials: 'include'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: selectedUser.id,
+          ...formData,
+        }),
       })
 
-      const result = await response.json()
-      
-      if (response.ok) {
-        setShowEditModal(false)
-        setSelectedUser(null)
-        await loadAdminData() // Refresh data
-        alert('User updated successfully!')
-      } else {
-        alert(result.error || 'Failed to update user')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update user')
       }
+
+      await fetchAdminData()
+      setShowUserModal(false)
+      resetForm()
+      showNotification('success', 'User updated successfully!')
     } catch (error) {
-      console.error('Update user error:', error)
-      alert('Failed to update user')
-    } finally {
-      setIsSubmitting(false)
+      console.error('Error updating user:', error)
+      showNotification('error', error instanceof Error ? error.message : 'Failed to update user')
     }
   }
 
-  const deleteUser = async (userId: string) => {
-    setIsSubmitting(true)
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return
+
     try {
-      const response = await fetch(`/api/admin/users?userId=${userId}`, {
+      const response = await fetch(`/api/admin/users?userId=${userToDelete.id}`, {
         method: 'DELETE',
-        credentials: 'include'
       })
 
-      const result = await response.json()
-      
-      if (response.ok) {
-        setShowDeleteModal(false)
-        setSelectedUser(null)
-        await loadAdminData() // Refresh data
-        alert('User deleted successfully!')
-      } else {
-        alert(result.error || 'Failed to delete user')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete user')
       }
+
+      await fetchAdminData()
+      setShowDeleteConfirm(false)
+      setUserToDelete(null)
+      showNotification('success', 'User deleted successfully!')
     } catch (error) {
-      console.error('Delete user error:', error)
-      alert('Failed to delete user')
-    } finally {
-      setIsSubmitting(false)
+      console.error('Error deleting user:', error)
+      showNotification('error', error instanceof Error ? error.message : 'Failed to delete user')
     }
   }
 
-  if (authLoading || loading) {
+  const handleTogglePaymentOverride = async (user: User) => {
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          payment_override: !user.payment_override,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update payment override')
+      }
+
+      await fetchAdminData()
+      const action = !user.payment_override ? 'granted' : 'revoked'
+      showNotification('success', `Payment override ${action} for ${user.username}!`)
+    } catch (error) {
+      console.error('Error toggling payment override:', error)
+      showNotification('error', error instanceof Error ? error.message : 'Failed to update payment override')
+    }
+  }
+
+  const openCreateModal = () => {
+    setIsCreating(true)
+    setSelectedUser(null)
+    resetForm()
+    setShowUserModal(true)
+  }
+
+  const openEditModal = (user: User) => {
+    setIsCreating(false)
+    setSelectedUser(user)
+    setFormData({
+      username: user.username,
+      email: user.email,
+      password: '',
+      subscription_tier: user.subscription_tier,
+      subscription_status: user.subscription_status,
+      is_admin: user.is_admin,
+      payment_override: user.payment_override,
+      stripe_customer_id: user.stripe_customer_id || '',
+      sms_limit: user.sms_limit
+    })
+    setShowUserModal(true)
+  }
+
+  const openDeleteModal = (user: User) => {
+    setUserToDelete(user)
+    setShowDeleteConfirm(true)
+  }
+
+  const resetForm = () => {
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      subscription_tier: 'starter',
+      subscription_status: 'active',
+      is_admin: false,
+      payment_override: false,
+      stripe_customer_id: '',
+      sms_limit: 100
+    })
+  }
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message })
+    setTimeout(() => setNotification(null), 5000)
+  }
+
+  const filteredUsers = data?.users?.filter(user => {
+    const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesTier = !filterTier || user.subscription_tier === filterTier
+    const matchesStatus = !filterStatus || user.subscription_status === filterStatus
+    return matchesSearch && matchesTier && matchesStatus
+  }) || []
+
+  const getSubscriptionColor = (tier: string) => {
+    switch (tier.toLowerCase()) {
+      case 'enterprise': return 'bg-purple-100 text-purple-800'
+      case 'pro': return 'bg-blue-100 text-blue-800'
+      case 'starter': return 'bg-green-100 text-green-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'active': return 'bg-green-100 text-green-800'
+      case 'cancelled': return 'bg-red-100 text-red-800'
+      case 'pending': return 'bg-yellow-100 text-yellow-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading admin dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading admin dashboard...</p>
         </div>
       </div>
     )
   }
 
-  if (!user?.is_admin) {
-    return null
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!data) {
+    return <div className="min-h-screen flex items-center justify-center">No data available</div>
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-stone-100">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">🔧</span>
-              <span className="text-xl font-bold text-gray-900">Admin Console</span>
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+              <p className="text-gray-600">Manage your application and users</p>
             </div>
             <div className="flex items-center space-x-4">
-              <a
-                href="/dashboard"
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Dashboard
-              </a>
-              <span className="text-sm text-gray-600">Admin: {user.username}</span>
               <button
-                onClick={logout}
-                className="inline-flex items-center px-4 py-2 bg-stone-100 text-stone-700 font-medium rounded-full hover:bg-stone-200 transition-all duration-200 text-sm"
+                onClick={() => router.push('/dashboard')}
+                className="text-gray-500 hover:text-gray-700"
               >
-                Logout
+                ← Back to Dashboard
               </button>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
 
-      {/* Tab Navigation */}
-      <div className="bg-white border-b border-stone-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+          notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          <div className="flex items-center">
+            {notification.type === 'success' ? (
+              <CheckCircleIcon className="h-5 w-5 mr-2" />
+            ) : (
+              <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
+            )}
+            {notification.message}
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Navigation Tabs */}
+        <div className="mb-8">
+          <nav className="flex space-x-8">
             <button
-              onClick={() => setActiveTab('overview')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'overview'
+              onClick={() => setActiveTab('analytics')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'analytics'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               <ChartBarIcon className="h-5 w-5 inline mr-2" />
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('revenue')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'revenue'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <BanknotesIcon className="h-5 w-5 inline mr-2" />
               Revenue Analytics
             </button>
             <button
               onClick={() => setActiveTab('sms')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'sms'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              <SignalIcon className="h-5 w-5 inline mr-2" />
-              SMS Usage Reports
+              <ChatBubbleLeftRightIcon className="h-5 w-5 inline mr-2" />
+              SMS Reports
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'users'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              <UsersIcon className="h-5 w-5 inline mr-2" />
+              <UserIcon className="h-5 w-5 inline mr-2" />
               User Management
             </button>
-          </div>
+          </nav>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div>
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-                Admin Dashboard
-              </h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed">
-                Manage users, monitor usage, and track revenue across your SaaS platform
-              </p>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                    <UserIcon className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Total Users</p>
-                    <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
-                    <p className="text-xs text-gray-500 mt-1">Platform users</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                    <CreditCardIcon className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Monthly Revenue</p>
-                    <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</p>
-                    <p className="text-xs text-gray-500 mt-1">Recurring revenue</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-                    <PhoneIcon className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">SMS Usage</p>
-                    <p className="text-3xl font-bold text-gray-900">{stats.totalSmsUsage.toLocaleString()}</p>
-                    <p className="text-xs text-gray-500 mt-1">Messages sent</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
-                    <ChartBarIcon className="h-6 w-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Active Users</p>
-                    <p className="text-3xl font-bold text-gray-900">{stats.activeUsers}</p>
-                    <p className="text-xs text-gray-500 mt-1">Users with activity</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center mb-4">
-                  <BanknotesIcon className="h-8 w-8 text-blue-600 mr-3" />
-                  <h3 className="text-lg font-semibold text-gray-900">Revenue Analytics</h3>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">View detailed revenue and subscription metrics</p>
-                <button 
-                  onClick={() => setActiveTab('revenue')}
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  View Analytics
-                </button>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center mb-4">
-                  <SignalIcon className="h-8 w-8 text-green-600 mr-3" />
-                  <h3 className="text-lg font-semibold text-gray-900">SMS Usage Reports</h3>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">Monitor SMS usage across all tenants</p>
-                <button 
-                  onClick={() => setActiveTab('sms')}
-                  className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  View Reports
-                </button>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center mb-4">
-                  <UsersIcon className="h-8 w-8 text-purple-600 mr-3" />
-                  <h3 className="text-lg font-semibold text-gray-900">User Management</h3>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">Add, edit, or manage user accounts</p>
-                <button 
-                  onClick={() => setActiveTab('users')}
-                  className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
-                >
-                  Manage Users
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Revenue Analytics Tab */}
-        {activeTab === 'revenue' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Revenue Analytics</h1>
-              <p className="text-gray-600">Track revenue growth, subscriptions, and financial metrics</p>
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            {/* Key Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <CurrencyDollarIcon className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Monthly Revenue</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      ${data.analytics.revenueMetrics.monthlyRecurringRevenue.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <UserIcon className="h-8 w-8 text-blue-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Paid Subscribers</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {data.stats.paidSubscribers.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      +{data.stats.overrideUsers} override users
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <ChartBarIcon className="h-8 w-8 text-purple-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Growth Rate</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      +{data.analytics.revenueMetrics.monthlyGrowthRate}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <GiftIcon className="h-8 w-8 text-orange-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Override Users</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {data.stats.overrideUsers.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Admin granted access
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Revenue Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                 <div className="flex items-center justify-between mb-2">
-                   <p className="text-sm font-medium text-gray-500">Monthly Recurring Revenue</p>
-                   <ArrowTrendingUpIcon className="h-5 w-5 text-green-500" />
-                 </div>
-                <p className="text-3xl font-bold text-gray-900">{formatCurrency(revenueData.mrr)}</p>
-                <p className="text-xs text-green-600 mt-1">+{revenueData.growth}% from last month</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">Annual Revenue</p>
-                  <BanknotesIcon className="h-5 w-5 text-blue-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{formatCurrency(revenueData.yearly)}</p>
-                <p className="text-xs text-gray-500 mt-1">Projected annual</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">Active Subscribers</p>
-                  <UserIcon className="h-5 w-5 text-purple-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{revenueData.subscribers}</p>
-                <p className="text-xs text-gray-500 mt-1">Paying customers</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">Average Revenue Per User</p>
-                  <CreditCardIcon className="h-5 w-5 text-orange-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{formatCurrency(revenueData.arpu)}</p>
-                <p className="text-xs text-gray-500 mt-1">Monthly ARPU</p>
-              </div>
-            </div>
-
-            {/* Revenue Details */}
+            {/* Detailed Revenue Metrics */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Metrics</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Customer Lifetime Value</span>
-                    <span className="text-sm font-medium text-gray-900">{formatCurrency(revenueData.ltv)}</span>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Breakdown</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Annual Recurring Revenue</span>
+                    <span className="font-semibold">${data.analytics.revenueMetrics.annualRecurringRevenue.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Monthly Churn Rate</span>
-                    <span className="text-sm font-medium text-red-600">{revenueData.churn}%</span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Average Revenue Per User</span>
+                    <span className="font-semibold">${data.analytics.revenueMetrics.averageRevenuePerUser.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Monthly Growth Rate</span>
-                    <span className="text-sm font-medium text-green-600">+{revenueData.growth}%</span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Customer Lifetime Value</span>
+                    <span className="font-semibold">${data.analytics.revenueMetrics.customerLifetimeValue.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Revenue per SMS</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {formatCurrency(stats.totalSmsUsage > 0 ? stats.totalRevenue / stats.totalSmsUsage : 0)}
-                    </span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Monthly Churn Rate</span>
+                    <span className="font-semibold">{data.analytics.revenueMetrics.churnRate}%</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Breakdown</h3>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Tiers</h3>
                 <div className="space-y-3">
-                  {['Enterprise', 'Pro', 'Starter'].map((tier) => {
-                    const tierUsers = users.filter(u => u.subscription_tier?.toLowerCase() === tier.toLowerCase() && !u.is_admin)
-                    const tierRevenue = tierUsers.length * (tier === 'Enterprise' ? 50 : tier === 'Pro' ? 30 : 20)
-                    return (
-                      <div key={tier} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="font-medium text-gray-900">{tier}</p>
-                          <p className="text-sm text-gray-500">{tierUsers.length} subscribers</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium text-gray-900">{formatCurrency(tierRevenue)}</p>
-                          <p className="text-sm text-gray-500">monthly</p>
-                        </div>
+                  {Object.entries(data.analytics.subscriptionBreakdown).map(([tier, count]) => (
+                    <div key={tier} className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSubscriptionColor(tier)}`}>
+                          {tier.toUpperCase()}
+                        </span>
+                        <span className="ml-2 text-gray-600">{count} users</span>
                       </div>
-                    )
-                  })}
+                      <span className="font-semibold">
+                        ${((tier === 'enterprise' ? 50 : tier === 'pro' ? 30 : 20) * (count as number)).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* SMS Usage Reports Tab */}
+        {/* SMS Reports Tab */}
         {activeTab === 'sms' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">SMS Usage Reports</h1>
-              <p className="text-gray-600">Monitor SMS usage patterns and analyze communication metrics</p>
+          <div className="space-y-6">
+            {/* SMS Key Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-blue-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Total SMS Sent</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {data.analytics.smsMetrics.totalSent.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <ChartBarIcon className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">This Month</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {data.analytics.smsMetrics.thisMonth.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      +{Math.round(((data.analytics.smsMetrics.thisMonth - data.analytics.smsMetrics.lastMonth) / data.analytics.smsMetrics.lastMonth) * 100)}% vs last month
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <CheckCircleIcon className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Success Rate</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {data.analytics.smsMetrics.successRate}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-600" />
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Daily Average</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {data.analytics.smsMetrics.dailyAverage.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* SMS Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">Total SMS Sent</p>
-                  <PhoneIcon className="h-5 w-5 text-blue-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{smsData.total.toLocaleString()}</p>
-                <p className="text-xs text-gray-500 mt-1">All time</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">This Month</p>
-                  <CalendarIcon className="h-5 w-5 text-green-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">{smsData.thisMonth.toLocaleString()}</p>
-                <p className="text-xs text-green-600 mt-1">
-                  +{Math.round(((smsData.thisMonth - smsData.lastMonth) / Math.max(smsData.lastMonth, 1)) * 100)}% from last month
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">Daily Average</p>
-                  <ClockIcon className="h-5 w-5 text-purple-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">
-                  {Math.round(smsData.thisMonth / 30).toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">Messages per day</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-500">Success Rate</p>
-                  <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-900">98.5%</p>
-                <p className="text-xs text-gray-500 mt-1">Delivery success</p>
-              </div>
-            </div>
-
-            {/* SMS Analytics */}
+            {/* SMS Usage by Tier and Top Users */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
+              <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Usage by Subscription Tier</h3>
                 <div className="space-y-3">
-                  {Object.entries(smsData.byTier).map(([tier, usage]) => (
-                    <div key={tier} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTierColor(tier)} mr-3`}>
-                          {tier.charAt(0).toUpperCase() + tier.slice(1)}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium text-gray-900">{usage.toLocaleString()}</p>
-                        <p className="text-sm text-gray-500">
-                          {Math.round((usage / smsData.total) * 100)}%
-                        </p>
-                      </div>
+                  {Object.entries(data.analytics.smsUsageByTier).map(([tier, usage]) => (
+                    <div key={tier} className="flex justify-between items-center">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSubscriptionColor(tier)}`}>
+                        {tier.toUpperCase()}
+                      </span>
+                      <span className="font-semibold">{(usage as number).toLocaleString()} SMS</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Top SMS Users</h3>
-                <div className="space-y-3">
-                  {smsData.topUsers.map((user, index) => (
-                    <div key={user.email} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Top 10 SMS Users</h3>
+                <div className="space-y-2">
+                  {data.analytics.topSmsUsers.map((user, index) => (
+                    <div key={user.id} className="flex justify-between items-center py-2">
                       <div className="flex items-center">
-                        <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium mr-3">
-                          {index + 1}
-                        </span>
-                        <div>
-                          <p className="font-medium text-gray-900">{user.username}</p>
-                          <p className="text-sm text-gray-500">{user.email}</p>
+                        <span className="text-sm font-medium text-gray-500 w-6">#{index + 1}</span>
+                        <div className="ml-3">
+                          <p className="text-sm font-medium text-gray-900">{user.username}</p>
+                          <p className="text-xs text-gray-500">{user.email}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">{user.usage.toLocaleString()}</p>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getTierColor(user.tier)}`}>
-                          {user.tier}
-                        </span>
+                        <p className="text-sm font-semibold text-gray-900">{user.sms_usage.toLocaleString()}</p>
+                        <p className="text-xs text-gray-500">{user.subscription_tier}</p>
                       </div>
                     </div>
                   ))}
@@ -729,50 +616,62 @@ export default function AdminPage() {
 
         {/* User Management Tab */}
         {activeTab === 'users' && (
-          <div>
-            <div className="flex justify-between items-center mb-8">
+          <div className="space-y-6">
+            {/* User Management Header */}
+            <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
-                <p className="text-gray-600">Manage user accounts, subscriptions, and access levels</p>
+                <h3 className="text-lg font-semibold text-gray-900">User Management</h3>
+                <p className="text-sm text-gray-600">Manage user accounts and subscriptions</p>
               </div>
-              <button 
-                onClick={() => setShowCreateModal(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              <button
+                onClick={openCreateModal}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
               >
-                Add New User
+                <PlusIcon className="h-4 w-4 mr-2" />
+                Create User
               </button>
             </div>
 
             {/* Search and Filters */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 mb-6">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search users by name or email..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+            <div className="bg-white p-4 rounded-lg shadow">
+              <div className="flex flex-wrap gap-4 items-center">
+                <div className="flex-1 min-w-64">
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search users..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
                 </div>
-                <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>All Tiers</option>
-                  <option>Enterprise</option>
-                  <option>Pro</option>
-                  <option>Starter</option>
+                <select
+                  value={filterTier}
+                  onChange={(e) => setFilterTier(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">All Tiers</option>
+                  <option value="starter">Starter</option>
+                  <option value="pro">Pro</option>
+                  <option value="enterprise">Enterprise</option>
                 </select>
-                <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>All Status</option>
-                  <option>Active</option>
-                  <option>Cancelled</option>
-                  <option>Pending</option>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="pending">Pending</option>
                 </select>
               </div>
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -784,268 +683,199 @@ export default function AdminPage() {
                         Subscription
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         SMS Usage
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Created
+                        Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Access Type
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredUsers.map((userData) => (
-                      <tr key={userData.id} className="hover:bg-gray-50">
+                    {filteredUsers.map((user) => (
+                      <tr key={user.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                              <UserIcon className="h-5 w-5 text-gray-600" />
+                            <div className="flex-shrink-0 h-10 w-10">
+                              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                <UserIcon className="h-5 w-5 text-gray-500" />
+                              </div>
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900 flex items-center">
-                                {userData.username}
-                                {userData.is_admin && (
-                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                                {user.username}
+                                {user.is_admin && (
+                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
                                     Admin
                                   </span>
                                 )}
                               </div>
-                              <div className="text-sm text-gray-500">{userData.email}</div>
+                              <div className="text-sm text-gray-500">{user.email}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTierColor(userData.subscription_tier)}`}>
-                            {userData.subscription_tier}
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSubscriptionColor(user.subscription_tier)}`}>
+                            {user.subscription_tier.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {user.sms_usage.toLocaleString()} / {user.sms_limit === 999999 ? '∞' : user.sms_limit.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.subscription_status)}`}>
+                            {user.subscription_status.toUpperCase()}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(userData.subscription_status)}`}>
-                            {userData.subscription_status || 'active'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{userData.sms_usage.toLocaleString()}</div>
-                          <div className="text-sm text-gray-500">
-                            of {userData.sms_limit === 999999 ? '∞' : userData.sms_limit.toLocaleString()}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(userData.created_at)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button 
-                              onClick={() => {
-                                setSelectedUser(userData)
-                                setShowUserModal(true)
-                              }}
-                              className="text-blue-600 hover:text-blue-900"
-                            >
-                              <EyeIcon className="h-4 w-4" />
-                            </button>
-                            <button 
-                              onClick={() => {
-                                setSelectedUser(userData)
-                                setShowEditModal(true)
-                              }}
-                              className="text-indigo-600 hover:text-indigo-900"
-                              title="Edit user"
-                            >
-                              <PencilSquareIcon className="h-4 w-4" />
-                            </button>
-                            {!userData.is_admin && (
-                              <button 
-                                onClick={() => {
-                                  setSelectedUser(userData)
-                                  setShowDeleteModal(true)
-                                }}
-                                className="text-red-600 hover:text-red-900"
-                                title="Delete user"
-                              >
-                                <TrashIcon className="h-4 w-4" />
-                              </button>
+                          <div className="flex items-center">
+                            {user.payment_override ? (
+                              <div className="flex items-center text-orange-600">
+                                <GiftIcon className="h-4 w-4 mr-1" />
+                                <span className="text-xs font-medium">Override</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center text-green-600">
+                                <CreditCardIcon className="h-4 w-4 mr-1" />
+                                <span className="text-xs font-medium">Paid</span>
+                              </div>
                             )}
                           </div>
                         </td>
+                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                           <div className="flex items-center justify-end space-x-2">
+                             {user.stripe_customer_id && !user.payment_override && (
+                               <button
+                                 onClick={() => window.open(`https://dashboard.stripe.com/customers/${user.stripe_customer_id}`, '_blank')}
+                                 className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg"
+                                 title="View in Stripe Dashboard"
+                               >
+                                 <LinkIcon className="h-4 w-4" />
+                               </button>
+                             )}
+                             <button
+                               onClick={() => handleTogglePaymentOverride(user)}
+                               className={`p-2 rounded-lg transition-colors ${
+                                 user.payment_override
+                                   ? 'bg-orange-100 text-orange-600 hover:bg-orange-200'
+                                   : 'bg-green-100 text-green-600 hover:bg-green-200'
+                               }`}
+                               title={user.payment_override ? 'Remove payment override' : 'Grant payment override'}
+                             >
+                               {user.payment_override ? (
+                                 <CreditCardIcon className="h-4 w-4" />
+                               ) : (
+                                 <GiftIcon className="h-4 w-4" />
+                               )}
+                             </button>
+                             <button
+                               onClick={() => openEditModal(user)}
+                               className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                               title="Edit user"
+                             >
+                               <PencilIcon className="h-4 w-4" />
+                             </button>
+                             <button
+                               onClick={() => openDeleteModal(user)}
+                               className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                               title="Delete user"
+                             >
+                               <TrashIcon className="h-4 w-4" />
+                             </button>
+                           </div>
+                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
+
+            {filteredUsers.length === 0 && (
+              <div className="text-center py-12">
+                <UserIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">No users found matching your criteria.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Create User Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Create New User</h2>
-              <button 
-                onClick={() => setShowCreateModal(false)}
+      {/* User Modal */}
+      {showUserModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">
+                {isCreating ? 'Create New User' : 'Edit User'}
+              </h3>
+              <button
+                onClick={() => setShowUserModal(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <XCircleIcon className="h-6 w-6" />
+                <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
-            
-            <form onSubmit={(e) => {
-              e.preventDefault()
-              const formData = new FormData(e.target as HTMLFormElement)
-              createUser({
-                username: formData.get('username'),
-                email: formData.get('email'),
-                password: formData.get('password'),
-                subscription_tier: formData.get('subscription_tier'),
-                subscription_status: formData.get('subscription_status'),
-                is_admin: formData.get('is_admin') === 'on'
-              })
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                  <input
-                    type="text"
-                    name="username"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    required
-                    minLength={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subscription Tier</label>
-                  <select
-                    name="subscription_tier"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="starter">Starter</option>
-                    <option value="pro">Pro</option>
-                    <option value="enterprise">Enterprise</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                  <select
-                    name="subscription_status"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="active">Active</option>
-                    <option value="pending">Pending</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="is_admin"
-                    id="is_admin"
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="is_admin" className="ml-2 block text-sm text-gray-700">
-                    Admin User
-                  </label>
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
-                <button 
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {isSubmitting ? 'Creating...' : 'Create User'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
-      {/* Edit User Modal */}
-      {showEditModal && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Edit User</h2>
-              <button 
-                onClick={() => setShowEditModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <XCircleIcon className="h-6 w-6" />
-              </button>
-            </div>
-            
             <form onSubmit={(e) => {
               e.preventDefault()
-              const formData = new FormData(e.target as HTMLFormElement)
-              updateUser({
-                userId: selectedUser.id,
-                username: formData.get('username'),
-                email: formData.get('email'),
-                subscription_tier: formData.get('subscription_tier'),
-                subscription_status: formData.get('subscription_status'),
-                is_admin: formData.get('is_admin') === 'on',
-                sms_limit: formData.get('sms_limit')
-              })
+              isCreating ? handleCreateUser() : handleUpdateUser()
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Username
+                  </label>
                   <input
                     type="text"
-                    name="username"
-                    defaultValue={selectedUser.username}
-                    required
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
                   <input
                     type="email"
-                    name="email"
-                    defaultValue={selectedUser.email}
-                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
                   />
                 </div>
+
+                {isCreating && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                )}
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subscription Tier</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Subscription Tier
+                  </label>
                   <select
-                    name="subscription_tier"
-                    defaultValue={selectedUser.subscription_tier}
+                    value={formData.subscription_tier}
+                    onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="starter">Starter</option>
@@ -1053,55 +883,98 @@ export default function AdminPage() {
                     <option value="enterprise">Enterprise</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Subscription Status
+                  </label>
                   <select
-                    name="subscription_status"
-                    defaultValue={selectedUser.subscription_status || 'active'}
+                    value={formData.subscription_status}
+                    onChange={(e) => setFormData({ ...formData, subscription_status: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="active">Active</option>
-                    <option value="pending">Pending</option>
                     <option value="cancelled">Cancelled</option>
+                    <option value="pending">Pending</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">SMS Limit</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    SMS Limit
+                  </label>
                   <input
                     type="number"
-                    name="sms_limit"
-                    defaultValue={selectedUser.sms_limit}
+                    value={formData.sms_limit}
+                    onChange={(e) => setFormData({ ...formData, sms_limit: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="0"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Stripe Customer ID
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.stripe_customer_id}
+                    onChange={(e) => setFormData({ ...formData, stripe_customer_id: e.target.value })}
+                    placeholder="cus_xxxxxxxxx"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Link to Stripe customer (for paid users)
+                  </p>
                 </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="is_admin"
-                    id="edit_is_admin"
-                    defaultChecked={selectedUser.is_admin}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="edit_is_admin" className="ml-2 block text-sm text-gray-700">
-                    Admin User
+
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_admin}
+                      onChange={(e) => setFormData({ ...formData, is_admin: e.target.checked })}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Admin User</span>
+                  </label>
+
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.payment_override}
+                      onChange={(e) => setFormData({ ...formData, payment_override: e.target.checked })}
+                      className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Payment Override</span>
                   </label>
                 </div>
+
+                {formData.payment_override && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                    <div className="flex items-center">
+                      <GiftIcon className="h-5 w-5 text-orange-600 mr-2" />
+                      <p className="text-sm text-orange-800">
+                        This user will have premium access without payment requirements.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-              
-              <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
-                <button 
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
                   type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  onClick={() => setShowUserModal(false)}
+                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  {isSubmitting ? 'Updating...' : 'Update User'}
+                  {isCreating ? 'Create User' : 'Update User'}
                 </button>
               </div>
             </form>
@@ -1110,140 +983,32 @@ export default function AdminPage() {
       )}
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Delete User</h2>
-              <button 
-                onClick={() => setShowDeleteModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <XCircleIcon className="h-6 w-6" />
-              </button>
+      {showDeleteConfirm && userToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex items-center mb-4">
+              <ExclamationTriangleIcon className="h-8 w-8 text-red-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
             </div>
             
-            <div className="mb-6">
-              <p className="text-gray-600 mb-2">Are you sure you want to delete this user?</p>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="font-medium text-gray-900">{selectedUser.username}</p>
-                <p className="text-sm text-gray-500">{selectedUser.email}</p>
-                <p className="text-sm text-gray-500">
-                  {selectedUser.subscription_tier} • {selectedUser.sms_usage} SMS sent
-                </p>
-              </div>
-              <p className="text-red-600 text-sm mt-2 font-medium">
-                This action cannot be undone. All user data will be permanently deleted.
-              </p>
-            </div>
-            
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete the user <strong>{userToDelete.username}</strong>? 
+              This action cannot be undone and will permanently remove all user data.
+            </p>
+
             <div className="flex justify-end space-x-3">
-              <button 
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>
-              <button 
-                onClick={() => deleteUser(selectedUser.id)}
-                disabled={isSubmitting}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+              <button
+                onClick={handleDeleteUser}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
-                {isSubmitting ? 'Deleting...' : 'Delete User'}
+                Delete User
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* User Details Modal */}
-      {showUserModal && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">User Details</h2>
-              <button 
-                onClick={() => setShowUserModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <XCircleIcon className="h-6 w-6" />
-              </button>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Username</label>
-                      <p className="text-sm text-gray-900">{selectedUser.username}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Email</label>
-                      <p className="text-sm text-gray-900">{selectedUser.email}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Account Type</label>
-                      <p className="text-sm text-gray-900">
-                        {selectedUser.is_admin ? 'Administrator' : 'User'}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Created</label>
-                      <p className="text-sm text-gray-900">{formatDate(selectedUser.created_at)}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Details</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Tier</label>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTierColor(selectedUser.subscription_tier)}`}>
-                        {selectedUser.subscription_tier}
-                      </span>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Status</label>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedUser.subscription_status)}`}>
-                        {selectedUser.subscription_status || 'active'}
-                      </span>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">SMS Usage</label>
-                      <p className="text-sm text-gray-900">
-                        {selectedUser.sms_usage.toLocaleString()} of {selectedUser.sms_limit === 999999 ? '∞' : selectedUser.sms_limit.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">Monthly Value</label>
-                      <p className="text-sm text-gray-900">
-                        {formatCurrency(selectedUser.subscription_tier === 'enterprise' ? 50 : selectedUser.subscription_tier === 'pro' ? 30 : 20)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 pt-6 border-t">
-                <button 
-                  onClick={() => setShowUserModal(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  Close
-                </button>
-                <button 
-                  onClick={() => {
-                    setShowUserModal(false)
-                    setShowEditModal(true)
-                  }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Edit User
-                </button>
-              </div>
             </div>
           </div>
         </div>
