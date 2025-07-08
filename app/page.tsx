@@ -60,7 +60,7 @@ export default function Home() {
                     href="/register"
                     className="px-8 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
                   >
-                    Start Free Trial
+                    Subscribe Now
                   </a>
                   <a
                     href="/login"
@@ -126,23 +126,42 @@ export default function Home() {
               </div>
 
               <div className="space-y-4">
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
-                  <a 
-                    href={dataExtractionBookmarkletCode}
-                    className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
-                    draggable="true"
-                  >
-                    <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
-                      <span className="text-black text-xs font-bold">S</span>
+                {user && user.subscription_status === 'active' ? (
+                  <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
+                    <a 
+                      href={dataExtractionBookmarkletCode}
+                      className="inline-flex items-center px-4 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition-colors duration-200 cursor-move"
+                      draggable="true"
+                    >
+                      <div className="w-5 h-5 bg-white rounded flex items-center justify-center mr-2">
+                        <span className="text-black text-xs font-bold">S</span>
+                      </div>
+                      ession Remind
+                    </a>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Drag this button to your bookmarks bar
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
                     </div>
-                    ession Remind
-                  </a>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Drag this button to your bookmarks bar
-                  </p>
-                </div>
-                
+                    <h4 className="font-medium text-gray-900 mb-2">Subscription Required</h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Subscribe to access the bookmarklet and all features
+                    </p>
+                    <a 
+                      href="/register"
+                      className="inline-block px-4 py-2 bg-red-600 text-white font-medium rounded hover:bg-red-700 transition-colors duration-200"
+                    >
+                      Subscribe Now
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -164,16 +183,18 @@ export default function Home() {
               </div>
 
               <div className="space-y-3">
-                <a 
-                  href="/sessionremindext.zip"
-                  className="block text-center px-6 py-3 bg-gray-600 text-white font-medium hover:bg-gray-700 transition-colors duration-200"
-                  download="sessionremindext.zip"
-                >
-                  Download Extension
-                </a>
-                <button 
-                  onClick={() => {
-                    const instructions = `# Chrome Extension Installation Guide
+                {user && user.subscription_status === 'active' ? (
+                  <>
+                    <a 
+                      href="/sessionremindext.zip"
+                      className="block text-center px-6 py-3 bg-gray-600 text-white font-medium hover:bg-gray-700 transition-colors duration-200"
+                      download="sessionremindext.zip"
+                    >
+                      Download Extension
+                    </a>
+                    <button 
+                      onClick={() => {
+                        const instructions = `# Chrome Extension Installation Guide
 
 ## Step-by-Step Instructions:
 
@@ -210,19 +231,39 @@ export default function Home() {
 
 ## Browser Support:
 ✅ Chrome, Edge, Brave, and other Chromium browsers`;
-                    
-                    const blob = new Blob([instructions], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'chrome-extension-installation-guide.txt';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="block text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200"
-                >
-                  Download Installation Guide
-                </button>
+                        
+                        const blob = new Blob([instructions], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'chrome-extension-installation-guide.txt';
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="block text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      Download Installation Guide
+                    </button>
+                  </>
+                ) : (
+                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6 text-center">
+                    <div className="w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-medium text-gray-900 mb-2">Subscription Required</h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Subscribe to access the browser extension and all features
+                    </p>
+                    <a 
+                      href="/register"
+                      className="inline-block px-4 py-2 bg-red-600 text-white font-medium rounded hover:bg-red-700 transition-colors duration-200"
+                    >
+                      Subscribe Now
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -334,10 +375,10 @@ export default function Home() {
                 href="/register"
                 className="block w-full px-8 py-4 bg-black text-white font-medium text-center hover:bg-gray-800 transition-colors duration-200 rounded-lg"
               >
-                Start Free Trial
+                Subscribe Now
               </a>
               <p className="text-xs text-gray-500 text-center mt-3">
-                No setup fees • Cancel anytime • 7-day free trial
+                No setup fees • Cancel anytime
               </p>
             </div>
           </div>
@@ -356,7 +397,7 @@ export default function Home() {
               href="/register"
               className="inline-block px-8 py-3 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200 rounded-lg"
             >
-              Get Started Now
+              Subscribe Now
             </a>
           </div>
         </div>
