@@ -861,9 +861,9 @@ export default function AdminPage() {
       {/* User Modal */}
       {showUserModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {isCreating ? 'Create New User' : 'Edit User'}
               </h3>
               <button
@@ -880,41 +880,41 @@ export default function AdminPage() {
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Username
                   </label>
                   <input
                     type="text"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Email
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     required
                   />
                 </div>
 
                 {isCreating && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-900 mb-1">
                       Password
                     </label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                       required
                       minLength={6}
                     />
@@ -922,13 +922,13 @@ export default function AdminPage() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Subscription Tier
                   </label>
                   <select
                     value={formData.subscription_tier}
                     onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                   >
                     <option value="starter">Starter</option>
                     <option value="pro">Pro</option>
@@ -937,13 +937,13 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Subscription Status
                   </label>
                   <select
                     value={formData.subscription_status}
                     onChange={(e) => setFormData({ ...formData, subscription_status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                   >
                     <option value="active">Active</option>
                     <option value="cancelled">Cancelled</option>
@@ -952,20 +952,20 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     SMS Limit
                   </label>
                   <input
                     type="number"
                     value={formData.sms_limit}
                     onChange={(e) => setFormData({ ...formData, sms_limit: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     min="0"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Stripe Customer ID
                   </label>
                   <input
@@ -973,9 +973,9 @@ export default function AdminPage() {
                     value={formData.stripe_customer_id}
                     onChange={(e) => setFormData({ ...formData, stripe_customer_id: e.target.value })}
                     placeholder="cus_xxxxxxxxx"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-400"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-600 mt-1">
                     Link to Stripe customer (for paid users)
                   </p>
                 </div>
@@ -988,7 +988,7 @@ export default function AdminPage() {
                       onChange={(e) => setFormData({ ...formData, is_admin: e.target.checked })}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Admin User</span>
+                    <span className="ml-2 text-sm text-gray-900">Admin User</span>
                   </label>
 
                   <label className="flex items-center">
@@ -998,7 +998,7 @@ export default function AdminPage() {
                       onChange={(e) => setFormData({ ...formData, payment_override: e.target.checked })}
                       className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Payment Override</span>
+                    <span className="ml-2 text-sm text-gray-900">Payment Override</span>
                   </label>
                 </div>
 
@@ -1018,13 +1018,13 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowUserModal(false)}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  className="px-4 py-2 text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 border border-gray-300 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-600 font-medium shadow-sm"
                 >
                   {isCreating ? 'Create User' : 'Update User'}
                 </button>
