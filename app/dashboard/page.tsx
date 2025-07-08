@@ -86,8 +86,8 @@ export default function Dashboard() {
     try {
       // Check subscription status for non-admin users
       if (user && !user.is_admin) {
-        // Check if user has active subscription
-        const hasActiveSubscription = user.subscription_status === 'active'
+        // Check if user has active subscription or payment override
+        const hasActiveSubscription = user.subscription_status === 'active' || user.payment_override
         
         if (!hasActiveSubscription && !paymentCancelled) {
           // Only auto-redirect to payment if user hasn't cancelled
@@ -418,8 +418,8 @@ export default function Dashboard() {
     )
   }
 
-  // Show subscription required message for non-admin users without active subscription
-  if (user && !user.is_admin && user.subscription_status !== 'active') {
+  // Show subscription required message for non-admin users without active subscription or payment override
+  if (user && !user.is_admin && user.subscription_status !== 'active' && !user.payment_override) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">

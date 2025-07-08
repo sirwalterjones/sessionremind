@@ -860,8 +860,8 @@ export default function AdminPage() {
 
       {/* User Modal */}
       {showUserModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">
                 {isCreating ? 'Create New User' : 'Edit User'}
@@ -1036,7 +1036,7 @@ export default function AdminPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && userToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex items-center mb-4">
               <ExclamationTriangleIcon className="h-8 w-8 text-red-600 mr-3" />
@@ -1068,7 +1068,7 @@ export default function AdminPage() {
 
       {/* Password Reset Modal */}
       {showPasswordReset && userToResetPassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">

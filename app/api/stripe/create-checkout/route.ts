@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Admin users don't need to pay
-    if (user.is_admin) {
+    // Admin users and users with payment override don't need to pay
+    if (user.is_admin || user.payment_override) {
       return NextResponse.json(
-        { error: 'Admin users do not need to subscribe' },
+        { error: 'User already has premium access' },
         { status: 400 }
       )
     }

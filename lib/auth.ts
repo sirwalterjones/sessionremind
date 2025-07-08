@@ -13,6 +13,7 @@ export interface User {
   sms_limit: number
   stripe_customer_id?: string
   is_admin?: boolean
+  payment_override?: boolean
   created_at: string
 }
 

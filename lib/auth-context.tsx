@@ -11,6 +11,7 @@ interface User {
   sms_usage: number
   sms_limit: number
   is_admin?: boolean
+  payment_override?: boolean
 }
 
 interface AuthContextType {
