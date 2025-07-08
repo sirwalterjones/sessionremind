@@ -16,7 +16,8 @@ import {
   CheckCircleIcon,
   GiftIcon,
   CreditCardIcon,
-  LinkIcon
+  LinkIcon,
+  KeyIcon
 } from '@heroicons/react/24/outline'
 
 interface User {
@@ -86,6 +87,10 @@ export default function AdminPage() {
   const [isCreating, setIsCreating] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
+  const [showPasswordReset, setShowPasswordReset] = useState(false)
+  const [userToResetPassword, setUserToResetPassword] = useState<User | null>(null)
+  const [newPassword, setNewPassword] = useState('')
+  const [isResettingPassword, setIsResettingPassword] = useState(false)
   const [filterTier, setFilterTier] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
   const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null)
@@ -232,6 +237,40 @@ export default function AdminPage() {
     }
   }
 
+  const handleResetPassword = async () => {
+    if (!userToResetPassword || !newPassword) return
+
+    setIsResettingPassword(true)
+    
+    try {
+      const response = await fetch('/api/admin/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userToResetPassword.id,
+          newPassword: newPassword,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to reset password')
+      }
+
+      setShowPasswordReset(false)
+      setUserToResetPassword(null)
+      setNewPassword('')
+      showNotification('success', `Password reset successfully for ${userToResetPassword.username}!`)
+    } catch (error) {
+      console.error('Error resetting password:', error)
+      showNotification('error', error instanceof Error ? error.message : 'Failed to reset password')
+    } finally {
+      setIsResettingPassword(false)
+    }
+  }
+
   const openCreateModal = () => {
     setIsCreating(true)
     setSelectedUser(null)
@@ -259,6 +298,12 @@ export default function AdminPage() {
   const openDeleteModal = (user: User) => {
     setUserToDelete(user)
     setShowDeleteConfirm(true)
+  }
+
+  const openPasswordResetModal = (user: User) => {
+    setUserToResetPassword(user)
+    setNewPassword('')
+    setShowPasswordReset(true)
   }
 
   const resetForm = () => {
@@ -774,6 +819,13 @@ export default function AdminPage() {
                                )}
                              </button>
                              <button
+                               onClick={() => openPasswordResetModal(user)}
+                               className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg"
+                               title="Reset password"
+                             >
+                               <KeyIcon className="h-4 w-4" />
+                             </button>
+                             <button
                                onClick={() => openEditModal(user)}
                                className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
                                title="Edit user"
@@ -1008,6 +1060,66 @@ export default function AdminPage() {
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
                 Delete User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Password Reset Modal */}
+      {showPasswordReset && userToResetPassword && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <KeyIcon className="h-8 w-8 text-yellow-600 mr-3" />
+                <h3 className="text-lg font-semibold text-gray-900">Reset Password</h3>
+              </div>
+              <button
+                onClick={() => setShowPasswordReset(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-600 mb-4">
+                Reset password for user <strong>{userToResetPassword.username}</strong> ({userToResetPassword.email})
+              </p>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  required
+                  minLength={8}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Password must be at least 8 characters long
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowPasswordReset(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetPassword}
+                disabled={!newPassword || newPassword.length < 8 || isResettingPassword}
+                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isResettingPassword ? 'Resetting...' : 'Reset Password'}
               </button>
             </div>
           </div>

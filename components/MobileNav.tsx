@@ -40,12 +40,20 @@ export default function MobileNav() {
             <span className="font-medium">Dashboard</span>
           </Link>
           <Link 
-            href="/new" 
+            href="/profile" 
+            className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
+            onClick={() => setIsOpen(false)}
+          >
+            <span className="text-lg">👤</span>
+            <span className="font-medium">Profile</span>
+          </Link>
+          <Link 
+            href="/login" 
             className="flex items-center space-x-3 px-4 py-3 bg-stone-800 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-stone-900 transition-all duration-200"
             onClick={() => setIsOpen(false)}
           >
-            <span className="text-lg">✨</span>
-            <span>New Reminder</span>
+            <span className="text-lg">🔑</span>
+            <span>Login</span>
           </Link>
         </div>
       )}

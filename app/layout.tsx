@@ -149,15 +149,25 @@ export default function RootLayout({
                     </span>
                   </Link>
                   
+                  <Link 
+                    href="/profile" 
+                    className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="text-sm">👤</span>
+                      <span>Profile</span>
+                    </span>
+                  </Link>
+                  
                   <div className="w-px h-6 bg-stone-300 mx-2"></div>
                   
                   <Link 
-                    href="/new" 
+                    href="/login" 
                     className="group px-6 py-3 bg-stone-800 text-white font-medium rounded-full shadow-sm hover:shadow-md transition-all duration-200 hover:bg-stone-900 hover:scale-105"
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="text-sm">✨</span>
-                      <span>New Reminder</span>
+                      <span className="text-sm">🔑</span>
+                      <span>Login</span>
                     </span>
                   </Link>
                 </div>
