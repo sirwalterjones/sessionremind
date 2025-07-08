@@ -19,22 +19,33 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
+      <div className="relative overflow-hidden bg-gradient-to-br from-white via-slate-50/30 to-white">
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(120,119,198,0.08),_transparent_50%),radial-gradient(circle_at_70%_80%,_rgba(120,119,198,0.08),_transparent_50%)]" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
           
           {/* Main Hero Content */}
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-gray-900 mb-8 tracking-tight leading-tight">
+          <div className="text-center max-w-5xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-full text-sm font-medium text-blue-700 mb-8">
+              <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
+              Trusted by 500+ photographers
+            </div>
+            
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-light text-gray-900 mb-8 tracking-tight leading-[0.9]">
               Never miss a
-              <span className="font-medium block">session again</span>
+              <span className="font-medium block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                session again
+              </span>
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+            
+            <p className="text-xl sm:text-2xl lg:text-3xl text-gray-600 mb-16 max-w-4xl mx-auto leading-relaxed font-light">
               Automatically send SMS reminders to your photography clients with seamless UseSession integration
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
               {loading ? (
-                <div className="px-8 py-4 bg-gray-200 text-gray-500 font-medium animate-pulse">
+                <div className="px-10 py-4 bg-gray-200 text-gray-500 font-medium animate-pulse rounded-full">
                   Loading...
                 </div>
               ) : user ? (
@@ -42,13 +53,13 @@ export default function Home() {
                 <>
                   <a
                     href="/new"
-                    className="px-8 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
+                    className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
                   >
                     Create Reminder
                   </a>
                   <a
                     href="/dashboard"
-                    className="px-8 py-4 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                    className="px-10 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-full hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
                   >
                     View Dashboard
                   </a>
@@ -58,13 +69,13 @@ export default function Home() {
                 <>
                   <a
                     href="/register"
-                    className="px-8 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200"
+                    className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
                   >
                     Subscribe Now
                   </a>
                   <a
                     href="/login"
-                    className="px-8 py-4 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200"
+                    className="px-10 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-full hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
                   >
                     Sign In
                   </a>
@@ -74,15 +85,16 @@ export default function Home() {
           </div>
 
           {/* Mobile Notice */}
-          <div className="block md:hidden mb-16">
-            <div className="bg-amber-50 border border-amber-200 p-6 text-center max-w-md mx-auto">
-              <h3 className="text-lg font-medium text-amber-900 mb-2">Mobile Device Detected</h3>
-              <p className="text-amber-800 mb-4 text-sm">
+          <div className="block md:hidden mb-20">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-8 text-center max-w-md mx-auto rounded-2xl shadow-lg">
+              <div className="text-4xl mb-4">📱</div>
+              <h3 className="text-lg font-semibold text-amber-900 mb-3">Mobile Device Detected</h3>
+              <p className="text-amber-800 mb-6 text-sm leading-relaxed">
                 For best results, use a desktop or tablet-based browser with full integration options.
               </p>
               <a
                 href="/new"
-                className="inline-block px-6 py-3 bg-amber-600 text-white font-medium hover:bg-amber-700 transition-colors duration-200"
+                className="inline-block px-8 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-full hover:from-amber-700 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 shadow-md"
               >
                 Continue with Manual Entry
               </a>
@@ -93,88 +105,144 @@ export default function Home() {
       </div>
 
       {/* Pricing Section */}
-      <div className="bg-gray-50 py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-6">
-            Simple, transparent pricing
-          </h2>
-          <p className="text-xl text-gray-600 mb-16 font-light max-w-2xl mx-auto">
-            Professional SMS reminders for your photography business
-          </p>
+      <div className="relative py-32 bg-gradient-to-br from-slate-50 via-white to-slate-50 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,_rgba(120,119,198,0.05),_transparent_50%),radial-gradient(circle_at_80%_20%,_rgba(120,119,198,0.05),_transparent_50%),radial-gradient(circle_at_40%_40%,_rgba(120,119,198,0.05),_transparent_50%)]"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-4 py-2 bg-black/5 rounded-full text-sm font-medium text-gray-600 mb-6">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+              Simple, transparent pricing
+            </div>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 mb-6 leading-tight">
+              Professional SMS reminders
+              <span className="block text-gray-600 text-3xl sm:text-4xl lg:text-5xl mt-2">
+                for your photography business
+              </span>
+            </h2>
+          </div>
           
           {/* Pricing Card */}
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 transform hover:scale-105 transition-transform duration-200">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">Professional Plan</h3>
-                <div className="flex items-baseline justify-center mb-4">
-                  <span className="text-5xl font-bold text-gray-900">$20</span>
-                  <span className="text-xl text-gray-500 ml-2">/month</span>
-                </div>
-                <p className="text-gray-600">Everything you need for professional client communication</p>
-              </div>
+          <div className="max-w-lg mx-auto">
+            <div className="relative">
+              {/* Glow Effect */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-xl opacity-30"></div>
               
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Unlimited SMS reminders
+              {/* Main Card */}
+              <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-10 transform hover:scale-[1.02] transition-all duration-300">
+                {/* Popular Badge */}
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    Most Popular
+                  </div>
                 </div>
-                <div className="flex items-center text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  UseSession integration
+                
+                {/* Header */}
+                <div className="text-center mb-10 pt-4">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Professional Plan</h3>
+                  <div className="flex items-baseline justify-center mb-2">
+                    <span className="text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">$20</span>
+                    <span className="text-xl text-gray-500 ml-2 font-medium">/month</span>
+                  </div>
+                  <p className="text-gray-600 font-light">Everything you need for professional client communication</p>
                 </div>
-                <div className="flex items-center text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Automated scheduling
+                
+                {/* Features */}
+                <div className="space-y-5 mb-10">
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-700">Unlimited SMS reminders</span>
+                  </div>
+                  <div className="flex items-center bg-gradient-to-r from-blue-50 to-purple-50 -mx-4 px-4 py-2 rounded-xl">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-900 font-medium">UseSession integration</span>
+                    <span className="ml-auto text-xs bg-gradient-to-r from-blue-600 to-purple-600 text-white px-2 py-1 rounded-full">
+                      NEW
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-700">Automated scheduling</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-700">Dashboard analytics</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-700">Custom message templates</span>
+                  </div>
+                  <div className="flex items-center bg-gradient-to-r from-blue-50 to-purple-50 -mx-4 px-4 py-2 rounded-xl">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-900 font-medium">Smart data extraction</span>
+                    <span className="ml-auto text-xs bg-gradient-to-r from-blue-600 to-purple-600 text-white px-2 py-1 rounded-full">
+                      NEW
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Dashboard analytics
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Custom message templates
+                
+                {/* CTA Button */}
+                <div className="space-y-4">
+                  <a
+                    href="/register"
+                    className="block w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold text-center rounded-xl shadow-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
+                  >
+                    Start Your Subscription
+                  </a>
+                  <p className="text-sm text-gray-500 text-center">
+                    No setup fees • Cancel anytime • 30-day money-back guarantee
+                  </p>
                 </div>
               </div>
-              
-              <a
-                href="/register"
-                className="block w-full px-8 py-4 bg-black text-white font-medium text-center hover:bg-gray-800 transition-colors duration-200 rounded-lg"
-              >
-                Subscribe Now
-              </a>
-              <p className="text-xs text-gray-500 text-center mt-3">
-                No setup fees • Cancel anytime
-              </p>
             </div>
           </div>
           
-          <div className="mt-16">
-            <p className="text-lg text-gray-600 mb-8">
-              Ready to never miss another session?
-            </p>
-            <a
-              href="/login"
-              className="inline-block px-8 py-3 border border-gray-300 text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-colors duration-200 rounded-lg mr-4"
-            >
-              Sign In
-            </a>
-            <a
-              href="/register"
-              className="inline-block px-8 py-3 bg-black text-white font-medium hover:bg-gray-800 transition-colors duration-200 rounded-lg"
-            >
-              Subscribe Now
-            </a>
+          {/* Social Proof */}
+          <div className="mt-20 text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm text-gray-500">
+              <div className="flex items-center">
+                <div className="flex -space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-red-400 rounded-full border-2 border-white"></div>
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full border-2 border-white"></div>
+                  <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-teal-400 rounded-full border-2 border-white"></div>
+                </div>
+                <span className="ml-3">Trusted by 500+ photographers</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-yellow-400 mr-1">★★★★★</span>
+                <span>4.9/5 rating</span>
+              </div>
+              <div className="flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span>99.9% uptime</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -360,42 +428,69 @@ export default function Home() {
       </div>
 
       {/* How It Works */}
-      <div className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
+      <div className="py-32 bg-gradient-to-br from-white to-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 rounded-full text-sm font-medium text-green-700 mb-8">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+              Simple 3-step process
+            </div>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 mb-6 leading-tight">
+              How It Works
+            </h2>
+            <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
               Simple three-step process to keep your clients informed
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-black text-white font-medium flex items-center justify-center mb-6 mx-auto">
-                1
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <div className="text-center group">
+              <div className="relative mb-8">
+                <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2v0a2 2 0 01-2-2v-5a2 2 0 00-2-2H8z" />
+                  </svg>
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm font-bold text-gray-700 shadow-md">
+                  1
+                </div>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-4">Extract Data</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Extract Data</h3>
+              <p className="text-gray-600 leading-relaxed text-lg">
                 Automatically captures client name, phone, email, session type, and date from UseSession pages
               </p>
             </div>
             
-            <div className="text-center">
-              <div className="w-12 h-12 bg-black text-white font-medium flex items-center justify-center mb-6 mx-auto">
-                2
+            <div className="text-center group">
+              <div className="relative mb-8">
+                <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm font-bold text-gray-700 shadow-md">
+                  2
+                </div>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-4">Customize Message</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Customize Message</h3>
+              <p className="text-gray-600 leading-relaxed text-lg">
                 Personalize your SMS reminder with client name, session details, and your custom message
               </p>
             </div>
             
-            <div className="text-center">
-              <div className="w-12 h-12 bg-black text-white font-medium flex items-center justify-center mb-6 mx-auto">
-                3
+            <div className="text-center group">
+              <div className="relative mb-8">
+                <div className="w-20 h-20 bg-gradient-to-r from-pink-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm font-bold text-gray-700 shadow-md">
+                  3
+                </div>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-4">Send & Schedule</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Send & Schedule</h3>
+              <p className="text-gray-600 leading-relaxed text-lg">
                 Send immediately or schedule automatic reminders 3 days and 1 day before the session
               </p>
             </div>
