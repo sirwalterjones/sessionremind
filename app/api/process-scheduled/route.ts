@@ -4,6 +4,21 @@ import { getScheduledMessagesPendingDelivery, updateMessageStatus } from '@/lib/
 // This endpoint should be called periodically (e.g., every 15 minutes) by a cron job
 // In production, you could use Vercel Cron Jobs, GitHub Actions, or an external service
 
+// Helper function to check if current time is before 8am EST
+function isBeforeEightAmEST(): boolean {
+  const now = new Date()
+  
+  // Get Eastern Time (automatically handles EST/EDT)
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}))
+  const easternHour = easternTime.getHours()
+  
+  console.log(`Current UTC time: ${now.toISOString()}`)
+  console.log(`Eastern time: ${easternTime.toLocaleString("en-US", {timeZone: "America/New_York"})}`)
+  console.log(`Eastern hour: ${easternHour}`)
+  
+  return easternHour < 8
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('=== MANUAL CRON JOB PROCESSING START ===')
@@ -14,6 +29,19 @@ export async function POST(request: NextRequest) {
     const processedMessages = []
     
     console.log(`Found ${messagesToSend.length} messages ready to send`)
+    
+    // Check if it's too early to send messages (before 8am EST)
+    if (isBeforeEightAmEST()) {
+      console.log('⏰ Time restriction: It is before 8am EST, skipping all message sending')
+      return NextResponse.json({
+        success: true,
+        processed: 0,
+        messages: [],
+        totalScheduled: messagesToSend.length,
+        skipped: messagesToSend.length,
+        reason: 'Time restriction: Messages cannot be sent before 8am EST'
+      })
+    }
     
     // Process each message
     for (const message of messagesToSend) {

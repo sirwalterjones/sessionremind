@@ -1,8 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Helper function to check if current time is before 8am EST
+function isBeforeEightAmEST(): boolean {
+  const now = new Date()
+  
+  // Get Eastern Time (automatically handles EST/EDT)
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}))
+  const easternHour = easternTime.getHours()
+  
+  console.log(`Current UTC time: ${now.toISOString()}`)
+  console.log(`Eastern time: ${easternTime.toLocaleString("en-US", {timeZone: "America/New_York"})}`)
+  console.log(`Eastern hour: ${easternHour}`)
+  
+  return easternHour < 8
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { phone, message } = await request.json();
+    
+    // Check if it's too early to send messages (before 8am EST)
+    if (isBeforeEightAmEST()) {
+      console.log('⏰ Test SMS rejected: Time restriction - before 8am EST')
+      return NextResponse.json(
+        { error: 'Messages cannot be sent before 8am EST' },
+        { status: 400 }
+      )
+    }
     
     const apiKey = process.env.TEXTMAGIC_API_KEY;
     const username = process.env.TEXTMAGIC_USERNAME;

@@ -58,6 +58,17 @@ export async function updateMessageStatus(id: string, status: 'sent' | 'failed')
   }
 }
 
+// Helper function to check if current time is before 8am EST
+function isBeforeEightAmEST(): boolean {
+  const now = new Date()
+  
+  // Get Eastern Time (automatically handles EST/EDT)
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}))
+  const easternHour = easternTime.getHours()
+  
+  return easternHour < 8
+}
+
 export async function getScheduledMessagesPendingDelivery(): Promise<ScheduledMessage[]> {
   const messages = await getScheduledMessages()
   const now = new Date()
@@ -66,7 +77,7 @@ export async function getScheduledMessagesPendingDelivery(): Promise<ScheduledMe
     if (msg.status !== 'scheduled') return false
     
     const scheduledTime = new Date(msg.scheduledFor)
-    // Send if scheduled time has passed
-    return scheduledTime <= now
+    // Send if scheduled time has passed AND it's after 8am EST
+    return scheduledTime <= now && !isBeforeEightAmEST()
   })
 }

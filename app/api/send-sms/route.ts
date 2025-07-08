@@ -13,6 +13,21 @@ interface SMSRequest {
   oneDayReminder?: boolean
 }
 
+// Helper function to check if current time is before 8am EST
+function isBeforeEightAmEST(): boolean {
+  const now = new Date()
+  
+  // Get Eastern Time (automatically handles EST/EDT)
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}))
+  const easternHour = easternTime.getHours()
+  
+  console.log(`Current UTC time: ${now.toISOString()}`)
+  console.log(`Eastern time: ${easternTime.toLocaleString("en-US", {timeZone: "America/New_York"})}`)
+  console.log(`Eastern hour: ${easternHour}`)
+  
+  return easternHour < 8
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: SMSRequest = await request.json()
@@ -28,6 +43,15 @@ export async function POST(request: NextRequest) {
       console.log('SMS rejected: Client not opted in')
       return NextResponse.json(
         { error: 'Client has not opted in to SMS reminders' },
+        { status: 400 }
+      )
+    }
+
+    // Check if it's too early to send messages (before 8am EST)
+    if (isBeforeEightAmEST()) {
+      console.log('⏰ SMS rejected: Time restriction - before 8am EST')
+      return NextResponse.json(
+        { error: 'Messages cannot be sent before 8am EST' },
         { status: 400 }
       )
     }
