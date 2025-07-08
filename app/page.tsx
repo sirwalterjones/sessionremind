@@ -216,7 +216,7 @@ export default function Home() {
                     Start Your Subscription
                   </a>
                   <p className="text-sm text-gray-500 text-center">
-                    No setup fees • Cancel anytime • 30-day money-back guarantee
+                    No setup fees • Cancel anytime
                   </p>
                 </div>
               </div>
