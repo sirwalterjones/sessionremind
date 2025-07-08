@@ -42,9 +42,11 @@ export async function POST(request: NextRequest) {
     // Hash the new password
     const hashedPassword = await hashPassword(newPassword)
 
-    // Update user password
+    // Update user password (store in separate key like other auth functions)
+    await kv.set(`user:${userId}:password`, hashedPassword)
+    
+    // Update user timestamp
     await kv.hset(`user:${userId}`, {
-      password: hashedPassword,
       updated_at: new Date().toISOString()
     })
 
