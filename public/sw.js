@@ -1,4 +1,4 @@
-const CACHE_NAME = 'session-reminder-v1'
+const CACHE_NAME = 'session-reminder-v2'
 const urlsToCache = [
   '/',
   '/manifest.json'

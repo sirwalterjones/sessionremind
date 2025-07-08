@@ -28,6 +28,11 @@ export async function middleware(request: NextRequest) {
       pathname.includes('.')) {
     return NextResponse.next()
   }
+
+  // Check for potential redirect loops by looking at referer
+  const referer = request.headers.get('referer')
+  const isComingFromLogin = referer && referer.includes('/login')
+  const isComingFromDashboard = referer && referer.includes('/dashboard')
   
   if (isProtectedRoute) {
     try {
@@ -35,6 +40,12 @@ export async function middleware(request: NextRequest) {
       const user = await getCurrentUser(request)
       
       if (!user) {
+        // Prevent redirect loop: if coming from login, don't redirect back
+        if (isComingFromLogin) {
+          console.warn('Potential redirect loop detected: coming from login to protected route')
+          return NextResponse.next() // Let the page handle auth client-side
+        }
+        
         // Redirect to login
         const loginUrl = new URL('/login', request.url)
         loginUrl.searchParams.set('redirect', pathname)
@@ -42,6 +53,13 @@ export async function middleware(request: NextRequest) {
       }
     } catch (error) {
       console.error('Middleware auth error:', error)
+      
+      // Prevent redirect loop: if coming from login, don't redirect back
+      if (isComingFromLogin) {
+        console.warn('Auth error with potential redirect loop detected')
+        return NextResponse.next() // Let the page handle auth client-side
+      }
+      
       // If auth fails, redirect to login
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
@@ -49,18 +67,28 @@ export async function middleware(request: NextRequest) {
     }
   }
   
-  if (isPublicRoute) {
+  if (isPublicRoute && !isRootRoute) {
     try {
       // Check if already authenticated
       const user = await getCurrentUser(request)
       
       if (user) {
-        // Redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        // Prevent redirect loop: if coming from dashboard, don't redirect back
+        if (isComingFromDashboard) {
+          console.warn('Potential redirect loop detected: coming from dashboard to public route')
+          return NextResponse.next() // Let user stay on login page
+        }
+        
+        // Only redirect to dashboard if we're confident about the user's auth status
+        // and not in a potential loop
+        if (pathname === '/login' && !request.nextUrl.searchParams.has('redirect')) {
+          return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
       }
     } catch (error) {
       // If auth check fails, just continue to the public route
       console.error('Middleware auth check error:', error)
+      // Don't redirect on auth errors for public routes
     }
   }
   
