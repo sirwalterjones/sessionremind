@@ -77,6 +77,10 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showUserModal, setShowUserModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalRevenue: 0,
@@ -228,6 +232,87 @@ export default function AdminPage() {
         return 'bg-gray-100 text-gray-800'
       default:
         return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const createUser = async (userData: any) => {
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+        credentials: 'include'
+      })
+
+      const result = await response.json()
+      
+      if (response.ok) {
+        setShowCreateModal(false)
+        await loadAdminData() // Refresh data
+        alert('User created successfully!')
+      } else {
+        alert(result.error || 'Failed to create user')
+      }
+    } catch (error) {
+      console.error('Create user error:', error)
+      alert('Failed to create user')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const updateUser = async (userData: any) => {
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+        credentials: 'include'
+      })
+
+      const result = await response.json()
+      
+      if (response.ok) {
+        setShowEditModal(false)
+        setSelectedUser(null)
+        await loadAdminData() // Refresh data
+        alert('User updated successfully!')
+      } else {
+        alert(result.error || 'Failed to update user')
+      }
+    } catch (error) {
+      console.error('Update user error:', error)
+      alert('Failed to update user')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const deleteUser = async (userId: string) => {
+    setIsSubmitting(true)
+    try {
+      const response = await fetch(`/api/admin/users?userId=${userId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      const result = await response.json()
+      
+      if (response.ok) {
+        setShowDeleteModal(false)
+        setSelectedUser(null)
+        await loadAdminData() // Refresh data
+        alert('User deleted successfully!')
+      } else {
+        alert(result.error || 'Failed to delete user')
+      }
+    } catch (error) {
+      console.error('Delete user error:', error)
+      alert('Failed to delete user')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -650,7 +735,10 @@ export default function AdminPage() {
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
                 <p className="text-gray-600">Manage user accounts, subscriptions, and access levels</p>
               </div>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => setShowCreateModal(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 Add New User
               </button>
             </div>
@@ -760,11 +848,25 @@ export default function AdminPage() {
                             >
                               <EyeIcon className="h-4 w-4" />
                             </button>
-                            <button className="text-indigo-600 hover:text-indigo-900">
+                            <button 
+                              onClick={() => {
+                                setSelectedUser(userData)
+                                setShowEditModal(true)
+                              }}
+                              className="text-indigo-600 hover:text-indigo-900"
+                              title="Edit user"
+                            >
                               <PencilSquareIcon className="h-4 w-4" />
                             </button>
                             {!userData.is_admin && (
-                              <button className="text-red-600 hover:text-red-900">
+                              <button 
+                                onClick={() => {
+                                  setSelectedUser(userData)
+                                  setShowDeleteModal(true)
+                                }}
+                                className="text-red-600 hover:text-red-900"
+                                title="Delete user"
+                              >
                                 <TrashIcon className="h-4 w-4" />
                               </button>
                             )}
@@ -779,6 +881,280 @@ export default function AdminPage() {
           </div>
         )}
       </div>
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Create New User</h2>
+              <button 
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircleIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.target as HTMLFormElement)
+              createUser({
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                subscription_tier: formData.get('subscription_tier'),
+                subscription_status: formData.get('subscription_status'),
+                is_admin: formData.get('is_admin') === 'on'
+              })
+            }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    minLength={6}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Subscription Tier</label>
+                  <select
+                    name="subscription_tier"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="starter">Starter</option>
+                    <option value="pro">Pro</option>
+                    <option value="enterprise">Enterprise</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    name="subscription_status"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="is_admin"
+                    id="is_admin"
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="is_admin" className="ml-2 block text-sm text-gray-700">
+                    Admin User
+                  </label>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
+                <button 
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Creating...' : 'Create User'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Edit User</h2>
+              <button 
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircleIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.target as HTMLFormElement)
+              updateUser({
+                userId: selectedUser.id,
+                username: formData.get('username'),
+                email: formData.get('email'),
+                subscription_tier: formData.get('subscription_tier'),
+                subscription_status: formData.get('subscription_status'),
+                is_admin: formData.get('is_admin') === 'on',
+                sms_limit: formData.get('sms_limit')
+              })
+            }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    defaultValue={selectedUser.username}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    defaultValue={selectedUser.email}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Subscription Tier</label>
+                  <select
+                    name="subscription_tier"
+                    defaultValue={selectedUser.subscription_tier}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="starter">Starter</option>
+                    <option value="pro">Pro</option>
+                    <option value="enterprise">Enterprise</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    name="subscription_status"
+                    defaultValue={selectedUser.subscription_status || 'active'}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">SMS Limit</label>
+                  <input
+                    type="number"
+                    name="sms_limit"
+                    defaultValue={selectedUser.sms_limit}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="is_admin"
+                    id="edit_is_admin"
+                    defaultChecked={selectedUser.is_admin}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="edit_is_admin" className="ml-2 block text-sm text-gray-700">
+                    Admin User
+                  </label>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
+                <button 
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Updating...' : 'Update User'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Delete User</h2>
+              <button 
+                onClick={() => setShowDeleteModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircleIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-600 mb-2">Are you sure you want to delete this user?</p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="font-medium text-gray-900">{selectedUser.username}</p>
+                <p className="text-sm text-gray-500">{selectedUser.email}</p>
+                <p className="text-sm text-gray-500">
+                  {selectedUser.subscription_tier} • {selectedUser.sms_usage} SMS sent
+                </p>
+              </div>
+              <p className="text-red-600 text-sm mt-2 font-medium">
+                This action cannot be undone. All user data will be permanently deleted.
+              </p>
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button 
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => deleteUser(selectedUser.id)}
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+              >
+                {isSubmitting ? 'Deleting...' : 'Delete User'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* User Details Modal */}
       {showUserModal && selectedUser && (
@@ -858,7 +1234,13 @@ export default function AdminPage() {
                 >
                   Close
                 </button>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button 
+                  onClick={() => {
+                    setShowUserModal(false)
+                    setShowEditModal(true)
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
                   Edit User
                 </button>
               </div>
