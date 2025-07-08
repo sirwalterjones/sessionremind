@@ -350,19 +350,95 @@ export default function Dashboard() {
   }
 
   // Helper function to check if a session has passed
-  const isSessionPassed = (sessionTime: string) => {
+  const isSessionPassed = (sessionTime: string, sessionDate?: string) => {
     try {
-      const sessionDate = new Date(sessionTime)
+      // Use sessionDate (ISO string) if available, otherwise try to parse sessionTime
+      const dateToCheck = sessionDate ? new Date(sessionDate) : parseSessionDate(sessionTime)
+      if (!dateToCheck) return false
+      
       const now = new Date()
-      return sessionDate < now
+      return dateToCheck < now
     } catch {
       return false
     }
   }
 
+  // Parse session date with robust parsing (similar to schedule API)
+  const parseSessionDate = (sessionTime: string): Date | null => {
+    try {
+      // Clean up the input string
+      let dateStr = sessionTime.trim()
+      
+      // Try multiple parsing strategies
+      const strategies = [
+        // Strategy 1: Direct parsing with cleanup
+        () => {
+          let cleaned = dateStr.toLowerCase()
+          // Remove ordinals
+          cleaned = cleaned.replace(/(\d+)(st|nd|rd|th)/g, '$1')
+          // Remove day of week
+          cleaned = cleaned.replace(/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday),?\s*/i, '')
+          // Handle time ranges
+          cleaned = cleaned.replace(/(\d{1,2}:\d{2}\s*(am|pm))\s*-\s*\d{1,2}:\d{2}\s*(am|pm)/i, '$1')
+          // Replace " at " with space
+          cleaned = cleaned.replace(/ at /g, ' ')
+          return new Date(cleaned)
+        },
+        
+        // Strategy 2: Manual parsing for common formats
+        () => {
+          // Match: "July 10th, 2025 at 2:00 PM"
+          const match = dateStr.match(/(\w+)\s+(\d+)(?:st|nd|rd|th)?,?\s+(\d{4})\s+(?:at\s+)?(\d{1,2}):(\d{2})\s*(AM|PM)/i)
+          if (match) {
+            const [, month, day, year, hour, minute, ampm] = match
+            const date = new Date(`${month} ${day}, ${year} ${hour}:${minute} ${ampm}`)
+            return date
+          }
+          return null
+        },
+        
+        // Strategy 3: Try with just date part if time parsing fails
+        () => {
+          const datePart = dateStr.split(' at ')[0] || dateStr.split(/\d{1,2}:\d{2}/)[0]
+          if (datePart) {
+            let cleaned = datePart.replace(/(\d+)(st|nd|rd|th)/g, '$1')
+            cleaned = cleaned.replace(/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday),?\s*/i, '')
+            const date = new Date(cleaned + ' 12:00 PM') // Default to noon
+            return date
+          }
+          return null
+        },
+        
+        // Strategy 4: Try original string with minimal cleanup
+        () => {
+          const cleaned = dateStr.replace(/(\d+)(st|nd|rd|th)/g, '$1')
+          return new Date(cleaned)
+        }
+      ]
+      
+      for (let i = 0; i < strategies.length; i++) {
+        try {
+          const result = strategies[i]()
+          if (result && !isNaN(result.getTime()) && result.getFullYear() > 2020) {
+            return result
+          }
+        } catch (e) {
+          // Continue to next strategy
+        }
+      }
+      
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
   // Filter clients by active/archived status
   const filteredByStatus = clientGroups.filter(client => {
-    const sessionPassed = isSessionPassed(client.sessionTime)
+    // Try to get sessionDate from the first message if available
+    const firstMessage = client.messages[0]
+    const sessionDate = firstMessage && 'sessionDate' in firstMessage ? firstMessage.sessionDate : undefined
+    const sessionPassed = isSessionPassed(client.sessionTime, sessionDate)
     return activeTab === 'active' ? !sessionPassed : sessionPassed
   })
 
@@ -373,8 +449,16 @@ export default function Dashboard() {
   )
 
   // Count active and archived clients
-  const activeClientsCount = clientGroups.filter(client => !isSessionPassed(client.sessionTime)).length
-  const archivedClientsCount = clientGroups.filter(client => isSessionPassed(client.sessionTime)).length
+  const activeClientsCount = clientGroups.filter(client => {
+    const firstMessage = client.messages[0]
+    const sessionDate = firstMessage && 'sessionDate' in firstMessage ? firstMessage.sessionDate : undefined
+    return !isSessionPassed(client.sessionTime, sessionDate)
+  }).length
+  const archivedClientsCount = clientGroups.filter(client => {
+    const firstMessage = client.messages[0]
+    const sessionDate = firstMessage && 'sessionDate' in firstMessage ? firstMessage.sessionDate : undefined
+    return isSessionPassed(client.sessionTime, sessionDate)
+  }).length
 
   // Calculate analytics
   const totalMessages = scheduledMessages.length
@@ -732,7 +816,11 @@ export default function Dashboard() {
                 const registrationMessages = sentMessages.filter(msg => 'reminderType' in msg && msg.reminderType === 'registration')
                 const manualMessages = sentMessages.filter(msg => 'reminderType' in msg && msg.reminderType === 'manual')
                 const reminderMessages = sentMessages.filter(msg => 'reminderType' in msg && msg.reminderType !== 'registration' && msg.reminderType !== 'manual')
-                const sessionPassed = isSessionPassed(client.sessionTime)
+                
+                // Check if session has passed
+                const firstMessage = client.messages[0]
+                const sessionDate = firstMessage && 'sessionDate' in firstMessage ? firstMessage.sessionDate : undefined
+                const sessionPassed = isSessionPassed(client.sessionTime, sessionDate)
                 
                 return (
                   <div 
