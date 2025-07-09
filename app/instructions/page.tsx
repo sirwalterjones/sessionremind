@@ -40,50 +40,52 @@ export default function Instructions() {
             </div>
             
             <div className="ml-0 sm:ml-8 lg:ml-16 space-y-4 sm:space-y-6">
-              {/* Extension Option */}
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="text-stone-800 font-semibold mb-3 text-sm sm:text-base">✨ Browser Extension (Best)</h3>
-                <ul className="text-stone-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
+              {/* Bookmarklet Option - Now Recommended */}
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-6">
+                <h3 className="text-green-800 font-semibold mb-3 text-sm sm:text-base">✨ Bookmarklet (Recommended)</h3>
+                <ul className="text-green-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
+                  <li>• No installation required</li>
+                  <li>• Works on desktop browsers</li>
+                  <li>• One-click bookmark</li>
+                  <li>• Automatic data extraction</li>
+                  <li>• Stable and reliable</li>
+                </ul>
+                <div className="bg-green-50 border-2 border-dashed border-green-300 rounded-lg p-4 text-center">
+                  <h4 className="font-medium text-green-900 mb-2 text-sm">Drag to Install</h4>
+                  <a 
+                    href={dataExtractionBookmarkletCode}
+                    className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-medium rounded-full hover:bg-green-700 transition-all duration-200 text-sm cursor-move"
+                    draggable="true"
+                  >
+                    <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
+                      <span className="text-green-600 text-xs font-bold">S</span>
+                    </div>
+                    ession Remind
+                  </a>
+                  <p className="text-green-700 text-xs mt-2">Drag to your bookmarks bar</p>
+                </div>
+              </div>
+
+              {/* Extension Option - Now Beta */}
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6">
+                <h3 className="text-amber-800 font-semibold mb-3 text-sm sm:text-base">⚠️ Browser Extension (Beta)</h3>
+                <ul className="text-amber-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
                   <li>• Floating button appears automatically</li>
                   <li>• Extracts session titles automatically</li>
                   <li>• One-click data extraction</li>
                   <li>• Works on all UseSession pages</li>
+                  <li>• Currently in beta testing</li>
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a 
                     href="/extension-resizable.zip"
-                    className="inline-flex items-center justify-center px-4 py-2 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 text-sm"
+                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
                     download="session-reminder-extension-resizable.zip"
                   >
                     <span className="mr-2">⬇️</span>
                     Download Extension
                   </a>
-                  <span className="text-stone-600 text-xs sm:text-sm self-center text-center sm:text-left">Install once, works everywhere!</span>
-                </div>
-              </div>
-
-              {/* Bookmarklet Option */}
-                            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="text-amber-800 font-semibold mb-3 text-sm sm:text-base">⭐ Bookmarklet (Desktop)</h3>
-                <ul className="text-amber-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
-                  <li>• No installation required</li>
-                  <li>• Works on desktop browsers</li>
-                  <li>• One-click bookmark</li>
-                  <li>• Automatic data extraction</li>
-                </ul>
-                <div className="bg-amber-50 border-2 border-dashed border-amber-300 rounded-lg p-4 text-center">
-                  <h4 className="font-medium text-amber-900 mb-2 text-sm">Drag to Install</h4>
-                  <a 
-                    href={dataExtractionBookmarkletCode}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm cursor-move"
-                    draggable="true"
-                  >
-                    <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
-                      <span className="text-amber-600 text-xs font-bold">S</span>
-                    </div>
-                    ession Remind
-                  </a>
-                  <p className="text-amber-700 text-xs mt-2">Drag to your bookmarks bar</p>
+                  <span className="text-amber-600 text-xs sm:text-sm self-center text-center sm:text-left">Beta - Use bookmarklet for stable experience</span>
                 </div>
               </div>
 

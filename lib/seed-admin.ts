@@ -22,7 +22,7 @@ export async function seedAdminUser() {
   await kv.hset(`user:${adminUser.id}`, {
     ...adminUser,
     is_admin: true,
-    subscription_tier: 'enterprise',
+    subscription_tier: 'professional',
     sms_limit: 999999, // Unlimited for admin
     stripe_customer_id: null, // No payment required for admin
     subscription_status: 'active' // Always active for admin

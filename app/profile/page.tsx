@@ -161,16 +161,10 @@ export default function ProfilePage() {
       )
     }
 
-    const colors = {
-      'Enterprise': 'bg-purple-100 text-purple-800',
-      'Pro': 'bg-blue-100 text-blue-800',
-      'Starter': 'bg-green-100 text-green-800'
-    }
-
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${colors[tier as keyof typeof colors] || 'bg-gray-100 text-gray-800'}`}>
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
         <CreditCardIcon className="w-4 h-4 mr-1" />
-        {tier} • {status}
+        Professional • {status}
       </span>
     )
   }

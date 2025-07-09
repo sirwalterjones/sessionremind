@@ -54,35 +54,28 @@ export async function GET(request: NextRequest) {
     const activeUsers = users.filter(u => (Number(u.sms_usage) || 0) > 0).length
     const totalSmsUsage = users.reduce((sum, u) => sum + (Number(u.sms_usage) || 0), 0)
     
-    // Calculate revenue based on subscription tiers
-    const tierPricing: Record<string, number> = {
-      'enterprise': 50,
-      'pro': 30,
-      'starter': 20
-    }
+    // Calculate revenue based on Professional Plan ($20/month)
+    const professionalPlanPrice = 20
     
     const totalRevenue = users
       .filter(u => !u.is_admin && u.subscription_status === 'active' && !u.payment_override)
       .reduce((sum, u) => {
-        const tier = (u.subscription_tier as string)?.toLowerCase() || 'starter'
-        return sum + (tierPricing[tier] || 20)
+        return sum + professionalPlanPrice
       }, 0)
 
-    // Calculate subscription breakdown
+    // Calculate subscription breakdown (all users are on Professional Plan)
     const subscriptionBreakdown = users
       .filter(u => !u.is_admin)
       .reduce((acc: Record<string, number>, u) => {
-        const tier = (u.subscription_tier as string)?.toLowerCase() || 'starter'
-        acc[tier] = (acc[tier] || 0) + 1
+        acc['professional'] = (acc['professional'] || 0) + 1
         return acc
       }, {})
 
-    // SMS usage by tier
+    // SMS usage by tier (all users are on Professional Plan)
     const smsUsageByTier = users
       .filter(u => !u.is_admin)
       .reduce((acc: Record<string, number>, u) => {
-        const tier = (u.subscription_tier as string)?.toLowerCase() || 'starter'
-        acc[tier] = (acc[tier] || 0) + (Number(u.sms_usage) || 0)
+        acc['professional'] = (acc['professional'] || 0) + (Number(u.sms_usage) || 0)
         return acc
       }, {})
 
@@ -176,7 +169,7 @@ export async function POST(request: NextRequest) {
       username, 
       email, 
       password, 
-      subscription_tier = 'starter', 
+      subscription_tier = 'professional', 
       subscription_status = 'active', 
       is_admin = false,
       payment_override = false,
@@ -218,7 +211,7 @@ export async function POST(request: NextRequest) {
       payment_override,
       stripe_customer_id,
       sms_usage: 0,
-      sms_limit: subscription_tier === 'enterprise' ? 999999 : subscription_tier === 'pro' ? 1000 : 100
+      sms_limit: is_admin ? 999999 : 500 // Admins get unlimited, regular users get 500
     })
 
     return NextResponse.json({
@@ -306,9 +299,9 @@ export async function PUT(request: NextRequest) {
     if (email) updateData.email = email
     if (subscription_tier) {
       updateData.subscription_tier = subscription_tier
-      // Update SMS limit based on tier if not explicitly provided
+      // Update SMS limit based on admin status if not explicitly provided
       if (!sms_limit) {
-        updateData.sms_limit = subscription_tier === 'enterprise' ? 999999 : subscription_tier === 'pro' ? 1000 : 100
+        updateData.sms_limit = is_admin ? 999999 : 500 // Admins get unlimited, regular users get 500
       }
     }
     if (subscription_status) updateData.subscription_status = subscription_status

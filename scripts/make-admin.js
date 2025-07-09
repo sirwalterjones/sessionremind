@@ -13,7 +13,7 @@ async function makeAdmin() {
     const adminUser = {
       ...user,
       is_admin: true,
-      subscription_tier: 'enterprise',
+      subscription_tier: 'professional',
       sms_limit: 999999,
       stripe_customer_id: null,
       subscription_status: 'active'

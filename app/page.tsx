@@ -148,14 +148,7 @@ export default function Home() {
                 
                 {/* Features */}
                 <div className="space-y-5 mb-10">
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Unlimited SMS reminders</span>
-                  </div>
+
                   <div className="flex items-center bg-stone-100 -mx-4 px-4 py-2 rounded-xl">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-4">
                       <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">

@@ -6,7 +6,7 @@ interface User {
   id: string
   username: string
   email: string
-  subscription_tier: 'starter' | 'pro' | 'enterprise'
+  subscription_tier: 'professional'
   subscription_status: 'active' | 'inactive' | 'cancelled' | 'pending'
   sms_usage: number
   sms_limit: number

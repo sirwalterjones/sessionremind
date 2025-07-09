@@ -27,13 +27,11 @@
 - **Financial Dashboard**: Revenue tracking, subscription metrics, churn analysis
 
 ## Phase 5: Pricing Strategy & Business Logic (Week 5-6)
-- **Usage-Based Pricing**: Track SMS usage per user for accurate billing
-- **Subscription Tiers**: 
-  - Starter: $29/month (up to 500 SMS)
-  - Professional: $79/month (up to 2,000 SMS) 
-  - Enterprise: $199/month (up to 10,000 SMS)
-- **Overage Handling**: $0.10 per SMS beyond plan limits
-- **Admin Override Controls**: Ability to modify any user's plan or usage
+- **Simple Pricing**: Single Professional Plan for all users
+- **Subscription Tier**: 
+  - Professional: $20/month (up to 500 SMS)
+- **Overage Handling**: Users can contact support for additional SMS capacity
+- **Admin Override Controls**: Ability to grant free access and modify user limits
 
 ## Phase 6: Enhanced Features & Launch Prep (Week 6-7)
 - **User Onboarding**: Guided setup flow for new users

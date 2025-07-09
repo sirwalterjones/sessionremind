@@ -100,12 +100,12 @@ export default function AdminPage() {
     username: '',
     email: '',
     password: '',
-    subscription_tier: 'starter',
+    subscription_tier: 'professional',
     subscription_status: 'active',
     is_admin: false,
     payment_override: false,
     stripe_customer_id: '',
-    sms_limit: 100
+    sms_limit: 500
   })
 
   useEffect(() => {
@@ -311,12 +311,12 @@ export default function AdminPage() {
       username: '',
       email: '',
       password: '',
-      subscription_tier: 'starter',
+      subscription_tier: 'professional',
       subscription_status: 'active',
       is_admin: false,
       payment_override: false,
       stripe_customer_id: '',
-      sms_limit: 100
+      sms_limit: 500
     })
   }
 
@@ -334,12 +334,8 @@ export default function AdminPage() {
   }) || []
 
   const getSubscriptionColor = (tier: string) => {
-    switch (tier.toLowerCase()) {
-      case 'enterprise': return 'bg-purple-100 text-purple-800'
-      case 'pro': return 'bg-blue-100 text-blue-800'
-      case 'starter': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
+    // All users are on Professional Plan
+    return 'bg-blue-100 text-blue-800'
   }
 
   const getStatusColor = (status: string) => {
@@ -546,13 +542,13 @@ export default function AdminPage() {
                   {Object.entries(data.analytics.subscriptionBreakdown).map(([tier, count]) => (
                     <div key={tier} className="flex justify-between items-center">
                       <div className="flex items-center">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSubscriptionColor(tier)}`}>
-                          {tier.toUpperCase()}
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800`}>
+                          PROFESSIONAL
                         </span>
                         <span className="ml-2 text-gray-600">{count} users</span>
                       </div>
                       <span className="font-semibold">
-                        ${((tier === 'enterprise' ? 50 : tier === 'pro' ? 30 : 20) * (count as number)).toLocaleString()}
+                        ${(20 * (count as number)).toLocaleString()}
                       </span>
                     </div>
                   ))}
@@ -627,7 +623,7 @@ export default function AdminPage() {
                   {Object.entries(data.analytics.smsUsageByTier).map(([tier, usage]) => (
                     <div key={tier} className="flex justify-between items-center">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSubscriptionColor(tier)}`}>
-                        {tier.toUpperCase()}
+                        PROFESSIONAL
                       </span>
                       <span className="font-semibold">{(usage as number).toLocaleString()} SMS</span>
                     </div>
@@ -698,9 +694,7 @@ export default function AdminPage() {
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">All Tiers</option>
-                  <option value="starter">Starter</option>
-                  <option value="pro">Pro</option>
-                  <option value="enterprise">Enterprise</option>
+                  <option value="professional">Professional</option>
                 </select>
                 <select
                   value={filterStatus}
@@ -766,7 +760,7 @@ export default function AdminPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSubscriptionColor(user.subscription_tier)}`}>
-                            {user.subscription_tier.toUpperCase()}
+                            PROFESSIONAL
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -930,9 +924,7 @@ export default function AdminPage() {
                     onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                   >
-                    <option value="starter">Starter</option>
-                    <option value="pro">Pro</option>
-                    <option value="enterprise">Enterprise</option>
+                    <option value="professional">Professional</option>
                   </select>
                 </div>
 

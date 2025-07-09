@@ -2,9 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useAuth } from '@/lib/auth-context'
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
+  const { user, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    setIsOpen(false)
+  }
 
   return (
     <>
@@ -47,14 +54,24 @@ export default function MobileNav() {
             <span className="text-lg">👤</span>
             <span className="font-medium">Profile</span>
           </Link>
-          <Link 
-            href="/login" 
-            className="flex items-center space-x-3 px-4 py-3 bg-stone-800 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-stone-900 transition-all duration-200"
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="text-lg">🔑</span>
-            <span>Login</span>
-          </Link>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-3 px-4 py-3 bg-red-600 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-red-700 transition-all duration-200 w-full text-left"
+            >
+              <span className="text-lg">🚪</span>
+              <span>Logout</span>
+            </button>
+          ) : (
+            <Link 
+              href="/login" 
+              className="flex items-center space-x-3 px-4 py-3 bg-stone-800 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-stone-900 transition-all duration-200"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="text-lg">🔑</span>
+              <span>Login</span>
+            </Link>
+          )}
         </div>
       )}
     </>
