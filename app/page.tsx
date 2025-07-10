@@ -22,9 +22,9 @@ export default function Home() {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(0,0,0,0.02),_transparent_50%),radial-gradient(circle_at_70%_80%,_rgba(0,0,0,0.02),_transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(0,0,0,0.02),_transparent_50%),radial-gradient(circle_at_70%_80%,_rgba(0,0,0,0.02),_transparent_50%)] -z-10" />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
           
           {/* Main Hero Content */}
           <div className="text-center max-w-5xl mx-auto">
@@ -108,9 +108,9 @@ export default function Home() {
       {/* Pricing Section */}
       <div className="relative py-32 bg-stone-50 overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,_rgba(0,0,0,0.02),_transparent_50%),radial-gradient(circle_at_80%_20%,_rgba(0,0,0,0.02),_transparent_50%),radial-gradient(circle_at_40%_40%,_rgba(0,0,0,0.02),_transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,_rgba(0,0,0,0.02),_transparent_50%),radial-gradient(circle_at_80%_20%,_rgba(0,0,0,0.02),_transparent_50%),radial-gradient(circle_at_40%_40%,_rgba(0,0,0,0.02),_transparent_50%)] -z-10"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center px-4 py-2 bg-stone-100 rounded-full text-sm font-medium text-gray-600 mb-6">
