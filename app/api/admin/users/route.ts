@@ -36,10 +36,14 @@ async function getSmsMetrics(totalSmsUsage: number, smsUsageByTier: Record<strin
 
     const statsData = await response.json()
     
+    // TextMagic returns an array of stats objects
+    const stats = Array.isArray(statsData) ? statsData[0] : statsData
+    
     // Calculate metrics from TextMagic response
-    const totalSent = statsData.outbound?.total || totalSmsUsage
-    const delivered = statsData.outbound?.delivered || totalSmsUsage
-    const failed = statsData.outbound?.failed || 0
+    const delivered = stats?.messagesSentDelivered || 0
+    const failed = stats?.messagesSentFailed || 0
+    const rejected = stats?.messagesSentRejected || 0
+    const totalSent = delivered + failed + rejected || totalSmsUsage
     
     // Calculate success rate
     const successRate = totalSent > 0 ? Math.round(((delivered / totalSent) * 100) * 10) / 10 : 0

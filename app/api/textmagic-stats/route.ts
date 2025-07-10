@@ -57,10 +57,14 @@ export async function GET(request: NextRequest) {
 
     const statsData = await response.json()
     
+    // TextMagic returns an array of stats objects
+    const stats = Array.isArray(statsData) ? statsData[0] : statsData
+    
     // Calculate metrics from TextMagic response
-    const totalSent = statsData.outbound?.total || 0
-    const delivered = statsData.outbound?.delivered || 0
-    const failed = statsData.outbound?.failed || 0
+    const delivered = stats?.messagesSentDelivered || 0
+    const failed = stats?.messagesSentFailed || 0
+    const rejected = stats?.messagesSentRejected || 0
+    const totalSent = delivered + failed + rejected || 0
     
     // Calculate success rate
     const successRate = totalSent > 0 ? ((delivered / totalSent) * 100) : 0
