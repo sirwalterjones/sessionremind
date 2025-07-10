@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
       acc[userId].push({
         id: msg.id,
         clientName: msg.clientName,
+        phone: msg.phone,
         reminderType: msg.reminderType,
         status: msg.status,
         createdAt: msg.createdAt,
@@ -41,10 +42,12 @@ export async function GET(request: NextRequest) {
         allMessagesRaw: allMessages.map(msg => ({
           id: msg.id,
           clientName: msg.clientName,
+          phone: msg.phone,
           reminderType: msg.reminderType,
           status: msg.status,
           userId: msg.userId || 'MISSING_USER_ID',
-          createdAt: msg.createdAt
+          createdAt: msg.createdAt,
+          sentAt: msg.sentAt
         }))
       }
     })
