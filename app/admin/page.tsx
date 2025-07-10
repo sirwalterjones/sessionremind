@@ -378,6 +378,262 @@ export default function AdminPage() {
     }
   }
 
+  // Comprehensive Analytics Component
+  const ComprehensiveAnalytics = () => {
+    const [analyticsData, setAnalyticsData] = useState<any>(null)
+    const [loading, setLoading] = useState(false)
+
+    const fetchComprehensiveAnalytics = async () => {
+      setLoading(true)
+      try {
+        const response = await fetch('/api/admin/comprehensive-analytics')
+        const result = await response.json()
+        setAnalyticsData(result)
+      } catch (error) {
+        console.error('Error fetching comprehensive analytics:', error)
+        showNotification('error', 'Failed to fetch comprehensive analytics')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    useEffect(() => {
+      fetchComprehensiveAnalytics()
+    }, [])
+
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-3 text-gray-600">Loading comprehensive analytics...</span>
+        </div>
+      )
+    }
+
+    if (!analyticsData) {
+      return (
+        <div className="bg-red-50 p-4 rounded-lg">
+          <p className="text-red-800">Failed to load comprehensive analytics data</p>
+        </div>
+      )
+    }
+
+    const { account, messaging, spending } = analyticsData
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <p className="text-sm text-blue-800">
+            📊 <strong>Live TextMagic Analytics</strong> - Real-time data from your TextMagic account
+          </p>
+        </div>
+
+        {/* Account Overview */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <UserIcon className="h-5 w-5 mr-2 text-blue-600" />
+            Account Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <CurrencyDollarIcon className="h-8 w-8 text-green-600" />
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Account Balance</p>
+                  <p className="text-2xl font-bold text-green-700">
+                    {account?.currency?.htmlSymbol || '$'}{account?.balance || '0'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <UserIcon className="h-8 w-8 text-blue-600" />
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Account Owner</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {account?.firstName} {account?.lastName}
+                  </p>
+                  <p className="text-xs text-gray-500">{account?.email}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <div className="h-8 w-8 bg-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">TZ</span>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Timezone</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {account?.timezone?.timezone || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-orange-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <div className="h-8 w-8 bg-orange-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">CO</span>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Company</p>
+                  <p className="text-lg font-semibold text-gray-900 truncate">
+                    {account?.company || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Messaging Analytics */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2 text-green-600" />
+            SMS Performance Metrics
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <CheckCircleIcon className="h-8 w-8 text-green-600" />
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Messages Delivered</p>
+                  <p className="text-2xl font-bold text-green-700">
+                    {messaging?.totals?.totalDelivered || 0}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {messaging?.totals?.overallDeliveryRate || 0}% success rate
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-red-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <ExclamationTriangleIcon className="h-8 w-8 text-red-600" />
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Failed Messages</p>
+                  <p className="text-2xl font-bold text-red-700">
+                    {messaging?.totals?.totalFailed || 0}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {messaging?.totals?.totalRejected || 0} rejected
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-blue-600" />
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Message Parts</p>
+                  <p className="text-2xl font-bold text-blue-700">
+                    {messaging?.totals?.totalParts || 0}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {messaging?.totals?.averageCostPerMessage ? `$${messaging.totals.averageCostPerMessage.toFixed(3)} avg` : 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-yellow-50 p-4 rounded-lg">
+              <div className="flex items-center">
+                <CurrencyDollarIcon className="h-8 w-8 text-yellow-600" />
+                <div className="ml-3">
+                  <p className="text-sm text-gray-600">Total Costs</p>
+                  <p className="text-2xl font-bold text-yellow-700">
+                    ${messaging?.totals?.totalCosts?.toFixed(2) || '0.00'}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {messaging?.totals?.totalSent || 0} messages sent
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Financial Overview */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <CurrencyDollarIcon className="h-5 w-5 mr-2 text-green-600" />
+            Financial Overview
+          </h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h4 className="text-md font-medium text-gray-900 mb-3">Spending Summary</h4>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Spending</span>
+                    <span className="font-semibold text-gray-900">
+                      ${spending?.totalSpending?.toFixed(2) || '0.00'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Current Balance</span>
+                    <span className="font-semibold text-green-600">
+                      ${account?.balance || '0.00'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Recent Transactions</span>
+                    <span className="font-semibold text-gray-900">
+                      {spending?.recentTransactions?.length || 0} records
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-md font-medium text-gray-900 mb-3">Recent Transactions</h4>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {spending?.recentTransactions?.slice(0, 8).map((transaction: any, index: number) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 capitalize">
+                        {transaction.type}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(transaction.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-sm font-semibold ${
+                        transaction.delta < 0 ? 'text-red-600' : 'text-green-600'
+                      }`}>
+                        {transaction.delta < 0 ? '-' : '+'}${Math.abs(transaction.delta).toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Bal: ${transaction.balance}
+                      </p>
+                    </div>
+                  </div>
+                )) || <p className="text-gray-500 text-sm">No transactions available</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Refresh Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={fetchComprehensiveAnalytics}
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center"
+          >
+            {loading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            ) : (
+              <span className="mr-2">🔄</span>
+            )}
+            Refresh Analytics
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -602,52 +858,7 @@ export default function AdminPage() {
 
         {/* Comprehensive Analytics Tab */}
         {activeTab === 'comprehensive' && (
-          <div className="space-y-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm text-blue-800">
-                📊 <strong>Full TextMagic Analytics</strong> - Real-time data pulled directly from your TextMagic account
-              </p>
-            </div>
-            
-            {/* Add comprehensive analytics component here */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Coming Soon: Full TextMagic Analytics</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="border border-gray-200 p-4 rounded-lg">
-                    <h4 className="font-medium text-gray-900">Messaging Analytics</h4>
-                    <p className="text-sm text-gray-600 mt-1">Detailed delivery rates, reply rates, and messaging patterns</p>
-                  </div>
-                  <div className="border border-gray-200 p-4 rounded-lg">
-                    <h4 className="font-medium text-gray-900">Financial Reports</h4>
-                    <p className="text-sm text-gray-600 mt-1">Spending history, balance tracking, and cost analysis</p>
-                  </div>
-                  <div className="border border-gray-200 p-4 rounded-lg">
-                    <h4 className="font-medium text-gray-900">Account Overview</h4>
-                    <p className="text-sm text-gray-600 mt-1">Complete account information and settings</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-center py-8">
-                  <button
-                    onClick={async () => {
-                      try {
-                        const response = await fetch('/api/admin/comprehensive-analytics')
-                        const result = await response.json()
-                        console.log('Comprehensive analytics:', result)
-                        showNotification('success', 'Check browser console for comprehensive analytics data')
-                      } catch (error) {
-                        showNotification('error', 'Failed to fetch comprehensive analytics')
-                      }
-                    }}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center"
-                  >
-                    🔍 Test Comprehensive Analytics API
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ComprehensiveAnalytics />
         )}
 
         {/* SMS Reports Tab */}
