@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data.user)
         
         // Auto-update subscription status for professional users
-        if (data.user.subscription_tier === 'professional' && data.user.subscription_status !== 'active') {
+        if (data.user && data.user.subscription_tier === 'professional' && data.user.subscription_status !== 'active') {
           try {
             const updateResponse = await fetch('/api/update-user-subscription', {
               method: 'POST',
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data.user)
         
         // Auto-update subscription status for professional users
-        if (data.user.subscription_tier === 'professional' && data.user.subscription_status !== 'active') {
+        if (data.user && data.user.subscription_tier === 'professional' && data.user.subscription_status !== 'active') {
           try {
             const updateResponse = await fetch('/api/update-user-subscription', {
               method: 'POST',
