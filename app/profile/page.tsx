@@ -68,7 +68,7 @@ export default function ProfilePage() {
       const response = await fetch('/api/auth/me')
       if (response.ok) {
         const userData = await response.json()
-        setUserDetails(userData)
+        setUserDetails(userData.user) // Extract user object from response
       }
     } catch (error) {
       console.error('Error fetching user details:', error)
