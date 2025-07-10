@@ -42,6 +42,23 @@ export async function saveScheduledMessages(messages: ScheduledMessage[]): Promi
 }
 
 export async function addScheduledMessage(message: ScheduledMessage): Promise<void> {
+  // CRITICAL: Validate that message has userId attribution
+  if (!message.userId) {
+    console.error('🚨 CRITICAL ERROR: Attempted to store message without userId!', {
+      id: message.id,
+      clientName: message.clientName,
+      reminderType: message.reminderType,
+      status: message.status
+    })
+    throw new Error('Message must have userId attribution before storage')
+  }
+
+  console.log(`✅ Storing message with proper userId attribution: ${message.userId}`, {
+    id: message.id,
+    clientName: message.clientName,
+    reminderType: message.reminderType
+  })
+
   const messages = await getScheduledMessages()
   messages.push(message)
   await saveScheduledMessages(messages)
