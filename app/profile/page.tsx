@@ -265,8 +265,8 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">SMS Usage</label>
                   <div className="bg-gray-50 px-3 py-2 rounded-lg">
                     <div className="flex justify-between text-sm">
-                      <span>Used: {userDetails.sms_usage}</span>
-                      <span>Limit: {userDetails.sms_limit}</span>
+                      <span className="text-gray-900">Used: {userDetails.sms_usage}</span>
+                      <span className="text-gray-900">Limit: {userDetails.sms_limit}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                       <div 

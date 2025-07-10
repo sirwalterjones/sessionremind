@@ -168,15 +168,15 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
               <div className="space-y-1">
                 <div className="flex justify-between text-sm">
                   <span className="text-green-600">✅ Sent</span>
-                  <span className="font-medium">{activity.messagesByStatus?.sent || 0}</span>
+                  <span className="font-medium text-gray-900">{activity.messagesByStatus?.sent || 0}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-blue-600">⏰ Scheduled</span>
-                  <span className="font-medium">{activity.messagesByStatus?.scheduled || 0}</span>
+                  <span className="font-medium text-gray-900">{activity.messagesByStatus?.scheduled || 0}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-red-600">❌ Failed</span>
-                  <span className="font-medium">{activity.messagesByStatus?.failed || 0}</span>
+                  <span className="font-medium text-gray-900">{activity.messagesByStatus?.failed || 0}</span>
                 </div>
               </div>
             </div>
