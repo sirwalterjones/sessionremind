@@ -109,6 +109,11 @@ export async function GET(request: NextRequest) {
             userPublicData.payment_override = false
           }
           
+          // Add require payment status if not present
+          if (!userPublicData.require_payment) {
+            userPublicData.require_payment = false
+          }
+          
           // Add Stripe customer ID if not present
           if (!userPublicData.stripe_customer_id) {
             userPublicData.stripe_customer_id = null
@@ -240,6 +245,7 @@ export async function POST(request: NextRequest) {
       subscription_status = 'active', 
       is_admin = false,
       payment_override = false,
+      require_payment = false,
       stripe_customer_id = null
     } = await request.json()
 
@@ -276,6 +282,7 @@ export async function POST(request: NextRequest) {
       subscription_status,
       is_admin,
       payment_override,
+      require_payment,
       stripe_customer_id,
       sms_usage: 0,
       sms_limit: is_admin ? 999999 : 500 // Admins get unlimited, regular users get 500
@@ -325,6 +332,7 @@ export async function PUT(request: NextRequest) {
       is_admin, 
       sms_limit,
       payment_override,
+      require_payment,
       stripe_customer_id 
     } = await request.json()
 
@@ -374,6 +382,7 @@ export async function PUT(request: NextRequest) {
     if (subscription_status) updateData.subscription_status = subscription_status
     if (typeof is_admin === 'boolean') updateData.is_admin = is_admin
     if (typeof payment_override === 'boolean') updateData.payment_override = payment_override
+    if (typeof require_payment === 'boolean') updateData.require_payment = require_payment
     if (stripe_customer_id !== undefined) updateData.stripe_customer_id = stripe_customer_id
     if (sms_limit) updateData.sms_limit = Number(sms_limit)
 

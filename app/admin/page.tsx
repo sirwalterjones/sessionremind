@@ -28,6 +28,7 @@ interface User {
   subscription_status: string
   is_admin: boolean
   payment_override: boolean
+  require_payment: boolean
   stripe_customer_id: string | null
   sms_usage: number
   sms_limit: number
@@ -104,6 +105,7 @@ export default function AdminPage() {
     subscription_status: 'active',
     is_admin: false,
     payment_override: false,
+    require_payment: false,
     stripe_customer_id: '',
     sms_limit: 500
   })
@@ -237,6 +239,33 @@ export default function AdminPage() {
     }
   }
 
+  const handleToggleRequirePayment = async (user: User) => {
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          require_payment: !user.require_payment,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update payment requirement')
+      }
+
+      await fetchAdminData()
+      const action = !user.require_payment ? 'enabled' : 'disabled'
+      showNotification('success', `Payment requirement ${action} for ${user.username}!`)
+    } catch (error) {
+      console.error('Error toggling payment requirement:', error)
+      showNotification('error', error instanceof Error ? error.message : 'Failed to update payment requirement')
+    }
+  }
+
   const handleResetPassword = async () => {
     if (!userToResetPassword || !newPassword) return
 
@@ -289,6 +318,7 @@ export default function AdminPage() {
       subscription_status: user.subscription_status,
       is_admin: user.is_admin,
       payment_override: user.payment_override,
+      require_payment: user.require_payment || false,
       stripe_customer_id: user.stripe_customer_id || '',
       sms_limit: user.sms_limit
     })
@@ -315,6 +345,7 @@ export default function AdminPage() {
       subscription_status: 'active',
       is_admin: false,
       payment_override: false,
+      require_payment: false,
       stripe_customer_id: '',
       sms_limit: 500
     })
@@ -864,11 +895,16 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
+                          <div className="flex items-center space-x-1">
                             {user.payment_override ? (
                               <div className="flex items-center text-orange-600">
                                 <GiftIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Override</span>
+                              </div>
+                            ) : user.require_payment ? (
+                              <div className="flex items-center text-red-600">
+                                <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
+                                <span className="text-xs font-medium">Payment Required</span>
                               </div>
                             ) : (
                               <div className="flex items-center text-green-600">
@@ -902,6 +938,21 @@ export default function AdminPage() {
                                  <CreditCardIcon className="h-4 w-4" />
                                ) : (
                                  <GiftIcon className="h-4 w-4" />
+                               )}
+                             </button>
+                             <button
+                               onClick={() => handleToggleRequirePayment(user)}
+                               className={`p-2 rounded-lg transition-colors ${
+                                 user.require_payment
+                                   ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                               }`}
+                               title={user.require_payment ? 'Disable payment requirement' : 'Require payment'}
+                             >
+                               {user.require_payment ? (
+                                 <ExclamationTriangleIcon className="h-4 w-4" />
+                               ) : (
+                                 <CreditCardIcon className="h-4 w-4" />
                                )}
                              </button>
                              <button

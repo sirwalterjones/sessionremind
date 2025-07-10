@@ -14,6 +14,7 @@ export interface User {
   stripe_customer_id?: string
   is_admin?: boolean
   payment_override?: boolean
+  require_payment?: boolean
   created_at: string
 }
 
