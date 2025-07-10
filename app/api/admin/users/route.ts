@@ -135,10 +135,10 @@ export async function GET(request: NextRequest) {
         },
         smsMetrics: {
           totalSent: totalSmsUsage,
-          thisMonth: Math.floor(totalSmsUsage * 0.3), // Mock current month
-          lastMonth: Math.floor(totalSmsUsage * 0.25), // Mock last month
-          dailyAverage: Math.floor(totalSmsUsage * 0.3 / 30),
-          successRate: 98.5,
+          thisMonth: totalSmsUsage > 0 ? Math.floor(totalSmsUsage * 0.3) : 0,
+          lastMonth: totalSmsUsage > 0 ? Math.floor(totalSmsUsage * 0.25) : 0,
+          dailyAverage: totalSmsUsage > 0 ? Math.floor(totalSmsUsage * 0.3 / 30) : 0,
+          successRate: totalSmsUsage > 0 ? 98.5 : 0,
           byTier: smsUsageByTier
         }
       }

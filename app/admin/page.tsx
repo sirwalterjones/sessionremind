@@ -584,7 +584,9 @@ export default function AdminPage() {
                       {data.analytics.smsMetrics.thisMonth.toLocaleString()}
                     </p>
                     <p className="text-xs text-gray-500">
-                      +{Math.round(((data.analytics.smsMetrics.thisMonth - data.analytics.smsMetrics.lastMonth) / data.analytics.smsMetrics.lastMonth) * 100)}% vs last month
+                      {data.analytics.smsMetrics.lastMonth === 0 
+                        ? 'No previous data' 
+                        : `${Math.round(((data.analytics.smsMetrics.thisMonth - data.analytics.smsMetrics.lastMonth) / data.analytics.smsMetrics.lastMonth) * 100) >= 0 ? '+' : ''}${Math.round(((data.analytics.smsMetrics.thisMonth - data.analytics.smsMetrics.lastMonth) / data.analytics.smsMetrics.lastMonth) * 100)}% vs last month`}
                     </p>
                   </div>
                 </div>
@@ -596,7 +598,9 @@ export default function AdminPage() {
                   <div className="ml-4">
                     <p className="text-sm text-gray-600">Success Rate</p>
                     <p className="text-2xl font-semibold text-gray-900">
-                      {data.analytics.smsMetrics.successRate}%
+                      {data.analytics.smsMetrics.totalSent === 0 
+                        ? 'No data' 
+                        : `${data.analytics.smsMetrics.successRate}%`}
                     </p>
                   </div>
                 </div>
