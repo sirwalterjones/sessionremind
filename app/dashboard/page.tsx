@@ -58,18 +58,20 @@ export default function Dashboard() {
   const [cancellingMessages, setCancellingMessages] = useState<Set<string>>(new Set())
   const [cancelledMessages, setCancelledMessages] = useState<Set<string>>(new Set())
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
-  const [paymentCancelled, setPaymentCancelled] = useState(false)
 
   useEffect(() => {
     console.log('Dashboard useEffect - user:', user)
+    console.log('Dashboard useEffect - user details:', {
+      exists: !!user,
+      subscription_tier: user?.subscription_tier,
+      subscription_status: user?.subscription_status,
+      is_admin: user?.is_admin,
+      payment_override: user?.payment_override
+    })
     
-    // Check payment status from URL
+    // Check payment status from URL (simplified for Professional Plan)
     const payment = searchParams.get('payment')
-    if (payment === 'cancelled') {
-      setPaymentCancelled(true)
-    } else if (payment === 'success') {
-      // Payment successful - we should refresh user data to get updated subscription status
-      // For now, just show a success message and continue
+    if (payment === 'success') {
       console.log('Payment successful!')
     }
     
@@ -84,35 +86,8 @@ export default function Dashboard() {
   const loadAllData = async () => {
     setLoading(true)
     try {
-      // Check subscription status for non-admin users
-      if (user && !user.is_admin) {
-        // Check if user has active subscription or payment override
-        const hasActiveSubscription = user.subscription_status === 'active' || user.payment_override
-        
-        if (!hasActiveSubscription && !paymentCancelled) {
-          // Only auto-redirect to payment if user hasn't cancelled
-          try {
-            const response = await fetch('/api/stripe/create-checkout', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' }
-            })
-            
-            if (response.ok) {
-              const { url } = await response.json()
-              window.location.href = url
-              return
-            } else {
-              // Show payment required message
-              setLoading(false)
-              return
-            }
-          } catch (error) {
-            console.error('Failed to create checkout session:', error)
-            setLoading(false)
-            return
-          }
-        }
-      }
+      // Professional Plan - all authenticated users have access
+      // No subscription checks needed
       
       // Load sent messages from localStorage (user-specific)
       if (user) {
@@ -502,69 +477,8 @@ export default function Dashboard() {
     )
   }
 
-  // Show subscription required message for non-admin users without active subscription or payment override
-  // Note: Since we're using a single Professional Plan, all users with 'professional' tier should have access
-  if (user && !user.is_admin && user.subscription_tier !== 'professional' && user.subscription_status !== 'active' && !user.payment_override) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
-        <div className="max-w-md w-full mx-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
-            <div className="text-center mb-8">
-              <div className={`w-16 h-16 ${paymentCancelled ? 'bg-orange-200' : 'bg-yellow-200'} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                <span className="text-2xl">{paymentCancelled ? '⚠️' : '💳'}</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {paymentCancelled ? 'Payment Cancelled' : 'Subscription Required'}
-              </h2>
-              <p className="text-gray-600">
-                {paymentCancelled 
-                  ? 'Your payment was cancelled. You need an active subscription to access Session Remind features.' 
-                  : 'Subscribe to Session Remind for $20/month to access your dashboard'
-                }
-              </p>
-              {paymentCancelled && (
-                <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                  <p className="text-sm text-orange-800">
-                    No worries! You can try again anytime. Your account is safe.
-                  </p>
-                </div>
-              )}
-            </div>
-            
-            <div className="space-y-4">
-              <button
-                onClick={async () => {
-                  setPaymentCancelled(false) // Reset cancelled state
-                  try {
-                    const response = await fetch('/api/stripe/create-checkout', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' }
-                    })
-                    
-                    if (response.ok) {
-                      const { url } = await response.json()
-                      window.location.href = url
-                    }
-                  } catch (error) {
-                    console.error('Payment error:', error)
-                  }
-                }}
-                className="w-full bg-green-600 text-white py-3 px-4 rounded-full font-medium hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
-              >
-                {paymentCancelled ? 'Try Again - Subscribe for $20/month' : 'Subscribe Now - $20/month'}
-              </button>
-              <button
-                onClick={logout}
-                className="w-full bg-white text-stone-800 py-3 px-4 rounded-full font-medium border border-stone-200 hover:bg-stone-50 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // Note: Since we're using a single Professional Plan, all authenticated users get access
+  // Subscription check removed - all users who can log in have access to the dashboard
 
   if (loading) {
     return (
