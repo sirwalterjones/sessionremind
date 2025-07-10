@@ -60,15 +60,6 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
 
   useEffect(() => {
-    console.log('Dashboard useEffect - user:', user)
-    console.log('Dashboard useEffect - user details:', {
-      exists: !!user,
-      subscription_tier: user?.subscription_tier,
-      subscription_status: user?.subscription_status,
-      is_admin: user?.is_admin,
-      payment_override: user?.payment_override
-    })
-    
     // Check payment status from URL (simplified for Professional Plan)
     const payment = searchParams.get('payment')
     if (payment === 'success') {
