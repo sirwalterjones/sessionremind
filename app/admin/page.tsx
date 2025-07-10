@@ -519,19 +519,19 @@ export default function AdminPage() {
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Annual Recurring Revenue</span>
-                    <span className="font-semibold">${data.analytics.revenueMetrics.annualRecurringRevenue.toLocaleString()}</span>
+                    <span className="font-semibold text-gray-900">${data.analytics.revenueMetrics.annualRecurringRevenue.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Average Revenue Per User</span>
-                    <span className="font-semibold">${data.analytics.revenueMetrics.averageRevenuePerUser.toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900">${data.analytics.revenueMetrics.averageRevenuePerUser.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Customer Lifetime Value</span>
-                    <span className="font-semibold">${data.analytics.revenueMetrics.customerLifetimeValue.toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900">${data.analytics.revenueMetrics.customerLifetimeValue.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Monthly Churn Rate</span>
-                    <span className="font-semibold">{data.analytics.revenueMetrics.churnRate}%</span>
+                    <span className="font-semibold text-gray-900">{data.analytics.revenueMetrics.churnRate}%</span>
                   </div>
                 </div>
               </div>
@@ -547,7 +547,7 @@ export default function AdminPage() {
                         </span>
                         <span className="ml-2 text-gray-600">{count} users</span>
                       </div>
-                      <span className="font-semibold">
+                      <span className="font-semibold text-gray-900">
                         ${(20 * (count as number)).toLocaleString()}
                       </span>
                     </div>
@@ -629,7 +629,7 @@ export default function AdminPage() {
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSubscriptionColor(tier)}`}>
                         PROFESSIONAL
                       </span>
-                      <span className="font-semibold">{(usage as number).toLocaleString()} SMS</span>
+                      <span className="font-semibold text-gray-900">{(usage as number).toLocaleString()} SMS</span>
                     </div>
                   ))}
                 </div>
