@@ -200,7 +200,7 @@ export default function Instructions() {
                     draggable="true"
                   >
                     <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center mr-3">
-                      <span className="text-green-600 text-lg">🔖</span>
+                      <span className="text-green-600 font-bold text-xs">Sr</span>
                     </div>
                     Session Reminder
                   </a>
