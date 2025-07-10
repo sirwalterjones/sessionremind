@@ -271,7 +271,7 @@ export default function Home() {
               </div>
 
               <div className="space-y-4">
-                {user && user.subscription_status === 'active' ? (
+                {user ? (
                   <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                     <h4 className="font-medium text-gray-900 mb-4">Drag to Bookmarks Bar</h4>
                     <a 
@@ -328,7 +328,7 @@ export default function Home() {
               </div>
 
               <div className="space-y-3">
-                {user && user.subscription_status === 'active' ? (
+                {user ? (
                   <>
                     <a 
                       href="/sessionremindext.zip"
