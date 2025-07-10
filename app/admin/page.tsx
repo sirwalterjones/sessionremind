@@ -80,7 +80,7 @@ export default function AdminPage() {
   const [data, setData] = useState<AdminData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'analytics' | 'sms' | 'users'>('analytics')
+  const [activeTab, setActiveTab] = useState<'analytics' | 'comprehensive' | 'sms' | 'users'>('analytics')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showUserModal, setShowUserModal] = useState(false)
@@ -428,6 +428,17 @@ export default function AdminPage() {
               Revenue Analytics
             </button>
             <button
+              onClick={() => setActiveTab('comprehensive')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'comprehensive'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <ChartBarIcon className="h-5 w-5 inline mr-2" />
+              Full Analytics
+            </button>
+            <button
               onClick={() => setActiveTab('sms')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'sms'
@@ -552,6 +563,56 @@ export default function AdminPage() {
                       </span>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Comprehensive Analytics Tab */}
+        {activeTab === 'comprehensive' && (
+          <div className="space-y-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-sm text-blue-800">
+                📊 <strong>Full TextMagic Analytics</strong> - Real-time data pulled directly from your TextMagic account
+              </p>
+            </div>
+            
+            {/* Add comprehensive analytics component here */}
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Coming Soon: Full TextMagic Analytics</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="border border-gray-200 p-4 rounded-lg">
+                    <h4 className="font-medium text-gray-900">Messaging Analytics</h4>
+                    <p className="text-sm text-gray-600 mt-1">Detailed delivery rates, reply rates, and messaging patterns</p>
+                  </div>
+                  <div className="border border-gray-200 p-4 rounded-lg">
+                    <h4 className="font-medium text-gray-900">Financial Reports</h4>
+                    <p className="text-sm text-gray-600 mt-1">Spending history, balance tracking, and cost analysis</p>
+                  </div>
+                  <div className="border border-gray-200 p-4 rounded-lg">
+                    <h4 className="font-medium text-gray-900">Account Overview</h4>
+                    <p className="text-sm text-gray-600 mt-1">Complete account information and settings</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center py-8">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const response = await fetch('/api/admin/comprehensive-analytics')
+                        const result = await response.json()
+                        console.log('Comprehensive analytics:', result)
+                        showNotification('success', 'Check browser console for comprehensive analytics data')
+                      } catch (error) {
+                        showNotification('error', 'Failed to fetch comprehensive analytics')
+                      }
+                    }}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center"
+                  >
+                    🔍 Test Comprehensive Analytics API
+                  </button>
                 </div>
               </div>
             </div>

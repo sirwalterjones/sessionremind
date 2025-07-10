@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
-import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, UserIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, UserIcon, ChartBarIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
   id: string | number
@@ -42,6 +42,105 @@ interface ClientGroup {
   sessionTitle: string
   sessionTime: string
   messages: (ScheduledMessage | SentMessage)[]
+}
+
+// SMS Analytics Component
+function SMSAnalyticsComponent({ userId }: { userId: string }) {
+  const [analyticsData, setAnalyticsData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await fetch('/api/user/sms-analytics')
+        if (response.ok) {
+          const data = await response.json()
+          setAnalyticsData(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch SMS analytics:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
+  }, [userId])
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="h-6 bg-gray-200 rounded mb-2"></div>
+            <div className="h-8 bg-gray-200 rounded"></div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (!analyticsData?.success) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-gray-500">Unable to load SMS analytics</p>
+      </div>
+    )
+  }
+
+  const { smsAnalytics } = analyticsData
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="border border-gray-200 rounded-lg p-4">
+        <div className="flex items-center">
+          <ChartBarIcon className="h-8 w-8 text-blue-600" />
+          <div className="ml-3">
+            <p className="text-sm font-medium text-gray-500">SMS Used</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {smsAnalytics.current.smsUsage}
+            </p>
+            <p className="text-xs text-gray-500">
+              of {smsAnalytics.current.smsLimit === 'unlimited' ? '∞' : smsAnalytics.current.smsLimit}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="border border-gray-200 rounded-lg p-4">
+        <div className="flex items-center">
+          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+            <span className="text-green-600 text-sm font-bold">
+              {smsAnalytics.current.usagePercentage}%
+            </span>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm font-medium text-gray-500">Usage</p>
+            <p className="text-lg font-bold text-gray-900">
+              {smsAnalytics.current.remainingSms === 'unlimited' ? 'Unlimited' : `${smsAnalytics.current.remainingSms} left`}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="border border-gray-200 rounded-lg p-4">
+        <div className="flex items-center">
+          <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+            <span className="text-purple-600 text-lg">💰</span>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm font-medium text-gray-500">Est. Cost</p>
+            <p className="text-lg font-bold text-gray-900">
+              ${smsAnalytics.costs.totalSpent}
+            </p>
+            <p className="text-xs text-gray-500">
+              ${smsAnalytics.costs.averageCostPerSms}/SMS
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Dashboard() {
@@ -553,6 +652,21 @@ export default function Dashboard() {
               New Reminder
             </a>
           </div>
+        </div>
+
+        {/* SMS Analytics Section */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Your SMS Usage</h2>
+              <p className="text-sm text-gray-600">Track your personal SMS analytics and remaining limit</p>
+            </div>
+            <div className="bg-blue-50 px-3 py-1 rounded-full">
+              <span className="text-xs font-medium text-blue-700">Professional Plan</span>
+            </div>
+          </div>
+          
+          <SMSAnalyticsComponent userId={user.id} />
         </div>
 
         {/* Stats Cards */}
