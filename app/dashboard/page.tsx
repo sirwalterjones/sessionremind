@@ -503,7 +503,8 @@ export default function Dashboard() {
   }
 
   // Show subscription required message for non-admin users without active subscription or payment override
-  if (user && !user.is_admin && user.subscription_status !== 'active' && !user.payment_override) {
+  // Note: Since we're using a single Professional Plan, all users with 'professional' tier should have access
+  if (user && !user.is_admin && user.subscription_tier !== 'professional' && user.subscription_status !== 'active' && !user.payment_override) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">

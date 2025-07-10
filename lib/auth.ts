@@ -49,7 +49,7 @@ export async function createUser(username: string, email: string, password: stri
     username,
     email,
     subscription_tier: 'professional',
-    subscription_status: 'pending', // New users need to pay
+    subscription_status: 'active', // Professional plan users are active by default
     sms_usage: 0,
     sms_limit: 500,
     created_at: new Date().toISOString()
