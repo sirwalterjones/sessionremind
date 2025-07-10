@@ -24,10 +24,11 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day'
+  reminderType: '3-day' | '1-day' | 'manual' | 'registration'
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
   sentAt?: string
+  userId: string
 }
 
 export async function POST(request: NextRequest) {
@@ -101,6 +102,7 @@ export async function POST(request: NextRequest) {
         reminderType: '3-day',
         status: 'scheduled',
         createdAt: new Date().toISOString(),
+        userId: user.id,
       })
       console.log('✅ 3-day reminder scheduled (session is', daysUntilSession.toFixed(1), 'days away)')
     } else if (data.threeDayReminder && daysUntilSession <= 3) {
@@ -126,6 +128,7 @@ export async function POST(request: NextRequest) {
         reminderType: '1-day',
         status: 'scheduled',
         createdAt: new Date().toISOString(),
+        userId: user.id,
       })
       console.log('✅ 1-day reminder scheduled (session is', daysUntilSession.toFixed(1), 'days away)')
     } else if (data.oneDayReminder && daysUntilSession <= 1) {
@@ -189,9 +192,10 @@ export async function GET(request: NextRequest) {
   // Get user-specific scheduled messages
   const scheduledMessages = await getScheduledMessages()
   
-  // Filter messages by user ID (for now, return empty for non-admin users)
-  // TODO: Implement user-specific message storage
-  const userMessages = user.is_admin ? scheduledMessages : []
+  // Filter messages by user ID - admins see all, users see only their own
+  const userMessages = user.is_admin 
+    ? scheduledMessages 
+    : scheduledMessages.filter(msg => msg.userId === user.id)
   
   return NextResponse.json({
     scheduledMessages: userMessages

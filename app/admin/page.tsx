@@ -434,51 +434,53 @@ export default function AdminPage() {
             <UserIcon className="h-5 w-5 mr-2 text-blue-600" />
             Account Information
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <CurrencyDollarIcon className="h-8 w-8 text-green-600" />
-                <div className="ml-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-green-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <CurrencyDollarIcon className="h-8 w-8 text-green-600 flex-shrink-0" />
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Account Balance</p>
-                  <p className="text-2xl font-bold text-green-700">
+                  <p className="text-xl sm:text-2xl font-bold text-green-700 break-words">
                     {account?.currency?.htmlSymbol || '$'}{account?.balance || '0'}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <UserIcon className="h-8 w-8 text-blue-600" />
-                <div className="ml-3">
+            <div className="bg-blue-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <UserIcon className="h-8 w-8 text-blue-600 flex-shrink-0" />
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Account Owner</p>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <p className="text-base sm:text-lg font-semibold text-gray-900 break-words">
                     {account?.firstName} {account?.lastName}
                   </p>
-                  <p className="text-xs text-gray-500">{account?.email}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <div className="h-8 w-8 bg-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">TZ</span>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-gray-600">Timezone</p>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {account?.timezone?.timezone || 'N/A'}
+                  <p className="text-xs text-gray-500 truncate" title={account?.email}>
+                    {account?.email}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <div className="h-8 w-8 bg-orange-600 rounded-full flex items-center justify-center">
+            <div className="bg-purple-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <div className="h-8 w-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-sm font-bold">TZ</span>
+                </div>
+                <div className="ml-3 min-w-0 flex-1">
+                  <p className="text-sm text-gray-600">Timezone</p>
+                  <p className="text-base sm:text-lg font-semibold text-gray-900 break-words">
+                    {account?.timezone?.timezone?.replace('_', ' ') || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-orange-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <div className="h-8 w-8 bg-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">CO</span>
                 </div>
-                <div className="ml-3">
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Company</p>
-                  <p className="text-lg font-semibold text-gray-900 truncate">
+                  <p className="text-base sm:text-lg font-semibold text-gray-900 break-words" title={account?.company}>
                     {account?.company || 'N/A'}
                   </p>
                 </div>
@@ -493,58 +495,58 @@ export default function AdminPage() {
             <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2 text-green-600" />
             SMS Performance Metrics
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <CheckCircleIcon className="h-8 w-8 text-green-600" />
-                <div className="ml-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-green-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <CheckCircleIcon className="h-8 w-8 text-green-600 flex-shrink-0" />
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Messages Delivered</p>
-                  <p className="text-2xl font-bold text-green-700">
+                  <p className="text-xl sm:text-2xl font-bold text-green-700">
                     {messaging?.totals?.totalDelivered || 0}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 break-words">
                     {messaging?.totals?.overallDeliveryRate || 0}% success rate
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <ExclamationTriangleIcon className="h-8 w-8 text-red-600" />
-                <div className="ml-3">
+            <div className="bg-red-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <ExclamationTriangleIcon className="h-8 w-8 text-red-600 flex-shrink-0" />
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Failed Messages</p>
-                  <p className="text-2xl font-bold text-red-700">
+                  <p className="text-xl sm:text-2xl font-bold text-red-700">
                     {messaging?.totals?.totalFailed || 0}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 break-words">
                     {messaging?.totals?.totalRejected || 0} rejected
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <ChatBubbleLeftRightIcon className="h-8 w-8 text-blue-600" />
-                <div className="ml-3">
+            <div className="bg-blue-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-blue-600 flex-shrink-0" />
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Message Parts</p>
-                  <p className="text-2xl font-bold text-blue-700">
+                  <p className="text-xl sm:text-2xl font-bold text-blue-700">
                     {messaging?.totals?.totalParts || 0}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 break-words">
                     {messaging?.totals?.averageCostPerMessage ? `$${messaging.totals.averageCostPerMessage.toFixed(3)} avg` : 'N/A'}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <CurrencyDollarIcon className="h-8 w-8 text-yellow-600" />
-                <div className="ml-3">
+            <div className="bg-yellow-50 p-4 rounded-lg min-h-[120px]">
+              <div className="flex items-start">
+                <CurrencyDollarIcon className="h-8 w-8 text-yellow-600 flex-shrink-0" />
+                <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-gray-600">Total Costs</p>
-                  <p className="text-2xl font-bold text-yellow-700">
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-700">
                     ${messaging?.totals?.totalCosts?.toFixed(2) || '0.00'}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 break-words">
                     {messaging?.totals?.totalSent || 0} messages sent
                   </p>
                 </div>
@@ -590,15 +592,15 @@ export default function AdminPage() {
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {spending?.recentTransactions?.slice(0, 8).map((transaction: any, index: number) => (
                   <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 capitalize">
+                    <div className="min-w-0 flex-1 mr-3">
+                      <p className="text-sm font-medium text-gray-900 capitalize truncate">
                         {transaction.type}
                       </p>
                       <p className="text-xs text-gray-500">
                         {new Date(transaction.date).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <p className={`text-sm font-semibold ${
                         transaction.delta < 0 ? 'text-red-600' : 'text-green-600'
                       }`}>

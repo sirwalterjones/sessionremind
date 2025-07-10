@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getScheduledMessagesPendingDelivery, updateMessageStatus } from '@/lib/storage'
+import { kv } from '@vercel/kv'
 
 // This endpoint should be called periodically (e.g., every 15 minutes) by a cron job
 // In production, you could use Vercel Cron Jobs, GitHub Actions, or an external service
@@ -53,6 +54,22 @@ export async function POST(request: NextRequest) {
       if (success) {
         // Update message status to 'sent' in persistent storage
         await updateMessageStatus(message.id, 'sent')
+        
+        // Update user's SMS usage counter if message has userId
+        if (message.userId) {
+          try {
+            const userData = await kv.hgetall(`user:${message.userId}`)
+            if (userData) {
+              const currentUsage = Number(userData.sms_usage) || 0
+              const newUsage = currentUsage + 1
+              await kv.hset(`user:${message.userId}`, { sms_usage: newUsage })
+              console.log(`Updated SMS usage for user ${message.userId}: ${currentUsage} -> ${newUsage}`)
+            }
+          } catch (error) {
+            console.error('Failed to update SMS usage counter:', error)
+          }
+        }
+        
         processedMessages.push({
           id: message.id,
           clientName: message.clientName,

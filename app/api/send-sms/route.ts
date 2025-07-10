@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentUser } from '@/lib/auth'
+import { kv } from '@vercel/kv'
+import { addScheduledMessage } from '@/lib/storage'
 
 interface SMSRequest {
   name: string
@@ -30,6 +33,15 @@ function isBeforeEightAmEST(): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    // Get current user to track SMS usage
+    const currentUser = await getCurrentUser(request)
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
     const body: SMSRequest = await request.json()
     console.log('=== SMS API RECEIVED ===')
     console.log('Full request body:', JSON.stringify(body, null, 2))
@@ -37,6 +49,7 @@ export async function POST(request: NextRequest) {
     console.log('Name:', body.name)
     console.log('Opted in:', body.optedIn)
     console.log('Scheduling enabled:', body.schedulingEnabled)
+    console.log('User ID:', currentUser.id)
     console.log('========================')
 
     if (!body.optedIn) {
@@ -122,11 +135,52 @@ export async function POST(request: NextRequest) {
     const result = await response.json()
     console.log('SMS sent:', result)
 
+    // Update user's SMS usage counter
+    try {
+      const userData = await kv.hgetall(`user:${currentUser.id}`)
+      if (userData) {
+        const currentUsage = Number(userData.sms_usage) || 0
+        const newUsage = currentUsage + 1
+        await kv.hset(`user:${currentUser.id}`, { sms_usage: newUsage })
+        console.log(`Updated SMS usage for user ${currentUser.id}: ${currentUsage} -> ${newUsage}`)
+      }
+    } catch (error) {
+      console.error('Failed to update SMS usage counter:', error)
+      // Don't fail the SMS send if usage tracking fails
+    }
+
+    // Store the sent message in persistent storage so it appears on user's dashboard
+    try {
+      const sentMessage = {
+        id: `sent_${result.id || Date.now()}`,
+        clientName: body.name,
+        phone: body.phone,
+        email: body.email,
+        sessionTitle: body.sessionTitle,
+        sessionTime: body.sessionTime,
+        message: finalMessage,
+        scheduledFor: new Date().toISOString(), // When it was sent
+        sessionDate: body.sessionTime ? new Date(body.sessionTime).toISOString() : new Date().toISOString(),
+        reminderType: 'manual' as '3-day' | '1-day',
+        status: 'sent' as 'scheduled' | 'sent' | 'failed',
+        createdAt: new Date().toISOString(),
+        sentAt: new Date().toISOString(),
+        userId: currentUser.id
+      }
+      
+      await addScheduledMessage(sentMessage)
+      console.log(`Stored sent message for user ${currentUser.id}: ${body.name}`)
+    } catch (error) {
+      console.error('Failed to store sent message:', error)
+      // Don't fail the SMS send if storage fails
+    }
+
     return NextResponse.json({
       success: true,
       id: result.id,
       message: 'SMS sent successfully',
       textMagicResponse: result,
+      userSmsUsage: currentUser.sms_usage ? Number(currentUser.sms_usage) + 1 : 1
     })
   } catch (error) {
     console.error('SMS API error:', error)

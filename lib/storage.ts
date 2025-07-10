@@ -13,10 +13,11 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day' | 'test-2min' | 'test-5min'
+  reminderType: '3-day' | '1-day' | 'manual' | 'registration' | 'test-2min' | 'test-5min'
   status: 'scheduled' | 'sent' | 'failed'
   createdAt: string
   sentAt?: string
+  userId?: string
 }
 
 const STORAGE_KEY = 'scheduled-messages'

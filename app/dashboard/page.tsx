@@ -30,10 +30,11 @@ interface ScheduledMessage {
   message: string
   scheduledFor: string
   sessionDate: string
-  reminderType: '3-day' | '1-day' | 'registration' | 'manual'
+  reminderType: '3-day' | '1-day' | 'registration' | 'manual' | 'test-2min' | 'test-5min'
   status: 'scheduled' | 'sent' | 'failed' | 'cancelled'
   createdAt: string
   sentAt?: string
+  userId?: string
 }
 
 interface ClientGroup {
@@ -44,18 +45,29 @@ interface ClientGroup {
   messages: (ScheduledMessage | SentMessage)[]
 }
 
-// SMS Analytics Component
+// Enhanced SMS Analytics Component
 function SMSAnalyticsComponent({ userId }: { userId: string }) {
   const [analyticsData, setAnalyticsData] = useState<any>(null)
+  const [activityData, setActivityData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const response = await fetch('/api/user/sms-analytics')
-        if (response.ok) {
-          const data = await response.json()
+        // Fetch both usage data and activity data
+        const [analyticsResponse, activityResponse] = await Promise.all([
+          fetch('/api/user/sms-analytics'),
+          fetch('/api/user/sms-activity')
+        ])
+        
+        if (analyticsResponse.ok) {
+          const data = await analyticsResponse.json()
           setAnalyticsData(data)
+        }
+        
+        if (activityResponse.ok) {
+          const data = await activityResponse.json()
+          setActivityData(data)
         }
       } catch (error) {
         console.error('Failed to fetch SMS analytics:', error)
@@ -80,7 +92,7 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
     )
   }
 
-  if (!analyticsData?.success) {
+  if (!analyticsData?.success && !activityData?.success) {
     return (
       <div className="text-center py-4">
         <p className="text-gray-500">Unable to load SMS analytics</p>
@@ -88,57 +100,106 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
     )
   }
 
-  const { smsAnalytics } = analyticsData
+  const { smsAnalytics } = analyticsData || {}
+  const { activity } = activityData || {}
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center">
-          <ChartBarIcon className="h-8 w-8 text-blue-600" />
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-500">SMS Used</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {smsAnalytics.current.smsUsage}
-            </p>
-            <p className="text-xs text-gray-500">
-              of {smsAnalytics.current.smsLimit === 'unlimited' ? '∞' : smsAnalytics.current.smsLimit}
-            </p>
+    <div className="space-y-6">
+      {/* Usage Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <ChartBarIcon className="h-8 w-8 text-blue-600" />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-500">SMS Used</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {activity?.currentUsage || smsAnalytics?.current?.smsUsage || 0}
+              </p>
+              <p className="text-xs text-gray-500">
+                of {activity?.limit || smsAnalytics?.current?.smsLimit || 500}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+              <span className="text-green-600 text-sm font-bold">
+                {activity ? Math.round((activity.currentUsage / activity.limit) * 100) : smsAnalytics?.current?.usagePercentage || 0}%
+              </span>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-500">Usage</p>
+              <p className="text-lg font-bold text-gray-900">
+                {activity ? `${Math.max(0, activity.limit - activity.currentUsage)} left` : 
+                 smsAnalytics?.current?.remainingSms === 'unlimited' ? 'Unlimited' : 
+                 `${smsAnalytics?.current?.remainingSms || 0} left`}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+              <span className="text-purple-600 text-lg">📊</span>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-500">Success Rate</p>
+              <p className="text-lg font-bold text-gray-900">
+                {activity?.deliveryRate || 0}%
+              </p>
+              <p className="text-xs text-gray-500">
+                {activity?.totalMessages || 0} total messages
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-            <span className="text-green-600 text-sm font-bold">
-              {smsAnalytics.current.usagePercentage}%
-            </span>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-500">Usage</p>
-            <p className="text-lg font-bold text-gray-900">
-              {smsAnalytics.current.remainingSms === 'unlimited' ? 'Unlimited' : `${smsAnalytics.current.remainingSms} left`}
-            </p>
+      {/* Message Activity (if we have activity data) */}
+      {activity && (
+        <div className="border border-gray-200 rounded-lg p-4">
+          <h4 className="text-lg font-semibold text-gray-900 mb-3">Recent Activity</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm font-medium text-gray-600 mb-2">Message Status</p>
+              <div className="space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-600">✅ Sent</span>
+                  <span className="font-medium">{activity.messagesByStatus?.sent || 0}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-600">⏰ Scheduled</span>
+                  <span className="font-medium">{activity.messagesByStatus?.scheduled || 0}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-red-600">❌ Failed</span>
+                  <span className="font-medium">{activity.messagesByStatus?.failed || 0}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-600 mb-2">Latest Messages</p>
+              <div className="space-y-1 max-h-20 overflow-y-auto">
+                {activity.latestMessages?.slice(0, 3).map((msg: any, idx: number) => (
+                  <div key={idx} className="text-xs text-gray-600 flex justify-between">
+                    <span className="truncate">{msg.clientName}</span>
+                    <span className={`ml-2 ${
+                      msg.status === 'sent' ? 'text-green-600' : 
+                      msg.status === 'scheduled' ? 'text-blue-600' : 
+                      'text-red-600'
+                    }`}>
+                      {msg.status}
+                    </span>
+                  </div>
+                )) || <p className="text-xs text-gray-500">No recent messages</p>}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-            <span className="text-purple-600 text-lg">💰</span>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-500">Est. Cost</p>
-            <p className="text-lg font-bold text-gray-900">
-              ${smsAnalytics.costs.totalSpent}
-            </p>
-            <p className="text-xs text-gray-500">
-              ${smsAnalytics.costs.averageCostPerSms}/SMS
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -179,12 +240,21 @@ export default function Dashboard() {
       // Professional Plan - all authenticated users have access
       // No subscription checks needed
       
-      // Load sent messages from localStorage (user-specific)
+      // Load all messages from persistent storage (includes both scheduled and sent messages)
+      await loadScheduledMessages()
+      
+      // For backwards compatibility, still load localStorage data but merge it
       if (user) {
         const userKey = `sentMessages_${user.id}`
         const stored = localStorage.getItem(userKey)
         if (stored) {
-          setSentMessages(JSON.parse(stored))
+          const localMessages = JSON.parse(stored)
+          setSentMessages(prev => {
+            // Only add localStorage messages that aren't already in scheduled messages
+            const existingIds = new Set(scheduledMessages.map(msg => msg.id))
+            const uniqueLocalMessages = localMessages.filter((msg: any) => !existingIds.has(msg.id))
+            return [...prev, ...uniqueLocalMessages]
+          })
         }
         
         // For admin user, also load legacy data if exists
@@ -195,13 +265,14 @@ export default function Dashboard() {
             // Migrate legacy messages to admin user
             localStorage.setItem(userKey, JSON.stringify(legacyMessages))
             localStorage.removeItem('sentMessages') // Clean up old data
-            setSentMessages(legacyMessages)
+            setSentMessages(prev => {
+              const existingIds = new Set([...scheduledMessages.map(msg => msg.id), ...prev.map((msg: any) => msg.id)])
+              const uniqueLegacyMessages = legacyMessages.filter((msg: any) => !existingIds.has(msg.id))
+              return [...prev, ...uniqueLegacyMessages]
+            })
           }
         }
       }
-
-      // Load scheduled messages from API
-      await loadScheduledMessages()
     } catch (error) {
       console.error('Failed to load data:', error)
     } finally {
@@ -218,8 +289,16 @@ export default function Dashboard() {
         setScheduledMessages(messages)
         setScheduledCount(messages.filter((msg: ScheduledMessage) => msg.status === 'scheduled').length)
         
-        // Group messages by client (combine scheduled and sent messages)
-        const groups = groupMessagesByClient(messages, sentMessages)
+        console.log(`📊 Loaded ${messages.length} messages for user:`, messages.map((m: ScheduledMessage) => ({ 
+          id: m.id, 
+          client: m.clientName, 
+          type: m.reminderType, 
+          status: m.status,
+          userId: m.userId 
+        })))
+        
+        // Group messages by client - messages now include both scheduled and sent
+        const groups = groupMessagesByClient(messages, [])
         setClientGroups(groups)
       }
     } catch (error) {
