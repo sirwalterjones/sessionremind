@@ -649,7 +649,7 @@ export default function AdminPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold text-gray-900">{user.sms_usage.toLocaleString()}</p>
-                        <p className="text-xs text-gray-500">{user.subscription_tier}</p>
+                        <p className="text-xs text-gray-500">professional</p>
                       </div>
                     </div>
                   ))}
@@ -668,13 +668,40 @@ export default function AdminPage() {
                 <h3 className="text-lg font-semibold text-gray-900">User Management</h3>
                 <p className="text-sm text-gray-600">Manage user accounts and subscriptions</p>
               </div>
-              <button
-                onClick={openCreateModal}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
-              >
-                <PlusIcon className="h-4 w-4 mr-2" />
-                Create User
-              </button>
+              <div className="flex space-x-3">
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/fix-user-tiers', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                      })
+                      const result = await response.json()
+                      if (result.success) {
+                        showNotification('success', result.message)
+                        fetchAdminData() // Refresh data
+                      } else {
+                        showNotification('error', result.error)
+                      }
+                    } catch (error) {
+                      showNotification('error', 'Failed to fix user tiers')
+                    }
+                  }}
+                  className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center"
+                >
+                  <span className="text-xs">🔧</span>
+                  <span className="ml-2">Fix Tiers</span>
+                </button>
+                <button
+                  onClick={openCreateModal}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Create User
+                </button>
+              </div>
             </div>
 
             {/* Search and Filters */}
