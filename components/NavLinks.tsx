@@ -18,7 +18,7 @@ export default function NavLinks() {
       >
         <span className="flex items-center space-x-2">
           <span className="text-sm">📖</span>
-          <span>Guide</span>
+          <span>How it Works</span>
         </span>
       </Link>
       
@@ -32,15 +32,17 @@ export default function NavLinks() {
         </span>
       </Link>
       
-      <Link 
-        href="/profile" 
-        className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
-      >
-        <span className="flex items-center space-x-2">
-          <span className="text-sm">👤</span>
-          <span>Profile</span>
-        </span>
-      </Link>
+      {user && (
+        <Link 
+          href="/profile" 
+          className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
+        >
+          <span className="flex items-center space-x-2">
+            <span className="text-sm">👤</span>
+            <span>Profile</span>
+          </span>
+        </Link>
+      )}
       
       <div className="w-px h-6 bg-stone-300 mx-2"></div>
       

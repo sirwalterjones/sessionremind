@@ -1,29 +1,11 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import React from 'react'
 import { useAuth } from '@/lib/auth-context'
 import MobileManualEntry from '@/components/MobileManualEntry'
 
 export default function Instructions() {
   const { user } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-  }, [user, router])
-
-  // Show loading if user is not authenticated yet
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
-        <div className="animate-pulse text-stone-600">Loading...</div>
-      </div>
-    )
-  }
   const dataExtractionBookmarkletCode = "javascript:(function(){try{const allText=document.body.innerText;let n='',e='',p='',s='',t='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}/g);if(emails){e=emails[0];}const phones=allText.match(/[+]?[0-9]{10,15}/g);if(phones){p=phones[0];}const lines=allText.split('\\\\n').map(l=>l.trim()).filter(l=>l.length>0);if(window.location.href.includes('app.usesession.com/sessions/')){const nameMatch=allText.match(/([A-Z][a-z]+(?:\\\\s+[A-Z]\\\\.?)*(?:\\\\s+[A-Z][a-z]+)*\\\\s+[A-Z][a-z]+)(?=\\\\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,})/);if(nameMatch){n=nameMatch[1];}const timeMatch=allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);const dayMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);if(timeMatch && dayMatch){t=dayMatch[1]+', '+dayMatch[2]+' at '+timeMatch[1];}else if(dayMatch){t=dayMatch[1]+', '+dayMatch[2];}let sessionTitle='';const titleSelectors=['h1','h2','h3','[class*=\\\"title\\\"]','[class*=\\\"session\\\"]','[class*=\\\"booking\\\"]'];for(const sel of titleSelectors){const els=document.querySelectorAll(sel);for(const el of els){const txt=el.textContent.trim();if(txt && txt.length>10 && txt.length<100 && !txt.match(/^[0-9]/) && !txt.includes('@') && !txt.includes('$') && !txt.toLowerCase().includes('earnings') && !txt.toLowerCase().includes('bookings') && !txt.toLowerCase().includes('views') && !txt.toLowerCase().includes('waitlist') && !txt.toLowerCase().includes('balance') && (txt.match(/\\\\b20\\\\d{2}\\\\b/) || txt.toLowerCase().includes('field') || txt.toLowerCase().includes('summer') || txt.toLowerCase().includes('winter') || txt.toLowerCase().includes('spring') || txt.toLowerCase().includes('fall') || txt.toLowerCase().includes('christmas') || txt.toLowerCase().includes('holiday') || txt.toLowerCase().includes('watermelon') || txt.toLowerCase().includes('sunflower') || txt.toLowerCase().includes('pumpkin') || txt.toLowerCase().includes('beach') || txt.toLowerCase().includes('studio') || txt.toLowerCase().includes('session') || txt.toLowerCase().includes('shoot') || txt.toLowerCase().includes('mini') || txt.toLowerCase().includes('portrait') || txt.toLowerCase().includes('photo'))){sessionTitle=txt;break;}}if(sessionTitle)break;}if(!sessionTitle){const patterns=[/([A-Z][a-z]+(?:\\\\s+[A-Z][a-z]+)*\\\\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\\\\s+20\\\\d{2})/gi,/(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\\\\s+[A-Z][a-z]+)*(?:\\\\s+20\\\\d{2})?/gi,/([A-Z][a-z\\\\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\\\\s]*)/gi,/(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi,/([A-Z][a-z]+(?:\\\\s+[A-Z][a-z]+)*)\\\\s+(?:Mini|Session|Shoot|Portrait|Photo)/gi];for(const pattern of patterns){const matches=allText.match(pattern);if(matches && matches[0].length>5 && matches[0].length<80){sessionTitle=matches[0].trim();break;}}}s=sessionTitle||'Photography Session';}else{for(let i=0;i<lines.length;i++){const line=lines[i];if(line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();const parts=cleanLine.split(/\\\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);s=parts[0].trim();if(s.endsWith(' at')){s=s.replace(/ at$/,'');}break;}else if(line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();s=cleanLine.split(/\\\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();break;}}const dates=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\\\n]*[0-9]{4}[^\\\\n]*[0-9]{1,2}:[0-9]{2}[^\\\\n]*(AM|PM)/gi);if(dates){t=dates[0];}else{const altDates=allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\\\\n]*[0-9]{4}[^\\\\n]*[0-9]{1,2}:[0-9]{2}[^\\\\n]*(AM|PM)/gi);if(altDates){t=altDates[0];}}const names=allText.match(/^[A-Z][a-z]+(?:\\\\s+[A-Z]\\\\.?)*(?:\\\\s+[A-Z][a-z]+)*\\\\s+[A-Z][a-z]+$/gm);if(names){n=names[0];}}const params=new URLSearchParams();if(n)params.set('name',n);if(e)params.set('email',e);if(p)params.set('phone',p);if(s)params.set('sessionTitle',s);if(t)params.set('sessionTime',t);const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new?'+params.toString(),'_blank');}catch(err){const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new','_blank');}})();"
   
   return (
@@ -36,10 +18,10 @@ export default function Instructions() {
             <span className="text-2xl">📖</span>
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight px-4">
-            Quick Start Guide
+            How it Works
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-            Get up and running with Session Reminder in just a few simple steps
+            Learn how Session Reminder works with your UseSession workflow
           </p>
         </div>
 
@@ -70,20 +52,33 @@ export default function Instructions() {
                   <li>• Automatic data extraction</li>
                   <li>• Stable and reliable</li>
                 </ul>
-                <div className="bg-green-50 border-2 border-dashed border-green-300 rounded-lg p-4 text-center">
-                  <h4 className="font-medium text-green-900 mb-2 text-sm">Drag to Install</h4>
-                  <a 
-                    href={dataExtractionBookmarkletCode}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-medium rounded-full hover:bg-green-700 transition-all duration-200 text-sm cursor-move"
-                    draggable="true"
-                  >
-                    <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
-                      <span className="text-green-600 text-xs font-bold">S</span>
-                    </div>
-                    ession Remind
-                  </a>
-                  <p className="text-green-700 text-xs mt-2">Drag to your bookmarks bar</p>
-                </div>
+                {user ? (
+                  <div className="bg-green-50 border-2 border-dashed border-green-300 rounded-lg p-4 text-center">
+                    <h4 className="font-medium text-green-900 mb-2 text-sm">Drag to Install</h4>
+                    <a 
+                      href={dataExtractionBookmarkletCode}
+                      className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-medium rounded-full hover:bg-green-700 transition-all duration-200 text-sm cursor-move"
+                      draggable="true"
+                    >
+                      <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
+                        <span className="text-green-600 text-xs font-bold">S</span>
+                      </div>
+                      ession Remind
+                    </a>
+                    <p className="text-green-700 text-xs mt-2">Drag to your bookmarks bar</p>
+                  </div>
+                ) : (
+                  <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
+                    <h4 className="font-medium text-blue-900 mb-2 text-sm">🔒 Login Required</h4>
+                    <p className="text-blue-700 text-xs mb-3">Please log in to access the bookmarklet</p>
+                    <a 
+                      href="/login"
+                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-all duration-200 text-sm"
+                    >
+                      Login to Access
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* Extension Option - Now Beta */}
@@ -96,17 +91,30 @@ export default function Instructions() {
                   <li>• Works on all UseSession pages</li>
                   <li>• Currently in beta testing</li>
                 </ul>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <a 
-                    href="/extension-resizable.zip"
-                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
-                    download="session-reminder-extension-resizable.zip"
-                  >
-                    <span className="mr-2">⬇️</span>
-                    Download Extension
-                  </a>
-                  <span className="text-amber-600 text-xs sm:text-sm self-center text-center sm:text-left">Beta - Use bookmarklet for stable experience</span>
-                </div>
+                {user ? (
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <a 
+                      href="/extension-resizable.zip"
+                      className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
+                      download="session-reminder-extension-resizable.zip"
+                    >
+                      <span className="mr-2">⬇️</span>
+                      Download Extension
+                    </a>
+                    <span className="text-amber-600 text-xs sm:text-sm self-center text-center sm:text-left">Beta - Use bookmarklet for stable experience</span>
+                  </div>
+                ) : (
+                  <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
+                    <h4 className="font-medium text-blue-900 mb-2 text-sm">🔒 Login Required</h4>
+                    <p className="text-blue-700 text-xs mb-3">Please log in to download the extension</p>
+                    <a 
+                      href="/login"
+                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-all duration-200 text-sm"
+                    >
+                      Login to Download
+                    </a>
+                  </div>
+                )}
               </div>
 
             </div>
