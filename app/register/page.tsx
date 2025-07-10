@@ -56,7 +56,7 @@ export default function RegisterPage() {
           <h2 className="text-3xl font-bold text-gray-900">
             Create your Session Remind account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-green-600">
             Start sending SMS reminders for $20/month
           </p>
         </div>

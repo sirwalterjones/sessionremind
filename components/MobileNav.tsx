@@ -38,14 +38,16 @@ export default function MobileNav() {
             <span className="text-lg">📖</span>
             <span className="font-medium">How it Works</span>
           </Link>
-          <Link 
-            href="/dashboard" 
-            className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="text-lg">📊</span>
-            <span className="font-medium">Dashboard</span>
-          </Link>
+          {user && (
+            <Link 
+              href="/dashboard" 
+              className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="text-lg">📊</span>
+              <span className="font-medium">Dashboard</span>
+            </Link>
+          )}
           {user && (
             <Link 
               href="/profile" 

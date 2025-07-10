@@ -296,7 +296,7 @@ export default function Instructions() {
           {/* CTA */}
           <div className="text-center pt-8">
             <a
-              href="/new"
+              href="https://sessionremind.com/register"
               className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-lg"
             >
               <span className="mr-3">🚀</span>

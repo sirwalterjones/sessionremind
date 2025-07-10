@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import MobileManualEntry from '@/components/MobileManualEntry'
 
@@ -51,34 +52,34 @@ export default function Home() {
               ) : user ? (
                 // Show dashboard links for logged-in users
                 <>
-                  <a
+                  <Link
                     href="/new"
                     className="px-10 py-4 bg-black text-white font-semibold rounded-full hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg"
                   >
                     Create Reminder
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/dashboard"
                     className="px-10 py-4 border-2 border-stone-300 text-gray-700 font-semibold rounded-full hover:border-stone-400 hover:bg-stone-50 transition-all duration-200"
                   >
                     View Dashboard
-                  </a>
+                  </Link>
                 </>
               ) : (
                 // Show signup/login for non-logged-in users
                 <>
-                  <a
+                  <Link
                     href="/register"
                     className="px-10 py-4 bg-black text-white font-semibold rounded-full hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg"
                   >
                     Subscribe Now
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/login"
                     className="px-10 py-4 border-2 border-stone-300 text-gray-700 font-semibold rounded-full hover:border-stone-400 hover:bg-stone-50 transition-all duration-200"
                   >
                     Sign In
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
