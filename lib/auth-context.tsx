@@ -42,6 +42,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json()
         setUser(data.user)
+        
+        // Auto-update subscription status for professional users
+        if (data.user.subscription_tier === 'professional' && data.user.subscription_status !== 'active') {
+          try {
+            const updateResponse = await fetch('/api/update-user-subscription', {
+              method: 'POST',
+              credentials: 'include'
+            })
+            if (updateResponse.ok) {
+              const updateData = await updateResponse.json()
+              setUser(updateData.user)
+            }
+          } catch (error) {
+            console.error('Failed to update subscription status:', error)
+          }
+        }
       } else {
         setUser(null)
       }
@@ -67,6 +83,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         // Set user immediately
         setUser(data.user)
+        
+        // Auto-update subscription status for professional users
+        if (data.user.subscription_tier === 'professional' && data.user.subscription_status !== 'active') {
+          try {
+            const updateResponse = await fetch('/api/update-user-subscription', {
+              method: 'POST',
+              credentials: 'include'
+            })
+            if (updateResponse.ok) {
+              const updateData = await updateResponse.json()
+              setUser(updateData.user)
+            }
+          } catch (error) {
+            console.error('Failed to update subscription status:', error)
+          }
+        }
+        
         return { success: true, user: data.user }
       } else {
         return { success: false, error: data.error }

@@ -4,53 +4,36 @@ import { getCurrentUser } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if user is admin
     const currentUser = await getCurrentUser(request)
-    if (!currentUser?.is_admin) {
+    
+    if (!currentUser) {
       return NextResponse.json(
-        { error: 'Unauthorized - Admin only' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const { userId, subscriptionStatus } = await request.json()
-    
-    if (!userId || !subscriptionStatus) {
-      return NextResponse.json(
-        { error: 'userId and subscriptionStatus required' },
-        { status: 400 }
-      )
+    // Update user's subscription status to active if they have professional tier
+    if (currentUser.subscription_tier === 'professional') {
+      await kv.hset(`user:${currentUser.id}`, {
+        subscription_status: 'active'
+      })
+      
+      return NextResponse.json({ 
+        message: 'Subscription status updated to active',
+        user: { ...currentUser, subscription_status: 'active' }
+      })
     }
 
-    // Get current user data
-    const user = await kv.hgetall(`user:${userId}`)
-    
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
-    }
-
-    // Update subscription status
-    const updatedUser = {
-      ...user,
-      subscription_status: subscriptionStatus
-    }
-    
-    await kv.hset(`user:${userId}`, updatedUser as unknown as Record<string, unknown>)
-    
-    return NextResponse.json({
-      success: true,
-      message: 'User subscription status updated',
-      userId: userId,
-      newStatus: subscriptionStatus
+    return NextResponse.json({ 
+      message: 'No update needed',
+      user: currentUser
     })
 
   } catch (error) {
-    console.error('Update user subscription error:', error)
+    console.error('Update subscription error:', error)
     return NextResponse.json(
-      { error: 'Failed to update user subscription' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
