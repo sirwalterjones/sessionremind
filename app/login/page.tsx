@@ -46,6 +46,7 @@ function LoginForm() {
           <div className="flex items-center justify-center mb-6">
             <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center">
               <span className="text-white text-2xl font-bold">S</span>
+              <span className="text-white text-lg font-bold">r</span>
             </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
@@ -132,6 +133,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">S</span>
+                <span className="text-white text-lg font-bold">r</span>
               </div>
             </div>
             <h2 className="text-3xl font-bold text-gray-900">

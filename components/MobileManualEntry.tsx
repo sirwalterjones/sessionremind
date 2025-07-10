@@ -69,7 +69,7 @@ export default function MobileManualEntry({ onDataExtracted }: MobileManualEntry
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
         <h3 className="font-bold text-blue-900 text-lg mb-2">📋 Client Details</h3>
         <p className="text-blue-800 text-sm">
-          Enter the client info from UseSession
+          Enter the client info from Session
         </p>
       </div>
       
@@ -189,7 +189,7 @@ export default function MobileManualEntry({ onDataExtracted }: MobileManualEntry
       <div className="bg-green-50 border border-green-200 rounded-xl p-4">
         <h4 className="font-bold text-green-900 mb-2">💡 How it works:</h4>
         <ol className="text-green-800 text-sm space-y-1">
-          <li>1. Open UseSession and find your client</li>
+                          <li>1. Open Session and find your client</li>
           <li>2. Enter their details above</li>
           <li>3. Form below fills automatically</li>
           <li>4. Send your reminder!</li>

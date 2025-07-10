@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://sessionremind.com'),
   title: 'Session Remind - SMS Reminders for Photography Sessions',
-  description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
+  description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://sessionremind.com',
     title: 'Session Remind - SMS Reminders for Photography Sessions',
-    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
+    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
     siteName: 'Session Remind',
     images: [
       {
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Session Remind - SMS Reminders for Photography Sessions',
-    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with UseSession to send automatic reminders to clients.',
+    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
     images: ['/logo.svg']
   },
   other: {

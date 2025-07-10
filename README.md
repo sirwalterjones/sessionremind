@@ -1,6 +1,6 @@
 # Session Reminder 📱
 
-A modern web application for photographers to send SMS reminders to clients based on scraped data from booking pages like UseSession.com.
+A modern web application for photographers to send SMS reminders to clients based on scraped data from booking pages like Session.com.
 
 > 🚀 **Now live at [sessionremind.com](https://sessionremind.com)**
 
@@ -9,7 +9,7 @@ A modern web application for photographers to send SMS reminders to clients base
 - **Client Reminder Form**: Create SMS reminders with auto-fill from query parameters
 - **SMS Integration**: Send messages via TextMagic API
 - **Dashboard**: View sent messages and statistics
-- **Bookmarklet**: Auto-scrape client data from UseSession pages
+- **Bookmarklet**: Auto-scrape client data from Session pages
 - **Responsive Design**: Clean Apple-style interface with Tailwind CSS
 
 ## Quick Start
@@ -46,12 +46,12 @@ A modern web application for photographers to send SMS reminders to clients base
 4. Toggle "Opted-in" to Yes
 5. Click "Send Reminder"
 
-### Auto-fill from UseSession
+### Auto-fill from Session
 
 Use the drag-and-drop bookmarklet from the homepage:
 
-1. Visit the homepage and drag the blue "UseSession → Session Reminder" button to your bookmarks bar
-2. Navigate to any UseSession client detail page in your browser
+1. Visit the homepage and drag the blue "Session → Session Reminder" button to your bookmarks bar
+2. Navigate to any Session client detail page in your browser
 3. Click the bookmark in your bookmarks bar
 4. The app will open with auto-filled client data
 

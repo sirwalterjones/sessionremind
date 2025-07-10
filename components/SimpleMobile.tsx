@@ -18,24 +18,24 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
   
   const handleExtract = async () => {
     if (!url.trim()) {
-      alert('Please paste the UseSession URL first')
+      alert('Please paste the Session URL first')
       return
     }
     
-    if (!url.includes('usesession.com')) {
-      alert('Please use a UseSession URL (app.usesession.com)')
+    if (!url.includes('session.com')) {
+      alert('Please use a Session URL (app.session.com)')
       return
     }
     
-    if (url.includes('book.usesession.com')) {
-      alert('❌ That\'s a booking URL!\n\nYou need the SESSION MANAGEMENT URL instead.\n\nGo to your UseSession dashboard (app.usesession.com) and find the client\'s session page.')
+    if (url.includes('book.session.com')) {
+      alert('❌ That\'s a booking URL!\n\nYou need the SESSION MANAGEMENT URL instead.\n\nGo to your Session dashboard (app.session.com) and find the client\'s session page.')
       return
     }
     
     setIsExtracting(true)
     
     try {
-      const response = await fetch('/api/extract-usesession', {
+      const response = await fetch('/api/extract-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim() }),
@@ -56,7 +56,7 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
       }
     } catch (error) {
       console.error('Extraction error:', error)
-      alert('❌ Could not extract data. Make sure the URL is from a UseSession client page.')
+      alert('❌ Could not extract data. Make sure the URL is from a Session client page.')
     } finally {
       setIsExtracting(false)
     }
@@ -65,10 +65,10 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText()
-      if (text.includes('usesession.com')) {
+      if (text.includes('session.com')) {
         setUrl(text)
       } else {
-        alert('Clipboard does not contain a UseSession URL')
+        alert('Clipboard does not contain a Session URL')
       }
     } catch (err) {
       alert('Please manually paste the URL in the box below')
@@ -91,14 +91,14 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
         <h3 className="font-bold text-blue-900 text-lg mb-2">📱 Mobile: Copy URL Method</h3>
         <p className="text-blue-800 text-sm">
-          Copy the UseSession page URL and paste it below
+          Copy the Session page URL and paste it below
         </p>
       </div>
       
       {/* URL Input */}
       <div className="bg-white border border-gray-200 rounded-xl p-4">
         <label className="block text-sm font-medium text-gray-900 mb-3">
-          UseSession Page URL:
+                      Session Page URL:
         </label>
         
         <div className="space-y-3">
@@ -107,7 +107,7 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="Paste app.usesession.com URL here..."
+              placeholder="Paste app.session.com URL here..."
               className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <div className="flex space-x-2">
@@ -144,16 +144,16 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
           <div className="bg-white rounded-lg p-3 border border-green-200">
             <p className="text-green-900 font-medium text-sm mb-1">✅ CORRECT URLs:</p>
             <ul className="text-green-800 text-xs space-y-1">
-              <li>• app.usesession.com/sessions/...</li>
-              <li>• app.usesession.com/bookings/...</li>
-              <li>• Your UseSession dashboard pages</li>
+                              <li>• app.session.com/sessions/...</li>
+                <li>• app.session.com/bookings/...</li>
+                <li>• Your Session dashboard pages</li>
             </ul>
           </div>
           
           <div className="bg-red-50 rounded-lg p-3 border border-red-200">
             <p className="text-red-900 font-medium text-sm mb-1">❌ WRONG URLs:</p>
             <ul className="text-red-800 text-xs space-y-1">
-              <li>• book.usesession.com/... (booking pages)</li>
+                              <li>• book.session.com/... (booking pages)</li>
               <li>• Public client booking links</li>
             </ul>
           </div>
@@ -162,7 +162,7 @@ export default function SimpleMobile({ onDataExtracted }: SimpleMobileProps) {
         <div className="mt-3 pt-3 border-t border-green-200">
           <h5 className="font-medium text-green-900 mb-2">How to find the right URL:</h5>
           <ol className="text-green-800 text-sm space-y-1">
-            <li>1. 📱 Open app.usesession.com (log in)</li>
+                          <li>1. 📱 Open app.session.com (log in)</li>
             <li>2. 🔍 Find your client's session</li>
             <li>3. 👆 Tap to open the session details</li>
             <li>4. 📋 Copy URL from address bar</li>

@@ -13,7 +13,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
   
   const extractFromURL = async () => {
     if (!url.trim()) {
-      alert('Please enter a UseSession URL')
+      alert('Please enter a Session URL')
       return
     }
     
@@ -21,7 +21,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
     
     try {
       // Call the existing server-side extraction API
-      const response = await fetch('/api/extract-usesession', {
+      const response = await fetch('/api/extract-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
       }
     } catch (error) {
       console.error('URL extraction error:', error)
-      alert(`❌ Could not extract data from URL.\n\nTry:\n• Check the URL is correct\n• Make sure it's a UseSession client page\n• Or use manual entry instead`)
+      alert(`❌ Could not extract data from URL.\n\nTry:\n• Check the URL is correct\n• Make sure it's a Session client page\n• Or use manual entry instead`)
     } finally {
       setIsExtracting(false)
     }
@@ -63,10 +63,10 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText()
-      if (text.includes('usesession.com') || text.includes('app.usesession.com')) {
+      if (text.includes('session.com') || text.includes('app.session.com')) {
         setUrl(text)
       } else {
-        alert('Clipboard does not contain a UseSession URL')
+        alert('Clipboard does not contain a Session URL')
       }
     } catch (err) {
       alert('Could not access clipboard. Please manually paste the URL.')
@@ -78,23 +78,23 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
       <div className="flex items-start space-x-3">
         <span className="text-blue-600 text-2xl">🔗</span>
         <div className="flex-1">
-          <h4 className="font-bold text-blue-900 mb-2">Extract from UseSession URL</h4>
+          <h4 className="font-bold text-blue-900 mb-2">Extract from Session URL</h4>
           <p className="text-blue-800 text-sm mb-4">
-            Paste the UseSession page URL and we'll extract the client data automatically
+            Paste the Session page URL and we'll extract the client data automatically
           </p>
           
           {/* URL Input */}
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                UseSession Page URL:
+                Session Page URL:
               </label>
               <div className="flex space-x-2">
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://app.usesession.com/sessions/..."
+                  placeholder="https://app.session.com/sessions/..."
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 />
                 <button
@@ -117,10 +117,10 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
               
               {showExample && (
                 <div className="mt-2 text-blue-700 text-xs">
-                  <p className="font-medium mb-1">✅ UseSession URLs that work:</p>
+                  <p className="font-medium mb-1">✅ Session URLs that work:</p>
                   <ul className="space-y-1 ml-2">
-                    <li>• <strong>Individual session pages:</strong> app.usesession.com/sessions/...</li>
-                    <li>• <strong>Client booking details:</strong> app.usesession.com/bookings/...</li>
+                    <li>• <strong>Individual session pages:</strong> app.session.com/sessions/...</li>
+                    <li>• <strong>Client booking details:</strong> app.session.com/bookings/...</li>
                     <li>• <strong>Calendar view pages:</strong> with client contact info visible</li>
                     <li>• <strong>Session management pages:</strong> showing client details</li>
                   </ul>
@@ -162,15 +162,15 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
           <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
             <h5 className="font-medium text-green-900 mb-2">📱 Step-by-Step Mobile Instructions:</h5>
             <ol className="text-green-800 text-sm space-y-2">
-              <li><strong>1. Open UseSession:</strong> Go to app.usesession.com in your mobile browser</li>
-              <li><strong>2. Find your client:</strong> Navigate to the specific session page (app.usesession.com/sessions/...)</li>
+              <li><strong>1. Open Session:</strong> Go to app.session.com in your mobile browser</li>
+              <li><strong>2. Find your client:</strong> Navigate to the specific session page (app.session.com/sessions/...)</li>
               <li><strong>3. Copy URL:</strong> Tap the address bar, select all, and copy the full URL</li>
               <li><strong>4. Return here:</strong> Come back to Session Reminder and paste the URL above</li>
               <li><strong>5. Extract:</strong> Tap "Extract Data" - name, email, phone, and session details fill automatically!</li>
             </ol>
             
             <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
-              <p className="text-yellow-800 text-xs font-medium">💡 Pro Tip: Individual session pages (with URLs like app.usesession.com/sessions/abc123) give the best extraction results!</p>
+              <p className="text-yellow-800 text-xs font-medium">💡 Pro Tip: Individual session pages (with URLs like app.session.com/sessions/abc123) give the best extraction results!</p>
             </div>
           </div>
         </div>

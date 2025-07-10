@@ -1,5 +1,5 @@
-// UseSession Bookmarklet Code
-// Copy and paste this into your browser console on a UseSession client detail page
+// Session Bookmarklet Code  
+// Copy and paste this into your browser console on a Session client detail page
 
 (function(){
   // Enhanced client data extraction with improved session title logic
@@ -28,7 +28,7 @@
     const lines = allText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
     // Check if we're on an individual session page
-    if (window.location.href.includes('app.usesession.com/sessions/')) {
+    if (window.location.href.includes('app.session.com/sessions/')) {
       // Extract name from individual session page (handles middle initials and middle names)
       // Matches: "John Smith", "Stacey E Colston", "Stacey E. Colston", "Mary Elizabeth Johnson", "John A. B. Smith"
       const nameMatch = allText.match(/([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)*\s+[A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);

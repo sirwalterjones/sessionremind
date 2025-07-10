@@ -1,5 +1,5 @@
-// Enhanced UseSession Bookmarklet
-// This version is specifically optimized for UseSession.com pages
+// Enhanced Session Bookmarklet
+// This version is specifically optimized for Session.com pages
 
 javascript:(function(){
   // Enhanced client data extraction using improved session title logic
@@ -28,7 +28,7 @@ javascript:(function(){
     const lines = allText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
     // Check if we're on an individual session page
-    if (window.location.href.includes('app.usesession.com/sessions/')) {
+    if (window.location.href.includes('app.session.com/sessions/')) {
       // Extract name from individual session page (handles middle initials and middle names)
       // Matches: "John Smith", "Stacey E Colston", "Stacey E. Colston", "Mary Elizabeth Johnson", "John A. B. Smith"
       const nameMatch = allText.match(/([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+)*\s+[A-Z][a-z]+)(?=\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
@@ -190,7 +190,7 @@ javascript:(function(){
   const targetUrl = `${baseUrl}/new?${params.toString()}`;
   
   // Log for debugging
-  console.log('UseSession data extracted:', data);
+  console.log('Session data extracted:', data);
   console.log('Target URL:', targetUrl);
   
   // Open new window

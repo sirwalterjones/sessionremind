@@ -40,7 +40,7 @@ export default function Home() {
             </h1>
             
             <p className="text-xl sm:text-2xl lg:text-3xl text-gray-600 mb-16 max-w-4xl mx-auto leading-relaxed font-light">
-              Automatically send SMS reminders to your photography clients with seamless UseSession integration
+              Automatically send SMS reminders to your photography clients with seamless Session integration
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
@@ -155,7 +155,7 @@ export default function Home() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-gray-900 font-medium">UseSession integration</span>
+                    <span className="text-gray-900 font-medium">Session integration</span>
                     <span className="ml-auto text-xs bg-black text-white px-2 py-1 rounded-full">
                       NEW
                     </span>
@@ -244,7 +244,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-4">Integration Options</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Extract client data from UseSession automatically
+              Extract client data from Session automatically
             </p>
           </div>
 
@@ -321,7 +321,7 @@ export default function Home() {
 
               <div className="space-y-3 mb-8 text-sm text-gray-600">
                 <div>Floating button appears automatically</div>
-                <div>Works on all UseSession pages</div>
+                <div>Works on all Session pages</div>
                 <div>Resizable button to avoid page conflicts</div>
                 <div>Advanced features for power users</div>
                 <div>Requires manual installation</div>
@@ -366,13 +366,13 @@ export default function Home() {
 
 5. **Verify Installation**
    - You should see "Session Reminder" in your extensions list
-   - Visit any UseSession page to see the floating button
+   - Visit any Session page to see the floating button
    - The button shows "S" icon with "Send Text Reminder" text
 
 ## Troubleshooting:
 - If you don't see "Load unpacked", make sure Developer mode is enabled
 - Chrome may show security warnings - this is normal for unpacked extensions
-- The extension only works on app.usesession.com pages
+- The extension only works on app.session.com pages
 
 ## Browser Support:
 ✅ Chrome, Edge, Brave, and other Chromium browsers`;
@@ -447,7 +447,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">Extract Data</h3>
               <p className="text-gray-600 leading-relaxed text-lg">
-                Automatically captures client name, phone, email, session type, and date from UseSession pages
+                Automatically captures client name, phone, email, session type, and date from Session pages
               </p>
             </div>
             
@@ -537,7 +537,7 @@ export default function Home() {
                     <li className="flex items-start">
                       <span className="flex-shrink-0 w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">4</span>
                       <div>
-                        <strong>Save:</strong> Save the bookmark and visit any UseSession page to test it
+                        <strong>Save:</strong> Save the bookmark and visit any Session page to test it
                       </div>
                     </li>
                   </ol>
