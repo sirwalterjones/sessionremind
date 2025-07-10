@@ -9,299 +9,464 @@ export default function Instructions() {
   const dataExtractionBookmarkletCode = "javascript:(function(){try{const allText=document.body.innerText;let n='',e='',p='',s='',t='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}/g);if(emails){e=emails[0];}const phones=allText.match(/[+]?[0-9]{10,15}/g);if(phones){p=phones[0];}const lines=allText.split('\\\\n').map(l=>l.trim()).filter(l=>l.length>0);if(window.location.href.includes('app.usesession.com/sessions/')){const nameMatch=allText.match(/([A-Z][a-z]+(?:\\\\s+[A-Z]\\\\.?)*(?:\\\\s+[A-Z][a-z]+)*\\\\s+[A-Z][a-z]+)(?=\\\\s+[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,})/);if(nameMatch){n=nameMatch[1];}const timeMatch=allText.match(/([0-9]{1,2}:[0-9]{2} [AP]M - [0-9]{1,2}:[0-9]{2} [AP]M)/);const dayMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ [0-9]{1,2}[a-z]{2}, [0-9]{4})/);if(timeMatch && dayMatch){t=dayMatch[1]+', '+dayMatch[2]+' at '+timeMatch[1];}else if(dayMatch){t=dayMatch[1]+', '+dayMatch[2];}let sessionTitle='';const titleSelectors=['h1','h2','h3','[class*=\\\"title\\\"]','[class*=\\\"session\\\"]','[class*=\\\"booking\\\"]'];for(const sel of titleSelectors){const els=document.querySelectorAll(sel);for(const el of els){const txt=el.textContent.trim();if(txt && txt.length>10 && txt.length<100 && !txt.match(/^[0-9]/) && !txt.includes('@') && !txt.includes('$') && !txt.toLowerCase().includes('earnings') && !txt.toLowerCase().includes('bookings') && !txt.toLowerCase().includes('views') && !txt.toLowerCase().includes('waitlist') && !txt.toLowerCase().includes('balance') && (txt.match(/\\\\b20\\\\d{2}\\\\b/) || txt.toLowerCase().includes('field') || txt.toLowerCase().includes('summer') || txt.toLowerCase().includes('winter') || txt.toLowerCase().includes('spring') || txt.toLowerCase().includes('fall') || txt.toLowerCase().includes('christmas') || txt.toLowerCase().includes('holiday') || txt.toLowerCase().includes('watermelon') || txt.toLowerCase().includes('sunflower') || txt.toLowerCase().includes('pumpkin') || txt.toLowerCase().includes('beach') || txt.toLowerCase().includes('studio') || txt.toLowerCase().includes('session') || txt.toLowerCase().includes('shoot') || txt.toLowerCase().includes('mini') || txt.toLowerCase().includes('portrait') || txt.toLowerCase().includes('photo'))){sessionTitle=txt;break;}}if(sessionTitle)break;}if(!sessionTitle){const patterns=[/([A-Z][a-z]+(?:\\\\s+[A-Z][a-z]+)*\\\\s+(?:Summer|Winter|Spring|Fall|Holiday|Christmas)\\\\s+20\\\\d{2})/gi,/(Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary|Field|Summer|Winter|Spring|Fall)(?:\\\\s+[A-Z][a-z]+)*(?:\\\\s+20\\\\d{2})?/gi,/([A-Z][a-z\\\\s]*(Mini|Session|Shoot|Portrait|Photo|Photography)[A-Z\\\\s]*)/gi,/(Watermelon|Sunflower|Pumpkin|Christmas|Holiday|Beach|Studio|Maternity|Newborn|Family|Senior|Wedding|Engagement|Birthday|Anniversary)[^.]*(?:Session|Shoot|Mini|Portrait|Photo)/gi,/([A-Z][a-z]+(?:\\\\s+[A-Z][a-z]+)*)\\\\s+(?:Mini|Session|Shoot|Portrait|Photo)/gi];for(const pattern of patterns){const matches=allText.match(pattern);if(matches && matches[0].length>5 && matches[0].length<80){sessionTitle=matches[0].trim();break;}}}s=sessionTitle||'Photography Session';}else{for(let i=0;i<lines.length;i++){const line=lines[i];if(line.match(/[A-Za-z].+(Truck|Session|Mini|Shoot|Photo).*-.*[A-Z]{2}/)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();const parts=cleanLine.split(/\\\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/);s=parts[0].trim();if(s.endsWith(' at')){s=s.replace(/ at$/,'');}break;}else if(line.match(/(Mini|Maternity|Newborn|Senior|Family|Wedding|Portrait|Pet|Commercial|Event|Beach|Studio|Outdoor|Indoor|Holiday|Christmas|Valentine|Easter|Spring|Summer|Fall|Winter|Birthday|Anniversary).*(Session|Shoot|Mini|Photography|Photo)/i)){const cleanLine=line.replace(/[🍉🎃🎄🌸🌺🌻🌷🌹🌼🌿🍀🌱🌲🌳🌴🌵🌶️🌽🌾🌿🍀🍁🍂🍃]/g,'').trim();s=cleanLine.split(/\\\\s+(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)/)[0].trim();break;}}const dates=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\\\n]*[0-9]{4}[^\\\\n]*[0-9]{1,2}:[0-9]{2}[^\\\\n]*(AM|PM)/gi);if(dates){t=dates[0];}else{const altDates=allText.match(/(January|February|March|April|May|June|July|August|September|October|November|December)[^\\\\n]*[0-9]{4}[^\\\\n]*[0-9]{1,2}:[0-9]{2}[^\\\\n]*(AM|PM)/gi);if(altDates){t=altDates[0];}}const names=allText.match(/^[A-Z][a-z]+(?:\\\\s+[A-Z]\\\\.?)*(?:\\\\s+[A-Z][a-z]+)*\\\\s+[A-Z][a-z]+$/gm);if(names){n=names[0];}}const params=new URLSearchParams();if(n)params.set('name',n);if(e)params.set('email',e);if(p)params.set('phone',p);if(s)params.set('sessionTitle',s);if(t)params.set('sessionTime',t);const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new?'+params.toString(),'_blank');}catch(err){const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new','_blank');}})();"
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6 sm:mb-8">
-            <span className="text-2xl">📖</span>
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full mb-8 shadow-lg">
+            <span className="text-3xl">🎯</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight px-4">
-            How it Works
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+            Let's Get You Started!
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-            Learn how Session Reminder works with your UseSession workflow
+          <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Transform your photography workflow in just 3 easy steps. No technical experience needed!
           </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-gray-500">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>2 minutes setup</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Works with UseSession</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Automatic reminders</span>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-8">
+        {/* Video Section */}
+        <div className="bg-white rounded-3xl p-8 shadow-xl mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              New to Browser Tools?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Don't worry! Watch these quick videos to understand both bookmarklets and browser extensions. Choose what works best for you!
+            </p>
+          </div>
           
-          {/* Browser Extension Option */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-stone-100">
-            <div className="flex items-start sm:items-center mb-6">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-stone-800 rounded-full flex items-center justify-center font-bold text-white text-sm sm:text-lg">
-                1
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Bookmarklet Video */}
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-500 rounded-full mb-3">
+                  <span className="text-white text-xl">🔖</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">How Bookmarklets Work</h3>
+                <p className="text-sm text-gray-600">Simple drag-and-drop installation</p>
               </div>
-              <div className="ml-3 sm:ml-4">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
-                  🚀 Choose Your Integration
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600">Browser Extension or Bookmarklet</p>
+              
+              <div className="relative w-full h-0 pb-[56.25%] rounded-xl overflow-hidden shadow-lg">
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src="https://www.youtube.com/embed/4FMZmg3zh4s"
+                  title="What is bookmarklet and how to create one"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <p className="text-sm text-green-800 text-center">
+                  <span className="font-semibold">🎯 Recommended:</span> Shows exactly how our Session Reminder bookmarklet works!
+                </p>
               </div>
             </div>
             
-            <div className="ml-0 sm:ml-8 lg:ml-16 space-y-4 sm:space-y-6">
-              {/* Bookmarklet Option - Now Recommended */}
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="text-green-800 font-semibold mb-3 text-sm sm:text-base">✨ Bookmarklet (Recommended)</h3>
-                <ul className="text-green-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
-                  <li>• No installation required</li>
-                  <li>• Works on desktop browsers</li>
-                  <li>• One-click bookmark</li>
-                  <li>• Automatic data extraction</li>
-                  <li>• Stable and reliable</li>
-                </ul>
-                {user ? (
-                  <div className="bg-green-50 border-2 border-dashed border-green-300 rounded-lg p-4 text-center">
-                    <h4 className="font-medium text-green-900 mb-2 text-sm">Drag to Install</h4>
-                    <a 
-                      href={dataExtractionBookmarkletCode}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-medium rounded-full hover:bg-green-700 transition-all duration-200 text-sm cursor-move"
-                      draggable="true"
-                    >
-                      <div className="w-4 h-4 bg-white rounded flex items-center justify-center mr-2">
-                        <span className="text-green-600 text-xs font-bold">S</span>
+            {/* Browser Extension Video */}
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-amber-500 rounded-full mb-3">
+                  <span className="text-white text-xl">🧩</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">How Browser Extensions Work</h3>
+                <p className="text-sm text-gray-600">Download and install process</p>
+              </div>
+              
+              <div className="relative w-full h-0 pb-[56.25%] rounded-xl overflow-hidden shadow-lg">
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src="https://www.youtube.com/embed/8Xuie8JX-uM"
+                  title="How to Install Browser Extensions"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p className="text-sm text-amber-800 text-center">
+                  <span className="font-semibold">⚠️ Beta Version:</span> Our extension is currently in testing phase
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center mt-8">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <p className="text-sm text-blue-800">
+                <span className="font-semibold">💡 Pro Tip:</span> Start with the bookmarklet (left video) - it's easier and more reliable. 
+                You can always try the extension later if you want advanced features!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Benefits Section */}
+        <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl p-8 text-white mb-16">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-6">Why Session Reminder?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">⚡</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Save Time</h3>
+                <p className="text-white text-opacity-90">Automated reminders mean no more manual follow-ups</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Reduce No-Shows</h3>
+                <p className="text-white text-opacity-90">Gentle reminders keep your sessions on track</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">📱</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Professional</h3>
+                <p className="text-white text-opacity-90">Branded SMS messages that look polished</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Choose Your Method */}
+        <div className="bg-white rounded-3xl p-8 shadow-xl mb-16">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full mb-6">
+              <span className="text-white text-2xl">🚀</span>
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Method</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Pick the option that works best for you. Both methods extract client data automatically!
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Bookmarklet Option */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                Recommended
+              </div>
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                  <span className="text-white text-xl">🔖</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-green-800">Bookmarklet</h3>
+                  <p className="text-green-600">Simple and reliable</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-green-700">
+                  <span className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs mr-3">✓</span>
+                  <span>No installation required</span>
+                </div>
+                <div className="flex items-center text-green-700">
+                  <span className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs mr-3">✓</span>
+                  <span>Works instantly</span>
+                </div>
+                <div className="flex items-center text-green-700">
+                  <span className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs mr-3">✓</span>
+                  <span>Just drag to bookmarks</span>
+                </div>
+              </div>
+
+              {user ? (
+                <div className="bg-white border-2 border-dashed border-green-300 rounded-xl p-6 text-center">
+                  <h4 className="font-semibold text-green-900 mb-3">🎯 Ready to Install</h4>
+                  <a 
+                    href={dataExtractionBookmarkletCode}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-move"
+                    draggable="true"
+                  >
+                    <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center mr-3">
+                      <span className="text-green-600 font-bold">Sr</span>
+                    </div>
+                    Session Reminder
+                  </a>
+                  <p className="text-green-700 text-sm mt-3">👆 Drag this to your bookmarks bar</p>
+                </div>
+              ) : (
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 text-center">
+                  <h4 className="font-semibold text-blue-900 mb-3">🔐 Login Required</h4>
+                  <p className="text-blue-700 text-sm mb-4">Please log in to access your bookmarklet</p>
+                  <a 
+                    href="/login"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    Login to Get Started
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Extension Option */}
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center mr-4">
+                  <span className="text-white text-xl">🧩</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-amber-800">Browser Extension</h3>
+                  <p className="text-amber-600">Advanced features (Beta)</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-amber-700">
+                  <span className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center text-white text-xs mr-3">✓</span>
+                  <span>Automatic detection</span>
+                </div>
+                <div className="flex items-center text-amber-700">
+                  <span className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center text-white text-xs mr-3">✓</span>
+                  <span>Floating button</span>
+                </div>
+                <div className="flex items-center text-amber-700">
+                  <span className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center text-white text-xs mr-3">⚠</span>
+                  <span>Currently in beta</span>
+                </div>
+              </div>
+
+              {user ? (
+                <div className="bg-white border-2 border-amber-200 rounded-xl p-6 text-center">
+                  <h4 className="font-semibold text-amber-900 mb-3">🚀 Download Extension</h4>
+                  <a 
+                    href="/extension-resizable.zip"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-full hover:from-amber-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    download="session-reminder-extension.zip"
+                  >
+                    <span className="mr-2">⬇️</span>
+                    Download Extension
+                  </a>
+                  <p className="text-amber-700 text-sm mt-3">Beta version - use bookmarklet for stable experience</p>
+                </div>
+              ) : (
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 text-center">
+                  <h4 className="font-semibold text-blue-900 mb-3">🔐 Login Required</h4>
+                  <p className="text-blue-700 text-sm mb-4">Please log in to download the extension</p>
+                  <a 
+                    href="/login"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    Login to Download
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Setup Steps */}
+        <div className="space-y-12">
+          
+          {/* Step 1 - Use on UseSession */}
+          <div className="bg-white rounded-3xl p-8 shadow-xl">
+            <div className="flex items-center mb-8">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center font-bold text-white text-xl mr-4">
+                1
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Go to UseSession</h2>
+                <p className="text-gray-600">Find your client's session page</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">✨ Perfect Pages to Use:</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-white text-xs">📄</span>
                       </div>
-                      ession Remind
-                    </a>
-                    <p className="text-green-700 text-xs mt-2">Drag to your bookmarks bar</p>
+                      <span className="text-gray-700">Individual client session pages</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-white text-xs">📅</span>
+                      </div>
+                      <span className="text-gray-700">Calendar booking details</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-white text-xs">✉️</span>
+                      </div>
+                      <span className="text-gray-700">Booking confirmations</span>
+                    </div>
                   </div>
-                ) : (
-                  <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
-                    <h4 className="font-medium text-blue-900 mb-2 text-sm">🔒 Login Required</h4>
-                    <p className="text-blue-700 text-xs mb-3">Please log in to access the bookmarklet</p>
-                    <a 
-                      href="/login"
-                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-all duration-200 text-sm"
-                    >
-                      Login to Access
-                    </a>
+                </div>
+                
+                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+                  <div className="flex items-start">
+                    <span className="text-yellow-600 text-xl mr-3">💡</span>
+                    <div>
+                      <h4 className="font-semibold text-yellow-800 mb-1">Pro Tip</h4>
+                      <p className="text-yellow-700 text-sm">Make sure you can see the client's name, phone, and session details on the page before using the tool.</p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-
-              {/* Extension Option - Now Beta */}
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="text-amber-800 font-semibold mb-3 text-sm sm:text-base">⚠️ Browser Extension (Beta)</h3>
-                <ul className="text-amber-700 text-xs sm:text-sm space-y-1 sm:space-y-2 mb-4">
-                  <li>• Floating button appears automatically</li>
-                  <li>• Extracts session titles automatically</li>
-                  <li>• One-click data extraction</li>
-                  <li>• Works on all UseSession pages</li>
-                  <li>• Currently in beta testing</li>
-                </ul>
-                {user ? (
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <a 
-                      href="/extension-resizable.zip"
-                      className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 text-sm"
-                      download="session-reminder-extension-resizable.zip"
-                    >
-                      <span className="mr-2">⬇️</span>
-                      Download Extension
-                    </a>
-                    <span className="text-amber-600 text-xs sm:text-sm self-center text-center sm:text-left">Beta - Use bookmarklet for stable experience</span>
-                  </div>
-                ) : (
-                  <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
-                    <h4 className="font-medium text-blue-900 mb-2 text-sm">🔒 Login Required</h4>
-                    <p className="text-blue-700 text-xs mb-3">Please log in to download the extension</p>
-                    <a 
-                      href="/login"
-                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 transition-all duration-200 text-sm"
-                    >
-                      Login to Download
-                    </a>
-                  </div>
-                )}
+              
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl p-6 text-center">
+                <div className="text-6xl mb-4">🖥️</div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">UseSession Page</h3>
+                <p className="text-gray-600 text-sm">Navigate to any client session page where you can see their contact information and booking details.</p>
               </div>
-
             </div>
           </div>
 
-          {/* Step 2 */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-stone-100">
-            <div className="flex items-start sm:items-center mb-6">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-stone-700 rounded-full flex items-center justify-center font-bold text-white text-sm sm:text-lg">
+          {/* Step 2 - Extract and Send */}
+          <div className="bg-white rounded-3xl p-8 shadow-xl">
+            <div className="flex items-center mb-8">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center font-bold text-white text-xl mr-4">
                 2
               </div>
-              <div className="ml-3 sm:ml-4">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
-                  🎯 Navigate to UseSession
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600">Find your client's session details</p>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Extract & Send</h2>
+                <p className="text-gray-600">One click to magic!</p>
               </div>
             </div>
-            <div className="ml-0 sm:ml-8 lg:ml-16 space-y-4">
-              <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                Go to any client's session page in UseSession where you can see their contact info and session details.
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-6 mb-6">
+                  <h3 className="text-xl font-semibold text-green-800 mb-4">🎯 What Gets Extracted:</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-white text-xs font-bold">✓</span>
+                      </div>
+                      <span className="text-green-700">Client name & contact info</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-white text-xs font-bold">✓</span>
+                      </div>
+                      <span className="text-green-700">Session title & details</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-white text-xs font-bold">✓</span>
+                      </div>
+                      <span className="text-green-700">Date & time information</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-r from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-6">
+                  <h4 className="font-semibold text-pink-800 mb-3">📱 SMS Reminder Flow</h4>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="text-center">
+                      <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xs mb-1">1</div>
+                      <span className="text-pink-700">Enrollment</span>
+                    </div>
+                    <div className="text-pink-400">→</div>
+                    <div className="text-center">
+                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs mb-1">⚡</div>
+                      <span className="text-pink-700">Manual SMS</span>
+                    </div>
+                    <div className="text-pink-400">→</div>
+                    <div className="text-center">
+                      <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white font-bold text-xs mb-1">2</div>
+                      <span className="text-pink-700">3-Day Alert</span>
+                    </div>
+                    <div className="text-pink-400">→</div>
+                    <div className="text-center">
+                      <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs mb-1">3</div>
+                      <span className="text-pink-700">1-Day Alert</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl p-6 text-center">
+                <div className="text-6xl mb-4">✨</div>
+                <h3 className="text-xl font-semibold text-indigo-800 mb-4">Automatic Magic</h3>
+                <div className="space-y-3 text-left">
+                  <div className="flex items-center">
+                    <span className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center text-white text-xs mr-3">1</span>
+                    <span className="text-indigo-700">Click your bookmarklet/extension</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs mr-3">2</span>
+                    <span className="text-indigo-700">Review pre-filled form</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center text-white text-xs mr-3">3</span>
+                    <span className="text-indigo-700">Customize your message</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center text-white text-xs mr-3">4</span>
+                    <span className="text-indigo-700">Send or schedule reminders</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-12 text-center text-white">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Workflow?</h2>
+              <p className="text-xl mb-8 text-purple-100">
+                Join hundreds of photographers who've streamlined their client communication with Session Reminder.
               </p>
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="font-semibold text-stone-800 mb-3 text-sm sm:text-base">📍 Best pages to use:</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="flex items-start space-x-2">
-                    <span className="w-2 h-2 bg-stone-600 rounded-full mt-2 flex-shrink-0"></span>
-                    <span className="text-stone-700 text-xs sm:text-sm break-words">Individual session pages</span>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <span className="w-2 h-2 bg-stone-600 rounded-full mt-2 flex-shrink-0"></span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Calendar booking details</span>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <span className="w-2 h-2 bg-stone-600 rounded-full mt-2 flex-shrink-0"></span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Client booking confirmations</span>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <span className="w-2 h-2 bg-stone-600 rounded-full mt-2 flex-shrink-0"></span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Session management pages</span>
-                  </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                <a
+                  href="/register"
+                  className="inline-flex items-center px-8 py-4 bg-white text-purple-600 font-bold rounded-full hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg"
+                >
+                  <span className="mr-3">🚀</span>
+                  Get Started Free
+                </a>
+                {user && (
+                  <a
+                    href="/new"
+                    className="inline-flex items-center px-8 py-4 bg-purple-500 bg-opacity-30 text-white font-bold rounded-full hover:bg-opacity-40 transition-all duration-200 border-2 border-white border-opacity-30 text-lg"
+                  >
+                    <span className="mr-3">✨</span>
+                    Create Your First Reminder
+                  </a>
+                )}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-purple-200">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <span>No credit card required</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <span>Setup in under 2 minutes</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <span>Cancel anytime</span>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-stone-100">
-            <div className="flex items-start sm:items-center mb-6">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-stone-600 rounded-full flex items-center justify-center font-bold text-white text-sm sm:text-lg">
-                3
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
-                  ✨ Extract Client Data
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600">Let the automation work its magic</p>
-              </div>
-            </div>
-            <div className="ml-0 sm:ml-8 lg:ml-16 space-y-4">
-              <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                Click the extension button or bookmarklet while on the UseSession client page.
-              </p>
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 sm:p-6">
-                <h3 className="font-semibold text-stone-800 mb-3 text-sm sm:text-base">🎉 What gets extracted:</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="flex items-start space-x-3">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Client name (e.g., "Jane Doe")</span>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Phone number</span>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Email address</span>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-stone-700 text-xs sm:text-sm break-words">Session title (e.g., "Sunflower Field Summer 2025")</span>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-stone-700 text-xs sm:text-sm">Session date & time</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 4 */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-stone-100">
-            <div className="flex items-start sm:items-center mb-6">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-stone-500 rounded-full flex items-center justify-center font-bold text-white text-sm sm:text-lg">
-                4
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
-                  🚀 Send or Schedule
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600">Review, customize, and send</p>
-              </div>
-            </div>
-            <div className="ml-0 sm:ml-8 lg:ml-16 space-y-4">
-              <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                Review the pre-filled form, customize your message, and choose between immediate sending or scheduled reminders.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 sm:p-4">
-                  <div className="flex items-start space-x-2 mb-2">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
-                    <span className="font-semibold text-stone-800 text-sm sm:text-base">Verify details</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-700 ml-7 sm:ml-8">Check extracted info</p>
-                </div>
-                <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 sm:p-4">
-                  <div className="flex items-start space-x-2 mb-2">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
-                    <span className="font-semibold text-stone-800 text-sm sm:text-base">Customize message</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-700 ml-7 sm:ml-8">Add personalization</p>
-                </div>
-                <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 sm:p-4">
-                  <div className="flex items-start space-x-2 mb-2">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
-                    <span className="font-semibold text-stone-800 text-sm sm:text-base">Confirm opt-in</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-700 ml-7 sm:ml-8">Toggle switch ON</p>
-                </div>
-                <div className="bg-stone-50 border border-stone-200 rounded-xl p-3 sm:p-4">
-                  <div className="flex items-start space-x-2 mb-2">
-                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</span>
-                    <span className="font-semibold text-stone-800 text-sm sm:text-base">Send or schedule</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-700 ml-7 sm:ml-8">Immediate or auto reminders</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* SMS Workflow */}
-          <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 sm:p-6 lg:p-8">
-            <div className="flex items-start sm:items-center mb-6">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-stone-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-stone-600 text-lg sm:text-xl">📱</span>
-              </div>
-              <div className="ml-3 sm:ml-4">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">SMS Workflow</h2>
-                <p className="text-sm sm:text-base text-gray-600">How automated reminders work</p>
-              </div>
-            </div>
-            <div className="ml-0 sm:ml-8 lg:ml-16">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-2 lg:space-x-4 text-gray-700">
-                <div className="flex items-center space-x-2">
-                  <span className="w-6 h-6 sm:w-8 sm:h-8 bg-stone-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-                  <span className="text-xs sm:text-sm lg:text-base">Enrollment</span>
-                </div>
-                <span className="text-gray-400 hidden sm:inline">→</span>
-                <div className="flex items-center space-x-2">
-                  <span className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">⚡</span>
-                  <span className="text-xs sm:text-sm lg:text-base">Manual Message</span>
-                </div>
-                <span className="text-gray-400 hidden sm:inline">→</span>
-                <div className="flex items-center space-x-2">
-                  <span className="w-6 h-6 sm:w-8 sm:h-8 bg-stone-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
-                  <span className="text-xs sm:text-sm lg:text-base">3-Day Reminder</span>
-                </div>
-                <span className="text-gray-400 hidden sm:inline">→</span>
-                <div className="flex items-center space-x-2">
-                  <span className="w-6 h-6 sm:w-8 sm:h-8 bg-stone-400 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
-                  <span className="text-xs sm:text-sm lg:text-base">1-Day Reminder</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          {/* CTA */}
-          <div className="text-center pt-8">
-            <a
-              href="https://sessionremind.com/register"
-              className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-lg"
-            >
-              <span className="mr-3">🚀</span>
-              Get Started Now
-            </a>
           </div>
         </div>
       </div>
