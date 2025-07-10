@@ -29,6 +29,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get redirect path from request body (optional)
+    const body = await request.json().catch(() => ({}))
+    const redirectPath = body.redirectPath || '/dashboard'
+
     // Create Stripe customer if not exists
     let customerId = user.stripe_customer_id
     if (!customerId) {
@@ -41,7 +45,11 @@ export async function POST(request: NextRequest) {
       })
       customerId = customer.id
       
-      // TODO: Update user record with customer ID
+      // Update user record with customer ID
+      const { kv } = await import('@vercel/kv')
+      await kv.hset(`user:${user.id}`, {
+        stripe_customer_id: customerId
+      })
     }
 
     // Get the origin for redirect URLs
@@ -58,10 +66,11 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/dashboard?payment=success`,
-      cancel_url: `${origin}/dashboard?payment=cancelled`,
+      success_url: `${origin}${redirectPath}?payment=success`,
+      cancel_url: `${origin}/payment-required?payment=cancelled&redirect=${encodeURIComponent(redirectPath)}`,
       metadata: {
-        userId: user.id
+        userId: user.id,
+        redirectPath: redirectPath
       }
     })
 

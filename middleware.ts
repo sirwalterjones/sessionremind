@@ -6,7 +6,7 @@ import { getCurrentUser } from '@/lib/auth'
 const protectedRoutes = ['/dashboard', '/new', '/admin']
 
 // Public routes (auth pages and marketing pages)
-const publicRoutes = ['/login', '/register', '/']
+const publicRoutes = ['/login', '/register', '/', '/payment-required']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -51,6 +51,18 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.set('redirect', pathname)
         return NextResponse.redirect(loginUrl)
       }
+
+      // Check payment requirements (after authentication)
+      if (user.require_payment && !user.payment_override && !user.is_admin) {
+        // Only block access to dashboard and new, allow admin access for admins
+        if (pathname.startsWith('/dashboard') || pathname.startsWith('/new')) {
+          // Redirect to payment required page
+          const paymentUrl = new URL('/payment-required', request.url)
+          paymentUrl.searchParams.set('redirect', pathname)
+          return NextResponse.redirect(paymentUrl)
+        }
+      }
+      
     } catch (error) {
       console.error('Middleware auth error:', error)
       
