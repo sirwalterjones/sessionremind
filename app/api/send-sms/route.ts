@@ -161,8 +161,8 @@ export async function POST(request: NextRequest) {
         message: finalMessage,
         scheduledFor: new Date().toISOString(), // When it was sent
         sessionDate: body.sessionTime ? new Date(body.sessionTime).toISOString() : new Date().toISOString(),
-        reminderType: 'manual' as '3-day' | '1-day',
-        status: 'sent' as 'scheduled' | 'sent' | 'failed',
+        reminderType: 'manual' as const,
+        status: 'sent' as const,
         createdAt: new Date().toISOString(),
         sentAt: new Date().toISOString(),
         userId: currentUser.id

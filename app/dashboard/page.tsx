@@ -241,7 +241,7 @@ export default function Dashboard() {
       // No subscription checks needed
       
       // Load all messages from persistent storage (includes both scheduled and sent messages)
-      await loadScheduledMessages()
+      const persistentMessages = await loadScheduledMessages()
       
       // For backwards compatibility, still load localStorage data but merge it
       if (user) {
@@ -250,8 +250,8 @@ export default function Dashboard() {
         if (stored) {
           const localMessages = JSON.parse(stored)
           setSentMessages(prev => {
-            // Only add localStorage messages that aren't already in scheduled messages
-            const existingIds = new Set(scheduledMessages.map(msg => msg.id))
+            // Only add localStorage messages that aren't already in persistent storage
+            const existingIds = new Set((persistentMessages || []).map(msg => msg.id))
             const uniqueLocalMessages = localMessages.filter((msg: any) => !existingIds.has(msg.id))
             return [...prev, ...uniqueLocalMessages]
           })
@@ -280,7 +280,7 @@ export default function Dashboard() {
     }
   }
 
-  const loadScheduledMessages = async () => {
+  const loadScheduledMessages = async (): Promise<ScheduledMessage[]> => {
     try {
       const response = await fetch('/api/schedule-reminders')
       if (response.ok) {
@@ -300,9 +300,13 @@ export default function Dashboard() {
         // Group messages by client - messages now include both scheduled and sent
         const groups = groupMessagesByClient(messages, [])
         setClientGroups(groups)
+        
+        return messages
       }
+      return []
     } catch (error) {
       console.error('Failed to load scheduled messages:', error)
+      return []
     }
   }
 
