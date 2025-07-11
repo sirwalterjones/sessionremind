@@ -1,11 +1,19 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import MobileManualEntry from '@/components/MobileManualEntry'
+import MobileSolution from '@/components/MobileSolution'
 
 export default function Instructions() {
   const { user } = useAuth()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent.toLowerCase()
+    const mobile = window.innerWidth <= 768 || /android|iphone|ipad|ipod|blackberry|windows phone/.test(userAgent)
+    setIsMobile(mobile)
+  }, [])
   const dataExtractionBookmarkletCode = "javascript:(function(){try{const allText=document.body.innerText;let clientName='',email='',phone='',sessionTitle='',sessionTime='';const emails=allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g);if(emails){email=emails[0];}const phones=allText.match(/\\b\\+?1?[-. ]?\\(?[0-9]{3}\\)?[-. ]?[0-9]{3}[-. ]?[0-9]{4}\\b/g);if(phones){phone=phones[0].replace(/[-. ()]/g,'');}if(window.location.href.includes('app.usesession.com')){const nameElements=document.querySelectorAll('h1, h2, h3, .client-name, [class*=\"name\"], [class*=\"client\"]');for(const el of nameElements){const text=el.textContent.trim();if(text && text.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/) && !text.includes('@') && !text.includes('Session') && !text.includes('Mini') && !text.includes('Photo')){clientName=text;break;}}if(!clientName){const nameMatch=allText.match(/\\b([A-Z][a-z]+ [A-Z][a-z]+)\\b(?=.*@|.*\\d{3}.*\\d{3}.*\\d{4})/);if(nameMatch){clientName=nameMatch[1];}}const titleElements=document.querySelectorAll('h1, h2, h3, .session-title, [class*=\"title\"], [class*=\"session\"]');for(const el of titleElements){const text=el.textContent.trim();if(text && text.length>5 && text.length<80 && (text.includes('Mini') || text.includes('Session') || text.includes('Photo') || text.includes('Portrait') || text.includes('Shoot') || text.includes('2024') || text.includes('2025') || text.includes('Watermelon') || text.includes('Sunflower') || text.includes('Pumpkin') || text.includes('Christmas') || text.includes('Holiday') || text.includes('Beach') || text.includes('Studio') || text.includes('Family') || text.includes('Senior') || text.includes('Wedding') || text.includes('Maternity') || text.includes('Newborn'))){sessionTitle=text;break;}}if(!sessionTitle){const titleMatch=allText.match(/\\b((?:Sunflower|Watermelon|Pumpkin|Christmas|Holiday|Beach|Studio|Family|Senior|Wedding|Maternity|Newborn|Summer|Winter|Spring|Fall)[^\\n]*(?:Mini|Session|Shoot|Portrait|Photo|Photography)[^\\n]*(?:2024|2025)?)/i);if(titleMatch){sessionTitle=titleMatch[1];}}const timeMatch=allText.match(/(\\d{1,2}:\\d{2} [AP]M)/);const dateMatch=allText.match(/\\b(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday), ([A-Z][a-z]+ \\d{1,2}(?:st|nd|rd|th), \\d{4})/);if(timeMatch && dateMatch){sessionTime=dateMatch[1]+', '+dateMatch[2]+' at '+timeMatch[1];}else if(dateMatch){sessionTime=dateMatch[1]+', '+dateMatch[2];}else if(timeMatch){sessionTime='at '+timeMatch[1];}if(!sessionTitle){sessionTitle='Photography Session';}}else{const lines=allText.split('\\n').map(l=>l.trim()).filter(l=>l.length>0);for(const line of lines){if(line.match(/[A-Z][a-z]+ [A-Z][a-z]+/) && !line.includes('@') && !line.includes('$') && line.length<50){clientName=line.match(/([A-Z][a-z]+ [A-Z][a-z]+)/)[1];break;}}for(const line of lines){if(line.match(/(Mini|Session|Shoot|Photo|Portrait|Photography|Maternity|Newborn|Family|Senior|Wedding|Beach|Studio|Holiday|Christmas|Watermelon|Sunflower|Pumpkin)/i) && line.length>5 && line.length<80){sessionTitle=line.trim();break;}}const dateTimeMatch=allText.match(/(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[^\\n]*\\d{4}[^\\n]*\\d{1,2}:\\d{2}[^\\n]*(AM|PM)/i);if(dateTimeMatch){sessionTime=dateTimeMatch[0];}if(!sessionTitle){sessionTitle='Photography Session';}}const params=new URLSearchParams();if(clientName)params.set('name',clientName);if(email)params.set('email',email);if(phone)params.set('phone',phone);if(sessionTitle)params.set('sessionTitle',sessionTitle);if(sessionTime)params.set('sessionTime',sessionTime);const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new?'+params.toString(),'_blank');}catch(err){const baseUrl='https://sessionremind.com';window.open(baseUrl+'/new','_blank');}})();"
   
   return (
@@ -148,17 +156,22 @@ export default function Instructions() {
           </div>
         </div>
 
-        {/* Choose Your Method */}
-        <div className="bg-white rounded-3xl p-8 shadow-xl mb-16">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full mb-6">
-              <span className="text-white text-2xl">🚀</span>
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Method</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Pick the option that works best for you. Both methods extract client data automatically!
-            </p>
+        {/* Mobile Detection: Show Mobile Solution or Desktop Methods */}
+        {isMobile ? (
+          <div className="mb-16">
+            <MobileSolution />
           </div>
+        ) : (
+          <div className="bg-white rounded-3xl p-8 shadow-xl mb-16">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full mb-6">
+                <span className="text-white text-2xl">🚀</span>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Method</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Pick the option that works best for you. Both methods extract client data automatically!
+              </p>
+            </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Bookmarklet Option */}
@@ -275,8 +288,10 @@ export default function Instructions() {
             </div>
           </div>
         </div>
+        )}
 
-        {/* Setup Steps */}
+        {/* Setup Steps - Only show for desktop */}
+        {!isMobile && (
         <div className="space-y-12">
           
           {/* Step 1 - Use on UseSession */}
@@ -469,6 +484,7 @@ export default function Instructions() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   )
