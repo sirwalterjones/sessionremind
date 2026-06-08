@@ -31,7 +31,9 @@ async function gql<T = any>(
     headers: {
       'content-type': 'application/json',
       accept: 'application/json',
-      authorization: token,
+      // UseSession's API requires "Authorization: Bearer <jwt>". The token we
+      // capture from localStorage is the raw JWT, so prefix it (idempotently).
+      authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`,
     },
     body: JSON.stringify({ query, variables, operationName }),
   })
