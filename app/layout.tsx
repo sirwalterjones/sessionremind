@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Hanken_Grotesk, Fraunces } from 'next/font/google'
 import Link from 'next/link'
 import MobileNav from '@/components/MobileNav'
 import { AuthProvider } from '@/lib/auth-context'
 import NavLinks from '@/components/NavLinks'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Distinctive type: a high-contrast serif for display + a characterful grotesque
+// for body (replaces the generic Inter look).
+const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
+const display = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+  axes: ['opsz', 'SOFT', 'WONK'],
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sessionremind.com'),
@@ -78,7 +86,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
-      <body className={inter.className}>
+      <body className={`${body.variable} ${display.variable} ${body.className}`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `

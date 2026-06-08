@@ -82,6 +82,31 @@ export async function countUserMessages(userId: string): Promise<number> {
   return messages.filter((m) => m.userId === userId).length
 }
 
+// Delete a single message, scoped to its owner. Returns true if removed.
+export async function deleteScheduledMessage(id: string, userId: string): Promise<boolean> {
+  const messages = await getScheduledMessages()
+  const next = messages.filter((m) => !(m.id === id && m.userId === userId))
+  if (next.length === messages.length) return false
+  await saveScheduledMessages(next)
+  return true
+}
+
+// Patch editable fields of a scheduled message, scoped to its owner.
+export async function updateScheduledMessage(
+  id: string,
+  userId: string,
+  patch: Partial<Pick<ScheduledMessage, 'message' | 'scheduledFor' | 'status'>>
+): Promise<ScheduledMessage | null> {
+  const messages = await getScheduledMessages()
+  const msg = messages.find((m) => m.id === id && m.userId === userId)
+  if (!msg) return null
+  if (typeof patch.message === 'string') msg.message = patch.message
+  if (typeof patch.scheduledFor === 'string') msg.scheduledFor = patch.scheduledFor
+  if (patch.status) msg.status = patch.status
+  await saveScheduledMessages(messages)
+  return msg
+}
+
 export async function updateMessageStatus(id: string, status: 'sent' | 'failed'): Promise<void> {
   const messages = await getScheduledMessages()
   const message = messages.find(m => m.id === id)

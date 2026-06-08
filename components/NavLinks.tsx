@@ -23,8 +23,20 @@ export default function NavLinks() {
       </Link>
       
       {user && (
-        <Link 
-          href="/dashboard" 
+        <Link
+          href="/automation"
+          className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
+        >
+          <span className="flex items-center space-x-2">
+            <span className="text-sm">⚡</span>
+            <span>Automation</span>
+          </span>
+        </Link>
+      )}
+
+      {user && (
+        <Link
+          href="/dashboard"
           className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
         >
           <span className="flex items-center space-x-2">
