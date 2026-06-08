@@ -3,17 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { 
-  UserIcon, 
-  KeyIcon, 
-  CreditCardIcon, 
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
+import {
   EyeIcon,
   EyeSlashIcon,
   ArrowLeftIcon,
-  LinkIcon,
-  GiftIcon
 } from '@heroicons/react/24/outline'
 
 interface User {
@@ -59,7 +52,7 @@ export default function ProfilePage() {
       router.push('/login')
       return
     }
-    
+
     fetchUserDetails()
   }, [user, router])
 
@@ -84,7 +77,7 @@ export default function ProfilePage() {
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       showNotification('error', 'New passwords do not match')
       return
@@ -96,7 +89,7 @@ export default function ProfilePage() {
     }
 
     setIsResettingPassword(true)
-    
+
     try {
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
@@ -129,7 +122,7 @@ export default function ProfilePage() {
     }
 
     setIsGeneratingStripeLink(true)
-    
+
     try {
       const response = await fetch('/api/stripe/customer-portal', {
         method: 'POST',
@@ -154,295 +147,278 @@ export default function ProfilePage() {
   const getSubscriptionBadge = (tier: string, status: string, paymentOverride: boolean) => {
     if (paymentOverride) {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-          <GiftIcon className="w-4 h-4 mr-1" />
+        <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
+          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#DD4D24' }} />
           Admin Override
         </span>
       )
     }
 
     return (
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-        <CreditCardIcon className="w-4 h-4 mr-1" />
-        Professional • {status}
+      <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-ink" />
+        Professional · {status}
       </span>
     )
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
-        <div className="animate-pulse text-stone-600">Loading profile...</div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="eyebrow animate-pulse">Loading profile…</div>
       </div>
     )
   }
 
   if (!userDetails) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
-        <div className="text-red-600">Error loading profile</div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="text-[15px] text-[#B23A1E]">Error loading profile</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-6">
-            <div className="flex items-center">
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="mr-4 p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
-              >
-                <ArrowLeftIcon className="h-5 w-5" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Account Profile</h1>
-                <p className="text-gray-600">Manage your account settings and preferences</p>
-              </div>
-            </div>
-            {userDetails.is_admin && (
-              <button
-                onClick={() => router.push('/admin')}
-                className="inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 font-medium rounded-full hover:bg-purple-200 transition-all duration-200 text-sm"
-              >
-                Admin Console
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
+    <div className="text-ink">
       {/* Notification */}
       {notification && (
-        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-          notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}>
-          <div className="flex items-center">
-            {notification.type === 'success' ? (
-              <CheckCircleIcon className="h-5 w-5 mr-2" />
-            ) : (
-              <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-            )}
+        <div
+          className={`fixed top-20 right-5 z-50 rounded-lg border px-4 py-3 text-[14px] font-medium ${
+            notification.type === 'success'
+              ? 'border-hairline bg-white text-ink'
+              : 'border-[#E7C3B8] bg-white text-[#B23A1E]'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-block w-1.5 h-1.5 rounded-full ${
+                notification.type === 'success' ? 'bg-[#16a34a]' : 'bg-[#B23A1E]'
+              }`}
+            />
             {notification.message}
           </div>
         </div>
       )}
 
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex items-start gap-3">
+          <button
+            onClick={() => router.push('/dashboard')}
+            aria-label="Back to dashboard"
+            className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+          </button>
+          <div>
+            <div className="eyebrow mb-2">Account</div>
+            <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.0]">Profile</h1>
+            <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
+              Manage your account settings and preferences.
+            </p>
+          </div>
+        </div>
+        {userDetails.is_admin && (
+          <button
+            onClick={() => router.push('/admin')}
+            className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+          >
+            Admin Console
+          </button>
+        )}
+      </div>
+
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Info */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Account Information */}
-            <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-              <div className="flex items-center mb-6">
-                <UserIcon className="h-6 w-6 text-gray-500 mr-3" />
-                <h2 className="text-xl font-semibold text-gray-900">Account Information</h2>
-              </div>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                  <div className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{userDetails.username}</div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <div className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{userDetails.email}</div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subscription</label>
-                  <div className="mt-2">
-                    {getSubscriptionBadge(userDetails.subscription_tier, userDetails.subscription_status, userDetails.payment_override)}
-                  </div>
-                </div>
+      <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Profile Info */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Account Information */}
+          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+            <h2 className="font-display text-xl font-semibold">Account information</h2>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">SMS Usage</label>
-                  <div className="bg-gray-50 px-3 py-2 rounded-lg">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-900">Used: {userDetails.sms_usage}</span>
-                      <span className="text-gray-900">Limit: {userDetails.sms_limit}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: `${Math.min((userDetails.sms_usage / userDetails.sms_limit) * 100, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Password Reset */}
-            <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center">
-                  <KeyIcon className="h-6 w-6 text-gray-500 mr-3" />
-                  <h2 className="text-xl font-semibold text-gray-900">Password & Security</h2>
-                </div>
-                <button
-                  onClick={() => setShowPasswordReset(!showPasswordReset)}
-                  className="px-4 py-2 bg-stone-100 text-stone-700 rounded-lg hover:bg-stone-200 transition-colors"
-                >
-                  {showPasswordReset ? 'Cancel' : 'Change Password'}
-                </button>
+            <div className="mt-6 divide-y divide-hairline">
+              <div className="flex flex-col gap-1 py-4 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
+                <span className="eyebrow">Username</span>
+                <span className="text-[15px] font-medium text-ink">{userDetails.username}</span>
               </div>
 
-              {showPasswordReset && (
-                <form onSubmit={handlePasswordReset} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                    <div className="relative">
-                      <input
-                        type={showPasswords.current ? 'text' : 'password'}
-                        value={passwordData.currentPassword}
-                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPasswords({...showPasswords, current: !showPasswords.current})}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      >
-                        {showPasswords.current ? (
-                          <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <EyeIcon className="h-5 w-5 text-gray-400" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
+              <div className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <span className="eyebrow">Email</span>
+                <span className="text-[15px] font-medium text-ink">{userDetails.email}</span>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                    <div className="relative">
-                      <input
-                        type={showPasswords.new ? 'text' : 'password'}
-                        value={passwordData.newPassword}
-                        onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                        required
-                        minLength={8}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      >
-                        {showPasswords.new ? (
-                          <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <EyeIcon className="h-5 w-5 text-gray-400" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
+              <div className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <span className="eyebrow">Subscription</span>
+                {getSubscriptionBadge(userDetails.subscription_tier, userDetails.subscription_status, userDetails.payment_override)}
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                    <div className="relative">
-                      <input
-                        type={showPasswords.confirm ? 'text' : 'password'}
-                        value={passwordData.confirmPassword}
-                        onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                        required
-                        minLength={8}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPasswords({...showPasswords, confirm: !showPasswords.confirm})}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      >
-                        {showPasswords.confirm ? (
-                          <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <EyeIcon className="h-5 w-5 text-gray-400" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isResettingPassword}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isResettingPassword ? 'Updating...' : 'Update Password'}
-                  </button>
-                </form>
-              )}
+              <div className="py-4 last:pb-0">
+                <div className="flex items-center justify-between">
+                  <span className="eyebrow">SMS Usage</span>
+                  <span className="font-mono text-[12px] text-[#6E6A63]">
+                    {userDetails.sms_usage} / {userDetails.sms_limit}
+                  </span>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-hairline">
+                  <div
+                    className="h-full rounded-full bg-ink transition-all"
+                    style={{ width: `${Math.min((userDetails.sms_usage / userDetails.sms_limit) * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Stripe Portal */}
-            {userDetails.stripe_customer_id && !userDetails.payment_override && (
-              <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                <div className="flex items-center mb-4">
-                  <CreditCardIcon className="h-6 w-6 text-gray-500 mr-3" />
-                  <h2 className="text-lg font-semibold text-gray-900">Billing</h2>
-                </div>
-                
-                <p className="text-gray-600 text-sm mb-4">
-                  Access your Stripe customer portal to manage your subscription, view invoices, and update payment methods.
-                </p>
-                
-                <button
-                  onClick={handleStripePortal}
-                  disabled={isGeneratingStripeLink}
-                  className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-                >
-                  {isGeneratingStripeLink ? (
-                    'Generating...'
-                  ) : (
-                    <>
-                      <LinkIcon className="h-4 w-4 mr-2" />
-                      Stripe Portal
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
+          {/* Password Reset */}
+          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="font-display text-xl font-semibold">Password &amp; security</h2>
+              <button
+                onClick={() => setShowPasswordReset(!showPasswordReset)}
+                className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+              >
+                {showPasswordReset ? 'Cancel' : 'Change Password'}
+              </button>
+            </div>
 
-            {/* Account Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Actions</h2>
-              
-              <div className="space-y-3">
+            {showPasswordReset && (
+              <form onSubmit={handlePasswordReset} className="mt-6 space-y-5">
+                <div>
+                  <label className="eyebrow mb-2 block">Current Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPasswords.current ? 'text' : 'password'}
+                      value={passwordData.currentPassword}
+                      onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                      className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({...showPasswords, current: !showPasswords.current})}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6E6A63]"
+                    >
+                      {showPasswords.current ? (
+                        <EyeSlashIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="eyebrow mb-2 block">New Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPasswords.new ? 'text' : 'password'}
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                      className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none pr-10"
+                      required
+                      minLength={8}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6E6A63]"
+                    >
+                      {showPasswords.new ? (
+                        <EyeSlashIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="eyebrow mb-2 block">Confirm New Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPasswords.confirm ? 'text' : 'password'}
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                      className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none pr-10"
+                      required
+                      minLength={8}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({...showPasswords, confirm: !showPasswords.confirm})}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6E6A63]"
+                    >
+                      {showPasswords.confirm ? (
+                        <EyeSlashIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
                 <button
-                  onClick={() => router.push('/dashboard')}
-                  className="w-full bg-stone-100 text-stone-700 py-2 px-4 rounded-lg hover:bg-stone-200 transition-colors text-left"
+                  type="submit"
+                  disabled={isResettingPassword}
+                  className="w-full rounded-full bg-ink px-5 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Back to Dashboard
+                  {isResettingPassword ? 'Updating…' : 'Update Password'}
                 </button>
-                
-                <button
-                  onClick={() => router.push('/new')}
-                  className="w-full bg-blue-100 text-blue-700 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors text-left"
-                >
-                  Create New Reminder
-                </button>
-                
-                <button
-                  onClick={logout}
-                  className="w-full bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors text-left"
-                >
-                  Logout
-                </button>
-              </div>
+              </form>
+            )}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Stripe Portal */}
+          {userDetails.stripe_customer_id && !userDetails.payment_override && (
+            <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+              <h2 className="font-display text-lg font-semibold">Billing</h2>
+
+              <p className="mt-3 text-[14px] leading-relaxed text-[#6E6A63]">
+                Access your Stripe customer portal to manage your subscription, view invoices, and update payment methods.
+              </p>
+
+              <button
+                onClick={handleStripePortal}
+                disabled={isGeneratingStripeLink}
+                className="mt-5 w-full rounded-full bg-ink px-5 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGeneratingStripeLink ? 'Generating…' : 'Stripe Portal'}
+              </button>
+            </div>
+          )}
+
+          {/* Account Actions */}
+          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+            <h2 className="font-display text-lg font-semibold">Account actions</h2>
+
+            <div className="mt-5 space-y-3">
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+              >
+                Back to Dashboard
+              </button>
+
+              <button
+                onClick={() => router.push('/new')}
+                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+              >
+                Create New Reminder
+              </button>
+
+              <button
+                onClick={logout}
+                className="w-full rounded-full border border-[#E7C3B8] px-5 py-2.5 text-left text-[15px] font-medium text-[#B23A1E] transition-colors hover:bg-[#FBF4F1]"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   )
-} 
+}

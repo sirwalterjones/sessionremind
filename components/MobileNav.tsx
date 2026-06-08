@@ -13,71 +13,66 @@ export default function MobileNav() {
     setIsOpen(false)
   }
 
-  return (
-    <>
-      {/* Mobile Menu Button */}
-      <div className="md:hidden">
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 rounded-full bg-stone-50 text-stone-600 hover:text-gray-900 hover:bg-stone-100 transition-all duration-200"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-          </svg>
-        </button>
-      </div>
+  const item =
+    'block px-5 py-3 text-[15px] font-medium text-[#4F4B44] hover:text-ink hover:bg-[#FAFAF8] transition-colors'
 
-      {/* Mobile Menu - Collapsible */}
+  return (
+    <div className="md:hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Menu"
+        className="p-2 text-ink"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.8}
+            d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 7h16M4 12h16M4 17h16'}
+          />
+        </svg>
+      </button>
+
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-t border-stone-200 py-4 space-y-2 shadow-lg">
-          <Link 
-            href="/instructions" 
-            className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="text-lg">📖</span>
-            <span className="font-medium">How it Works</span>
+        <div className="absolute top-full left-0 right-0 bg-white border-t border-hairline py-2">
+          <Link href="/instructions" className={item} onClick={() => setIsOpen(false)}>
+            How it works
           </Link>
           {user && (
-            <Link 
-              href="/dashboard" 
-              className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
-              onClick={() => setIsOpen(false)}
-            >
-              <span className="text-lg">📊</span>
-              <span className="font-medium">Dashboard</span>
+            <Link href="/automation" className={item} onClick={() => setIsOpen(false)}>
+              Automation
             </Link>
           )}
           {user && (
-            <Link 
-              href="/profile" 
-              className="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:text-gray-900 hover:bg-stone-50 rounded-xl transition-all duration-200 mx-4"
-              onClick={() => setIsOpen(false)}
-            >
-              <span className="text-lg">👤</span>
-              <span className="font-medium">Profile</span>
+            <Link href="/dashboard" className={item} onClick={() => setIsOpen(false)}>
+              Dashboard
             </Link>
           )}
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-3 px-4 py-3 bg-red-600 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-red-700 transition-all duration-200 w-full text-left"
-            >
-              <span className="text-lg">🚪</span>
-              <span>Logout</span>
-            </button>
-          ) : (
-            <Link 
-              href="/login" 
-              className="flex items-center space-x-3 px-4 py-3 bg-stone-800 text-white rounded-xl font-medium shadow-sm mx-4 hover:bg-stone-900 transition-all duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              <span className="text-lg">🔑</span>
-              <span>Login</span>
+          {user && (
+            <Link href="/profile" className={item} onClick={() => setIsOpen(false)}>
+              Profile
             </Link>
           )}
+          <div className="px-5 pt-2 pb-1">
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-center rounded-full border border-hairline px-5 py-2.5 text-sm font-medium text-ink"
+              >
+                Log out
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="block text-center rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white"
+              >
+                Sign in
+              </Link>
+            )}
+          </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

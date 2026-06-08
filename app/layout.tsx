@@ -1,19 +1,19 @@
 import type { Metadata, Viewport } from 'next'
-import { Hanken_Grotesk, Fraunces } from 'next/font/google'
+import { Hanken_Grotesk, IBM_Plex_Mono } from 'next/font/google'
 import Link from 'next/link'
 import MobileNav from '@/components/MobileNav'
 import { AuthProvider } from '@/lib/auth-context'
 import NavLinks from '@/components/NavLinks'
 import './globals.css'
 
-// Distinctive type: a high-contrast serif for display + a characterful grotesque
-// for body (replaces the generic Inter look).
+// Swiss-editorial system: one clean grotesque for everything, with a monospaced
+// face reserved for small uppercase labels/metadata. No generic Inter look.
 const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
-const display = Fraunces({
+const mono = IBM_Plex_Mono({
   subsets: ['latin'],
-  variable: '--font-display',
+  weight: ['400', '500'],
+  variable: '--font-mono',
   display: 'swap',
-  axes: ['opsz', 'SOFT', 'WONK'],
 })
 
 export const metadata: Metadata = {
@@ -86,7 +86,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
-      <body className={`${body.variable} ${display.variable} ${body.className}`}>
+      <body className={`${body.variable} ${mono.variable} ${body.className}`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -118,45 +118,37 @@ export default function RootLayout({
           }}
         />
         <AuthProvider>
-          <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-          <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-stone-200 shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-              <div className="flex justify-between items-center h-20">
-                {/* Logo Section */}
-                <div className="flex items-center">
-                  <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
-                      <span className="text-white text-lg sm:text-xl font-bold">Sr</span>
-                    </div>
-                    <div className="block">
-                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                        Session Remind
-                      </h1>
-                    </div>
+          <div className="min-h-screen bg-white text-[#141414]">
+            <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-[#ECEAE4]">
+              <div className="max-w-6xl mx-auto px-5 sm:px-8">
+                <div className="flex justify-between items-center h-16">
+                  <Link href="/" className="flex items-center gap-2.5 group">
+                    <span
+                      className="inline-block w-2.5 h-2.5 rounded-full transition-transform group-hover:scale-125"
+                      style={{ background: '#DD4D24' }}
+                    />
+                    <span className="text-[17px] font-semibold tracking-tight text-[#141414]">SessionRemind</span>
                   </Link>
+
+                  <NavLinks />
+                  <MobileNav />
                 </div>
-                
-                {/* Navigation Links */}
-                <NavLinks />
-                
-                <MobileNav />
               </div>
-            </div>
-          </nav>
-          <main className="max-w-6xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
-            {children}
-          </main>
-          
-          {/* Footer */}
-          <footer className="bg-white border-t border-stone-200 mt-auto">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="text-center">
-                <p className="text-sm text-stone-600">
-                  Made with <span className="text-red-500">❤️</span> by Jones Web Design & Development
+            </nav>
+
+            <main className="max-w-6xl mx-auto py-6 px-5 sm:py-10 sm:px-8">{children}</main>
+
+            <footer className="border-t border-[#ECEAE4] mt-auto">
+              <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="inline-block w-2 h-2 rounded-full" style={{ background: '#DD4D24' }} />
+                  <span className="text-sm font-semibold tracking-tight">SessionRemind</span>
+                </div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#9A958C]">
+                  Automatic SMS reminders · Built for photographers
                 </p>
               </div>
-            </div>
-          </footer>
+            </footer>
           </div>
         </AuthProvider>
       </body>

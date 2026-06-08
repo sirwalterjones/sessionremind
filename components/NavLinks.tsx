@@ -6,81 +6,46 @@ import { useAuth } from '@/lib/auth-context'
 export default function NavLinks() {
   const { user, logout } = useAuth()
 
-  const handleLogout = () => {
-    logout()
-  }
+  const linkClass =
+    'text-sm font-medium text-[#6E6A63] hover:text-ink transition-colors'
 
   return (
-    <div className="hidden md:flex items-center space-x-2">
-      <Link 
-        href="/instructions" 
-        className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
-      >
-        <span className="flex items-center space-x-2">
-          <span className="text-sm">📖</span>
-          <span>How it Works</span>
-        </span>
+    <div className="hidden md:flex items-center gap-7">
+      <Link href="/instructions" className={linkClass}>
+        How it works
       </Link>
-      
+
       {user && (
-        <Link
-          href="/automation"
-          className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
-        >
-          <span className="flex items-center space-x-2">
-            <span className="text-sm">⚡</span>
-            <span>Automation</span>
-          </span>
+        <Link href="/automation" className={linkClass}>
+          Automation
+        </Link>
+      )}
+      {user && (
+        <Link href="/dashboard" className={linkClass}>
+          Dashboard
+        </Link>
+      )}
+      {user && (
+        <Link href="/profile" className={linkClass}>
+          Profile
         </Link>
       )}
 
-      {user && (
-        <Link
-          href="/dashboard"
-          className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
-        >
-          <span className="flex items-center space-x-2">
-            <span className="text-sm">📊</span>
-            <span>Dashboard</span>
-          </span>
-        </Link>
-      )}
-      
-      {user && (
-        <Link 
-          href="/profile" 
-          className="group relative px-4 py-2 text-stone-600 hover:text-gray-900 font-medium transition-all duration-200 rounded-full hover:bg-stone-50"
-        >
-          <span className="flex items-center space-x-2">
-            <span className="text-sm">👤</span>
-            <span>Profile</span>
-          </span>
-        </Link>
-      )}
-      
-      <div className="w-px h-6 bg-stone-300 mx-2"></div>
-      
       {user ? (
         <button
-          onClick={handleLogout}
-          className="group px-6 py-3 bg-red-600 text-white font-medium rounded-full shadow-sm hover:shadow-md transition-all duration-200 hover:bg-red-700 hover:scale-105"
+          onClick={logout}
+          className="text-sm font-medium text-[#6E6A63] hover:text-ink transition-colors"
         >
-          <span className="flex items-center space-x-2">
-            <span className="text-sm">🚪</span>
-            <span>Logout</span>
-          </span>
+          Log out
         </button>
       ) : (
-        <Link 
-          href="/login" 
-          className="group px-6 py-3 bg-stone-800 text-white font-medium rounded-full shadow-sm hover:shadow-md transition-all duration-200 hover:bg-stone-900 hover:scale-105"
+        <Link
+          href="/login"
+          className="inline-flex items-center rounded-full bg-ink px-5 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
         >
-          <span className="flex items-center space-x-2">
-            <span className="text-sm">🔑</span>
-            <span>Login</span>
-          </span>
+          Sign in
         </Link>
       )}
     </div>
   )
-} 
+}

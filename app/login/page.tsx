@@ -40,27 +40,25 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="flex min-h-[70vh] items-center justify-center py-12">
+      <div className="w-full max-w-sm">
         <div className="text-center">
-          <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">S</span>
-              <span className="text-white text-lg font-bold">r</span>
-            </div>
+          <div className="eyebrow flex items-center justify-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#DD4D24' }} />
+            Welcome back
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            Sign in to Session Remind
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Access your SMS reminder dashboard
+          <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
+            Sign in
+          </h1>
+          <p className="mt-3 text-[15px] text-[#6E6A63]">
+            Access your SMS reminder dashboard.
           </p>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
+
+        <form className="mt-10 space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
                 Email address
               </label>
               <input
@@ -71,13 +69,13 @@ function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-black focus:border-black"
+                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
                 placeholder="Enter your email"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-ink">
                 Password
               </label>
               <input
@@ -88,36 +86,32 @@ function LoginForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-black focus:border-black"
+                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
                 placeholder="Enter your password"
               />
             </div>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+            <div className="rounded-lg border border-hairline bg-[#FAFAF8] px-4 py-3 text-sm text-accent">
               {error}
             </div>
           )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Signing in... Please wait' : 'Sign in'}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-full bg-ink px-6 py-3 text-center font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? 'Signing in... Please wait' : 'Sign in'}
+          </button>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link href="/register" className="font-medium text-black hover:text-gray-800">
-                Sign up now
-              </Link>
-            </p>
-          </div>
+          <p className="text-center text-sm text-[#6E6A63]">
+            Don&apos;t have an account?{' '}
+            <Link href="/register" className="font-medium text-ink underline-offset-4 hover:underline">
+              Sign up now
+            </Link>
+          </p>
         </form>
       </div>
     </div>
@@ -127,19 +121,15 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">S</span>
-                <span className="text-white text-lg font-bold">r</span>
-              </div>
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900">
-              Loading...
-            </h2>
+      <div className="flex min-h-[70vh] items-center justify-center py-12">
+        <div className="w-full max-w-sm text-center">
+          <div className="eyebrow flex items-center justify-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#DD4D24' }} />
+            Welcome back
           </div>
+          <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
+            Loading…
+          </h1>
         </div>
       </div>
     }>

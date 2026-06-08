@@ -5,10 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import CsvImport from '@/components/CsvImport'
 import {
-  BoltIcon,
-  CheckCircleIcon,
   ArrowPathIcon,
-  LinkIcon,
   LockClosedIcon,
   ShieldCheckIcon,
   ClipboardDocumentIcon,
@@ -234,8 +231,8 @@ export default function AutomationPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <ArrowPathIcon className="w-8 h-8 text-blue-500 animate-spin" />
+      <div className="flex items-center justify-center py-32">
+        <ArrowPathIcon className="w-7 h-7 text-muted animate-spin" />
       </div>
     )
   }
@@ -245,324 +242,343 @@ export default function AutomationPage() {
     .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6"
-        >
-          <ArrowLeftIcon className="w-4 h-4 mr-1" /> Back to dashboard
-        </button>
+    <div className="text-ink">
+      <button
+        onClick={() => router.push('/dashboard')}
+        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink transition-colors mb-10"
+      >
+        <ArrowLeftIcon className="w-3.5 h-3.5" /> Back to dashboard
+      </button>
 
-        <div className="flex items-center mb-2">
-          <BoltIcon className="w-7 h-7 text-blue-600 mr-2" />
-          <h1 className="text-2xl font-bold text-gray-900">Automatic reminders</h1>
-        </div>
-        <p className="text-gray-600 mb-8">
+      <div className="border-b border-hairline pb-10 mb-12">
+        <p className="eyebrow mb-3">Automation</p>
+        <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
+          Automatic reminders
+        </h1>
+        <p className="mt-3 text-muted max-w-xl leading-relaxed">
           Connect UseSession once and we&apos;ll automatically text your clients reminders before every session.
         </p>
+      </div>
 
-        {notice && (
-          <div
-            className={`mb-6 rounded-lg px-4 py-3 text-sm ${
-              notice.type === 'ok' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
-            }`}
-          >
-            {notice.text}
-          </div>
-        )}
+      {notice && (
+        <div
+          className={`mb-8 rounded-lg border px-4 py-3 text-sm ${
+            notice.type === 'ok'
+              ? 'border-[#cfe8d4] text-[#16a34a]'
+              : 'border-[#f1c9bd] text-accent'
+          }`}
+        >
+          {notice.text}
+        </div>
+      )}
 
-        {/* Connection card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          {status.connected ? (
-            <div>
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center">
-                  <CheckCircleIcon className="w-6 h-6 text-green-500 mr-2" />
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      Connected{status.businessName ? ` · ${status.businessName}` : ''}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {status.lastSyncAt
-                        ? `Last synced ${new Date(status.lastSyncAt).toLocaleString()}`
-                        : 'Waiting for first sync…'}
-                      {typeof status.lastSyncBookings === 'number' && ` · ${status.lastSyncBookings} upcoming booking(s)`}
-                    </p>
-                    {status.lastSyncStatus === 'error' && (
-                      <p className="text-sm text-red-600 mt-1">Last sync error: {status.lastSyncError}</p>
-                    )}
-                  </div>
+      {/* Connection card */}
+      <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+        {status.connected ? (
+          <div>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-start gap-3">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-[#16a34a] flex-shrink-0" />
+                <div>
+                  <p className="font-display font-semibold text-ink">
+                    Connected{status.businessName ? ` · ${status.businessName}` : ''}
+                  </p>
+                  <p className="text-sm text-muted mt-0.5">
+                    {status.lastSyncAt
+                      ? `Last synced ${new Date(status.lastSyncAt).toLocaleString()}`
+                      : 'Waiting for first sync…'}
+                    {typeof status.lastSyncBookings === 'number' && ` · ${status.lastSyncBookings} upcoming booking(s)`}
+                  </p>
+                  {status.lastSyncStatus === 'error' && (
+                    <p className="text-sm text-accent mt-1">Last sync error: {status.lastSyncError}</p>
+                  )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={syncNow}
-                    disabled={syncing}
-                    className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    <ArrowPathIcon className={`w-4 h-4 mr-1 ${syncing ? 'animate-spin' : ''}`} />
-                    Sync now
-                  </button>
-                  <button
-                    onClick={disconnect}
-                    className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50"
-                  >
-                    Disconnect
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={syncNow}
+                  disabled={syncing}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  <ArrowPathIcon className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                  Sync now
+                </button>
+                <button
+                  onClick={disconnect}
+                  className="rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-[#FAFAF8] transition-colors"
+                >
+                  Disconnect
+                </button>
               </div>
             </div>
-          ) : (
-            <div>
-              <div className="flex items-center mb-1">
-                <LinkIcon className="w-5 h-5 text-blue-600 mr-2" />
-                <h2 className="font-semibold text-gray-900">Connect your UseSession account</h2>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                One-time setup. After this, new bookings sync automatically — you never have to touch it again.
-              </p>
+          </div>
+        ) : (
+          <div>
+            <div className="flex items-center gap-2.5 mb-1.5">
+              <span className="w-2 h-2 rounded-full bg-accent" />
+              <h2 className="font-display text-xl font-semibold text-ink">Connect your UseSession account</h2>
+            </div>
+            <p className="text-sm text-muted mb-6">
+              One-time setup. After this, new bookings sync automatically — you never have to touch it again.
+            </p>
 
-              {/* Recommended: true one-click via the browser extension (no dragging) */}
-              <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4 mb-4">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <p className="text-sm font-semibold text-gray-900">⚡ One-click connect — no dragging</p>
-                  <span className="text-[10px] uppercase tracking-wide bg-blue-600 text-white px-2 py-0.5 rounded-full">
-                    Easiest
-                  </span>
+            {/* Recommended: true one-click via the browser extension (no dragging) */}
+            <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5 mb-5">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                  <p className="font-display text-sm font-semibold text-ink">One-click connect — browser extension</p>
                 </div>
-                <ol className="mt-2 text-sm text-gray-700 space-y-1 list-decimal list-inside">
-                  <li>
-                    <a href="/sessionremind-connector.zip" className="text-blue-600 underline">
-                      Download the connector
-                    </a>{' '}
-                    and unzip it.
-                  </li>
-                  <li>
-                    Open <code className="text-xs bg-white px-1 rounded border">chrome://extensions</code>, turn on
-                    Developer mode, click “Load unpacked”, and choose the folder.
-                  </li>
-                  <li>
-                    On UseSession (logged in), click the SessionRemind icon → <strong>Connect</strong>. That&apos;s it.
-                  </li>
-                </ol>
-              </div>
-              <div className="text-center text-xs text-gray-400 mb-4">or use the no-install option below</div>
-
-              {!pairCode ? (
-                <button
-                  onClick={startConnect}
-                  disabled={connecting}
-                  className="inline-flex items-center px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50"
-                >
-                  <BoltIcon className="w-5 h-5 mr-2" />
-                  {connecting ? 'Starting…' : 'Connect UseSession'}
-                </button>
-              ) : (
-                <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                  <p className="text-sm font-medium text-gray-900 mb-3">Almost there — two steps:</p>
-                  <ol className="text-sm text-gray-700 space-y-3 list-decimal list-inside">
-                    <li>
-                      Drag this button to your bookmarks bar (or{' '}
-                      <button onClick={copyBookmarklet} className="text-blue-600 underline inline-flex items-center">
-                        <ClipboardDocumentIcon className="w-3.5 h-3.5 mr-0.5" />
-                        copy the link
-                      </button>
-                      ):
-                      {/*
-                        Rendered as raw HTML so the javascript: href survives (React
-                        strips javascript: URLs). onClickCapture stops it from running
-                        on this page if clicked — it's meant to be dragged, not clicked.
-                      */}
-                      <div
-                        className="mt-2"
-                        onClickCapture={(e) => e.preventDefault()}
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            '<a href="' +
-                            bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
-                            '" draggable="true" title="Drag me to your bookmarks bar" ' +
-                            'style="background:#BE7B2E" ' +
-                            'class="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium cursor-grab no-underline">' +
-                            '⚡ Connect to SessionRemind</a>',
-                        }}
-                      />
-                      <p className="text-xs text-gray-500 mt-2">
-                        Can&apos;t drag it?{' '}
-                        <button onClick={copyBookmarklet} className="text-blue-600 underline">
-                          Copy the link
-                        </button>
-                        , then make a new bookmark and paste it as the URL.
-                      </p>
-                    </li>
-                    <li>
-                      Open{' '}
-                      <a href="https://app.usesession.com/sessions" target="_blank" rel="noreferrer" className="text-blue-600 underline">
-                        UseSession
-                      </a>{' '}
-                      (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
-                    </li>
-                  </ol>
-                  <p className="text-xs text-gray-500 mt-3">Waiting for you to click it… code expires in 10 minutes.</p>
-                </div>
-              )}
-
-              {/* Paste fallback */}
-              <details className="mt-4">
-                <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
-                  Prefer not to use a bookmark? Paste your token instead
-                </summary>
-                <div className="mt-3">
-                  <textarea
-                    value={pasteToken}
-                    onChange={(e) => setPasteToken(e.target.value)}
-                    placeholder="Paste your UseSession session-token here"
-                    className="w-full text-sm border border-gray-200 rounded-lg p-3 h-20 font-mono"
-                  />
-                  <button
-                    onClick={connectWithToken}
-                    disabled={connecting || !pasteToken.trim()}
-                    className="mt-2 px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
-                  >
-                    Connect with token
-                  </button>
-                </div>
-              </details>
-
-              {/* Trust copy */}
-              <div className="mt-5 flex items-start gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
-                <ShieldCheckIcon className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <span>
-                  Your UseSession access is <strong>AES-256 encrypted</strong> and used only to read <em>your</em>{' '}
-                  upcoming bookings so reminders can send. We never store, mine, share, or sell your client data, and
-                  you can disconnect anytime.
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] border border-hairline rounded-full px-2.5 py-0.5 text-muted">
+                  Easiest
                 </span>
               </div>
+              <p className="text-sm text-muted mb-3">
+                A true one-click <strong className="text-ink font-medium">&ldquo;Add to Chrome&rdquo;</strong> install is
+                coming soon via the Chrome Web Store. For now, load it manually — it takes about a minute:
+              </p>
+              <ol className="text-sm text-ink/80 space-y-2 list-decimal list-inside">
+                <li>
+                  <a href="/sessionremind-connector.zip" className="text-accent underline">
+                    Download the connector
+                  </a>{' '}
+                  and unzip it.
+                </li>
+                <li>
+                  Open <code className="font-mono text-xs bg-white px-1.5 py-0.5 rounded border border-hairline">chrome://extensions</code>, turn on
+                  Developer mode, click &ldquo;Load unpacked&rdquo;, and choose the folder.
+                </li>
+                <li>
+                  On UseSession (logged in), click the SessionRemind icon → <strong className="text-ink font-medium">Connect</strong>. That&apos;s it.
+                </li>
+              </ol>
             </div>
-          )}
-        </div>
+            <div className="text-center font-mono text-[11px] uppercase tracking-[0.16em] text-muted mb-5">
+              or use the no-install option below
+            </div>
 
-        {/* Settings */}
-        {settings && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-            <h2 className="font-semibold text-gray-900 mb-4">Reminder settings</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Studio name</label>
-                <input
-                  value={settings.studioName}
-                  onChange={(e) => setSettings({ ...settings, studioName: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Reminder message template
-                </label>
-                <textarea
-                  value={settings.reminderTemplate}
-                  onChange={(e) => setSettings({ ...settings, reminderTemplate: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm h-24"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Placeholders: {'{name}'} {'{sessionTitle}'} {'{sessionTime}'} {'{studioName}'}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Send reminders</label>
-                  <div className="flex gap-2">
-                    {[7, 3, 2, 1].map((d) => {
-                      const on = settings.offsetsDays.includes(d)
-                      return (
-                        <button
-                          key={d}
-                          onClick={() =>
-                            setSettings({
-                              ...settings,
-                              offsetsDays: on
-                                ? settings.offsetsDays.filter((x) => x !== d)
-                                : [...settings.offsetsDays, d].sort((a, b) => b - a),
-                            })
-                          }
-                          className={`px-3 py-1.5 rounded-lg text-sm border ${
-                            on ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200'
-                          }`}
-                        >
-                          {d}-day
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Auto-schedule new bookings</label>
-                  <button
-                    onClick={() => setSettings({ ...settings, autoSchedule: !settings.autoSchedule })}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${
-                      settings.autoSchedule ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}
-                  >
-                    {settings.autoSchedule ? 'On' : 'Off'}
-                  </button>
-                </div>
-              </div>
+            {!pairCode ? (
               <button
-                onClick={saveSettings}
-                disabled={savingSettings}
-                className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                onClick={startConnect}
+                disabled={connecting}
+                className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {savingSettings ? 'Saving…' : 'Save settings'}
+                {connecting ? 'Starting…' : 'Connect UseSession'}
               </button>
+            ) : (
+              <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5">
+                <p className="font-display text-sm font-semibold text-ink mb-4">Almost there — two steps:</p>
+                <ol className="text-sm text-ink/80 space-y-4 list-decimal list-inside">
+                  <li>
+                    Drag this button to your bookmarks bar (or{' '}
+                    <button onClick={copyBookmarklet} className="text-accent underline inline-flex items-center gap-0.5">
+                      <ClipboardDocumentIcon className="w-3.5 h-3.5" />
+                      copy the link
+                    </button>
+                    ):
+                    {/*
+                      Rendered as raw HTML so the javascript: href survives (React
+                      strips javascript: URLs). onClickCapture stops it from running
+                      on this page if clicked — it's meant to be dragged, not clicked.
+                    */}
+                    <div
+                      className="mt-3"
+                      onClickCapture={(e) => e.preventDefault()}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          '<a href="' +
+                          bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
+                          '" draggable="true" title="Drag me to your bookmarks bar" ' +
+                          'style="background:#141414" ' +
+                          'class="inline-flex items-center px-4 py-2 rounded-full text-white text-sm font-medium cursor-grab no-underline">' +
+                          'Connect to SessionRemind</a>',
+                      }}
+                    />
+                    <p className="text-xs text-muted mt-2">
+                      Can&apos;t drag it?{' '}
+                      <button onClick={copyBookmarklet} className="text-accent underline">
+                        Copy the link
+                      </button>
+                      , then make a new bookmark and paste it as the URL.
+                    </p>
+                  </li>
+                  <li>
+                    Open{' '}
+                    <a href="https://app.usesession.com/sessions" target="_blank" rel="noreferrer" className="text-accent underline">
+                      UseSession
+                    </a>{' '}
+                    (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
+                    <div className="mt-2 rounded-lg border border-[#f1c9bd] px-3 py-2 text-xs text-ink/80">
+                      <strong className="text-accent font-medium">Important:</strong> Click the bookmark while you&apos;re
+                      on the UseSession tab (<span className="font-mono">app.usesession.com</span>) — <strong className="text-ink font-medium">not</strong>{' '}
+                      on this SessionRemind tab. It reads your UseSession login, so it only works there.
+                    </div>
+                  </li>
+                </ol>
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-4">Waiting for you to click it · code expires in 10 minutes</p>
+              </div>
+            )}
+
+            {/* Paste fallback */}
+            <details className="mt-5">
+              <summary className="text-sm text-muted cursor-pointer hover:text-ink transition-colors">
+                Prefer not to use a bookmark? Paste your token instead
+              </summary>
+              <div className="mt-3">
+                <textarea
+                  value={pasteToken}
+                  onChange={(e) => setPasteToken(e.target.value)}
+                  placeholder="Paste your UseSession session-token here"
+                  className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] h-20 font-mono focus:border-ink focus:outline-none"
+                />
+                <button
+                  onClick={connectWithToken}
+                  disabled={connecting || !pasteToken.trim()}
+                  className="mt-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  Connect with token
+                </button>
+              </div>
+            </details>
+
+            {/* Trust copy */}
+            <div className="mt-6 flex items-start gap-2.5 text-xs text-muted bg-[#FAFAF8] border border-hairline rounded-lg p-4">
+              <ShieldCheckIcon className="w-4 h-4 text-muted mt-0.5 flex-shrink-0" />
+              <span className="leading-relaxed">
+                Your UseSession access is <strong className="text-ink font-medium">AES-256 encrypted</strong> and used only to read <em>your</em>{' '}
+                upcoming bookings so reminders can send. We never store, mine, share, or sell your client data, and
+                you can disconnect anytime.
+              </span>
             </div>
           </div>
         )}
+      </div>
 
-        {/* CSV import (no-connection fallback) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-1">Import from a CSV</h2>
-          <p className="text-xs text-gray-400 mb-4">Works without connecting — great on mobile, or as a backup.</p>
-          <CsvImport onImported={loadAll} />
-        </div>
-
-        {/* Upcoming auto-scheduled reminders */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">
-            Upcoming reminders {upcoming.length > 0 && <span className="text-gray-400 font-normal">· {upcoming.length}</span>}
-          </h2>
-          {upcoming.length === 0 ? (
-            <p className="text-sm text-gray-500">
-              No reminders scheduled yet. Connect UseSession (or sync) and they&apos;ll appear here automatically.
-            </p>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {upcoming.slice(0, 50).map((m) => (
-                <div key={m.id} className="py-3 flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {m.clientName} <span className="text-gray-400">· {m.sessionTitle}</span>
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {m.reminderType} reminder · sends {new Date(m.scheduledFor).toLocaleString()}
-                      {m.source === 'usesession' && ' · auto'}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => cancelReminder(m.id)}
-                    className="text-gray-400 hover:text-red-500 flex-shrink-0"
-                    title="Cancel this reminder"
-                  >
-                    <TrashIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+      {/* Settings */}
+      {settings && (
+        <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+          <h2 className="font-display text-xl font-semibold text-ink mb-6">Reminder settings</h2>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-ink mb-1.5">Studio name</label>
+              <input
+                value={settings.studioName}
+                onChange={(e) => setSettings({ ...settings, studioName: e.target.value })}
+                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+              />
             </div>
-          )}
+            <div>
+              <label className="block text-sm font-medium text-ink mb-1.5">
+                Reminder message template
+              </label>
+              <textarea
+                value={settings.reminderTemplate}
+                onChange={(e) => setSettings({ ...settings, reminderTemplate: e.target.value })}
+                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] h-24 focus:border-ink focus:outline-none"
+              />
+              <p className="font-mono text-xs text-muted mt-1.5">
+                Placeholders: {'{name}'} {'{sessionTitle}'} {'{sessionTime}'} {'{studioName}'}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-8">
+              <div>
+                <label className="block text-sm font-medium text-ink mb-2">Send reminders</label>
+                <div className="flex gap-2">
+                  {[7, 3, 2, 1].map((d) => {
+                    const on = settings.offsetsDays.includes(d)
+                    return (
+                      <button
+                        key={d}
+                        onClick={() =>
+                          setSettings({
+                            ...settings,
+                            offsetsDays: on
+                              ? settings.offsetsDays.filter((x) => x !== d)
+                              : [...settings.offsetsDays, d].sort((a, b) => b - a),
+                          })
+                        }
+                        className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                          on ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-hairline hover:bg-[#FAFAF8]'
+                        }`}
+                      >
+                        {d}-day
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-ink mb-2">Auto-schedule new bookings</label>
+                <button
+                  onClick={() => setSettings({ ...settings, autoSchedule: !settings.autoSchedule })}
+                  className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                    settings.autoSchedule
+                      ? 'border-[#cfe8d4] text-[#16a34a]'
+                      : 'border-hairline text-muted'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-[#16a34a]' : 'bg-muted'}`} />
+                  {settings.autoSchedule ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={saveSettings}
+              disabled={savingSettings}
+              className="rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {savingSettings ? 'Saving…' : 'Save settings'}
+            </button>
+          </div>
         </div>
+      )}
 
-        <div className="mt-6 flex items-center justify-center text-xs text-gray-400">
-          <LockClosedIcon className="w-3.5 h-3.5 mr-1" />
-          Your UseSession token is encrypted at rest and never shared.
+      {/* CSV import (no-connection fallback) */}
+      <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+        <h2 className="font-display text-xl font-semibold text-ink mb-1.5">Import from a CSV</h2>
+        <p className="font-mono text-xs text-muted mb-5">Works without connecting — great on mobile, or as a backup.</p>
+        <CsvImport onImported={loadAll} />
+      </div>
+
+      {/* Upcoming auto-scheduled reminders */}
+      <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+        <div className="flex items-baseline gap-3 mb-5">
+          <h2 className="font-display text-xl font-semibold text-ink">Upcoming reminders</h2>
+          {upcoming.length > 0 && <span className="font-mono text-xs text-muted">{upcoming.length}</span>}
         </div>
+        {upcoming.length === 0 ? (
+          <p className="text-sm text-muted">
+            No reminders scheduled yet. Connect UseSession (or sync) and they&apos;ll appear here automatically.
+          </p>
+        ) : (
+          <div className="divide-y divide-hairline">
+            {upcoming.slice(0, 50).map((m) => (
+              <div key={m.id} className="py-3.5 flex items-start justify-between gap-3 -mx-3 px-3 rounded-lg hover:bg-[#FAFAF8] transition-colors">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-ink truncate">
+                    {m.clientName} <span className="text-muted">· {m.sessionTitle}</span>
+                  </p>
+                  <p className="font-mono text-xs text-muted mt-0.5">
+                    {m.reminderType} reminder · sends {new Date(m.scheduledFor).toLocaleString()}
+                    {m.source === 'usesession' && ' · auto'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => cancelReminder(m.id)}
+                  className="text-muted hover:text-accent transition-colors flex-shrink-0"
+                  title="Cancel this reminder"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 flex items-center justify-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+        <LockClosedIcon className="w-3.5 h-3.5" />
+        Your UseSession token is encrypted at rest and never shared
       </div>
     </div>
   )

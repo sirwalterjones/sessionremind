@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
-import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, UserIcon, ChartBarIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ClockIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
   id: string | number
@@ -81,11 +81,11 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded mb-2"></div>
-            <div className="h-8 bg-gray-200 rounded"></div>
+          <div key={i} className="bg-white p-6 animate-pulse">
+            <div className="h-3 w-20 bg-[#F1EFE9] rounded mb-3"></div>
+            <div className="h-8 w-16 bg-[#F1EFE9] rounded"></div>
           </div>
         ))}
       </div>
@@ -94,8 +94,8 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
 
   if (!analyticsData?.success && !activityData?.success) {
     return (
-      <div className="text-center py-4">
-        <p className="text-gray-500">Unable to load SMS analytics</p>
+      <div className="text-center py-6">
+        <p className="text-muted text-sm">Unable to load SMS analytics</p>
       </div>
     )
   }
@@ -106,95 +106,83 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
   return (
     <div className="space-y-6">
       {/* Usage Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ChartBarIcon className="h-8 w-8 text-blue-600" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">SMS Used</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {activity?.currentUsage || smsAnalytics?.current?.smsUsage || 0}
-              </p>
-              <p className="text-xs text-gray-500">
-                of {activity?.limit || smsAnalytics?.current?.smsLimit || 500}
-              </p>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
+        <div className="bg-white p-6">
+          <p className="eyebrow">SMS Used</p>
+          <p className="font-display text-4xl font-semibold text-ink mt-3">
+            {activity?.currentUsage || smsAnalytics?.current?.smsUsage || 0}
+          </p>
+          <p className="font-mono text-xs text-muted mt-1">
+            of {activity?.limit || smsAnalytics?.current?.smsLimit || 500}
+          </p>
         </div>
 
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-              <span className="text-green-600 text-sm font-bold">
-                {activity ? Math.round((activity.currentUsage / activity.limit) * 100) : smsAnalytics?.current?.usagePercentage || 0}%
-              </span>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Usage</p>
-              <p className="text-lg font-bold text-gray-900">
-                {activity ? `${Math.max(0, activity.limit - activity.currentUsage)} left` : 
-                 smsAnalytics?.current?.remainingSms === 'unlimited' ? 'Unlimited' : 
-                 `${smsAnalytics?.current?.remainingSms || 0} left`}
-              </p>
-            </div>
-          </div>
+        <div className="bg-white p-6">
+          <p className="eyebrow">Usage</p>
+          <p className="font-display text-4xl font-semibold text-ink mt-3">
+            {activity ? Math.round((activity.currentUsage / activity.limit) * 100) : smsAnalytics?.current?.usagePercentage || 0}%
+          </p>
+          <p className="font-mono text-xs text-muted mt-1">
+            {activity ? `${Math.max(0, activity.limit - activity.currentUsage)} left` :
+             smsAnalytics?.current?.remainingSms === 'unlimited' ? 'Unlimited' :
+             `${smsAnalytics?.current?.remainingSms || 0} left`}
+          </p>
         </div>
 
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-              <span className="text-purple-600 text-lg">📊</span>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Success Rate</p>
-              <p className="text-lg font-bold text-gray-900">
-                {activity?.deliveryRate || 0}%
-              </p>
-              <p className="text-xs text-gray-500">
-                {activity?.totalMessages || 0} total messages
-              </p>
-            </div>
-          </div>
+        <div className="bg-white p-6">
+          <p className="eyebrow">Success Rate</p>
+          <p className="font-display text-4xl font-semibold text-ink mt-3">
+            {activity?.deliveryRate || 0}%
+          </p>
+          <p className="font-mono text-xs text-muted mt-1">
+            {activity?.totalMessages || 0} total messages
+          </p>
         </div>
       </div>
 
       {/* Message Activity (if we have activity data) */}
       {activity && (
-        <div className="border border-gray-200 rounded-lg p-4">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3">Recent Activity</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-hairline p-6">
+          <p className="eyebrow mb-5">Recent Activity</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">Message Status</p>
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-green-600">✅ Sent</span>
-                  <span className="font-medium text-gray-900">{activity.messagesByStatus?.sent || 0}</span>
+              <p className="eyebrow mb-3">Message Status</p>
+              <div className="divide-y divide-hairline">
+                <div className="flex justify-between text-sm py-2">
+                  <span className="flex items-center gap-2 text-[#16a34a]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" /> Sent
+                  </span>
+                  <span className="font-mono text-ink">{activity.messagesByStatus?.sent || 0}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-blue-600">⏰ Scheduled</span>
-                  <span className="font-medium text-gray-900">{activity.messagesByStatus?.scheduled || 0}</span>
+                <div className="flex justify-between text-sm py-2">
+                  <span className="flex items-center gap-2 text-muted">
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted" /> Scheduled
+                  </span>
+                  <span className="font-mono text-ink">{activity.messagesByStatus?.scheduled || 0}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-red-600">❌ Failed</span>
-                  <span className="font-medium text-gray-900">{activity.messagesByStatus?.failed || 0}</span>
+                <div className="flex justify-between text-sm py-2">
+                  <span className="flex items-center gap-2 text-accent">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Failed
+                  </span>
+                  <span className="font-mono text-ink">{activity.messagesByStatus?.failed || 0}</span>
                 </div>
               </div>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">Latest Messages</p>
-              <div className="space-y-1 max-h-20 overflow-y-auto">
+              <p className="eyebrow mb-3">Latest Messages</p>
+              <div className="divide-y divide-hairline max-h-24 overflow-y-auto">
                 {activity.latestMessages?.slice(0, 3).map((msg: any, idx: number) => (
-                  <div key={idx} className="text-xs text-gray-600 flex justify-between">
-                    <span className="truncate">{msg.clientName}</span>
-                    <span className={`ml-2 ${
-                      msg.status === 'sent' ? 'text-green-600' : 
-                      msg.status === 'scheduled' ? 'text-blue-600' : 
-                      'text-red-600'
+                  <div key={idx} className="text-sm flex justify-between py-2">
+                    <span className="truncate text-ink">{msg.clientName}</span>
+                    <span className={`ml-2 font-mono text-xs uppercase tracking-[0.12em] ${
+                      msg.status === 'sent' ? 'text-[#16a34a]' :
+                      msg.status === 'scheduled' ? 'text-muted' :
+                      'text-accent'
                     }`}>
                       {msg.status}
                     </span>
                   </div>
-                )) || <p className="text-xs text-gray-500">No recent messages</p>}
+                )) || <p className="text-sm text-muted py-2">No recent messages</p>}
               </div>
             </div>
           </div>
@@ -488,21 +476,21 @@ function DashboardContent() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'scheduled': return <ClockIcon className="h-4 w-4 text-amber-500" />
-      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-emerald-500" />
-      case 'failed': return <XMarkIcon className="h-4 w-4 text-red-500" />
-      case 'cancelled': return <XMarkIcon className="h-4 w-4 text-gray-500" />
-      default: return <ClockIcon className="h-4 w-4 text-gray-400" />
+      case 'scheduled': return <ClockIcon className="h-4 w-4 text-muted" />
+      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-[#16a34a]" />
+      case 'failed': return <XMarkIcon className="h-4 w-4 text-accent" />
+      case 'cancelled': return <XMarkIcon className="h-4 w-4 text-muted" />
+      default: return <ClockIcon className="h-4 w-4 text-muted" />
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'scheduled': return 'bg-amber-50 text-amber-700 border-amber-200'
-      case 'sent': return 'bg-emerald-50 text-emerald-700 border-emerald-200'
-      case 'failed': return 'bg-red-50 text-red-700 border-red-200'
-      case 'cancelled': return 'bg-gray-50 text-gray-700 border-gray-200'
-      default: return 'bg-gray-50 text-gray-700 border-gray-200'
+      case 'scheduled': return 'text-muted border-hairline'
+      case 'sent': return 'text-[#16a34a] border-[#cfe8d4]'
+      case 'failed': return 'text-accent border-[#f1c9bd]'
+      case 'cancelled': return 'text-muted border-hairline'
+      default: return 'text-muted border-hairline'
     }
   }
 
@@ -628,29 +616,27 @@ function DashboardContent() {
   // Redirect to login if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100 flex items-center justify-center">
-        <div className="max-w-md w-full mx-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+      <div className="flex items-center justify-center py-24">
+        <div className="max-w-md w-full">
+          <div className="rounded-2xl border border-hairline p-10 bg-white">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-stone-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <UserIcon className="h-8 w-8 text-stone-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
-              <p className="text-gray-600">Please log in to access your dashboard</p>
+              <p className="eyebrow mb-3">Restricted</p>
+              <h2 className="font-display text-3xl font-semibold text-ink mb-2">Authentication required</h2>
+              <p className="text-muted">Please log in to access your dashboard.</p>
             </div>
-            
-            <div className="space-y-4">
+
+            <div className="space-y-3">
               <a
                 href="/login"
-                className="w-full bg-stone-800 text-white py-3 px-4 rounded-full font-medium hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
+                className="block text-center rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity"
               >
-                Go to Login
+                Go to login
               </a>
               <a
                 href="/register"
-                className="w-full bg-white text-stone-800 py-3 px-4 rounded-full font-medium border border-stone-200 hover:bg-stone-50 transition-all duration-200 shadow-sm hover:shadow-md text-center block"
+                className="block text-center rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-[#FAFAF8] transition-colors"
               >
-                Create Account
+                Create account
               </a>
             </div>
           </div>
@@ -664,197 +650,155 @@ function DashboardContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="animate-pulse space-y-8">
-            <div className="text-center">
-              <div className="h-12 w-12 bg-stone-200 rounded-full mx-auto mb-4"></div>
-              <div className="h-8 bg-stone-200 rounded-xl w-1/3 mx-auto mb-2"></div>
-              <div className="h-4 bg-stone-200 rounded-lg w-1/2 mx-auto"></div>
+      <div className="animate-pulse space-y-10 py-4">
+        <div>
+          <div className="h-3 w-24 bg-[#F1EFE9] rounded mb-4"></div>
+          <div className="h-10 w-1/3 bg-[#F1EFE9] rounded mb-3"></div>
+          <div className="h-4 w-1/2 bg-[#F1EFE9] rounded"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white p-6">
+              <div className="h-3 w-20 bg-[#F1EFE9] rounded mb-3"></div>
+              <div className="h-8 w-16 bg-[#F1EFE9] rounded"></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl p-6 shadow-sm">
-                  <div className="h-6 bg-stone-200 rounded-lg mb-2"></div>
-                  <div className="h-8 bg-stone-200 rounded-xl"></div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-neutral-50 to-stone-100">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-stone-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">📊</span>
-              <span className="text-xl font-bold text-gray-900">Session Remind</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {user.username}</span>
-              {user.is_admin && (
-                <>
-                  <a
-                    href="/admin"
-                    className="inline-flex items-center px-3 py-1.5 bg-purple-100 text-purple-700 font-medium rounded-full hover:bg-purple-200 transition-all duration-200 text-sm"
-                  >
-                    Admin Console
-                  </a>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    Admin
-                  </span>
-                </>
-              )}
-              <button
-                onClick={logout}
-                className="inline-flex items-center px-4 py-2 bg-stone-100 text-stone-700 font-medium rounded-full hover:bg-stone-200 transition-all duration-200 text-sm"
-              >
-                Logout
-              </button>
-            </div>
+    <div className="text-ink">
+      <div>
+
+        {/* Header */}
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-hairline pb-10 mb-12">
+          <div>
+            <p className="eyebrow mb-3">Dashboard</p>
+            <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
+              Session reminders
+            </h1>
+            <p className="mt-3 text-muted max-w-xl leading-relaxed">
+              Track your session reminders and client communications in one place.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            <span>Welcome, {user.username}</span>
+            {user.is_admin && (
+              <>
+                <span className="w-px h-3 bg-hairline" />
+                <a
+                  href="/admin"
+                  className="text-ink hover:text-accent transition-colors"
+                >
+                  Admin Console
+                </a>
+                <span className="rounded-full border border-hairline px-2 py-0.5 text-muted">
+                  Admin
+                </span>
+              </>
+            )}
+            <button
+              onClick={logout}
+              className="text-ink hover:text-accent transition-colors"
+            >
+              Logout
+            </button>
           </div>
         </div>
-      </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-stone-200 rounded-full mb-6">
-            <span className="text-2xl">📊</span>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-            SMS Dashboard
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed">
-            Track your session reminders and client communications with ease
-          </p>
-          <div className="flex justify-center">
-            <a
-              href="/new"
-              className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-            >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              New Reminder
-            </a>
-          </div>
+        {/* Primary action */}
+        <div className="mb-12">
+          <a
+            href="/new"
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity"
+          >
+            <PlusIcon className="h-4 w-4" />
+            New reminder
+          </a>
         </div>
 
         {/* SMS Analytics Section */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 mb-16">
-          <div className="flex items-center justify-between mb-6">
+        <div className="mb-14">
+          <div className="flex items-end justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Your SMS Usage</h2>
-              <p className="text-sm text-gray-600">Track your personal SMS analytics and remaining limit</p>
+              <p className="eyebrow mb-2">Usage</p>
+              <h2 className="font-display text-2xl font-semibold text-ink">Your SMS usage</h2>
+              <p className="text-sm text-muted mt-1">Track your personal SMS analytics and remaining limit.</p>
             </div>
-            <div className="bg-blue-50 px-3 py-1 rounded-full">
-              <span className="text-xs font-medium text-blue-700">Professional Plan</span>
-            </div>
+            <span className="rounded-full border border-hairline px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+              Professional Plan
+            </span>
           </div>
-          
+
           <SMSAnalyticsComponent userId={user.id} />
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mr-4">
-                <span className="text-emerald-600 text-xl">📤</span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Messages Sent</p>
-                <p className="text-3xl font-bold text-gray-900">{sentCount}</p>
-                <p className="text-xs text-gray-500 mt-1">{totalMessages} total</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline mb-14">
+          <div className="bg-white p-6">
+            <p className="eyebrow">Messages Sent</p>
+            <p className="font-display text-4xl font-semibold text-ink mt-3">{sentCount}</p>
+            <p className="font-mono text-xs text-muted mt-1">{totalMessages} total</p>
           </div>
-          
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                <span className="text-blue-600 text-xl">📊</span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Delivery Rate</p>
-                <p className="text-3xl font-bold text-gray-900">{deliveryRate}%</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {failedCount > 0 ? `${failedCount} failed` : 'No failures'}
-                </p>
-              </div>
-            </div>
+
+          <div className="bg-white p-6">
+            <p className="eyebrow">Delivery Rate</p>
+            <p className="font-display text-4xl font-semibold text-ink mt-3">{deliveryRate}%</p>
+            <p className="font-mono text-xs text-muted mt-1">
+              {failedCount > 0 ? `${failedCount} failed` : 'No failures'}
+            </p>
           </div>
-          
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                <span className="text-green-600 text-xl">💰</span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">SMS Cost</p>
-                <p className="text-3xl font-bold text-gray-900">${estimatedCost}</p>
-                <p className="text-xs text-gray-500 mt-1">$0.049/message</p>
-              </div>
-            </div>
+
+          <div className="bg-white p-6">
+            <p className="eyebrow">SMS Cost</p>
+            <p className="font-display text-4xl font-semibold text-ink mt-3">${estimatedCost}</p>
+            <p className="font-mono text-xs text-muted mt-1">$0.049/message</p>
           </div>
-          
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mr-4">
-                <span className="text-amber-600 text-xl">⏰</span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Scheduled</p>
-                <p className="text-3xl font-bold text-gray-900">{scheduledCount}</p>
-                <p className="text-xs text-gray-500 mt-1">{uniqueClients} clients</p>
-              </div>
-            </div>
+
+          <div className="bg-white p-6">
+            <p className="eyebrow">Scheduled</p>
+            <p className="font-display text-4xl font-semibold text-ink mt-3">{scheduledCount}</p>
+            <p className="font-mono text-xs text-muted mt-1">{uniqueClients} clients</p>
           </div>
         </div>
 
         {/* Tabs and Search */}
-        <div className="mb-8 space-y-6">
+        <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           {/* Tab Navigation */}
-          <div className="flex justify-center">
-            <div className="bg-stone-100 p-1 rounded-full">
-              <button
-                onClick={() => setActiveTab('active')}
-                className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                  activeTab === 'active'
-                    ? 'bg-white text-stone-900 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                Active ({activeClientsCount})
-              </button>
-              <button
-                onClick={() => setActiveTab('archived')}
-                className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                  activeTab === 'archived'
-                    ? 'bg-white text-stone-900 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                Archived ({archivedClientsCount})
-              </button>
-            </div>
+          <div className="inline-flex rounded-full border border-hairline p-1">
+            <button
+              onClick={() => setActiveTab('active')}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeTab === 'active'
+                  ? 'bg-ink text-white'
+                  : 'text-muted hover:text-ink'
+              }`}
+            >
+              Active ({activeClientsCount})
+            </button>
+            <button
+              onClick={() => setActiveTab('archived')}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeTab === 'archived'
+                  ? 'bg-ink text-white'
+                  : 'text-muted hover:text-ink'
+              }`}
+            >
+              Archived ({archivedClientsCount})
+            </button>
           </div>
 
           {/* Search Bar */}
-          <div className="relative max-w-md mx-auto">
-            <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className="relative w-full sm:max-w-xs">
+            <MagnifyingGlassIcon className="h-4 w-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-muted" />
             <input
               type="text"
-              placeholder={`Search ${activeTab} clients, phone numbers, or session types...`}
+              placeholder={`Search ${activeTab} clients...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-full focus:ring-2 focus:ring-stone-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-hairline bg-white text-sm text-ink placeholder:text-muted focus:outline-none focus:border-ink transition-colors"
             />
           </div>
         </div>
@@ -862,20 +806,20 @@ function DashboardContent() {
         {/* Client Groups */}
         <div>
           {filteredClients.length === 0 ? (
-            <div className="bg-white rounded-2xl p-16 shadow-sm border border-stone-100 text-center">
-              <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-8">
-                {searchTerm ? <MagnifyingGlassIcon className="h-10 w-10 text-stone-400" /> : <ClockIcon className="h-10 w-10 text-stone-400" />}
+            <div className="rounded-2xl border border-hairline p-16 text-center">
+              <div className="flex items-center justify-center mx-auto mb-6 text-muted">
+                {searchTerm ? <MagnifyingGlassIcon className="h-8 w-8" /> : <ClockIcon className="h-8 w-8" />}
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                {searchTerm 
-                  ? 'No matching clients found' 
-                  : activeTab === 'active' 
-                    ? 'No active reminders' 
+              <h3 className="font-display text-2xl font-semibold text-ink mb-3">
+                {searchTerm
+                  ? 'No matching clients found'
+                  : activeTab === 'active'
+                    ? 'No active reminders'
                     : 'No archived sessions yet'
                 }
               </h3>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
-                {searchTerm 
+              <p className="text-muted mb-8 max-w-md mx-auto leading-relaxed">
+                {searchTerm
                   ? 'Try adjusting your search terms or check the spelling.'
                   : activeTab === 'active'
                     ? 'Start sending personalized SMS reminders to your photography clients and keep track of them here.'
@@ -885,33 +829,31 @@ function DashboardContent() {
               {!searchTerm && (
                 <a
                   href="/new"
-                  className="inline-flex items-center px-8 py-4 bg-stone-800 text-white font-medium rounded-full hover:bg-stone-900 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity"
                 >
-                  <span className="mr-3 text-xl">🚀</span>
-                  <span className="text-lg">Create Your First Reminder</span>
+                  <PlusIcon className="h-4 w-4" />
+                  Create your first reminder
                 </a>
               )}
             </div>
           ) : (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-stone-100 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-stone-600 text-sm font-bold">{filteredClients.length}</span>
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    {searchTerm 
-                      ? `Search Results` 
-                      : activeTab === 'active' 
-                        ? 'Active Client Reminders' 
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-baseline gap-3">
+                  <h2 className="font-display text-2xl font-semibold text-ink">
+                    {searchTerm
+                      ? `Search Results`
+                      : activeTab === 'active'
+                        ? 'Active Client Reminders'
                         : 'Archived Sessions'
                     }
                   </h2>
+                  <span className="font-mono text-xs text-muted">{filteredClients.length}</span>
                 </div>
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="text-stone-600 hover:text-stone-800 text-sm font-medium"
+                    className="text-muted hover:text-ink text-sm font-medium transition-colors"
                   >
                     Clear search
                   </button>
@@ -935,97 +877,91 @@ function DashboardContent() {
                 const sessionPassed = isSessionPassed(client.sessionTime, sessionDate)
                 
                 return (
-                  <div 
-                    key={`${client.clientName}-${client.phone}`} 
-                    className={`bg-white rounded-2xl p-6 shadow-sm border transition-all duration-200 cursor-pointer ${
-                      sessionPassed 
-                        ? 'border-stone-200 opacity-75 hover:opacity-100 hover:shadow-md' 
-                        : 'border-stone-100 hover:shadow-md'
+                  <div
+                    key={`${client.clientName}-${client.phone}`}
+                    className={`group rounded-2xl border border-hairline p-6 transition-colors cursor-pointer hover:bg-[#FAFAF8] ${
+                      sessionPassed ? 'opacity-75 hover:opacity-100' : ''
                     }`}
                     onClick={() => openClientModal(client)}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-4">
-                          <span className="text-stone-600 text-xl">👤</span>
+                    <div className="flex items-start justify-between mb-5">
+                      <div>
+                        <div className="flex items-center gap-2.5 mb-1.5">
+                          <h4 className="font-display text-xl font-semibold text-ink">{client.clientName}</h4>
+                          {sessionPassed && (
+                            <span className="rounded-full border border-hairline px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                              Archived
+                            </span>
+                          )}
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-xl font-bold text-gray-900">{client.clientName}</h4>
-                            {sessionPassed && (
-                              <span className="px-2 py-1 bg-stone-100 text-stone-600 text-xs font-medium rounded-full">
-                                ARCHIVED
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex flex-col text-gray-600 text-sm space-y-1">
-                            <div className="flex items-center">
-                              <PhoneIcon className="h-4 w-4 mr-1" />
-                              {client.phone}
-                            </div>
-                            {client.messages[0]?.email && (
-                              <div className="flex items-center">
-                                <span className="text-gray-400 mr-1">📧</span>
-                                {client.messages[0].email}
-                              </div>
-                            )}
-                          </div>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+                          <span className="flex items-center gap-1.5">
+                            <PhoneIcon className="h-4 w-4" />
+                            <span className="font-mono">{client.phone}</span>
+                          </span>
+                          {client.messages[0]?.email && (
+                            <span>{client.messages[0].email}</span>
+                          )}
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm text-gray-500 mb-1">{client.messages.length} message{client.messages.length !== 1 ? 's' : ''}</div>
-                        <div className="flex gap-1 flex-wrap">
+                        <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mb-2">
+                          {client.messages.length} message{client.messages.length !== 1 ? 's' : ''}
+                        </div>
+                        <div className="flex gap-1.5 flex-wrap justify-end">
                           {registrationMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              📧 {registrationMessages.length} registration
+                            <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                              {registrationMessages.length} registration
                             </span>
                           )}
                           {manualMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              💬 {manualMessages.length} manual
+                            <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                              {manualMessages.length} manual
                             </span>
                           )}
                           {reminderMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                              ⏰ {reminderMessages.length} reminder{reminderMessages.length !== 1 ? 's' : ''}
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe8d4] px-2.5 py-0.5 text-xs font-medium text-[#16a34a]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" />
+                              {reminderMessages.length} reminder{reminderMessages.length !== 1 ? 's' : ''}
                             </span>
                           )}
                           {scheduledMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                              ⏳ {scheduledMessages.length} scheduled
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                              <span className="w-1.5 h-1.5 rounded-full bg-muted" />
+                              {scheduledMessages.length} scheduled
                             </span>
                           )}
                           {failedMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                              ❌ {failedMessages.length} failed
+                            <span className="inline-flex items-center rounded-full border border-[#f1c9bd] px-2.5 py-0.5 text-xs font-medium text-accent">
+                              {failedMessages.length} failed
                             </span>
                           )}
                           {cancelledMessages.length > 0 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              🚫 {cancelledMessages.length} cancelled
+                            <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                              {cancelledMessages.length} cancelled
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
-                        <p className="text-xs font-medium text-stone-600 mb-1">📸 Session Type</p>
-                        <p className="text-stone-800 font-medium text-sm">{client.sessionTitle || 'Photography Session'}</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-hairline rounded-xl overflow-hidden border border-hairline mb-5">
+                      <div className="bg-white p-4">
+                        <p className="eyebrow mb-1.5">Session Type</p>
+                        <p className="text-ink font-medium text-sm">{client.sessionTitle || 'Photography Session'}</p>
                       </div>
-                      <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
-                        <p className="text-xs font-medium text-stone-600 mb-1">📅 Session Date</p>
-                        <p className="text-stone-800 font-medium text-sm">{formatDate(client.sessionTime)}</p>
+                      <div className="bg-white p-4">
+                        <p className="eyebrow mb-1.5">Session Date</p>
+                        <p className="text-ink font-medium text-sm">{formatDate(client.sessionTime)}</p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <CalendarIcon className="h-4 w-4 mr-1" />
-                        <span>Created {formatDate(client.messages[0]?.createdAt || (client.messages[0] as SentMessage)?.timestamp || '')}</span>
-                      </div>
-                      <span className="text-stone-600 font-medium">Click to view details →</span>
+
+                    <div className="flex items-center justify-between text-sm text-muted border-t border-hairline pt-4">
+                      <span className="flex items-center gap-1.5">
+                        <CalendarIcon className="h-4 w-4" />
+                        <span className="font-mono text-xs">Created {formatDate(client.messages[0]?.createdAt || (client.messages[0] as SentMessage)?.timestamp || '')}</span>
+                      </span>
+                      <span className="text-ink font-medium group-hover:text-accent transition-colors">View details →</span>
                     </div>
                   </div>
                 )
@@ -1037,76 +973,74 @@ function DashboardContent() {
 
         {/* Client Detail Modal */}
         {showClientModal && selectedClient && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-              <div className="p-6 border-b border-stone-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-4">
-                      <span className="text-stone-600 text-xl">👤</span>
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{selectedClient.clientName}</h3>
-                      <div className="flex items-center text-gray-600 text-sm mt-1">
-                        <PhoneIcon className="h-4 w-4 mr-1" />
-                        {selectedClient.phone}
-                        {selectedClient.messages[0]?.email && (
-                          <>
-                            <span className="mx-2">•</span>
-                            <span>📧 {selectedClient.messages[0].email}</span>
-                          </>
-                        )}
-                      </div>
+          <div className="fixed inset-0 bg-ink/40 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl border border-hairline max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-[0_30px_80px_-40px_rgba(0,0,0,0.3)]">
+              <div className="p-6 sm:p-8 border-b border-hairline">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="eyebrow mb-2">Client</p>
+                    <h3 className="font-display text-2xl font-semibold text-ink">{selectedClient.clientName}</h3>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-muted text-sm mt-1.5">
+                      <span className="flex items-center gap-1.5">
+                        <PhoneIcon className="h-4 w-4" />
+                        <span className="font-mono">{selectedClient.phone}</span>
+                      </span>
+                      {selectedClient.messages[0]?.email && (
+                        <>
+                          <span className="text-hairline">•</span>
+                          <span>{selectedClient.messages[0].email}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                   <button
                     onClick={() => setShowClientModal(false)}
-                    className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-full border border-hairline hover:bg-[#FAFAF8] flex items-center justify-center transition-colors"
                   >
-                    <XMarkIcon className="h-5 w-5 text-gray-600" />
+                    <XMarkIcon className="h-4 w-4 text-ink" />
                   </button>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
-                    <p className="text-xs font-medium text-stone-600 mb-1">📸 Session Type</p>
-                    <p className="text-stone-800 font-medium">{selectedClient.sessionTitle || 'Photography Session'}</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-hairline rounded-xl overflow-hidden border border-hairline mt-6">
+                  <div className="bg-white p-4">
+                    <p className="eyebrow mb-1.5">Session Type</p>
+                    <p className="text-ink font-medium">{selectedClient.sessionTitle || 'Photography Session'}</p>
                   </div>
-                  <div className="bg-stone-50 border border-stone-200 rounded-lg p-4">
-                    <p className="text-xs font-medium text-stone-600 mb-1">📅 Session Date</p>
-                    <p className="text-stone-800 font-medium">{formatDate(selectedClient.sessionTime)}</p>
+                  <div className="bg-white p-4">
+                    <p className="eyebrow mb-1.5">Session Date</p>
+                    <p className="text-ink font-medium">{formatDate(selectedClient.sessionTime)}</p>
                   </div>
                 </div>
               </div>
-              
-              <div className="p-6 max-h-[60vh] overflow-y-auto">
-                <h4 className="text-lg font-bold text-gray-900 mb-4">Message Timeline</h4>
-                
+
+              <div className="p-6 sm:p-8 max-h-[60vh] overflow-y-auto">
+                <p className="eyebrow mb-5">Message Timeline</p>
+
                 <div className="space-y-4">
                   {selectedClient.messages
                     .sort((a, b) => new Date(a.createdAt || a.scheduledFor || (a as SentMessage).timestamp || 0).getTime() - new Date(b.createdAt || b.scheduledFor || (b as SentMessage).timestamp || 0).getTime())
                     .map((message) => (
-                    <div key={message.id} className="bg-stone-50 border border-stone-200 rounded-xl p-6">
+                    <div key={message.id} className="rounded-xl border border-hairline p-5 sm:p-6">
                       <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center">
-                          {getStatusIcon(message.status)}
-                          <div className="ml-3">
-                            <h5 className="font-semibold text-gray-900">
-                              {'reminderType' in message && message.reminderType === 'registration' && '📧 Registration Confirmation'}
-                              {'reminderType' in message && message.reminderType === 'manual' && '💬 Manual Message'}
-                              {'reminderType' in message && message.reminderType === '3-day' && '⏰ 3-Day Reminder'}
-                              {'reminderType' in message && message.reminderType === '1-day' && '⏰ 1-Day Reminder'}
-                              {!('reminderType' in message) && '📅 Scheduled Reminder'}
+                        <div className="flex items-start gap-3">
+                          <span className="mt-0.5">{getStatusIcon(message.status)}</span>
+                          <div>
+                            <h5 className="font-display font-semibold text-ink">
+                              {'reminderType' in message && message.reminderType === 'registration' && 'Registration Confirmation'}
+                              {'reminderType' in message && message.reminderType === 'manual' && 'Manual Message'}
+                              {'reminderType' in message && message.reminderType === '3-day' && '3-Day Reminder'}
+                              {'reminderType' in message && message.reminderType === '1-day' && '1-Day Reminder'}
+                              {!('reminderType' in message) && 'Scheduled Reminder'}
                             </h5>
-                            <div className="text-sm text-gray-600 mt-1">
-                              <div className="flex items-center gap-4">
+                            <div className="text-sm text-muted mt-1">
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs">
                                 {'reminderType' in message && (message.reminderType === 'registration' || message.reminderType === 'manual') ? (
-                                  <span>✅ Sent: {formatDate(message.scheduledFor || '')}</span>
+                                  <span>Sent: {formatDate(message.scheduledFor || '')}</span>
                                 ) : (
                                   <>
-                                    <span>🕒 Scheduled: {formatDate(message.scheduledFor || '')}</span>
+                                    <span>Scheduled: {formatDate(message.scheduledFor || '')}</span>
                                     {message.sentAt && (
-                                      <span>✅ Sent: {formatDate(message.sentAt)}</span>
+                                      <span>Sent: {formatDate(message.sentAt)}</span>
                                     )}
                                   </>
                                 )}
@@ -1114,8 +1048,8 @@ function DashboardContent() {
                             </div>
                           </div>
                         </div>
-                        
-                        <div className="flex items-center gap-3">
+
+                        <div className="flex items-center gap-2">
                           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(message.status)}`}>
                             {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
                           </span>
@@ -1126,37 +1060,37 @@ function DashboardContent() {
                                 cancelMessage(message.id.toString())
                               }}
                               disabled={cancellingMessages.has(message.id.toString())}
-                              className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                              className={`px-3 py-1 text-xs font-medium rounded-full border transition-colors ${
                                 cancelledMessages.has(message.id.toString())
-                                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                  ? 'border-[#cfe8d4] text-[#16a34a]'
                                   : cancellingMessages.has(message.id.toString())
-                                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                                  : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                  ? 'border-hairline text-muted cursor-not-allowed'
+                                  : 'border-[#f1c9bd] text-accent hover:bg-[#FAFAF8]'
                               }`}
                             >
                               {cancelledMessages.has(message.id.toString())
-                                ? '✓ Cancelled'
+                                ? 'Cancelled'
                                 : cancellingMessages.has(message.id.toString())
                                 ? 'Cancelling...'
                                 : 'Cancel'}
                             </button>
                           )}
                           {message.status === 'cancelled' && (
-                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                            <span className="px-3 py-1 border border-hairline text-muted text-xs font-medium rounded-full">
                               Cancelled
                             </span>
                           )}
                         </div>
                       </div>
-                      
-                      <div className="bg-white border border-stone-100 rounded-lg p-4">
-                        <p className="text-sm font-medium text-gray-800 mb-2">💬 Message Content</p>
-                        <p className="text-gray-700 leading-relaxed text-sm">
-                          "{message.message || 'No message content stored'}"
+
+                      <div className="rounded-lg bg-[#FAFAF8] border border-hairline p-4">
+                        <p className="eyebrow mb-2">Message Content</p>
+                        <p className="text-ink leading-relaxed text-sm">
+                          “{message.message || 'No message content stored'}”
                         </p>
                       </div>
-                      
-                      <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
+
+                      <div className="flex justify-between items-center mt-3 font-mono text-xs text-muted">
                         <span>Created: {formatDate(message.createdAt || (message as SentMessage).timestamp || message.scheduledFor || '')}</span>
                         <span>ID: {message.id}</span>
                       </div>
