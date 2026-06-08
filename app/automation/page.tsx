@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
+import CsvImport from '@/components/CsvImport'
 import {
   BoltIcon,
   CheckCircleIcon,
@@ -476,6 +477,13 @@ export default function AutomationPage() {
             </div>
           </div>
         )}
+
+        {/* CSV import (no-connection fallback) */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+          <h2 className="font-semibold text-gray-900 mb-1">Import from a CSV</h2>
+          <p className="text-xs text-gray-400 mb-4">Works without connecting — great on mobile, or as a backup.</p>
+          <CsvImport onImported={loadAll} />
+        </div>
 
         {/* Upcoming auto-scheduled reminders */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
