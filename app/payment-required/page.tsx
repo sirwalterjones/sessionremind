@@ -1,10 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CreditCardIcon, ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
 export default function PaymentRequiredPage() {
+  // useSearchParams must be inside a Suspense boundary (Next.js 14 requirement).
+  return (
+    <Suspense fallback={null}>
+      <PaymentRequiredContent />
+    </Suspense>
+  )
+}
+
+function PaymentRequiredContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectPath = searchParams.get('redirect') || '/dashboard'

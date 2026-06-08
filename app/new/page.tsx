@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Form from '@/components/Form'
 import MobileManualEntry from '@/components/MobileManualEntry'
@@ -21,6 +21,15 @@ interface FormData {
 }
 
 export default function NewReminder() {
+  // useSearchParams must be inside a Suspense boundary (Next.js 14 requirement).
+  return (
+    <Suspense fallback={null}>
+      <NewReminderContent />
+    </Suspense>
+  )
+}
+
+function NewReminderContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -31,6 +40,22 @@ export default function NewReminder() {
   const [textInput, setTextInput] = useState('')
   const [isExtractingText, setIsExtractingText] = useState(false)
   const [showTextExtractor, setShowTextExtractor] = useState(false)
+  // Per-user studio name (multi-tenant) — never hard-coded. Pulled from the
+  // photographer's settings (auto-filled from their UseSession business name).
+  const [studioName, setStudioName] = useState('')
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/settings')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (active && data?.settings?.studioName) setStudioName(data.settings.studioName)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [])
 
 
   const handleSmartExtraction = async () => {
@@ -274,7 +299,7 @@ export default function NewReminder() {
       if (formData.sendRegistrationMessage && !formData.sendManualText) {
         console.log('Sending registration confirmation...')
         
-        registrationMessage = `Hi ${formData.name}! You're registered for text reminders from Moments by Candice Photography. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. Looking forward to seeing you!`
+        registrationMessage = `Hi ${formData.name}! You're registered for text reminders from ${studioName || 'our studio'}. Your ${formData.sessionTitle} session is scheduled for ${formData.sessionTime}. Looking forward to seeing you!`
 
         const smsResponse = await fetch('/api/send-sms', {
           method: 'POST',

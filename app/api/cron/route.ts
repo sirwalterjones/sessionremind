@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { syncAllConnected } from '@/lib/sync'
 
 // This endpoint can be called by external cron services like cron-job.org
-// or by Vercel Cron Jobs to process scheduled messages
+// or by Vercel Cron Jobs to: (1) pull new UseSession bookings for every
+// connected photographer and auto-schedule reminders, then (2) send any
+// reminders that are now due.
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +25,18 @@ export async function GET(request: NextRequest) {
     console.log('User Agent:', request.headers.get('user-agent'))
     console.log('Timestamp:', new Date().toISOString())
 
-    // Call the background processor directly (internal call)
+    // 1) Pull new bookings from UseSession for all connected photographers and
+    //    auto-schedule reminders. Never let a sync failure block sending.
+    let syncSummary: { users: number; totalScheduled: number } | { error: string }
+    try {
+      syncSummary = await syncAllConnected()
+      console.log('UseSession sync:', JSON.stringify(syncSummary))
+    } catch (syncError) {
+      console.error('UseSession sync failed (continuing to send):', syncError)
+      syncSummary = { error: String(syncError instanceof Error ? syncError.message : syncError) }
+    }
+
+    // 2) Call the background processor directly (internal call)
     const baseUrl = process.env.VERCEL_URL 
       ? `https://${process.env.VERCEL_URL}` 
       : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
@@ -43,6 +57,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       timestamp: new Date().toISOString(),
+      sync: syncSummary,
       processed: result.processed,
       messages: result.messages,
     })

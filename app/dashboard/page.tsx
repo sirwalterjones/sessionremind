@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircleIcon, ClockIcon, PlayIcon, CogIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon, UserIcon, ChartBarIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
@@ -205,6 +205,15 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
 }
 
 export default function Dashboard() {
+  // useSearchParams must be inside a Suspense boundary (Next.js 14 requirement).
+  return (
+    <Suspense fallback={null}>
+      <DashboardContent />
+    </Suspense>
+  )
+}
+
+function DashboardContent() {
   const { user, logout } = useAuth()
   const searchParams = useSearchParams()
   const [sentMessages, setSentMessages] = useState<SentMessage[]>([])

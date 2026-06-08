@@ -2,23 +2,10 @@
 // This ensures messages survive server restarts and work across serverless instances
 
 import { kv } from '@vercel/kv'
+import { ScheduledMessage } from './types'
 
-interface ScheduledMessage {
-  id: string
-  clientName: string
-  phone: string
-  email: string
-  sessionTitle: string
-  sessionTime: string
-  message: string
-  scheduledFor: string
-  sessionDate: string
-  reminderType: '3-day' | '1-day' | 'manual' | 'registration' | 'test-2min' | 'test-5min'
-  status: 'scheduled' | 'sent' | 'failed'
-  createdAt: string
-  sentAt?: string
-  userId?: string
-}
+// Re-export so existing imports `from '@/lib/storage'` keep working.
+export type { ScheduledMessage }
 
 const STORAGE_KEY = 'scheduled-messages'
 
@@ -62,6 +49,37 @@ export async function addScheduledMessage(message: ScheduledMessage): Promise<vo
   const messages = await getScheduledMessages()
   messages.push(message)
   await saveScheduledMessages(messages)
+}
+
+// Batch add with de-duplication by externalKey. Does a single read-modify-write
+// per call (instead of one per message) and skips messages whose externalKey
+// already exists, so repeated syncs don't create duplicate reminders.
+// Returns the number actually added.
+export async function addScheduledMessages(newMessages: ScheduledMessage[]): Promise<number> {
+  if (!newMessages.length) return 0
+  for (const m of newMessages) {
+    if (!m.userId) throw new Error('Message must have userId attribution before storage')
+  }
+  const existing = await getScheduledMessages()
+  const seen = new Set(existing.map((m) => m.externalKey).filter(Boolean))
+  const toAdd = newMessages.filter((m) => !m.externalKey || !seen.has(m.externalKey))
+  if (!toAdd.length) return 0
+  await saveScheduledMessages([...existing, ...toAdd])
+  return toAdd.length
+}
+
+// All externalKeys already stored for a user (for dedupe checks before building).
+export async function getExistingExternalKeys(userId: string): Promise<Set<string>> {
+  const messages = await getScheduledMessages()
+  return new Set(
+    messages.filter((m) => m.userId === userId && m.externalKey).map((m) => m.externalKey as string)
+  )
+}
+
+// Count a user's scheduled + sent messages (for quota enforcement).
+export async function countUserMessages(userId: string): Promise<number> {
+  const messages = await getScheduledMessages()
+  return messages.filter((m) => m.userId === userId).length
 }
 
 export async function updateMessageStatus(id: string, status: 'sent' | 'failed'): Promise<void> {
