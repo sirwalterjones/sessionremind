@@ -1,50 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session Reminder</title>
-    <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-    <div class="popup-container">
-        <div class="header">
-            <div class="icon">📱</div>
-            <h1>Session Reminder</h1>
-        </div>
-        
-        <div class="content">
-            <div class="status" id="status">
-                <div class="status-indicator"></div>
-                <span id="status-text">Ready to use</span>
-            </div>
-            
-            <div class="instructions">
-                <h3>How to use:</h3>
-                <ol>
-                    <li>Go to any UseSession page</li>
-                    <li>Click the floating "Send Reminder" button</li>
-                    <li>Form opens with client data pre-filled</li>
-                </ol>
-            </div>
-            
-            <div class="actions">
-                <button id="test-btn" class="btn-primary">
-                    <span>📝</span>
-                    Test Form
-                </button>
-                <button id="help-btn" class="btn-secondary">
-                    <span>📖</span>
-                    Help
-                </button>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>v1.0.0</p>
-        </div>
-    </div>
-    
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        width: 320px;
+        margin: 0;
+        font-family: -apple-system, system-ui, sans-serif;
+        background: #14110d;
+        color: #f2ece0;
+        padding: 20px;
+      }
+      .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: #be7b2e; }
+      .brand strong { font-size: 15px; letter-spacing: -0.01em; }
+      p.sub { font-size: 12.5px; line-height: 1.5; color: #b3a78c; margin: 0 0 16px; }
+      button {
+        width: 100%;
+        padding: 11px 16px;
+        border: 0;
+        border-radius: 10px;
+        background: #be7b2e;
+        color: #14110d;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      button:disabled { opacity: 0.5; cursor: default; }
+      #status { margin-top: 14px; font-size: 12.5px; line-height: 1.5; color: #d8cdb8; min-height: 18px; }
+      a { color: #be7b2e; }
+    </style>
+  </head>
+  <body>
+    <div class="brand"><span class="dot"></span><strong>SessionRemind</strong></div>
+    <p class="sub">
+      Make sure you're logged into UseSession (this tab) and into SessionRemind in this browser, then connect.
+    </p>
+    <button id="connect">Connect this account</button>
+    <div id="status"></div>
     <script src="popup.js"></script>
-</body>
+  </body>
 </html>

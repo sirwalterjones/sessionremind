@@ -1,25 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Session Reminder",
-  "version": "1.0.0",
-  "description": "Automatically extract client data from UseSession and create SMS reminders",
-  "permissions": [
-    "activeTab",
-    "tabs"
-  ],
+  "name": "SessionRemind Connector",
+  "version": "2.0.0",
+  "description": "One-click connect your UseSession account to SessionRemind for automatic SMS reminders.",
+  "permissions": ["activeTab", "scripting", "tabs"],
   "host_permissions": [
-    "https://app.usesession.com/*"
+    "https://app.usesession.com/*",
+    "https://sessionremind.com/*"
   ],
-  "content_scripts": [
-    {
-      "matches": ["https://app.usesession.com/*"],
-      "js": ["content.js"],
-      "css": ["content.css"]
-    }
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

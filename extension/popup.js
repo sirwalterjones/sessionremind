@@ -1,46 +1,62 @@
-// Popup script for Session Reminder extension
-document.addEventListener('DOMContentLoaded', function() {
-    const testBtn = document.getElementById('test-btn');
-    const helpBtn = document.getElementById('help-btn');
-    const statusText = document.getElementById('status-text');
-    
-    // Check if we're on a UseSession page
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        const currentTab = tabs[0];
-        
-        if (currentTab.url.includes('app.usesession.com')) {
-            statusText.textContent = 'Ready on UseSession page';
-            statusText.style.color = '#166534';
-        } else {
-            statusText.textContent = 'Navigate to UseSession';
-            statusText.style.color = '#ea580c';
-            
-            // Change status indicator color
-            const indicator = document.querySelector('.status-indicator');
-            indicator.style.background = '#f97316';
-            
-            // Update status background
-            const status = document.querySelector('.status');
-            status.style.background = '#fff7ed';
-            status.style.borderColor = '#fed7aa';
+// One-click connect: read the UseSession token from the active tab and send it
+// to SessionRemind using the user's existing SessionRemind login (cookies are
+// included because the extension has host permission for sessionremind.com).
+const SR_ORIGIN = 'https://sessionremind.com'
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('connect')
+  const status = document.getElementById('status')
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs[0]
+    const onUseSession = tab && /https:\/\/app\.usesession\.com/.test(tab.url || '')
+
+    if (!onUseSession) {
+      status.textContent = 'Open app.usesession.com (logged in) in this tab, then click Connect.'
+      btn.disabled = true
+    } else {
+      status.textContent = 'Ready.'
+    }
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true
+      status.textContent = 'Connecting…'
+      try {
+        // Read the token from the UseSession page (content scripts/executeScript
+        // share the page origin, so localStorage is readable).
+        const [{ result: token }] = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => localStorage.getItem('session-token'),
+        })
+
+        if (!token) {
+          status.textContent = 'Please log into UseSession first, then try again.'
+          btn.disabled = false
+          return
         }
-    });
-    
-    // Test button - opens empty form
-    testBtn.addEventListener('click', function() {
-        chrome.tabs.create({
-            url: 'https://sessionremind.com/new',
-            active: true
-        });
-        window.close();
-    });
-    
-    // Help button - opens main page
-    helpBtn.addEventListener('click', function() {
-        chrome.tabs.create({
-            url: 'https://sessionremind.com',
-            active: true
-        });
-        window.close();
-    });
-});
+
+        const res = await fetch(`${SR_ORIGIN}/api/usesession/connect`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ token }),
+        })
+        const data = await res.json().catch(() => ({}))
+
+        if (res.ok) {
+          const n = data.sync && typeof data.sync.scheduled === 'number' ? data.sync.scheduled : null
+          status.textContent = `✅ Connected${data.businessName ? ' · ' + data.businessName : ''}!` + (n !== null ? ` Scheduled ${n} reminders.` : '')
+        } else if (res.status === 401) {
+          status.innerHTML = 'Please <a href="' + SR_ORIGIN + '/login" target="_blank">log into SessionRemind</a> in this browser first, then try again.'
+          btn.disabled = false
+        } else {
+          status.textContent = '❌ ' + (data.error || 'Could not connect. Try again.')
+          btn.disabled = false
+        }
+      } catch (e) {
+        status.textContent = '❌ ' + (e && e.message ? e.message : 'Something went wrong.')
+        btn.disabled = false
+      }
+    })
+  })
+})

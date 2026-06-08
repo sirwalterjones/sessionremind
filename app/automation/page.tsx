@@ -322,6 +322,32 @@ export default function AutomationPage() {
                 One-time setup. After this, new bookings sync automatically — you never have to touch it again.
               </p>
 
+              {/* Recommended: true one-click via the browser extension (no dragging) */}
+              <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4 mb-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <p className="text-sm font-semibold text-gray-900">⚡ One-click connect — no dragging</p>
+                  <span className="text-[10px] uppercase tracking-wide bg-blue-600 text-white px-2 py-0.5 rounded-full">
+                    Easiest
+                  </span>
+                </div>
+                <ol className="mt-2 text-sm text-gray-700 space-y-1 list-decimal list-inside">
+                  <li>
+                    <a href="/sessionremind-connector.zip" className="text-blue-600 underline">
+                      Download the connector
+                    </a>{' '}
+                    and unzip it.
+                  </li>
+                  <li>
+                    Open <code className="text-xs bg-white px-1 rounded border">chrome://extensions</code>, turn on
+                    Developer mode, click “Load unpacked”, and choose the folder.
+                  </li>
+                  <li>
+                    On UseSession (logged in), click the SessionRemind icon → <strong>Connect</strong>. That&apos;s it.
+                  </li>
+                </ol>
+              </div>
+              <div className="text-center text-xs text-gray-400 mb-4">or use the no-install option below</div>
+
               {!pairCode ? (
                 <button
                   onClick={startConnect}
@@ -342,18 +368,31 @@ export default function AutomationPage() {
                         copy the link
                       </button>
                       ):
-                      <div className="mt-2">
-                        {/* React blocks javascript: hrefs, so set it via ref. */}
-                        <a
-                          ref={(el) => {
-                            if (el && bookmarklet) el.setAttribute('href', bookmarklet)
-                          }}
-                          onClick={(e) => e.preventDefault()}
-                          className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium cursor-grab"
-                        >
-                          <BoltIcon className="w-4 h-4 mr-1" /> Connect to SessionRemind
-                        </a>
-                      </div>
+                      {/*
+                        Rendered as raw HTML so the javascript: href survives (React
+                        strips javascript: URLs). onClickCapture stops it from running
+                        on this page if clicked — it's meant to be dragged, not clicked.
+                      */}
+                      <div
+                        className="mt-2"
+                        onClickCapture={(e) => e.preventDefault()}
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            '<a href="' +
+                            bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
+                            '" draggable="true" title="Drag me to your bookmarks bar" ' +
+                            'style="background:#BE7B2E" ' +
+                            'class="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium cursor-grab no-underline">' +
+                            '⚡ Connect to SessionRemind</a>',
+                        }}
+                      />
+                      <p className="text-xs text-gray-500 mt-2">
+                        Can&apos;t drag it?{' '}
+                        <button onClick={copyBookmarklet} className="text-blue-600 underline">
+                          Copy the link
+                        </button>
+                        , then make a new bookmark and paste it as the URL.
+                      </p>
                     </li>
                     <li>
                       Open{' '}
