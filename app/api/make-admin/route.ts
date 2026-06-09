@@ -5,8 +5,9 @@ export async function POST(request: Request) {
   try {
     const { userId, secret } = await request.json()
     
-    // Simple secret check (you should use a proper secret)
-    if (secret !== 'admin-setup-secret-123') {
+    // Secret must be configured via env; endpoint is disabled if unset.
+    const expected = process.env.ADMIN_SETUP_SECRET
+    if (!expected || secret !== expected) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

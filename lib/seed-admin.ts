@@ -12,11 +12,13 @@ export async function seedAdminUser() {
   }
 
   // Create admin user
-  const adminUser = await createUser(
-    'walterjones', 
-    adminEmail, 
-    'candice' // Admin password
-  )
+  // Password must come from the environment, never hardcoded.
+  const seedPassword = process.env.ADMIN_SEED_PASSWORD
+  if (!seedPassword) {
+    console.warn('seedAdminUser: ADMIN_SEED_PASSWORD not set — skipping admin seed')
+    return
+  }
+  const adminUser = await createUser('walterjones', adminEmail, seedPassword)
 
   // Set admin flags
   await kv.hset(`user:${adminUser.id}`, {
