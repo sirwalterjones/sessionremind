@@ -44,6 +44,11 @@ export default function MobileNav() {
             </Link>
           )}
           {user && (
+            <Link href="/reminders" className={item} onClick={() => setIsOpen(false)}>
+              Reminders
+            </Link>
+          )}
+          {user && (
             <Link href="/dashboard" className={item} onClick={() => setIsOpen(false)}>
               Dashboard
             </Link>

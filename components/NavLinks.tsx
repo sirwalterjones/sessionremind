@@ -21,6 +21,11 @@ export default function NavLinks() {
         </Link>
       )}
       {user && (
+        <Link href="/reminders" className={linkClass}>
+          Reminders
+        </Link>
+      )}
+      {user && (
         <Link href="/dashboard" className={linkClass}>
           Dashboard
         </Link>
