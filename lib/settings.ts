@@ -168,10 +168,13 @@ export interface TenantBusiness {
   contactLastName: string
   contactEmail: string
   contactPhone: string // E.164
-  optInType: 'VERBAL' | 'WEB_FORM' | 'PAPER_FORM' | 'VIA_TEXT' | 'MOBILE_QR_CODE'
-  optInDetails: string
-  messageSample: string
-  monthlyVolume: string // Twilio expects a string bucket, e.g. '10', '100', '1,000'
+  // Opt-in/consent fields are standardized platform-side (same flow for every
+  // tenant), so they are NOT collected from the photographer. Kept optional for
+  // back-compat with any records that stored them.
+  optInType?: 'VERBAL' | 'WEB_FORM' | 'PAPER_FORM' | 'VIA_TEXT' | 'MOBILE_QR_CODE'
+  optInDetails?: string
+  messageSample?: string
+  monthlyVolume?: string // Twilio expects a string bucket, e.g. '10', '100', '1,000'
   updatedAt?: string
 }
 

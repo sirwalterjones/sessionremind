@@ -10,12 +10,14 @@
 // auth. On any failure after a number is purchased, we release the number so a
 // failed run doesn't silently leave a ~$2/mo charge behind.
 
+import { kv } from '@vercel/kv'
 import {
   TenantBusiness,
   TenantSmsSender,
   getTenantSmsSender,
   patchTenantSmsSender,
   getTenantBusiness,
+  getUserSettings,
 } from './settings'
 import {
   findAvailableTollFree,
@@ -27,15 +29,77 @@ import {
   twilioConfigured,
 } from './twilio'
 
-// A public image proving the opt-in flow is required by Twilio. We default to a
-// hosted screenshot of the UseSession booking consent; override per-tenant via env.
-const DEFAULT_OPT_IN_IMAGE =
-  process.env.TOLLFREE_OPT_IN_IMAGE_URL || 'https://sessionremind.com/opt-in-proof.png'
+// --- Platform-standardized consent (same for EVERY tenant) ----------------
+// In the ISV model the opt-in flow is identical for all studios (clients give
+// their number when booking via the studio's online booking page and thereby
+// consent to transactional appointment reminders). So we do NOT ask each
+// photographer to describe consent — these values are fixed platform-side, and
+// a single hosted opt-in proof image is reused across all verifications.
+
+const APP_BASE = process.env.NEXT_PUBLIC_BASE_URL || 'https://sessionremind.com'
+
+// A public image proving the opt-in flow is required by Twilio. This is a
+// platform asset hosted by us and reused for every tenant.
+const DEFAULT_OPT_IN_IMAGE = process.env.TOLLFREE_OPT_IN_IMAGE_URL || `${APP_BASE}/opt-in-proof.png`
+
+const PLATFORM_OPT_IN_TYPE = 'WEB_FORM' as const
+
+const PLATFORM_OPT_IN_DETAILS =
+  'Clients provide their mobile number when booking a session through the studio’s online ' +
+  'booking page and agree to receive transactional appointment reminder texts about that session. ' +
+  'Messages are reminders only (no marketing). Every recipient can reply STOP to opt out at any time.'
+
+const PLATFORM_USE_CASE_SUMMARY =
+  'Appointment reminder texts sent to a photography studio’s clients about sessions they booked. ' +
+  'Reminders include the session date, time, and location. Transactional only — no marketing.'
+
+// Map a tenant's included-texts limit to Twilio's monthly-volume bucket.
+function volumeBucket(smsLimit?: number): string {
+  const n = smsLimit || 0
+  if (n <= 200) return '100'
+  if (n <= 2000) return '1,000'
+  return '10,000'
+}
+
+// Build a realistic sample reminder from the tenant's own template + studio name.
+function sampleMessage(template: string, studioName: string): string {
+  const fill: Record<string, string> = {
+    name: 'Jordan',
+    sessionTitle: 'Family Portrait',
+    sessionTime: 'Sat Jun 14 at 10:00 AM',
+    studioName: studioName || 'your studio',
+  }
+  let out = (template || '').replace(/\{(\w+)\}/g, (_, k) => fill[k] ?? `{${k}}`)
+  if (!out.trim()) {
+    out = `Hi Jordan! Reminder: your Family Portrait session is on Sat Jun 14 at 10:00 AM. See you then! ${fill.studioName}`
+  }
+  return out
+}
 
 export interface ProvisionResult {
   ok: boolean
   sender?: TenantSmsSender
   error?: string
+}
+
+// How long a 'provisioning' record may sit before we treat it as crashed and
+// allow a retry (e.g. a serverless timeout left it stuck).
+const STALE_PROVISIONING_MS = 10 * 60 * 1000
+// Keep the lock alive as long as the stale window so a crashed run's lock and its
+// 'provisioning' record expire together — no window where a retry grabs the lock
+// but is still told "already provisioned".
+const LOCK_TTL_SECONDS = STALE_PROVISIONING_MS / 1000
+
+// A prior run may have already bought a number / created a service before failing
+// or timing out. Those are retryable, and on retry we REUSE the existing paid
+// resources instead of buying new ones (which would orphan the old ones).
+function isRetryable(s: TenantSmsSender | null): boolean {
+  if (!s || s.status === 'none' || s.status === 'failed') return true
+  if (s.status === 'provisioning') {
+    const t = s.updatedAt ? Date.parse(s.updatedAt) : 0
+    return !t || Date.now() - t > STALE_PROVISIONING_MS
+  }
+  return false
 }
 
 export async function provisionTollFree(
@@ -48,86 +112,132 @@ export async function provisionTollFree(
   const biz = business || (await getTenantBusiness(userId))
   if (!biz) return { ok: false, error: 'No business details on file for this tenant' }
 
-  // Guard: don't re-provision a tenant that already has a number.
-  const existing = await getTenantSmsSender(userId)
-  if (existing && existing.status !== 'none' && existing.status !== 'failed') {
-    return { ok: false, error: `Tenant already provisioned (status: ${existing.status})` }
+  // Atomic per-user lock acquired BEFORE any spend — prevents a double-click or
+  // an admin call racing a self-serve call from buying two numbers. Auto-expires
+  // so a crashed run can't lock the tenant out forever.
+  const lockKey = `provision:lock:${userId}`
+  const gotLock = await kv.set(lockKey, '1', { nx: true, ex: LOCK_TTL_SECONDS })
+  if (gotLock === null) {
+    return { ok: false, error: 'Provisioning already in progress — give it a moment.' }
   }
 
-  await patchTenantSmsSender(userId, { status: 'provisioning', error: undefined, updatedAt: nowIso() })
+  try {
+    const existing = await getTenantSmsSender(userId)
+    if (!isRetryable(existing)) {
+      return { ok: false, error: `Tenant already provisioned (status: ${existing!.status})` }
+    }
 
-  // 1) Find + buy a toll-free number.
-  const found = await findAvailableTollFree()
-  if (found.error || !found.phoneNumber) {
-    return fail(userId, found.error || 'No toll-free number available')
-  }
-  const bought = await purchaseNumber(found.phoneNumber)
-  if (bought.error || !bought.sid) {
-    return fail(userId, `Purchase failed: ${bought.error || 'unknown'}`)
-  }
-  const phoneNumberSid = bought.sid
-  const phoneNumber = bought.phoneNumber || found.phoneNumber
+    // Reuse any paid resources a prior attempt already created.
+    let phoneNumberSid = existing?.phoneNumberSid
+    let phoneNumber = existing?.phoneNumber
+    let messagingServiceSid = existing?.messagingServiceSid
 
-  // 2) Messaging Service + attach the number.
-  const svc = await createMessagingServiceWithNumber(`SessionRemind — ${studioName}`, phoneNumberSid)
-  if (svc.error || !svc.messagingServiceSid) {
-    await releaseNumber(phoneNumberSid) // don't leave a paid orphan number
-    return fail(userId, `Messaging Service failed: ${svc.error || 'unknown'}`)
-  }
-  const messagingServiceSid = svc.messagingServiceSid
+    await patchTenantSmsSender(userId, {
+      status: 'provisioning',
+      phoneNumberSid,
+      phoneNumber,
+      messagingServiceSid,
+      error: undefined,
+      updatedAt: nowIso(),
+    })
 
-  // 3) Submit toll-free verification (bound to the number, not the service).
-  const verification = await submitTollfreeVerification({
-    tollfreePhoneNumberSid: phoneNumberSid,
-    businessName: biz.legalName,
-    businessWebsite: biz.website,
-    notificationEmail: biz.contactEmail,
-    useCaseSummary:
-      'Appointment reminder texts sent to photography clients about sessions they booked. ' +
-      'Reminders include the session date, time, and location. No marketing.',
-    productionMessageSample: biz.messageSample,
-    optInImageUrls: [DEFAULT_OPT_IN_IMAGE],
-    optInType: biz.optInType,
-    messageVolume: biz.monthlyVolume,
-    businessStreetAddress: biz.addressStreet,
-    businessCity: biz.addressCity,
-    businessStateProvinceRegion: biz.addressState,
-    businessPostalCode: biz.addressZip,
-    businessCountry: biz.addressCountry || 'US',
-    businessContactFirstName: biz.contactFirstName,
-    businessContactLastName: biz.contactLastName,
-    businessContactEmail: biz.contactEmail,
-    businessContactPhone: biz.contactPhone,
-    additionalInformation:
-      'Clients opt in by providing their mobile number when booking a session through UseSession ' +
-      'and agreeing to receive reminder texts about that session.',
-  })
+    const settings = await getUserSettings(userId, studioName)
+    const smsLimit = await getSmsLimit(userId)
 
-  // Number + service exist even if verification submission failed; keep them and
-  // let an admin retry the verification rather than tearing everything down.
-  if (verification.error || !verification.sid) {
+    // 1) Buy a toll-free number (only if we don't already have one).
+    if (!phoneNumberSid) {
+      const found = await findAvailableTollFree()
+      if (found.error || !found.phoneNumber) {
+        return await fail(userId, found.error || 'No toll-free number available')
+      }
+      const bought = await purchaseNumber(found.phoneNumber)
+      if (bought.error || !bought.sid) {
+        return await fail(userId, `Purchase failed: ${bought.error || 'unknown'}`)
+      }
+      phoneNumberSid = bought.sid
+      phoneNumber = bought.phoneNumber || found.phoneNumber
+      // Persist immediately so a later crash can't orphan an unrecoverable number.
+      await patchTenantSmsSender(userId, { status: 'provisioning', phoneNumberSid, phoneNumber, updatedAt: nowIso() })
+    }
+
+    // 2) Messaging Service + attach the number (only if we don't already have one).
+    if (!messagingServiceSid) {
+      const svc = await createMessagingServiceWithNumber(`SessionRemind — ${studioName}`, phoneNumberSid)
+      if (svc.error || !svc.messagingServiceSid) {
+        const released = await releaseNumber(phoneNumberSid) // don't leave a paid orphan number
+        // Only forget the number if it was actually released. If the release call
+        // itself failed, KEEP the SID (status 'failed') so the still-billing number
+        // can be released on a later retry / by the admin — never erase a live SID.
+        return await fail(userId, `Messaging Service failed: ${svc.error || 'unknown'}`, released.ok)
+      }
+      messagingServiceSid = svc.messagingServiceSid
+      await patchTenantSmsSender(userId, { status: 'provisioning', messagingServiceSid, updatedAt: nowIso() })
+    }
+
+    // 3) Submit toll-free verification (bound to the number, not the service).
+    // Consent fields are platform-standardized; identity fields are the tenant's.
+    const verification = await submitTollfreeVerification({
+      tollfreePhoneNumberSid: phoneNumberSid,
+      businessName: biz.legalName,
+      businessWebsite: biz.website,
+      notificationEmail: biz.contactEmail,
+      useCaseSummary: PLATFORM_USE_CASE_SUMMARY,
+      productionMessageSample: sampleMessage(settings.reminderTemplate, settings.studioName || studioName),
+      optInImageUrls: [DEFAULT_OPT_IN_IMAGE],
+      optInType: PLATFORM_OPT_IN_TYPE,
+      messageVolume: volumeBucket(smsLimit),
+      businessStreetAddress: biz.addressStreet,
+      businessCity: biz.addressCity,
+      businessStateProvinceRegion: biz.addressState,
+      businessPostalCode: biz.addressZip,
+      businessCountry: biz.addressCountry || 'US',
+      businessContactFirstName: biz.contactFirstName,
+      businessContactLastName: biz.contactLastName,
+      businessContactEmail: biz.contactEmail,
+      businessContactPhone: biz.contactPhone,
+      additionalInformation: PLATFORM_OPT_IN_DETAILS,
+    })
+
+    // Number + service exist even if verification submission failed; KEEP them so
+    // a retry reuses them (see isRetryable / the reuse logic above) instead of
+    // buying a new number.
+    if (verification.error || !verification.sid) {
+      const sender = await patchTenantSmsSender(userId, {
+        status: 'failed',
+        messagingServiceSid,
+        phoneNumber,
+        phoneNumberSid,
+        error: `Verification submit failed: ${verification.error || 'unknown'}`,
+        updatedAt: nowIso(),
+      })
+      return { ok: false, sender, error: sender.error }
+    }
+
     const sender = await patchTenantSmsSender(userId, {
-      status: 'failed',
+      status: 'pending_verification',
       messagingServiceSid,
       phoneNumber,
       phoneNumberSid,
-      error: `Verification submit failed: ${verification.error || 'unknown'}`,
+      verificationSid: verification.sid,
+      verificationStatus: verification.status || 'PENDING_REVIEW',
+      error: undefined,
       updatedAt: nowIso(),
     })
-    return { ok: false, sender, error: sender.error }
+    return { ok: true, sender }
+  } catch (e: any) {
+    // Any unexpected throw (incl. a KV write failure) lands here so the tenant is
+    // left 'failed' (retryable) rather than stuck 'provisioning'. Persisted
+    // phoneNumberSid/messagingServiceSid are retained for reuse/cleanup on retry.
+    console.error('provisionTollFree unexpected error:', e?.message || e)
+    const sender = await patchTenantSmsSender(userId, {
+      status: 'failed',
+      error: `Unexpected error: ${e?.message || String(e)}`,
+      updatedAt: nowIso(),
+    }).catch(() => undefined)
+    return { ok: false, sender: sender || undefined, error: e?.message || String(e) }
+  } finally {
+    await kv.del(lockKey).catch(() => {})
   }
-
-  const sender = await patchTenantSmsSender(userId, {
-    status: 'pending_verification',
-    messagingServiceSid,
-    phoneNumber,
-    phoneNumberSid,
-    verificationSid: verification.sid,
-    verificationStatus: verification.status || 'PENDING_REVIEW',
-    error: undefined,
-    updatedAt: nowIso(),
-  })
-  return { ok: true, sender }
 }
 
 // Re-check a pending verification with Twilio and flip the tenant to active when
@@ -162,7 +272,25 @@ function nowIso(): string {
   return new Date().toISOString()
 }
 
-async function fail(userId: string, error: string): Promise<ProvisionResult> {
-  const sender = await patchTenantSmsSender(userId, { status: 'failed', error, updatedAt: nowIso() })
+async function getSmsLimit(userId: string): Promise<number> {
+  try {
+    const v = await kv.hget<number | string>(`user:${userId}`, 'sms_limit')
+    return Number(v) || 0
+  } catch {
+    return 0
+  }
+}
+
+// Mark the tenant 'failed' (retryable). When clearNumber is set (we released the
+// purchased number), wipe the stored number SIDs so a retry buys a fresh one
+// instead of reusing a dead/released SID.
+async function fail(userId: string, error: string, clearNumber = false): Promise<ProvisionResult> {
+  const patch: Partial<TenantSmsSender> = { status: 'failed', error, updatedAt: nowIso() }
+  if (clearNumber) {
+    patch.phoneNumberSid = undefined
+    patch.phoneNumber = undefined
+    patch.messagingServiceSid = undefined
+  }
+  const sender = await patchTenantSmsSender(userId, patch)
   return { ok: false, sender, error }
 }

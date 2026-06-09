@@ -103,6 +103,7 @@ export async function createMessagingServiceWithNumber(
 ): Promise<{ messagingServiceSid?: string; error?: string }> {
   const client = getClient()
   if (!client) return { error: 'Twilio not configured' }
+  let serviceSid: string | undefined
   try {
     const service = await client.messaging.v1.services.create({
       friendlyName,
@@ -110,9 +111,15 @@ export async function createMessagingServiceWithNumber(
       useInboundWebhookOnNumber: false,
       inboundRequestUrl: `${APP_BASE_URL}/api/twilio/inbound`,
     })
+    serviceSid = service.sid
     await client.messaging.v1.services(service.sid).phoneNumbers.create({ phoneNumberSid })
     return { messagingServiceSid: service.sid }
   } catch (e: any) {
+    // If the service was created but attaching the number failed, delete the
+    // orphaned service before returning so we don't accumulate dangling ones.
+    if (serviceSid) {
+      await client.messaging.v1.services(serviceSid).remove().catch(() => {})
+    }
     return { error: e?.message || String(e) }
   }
 }

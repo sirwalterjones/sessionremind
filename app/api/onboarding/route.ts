@@ -7,11 +7,10 @@ import {
   getTenantSmsSender,
 } from '@/lib/settings'
 
-// Self-service: the photographer enters the business details Twilio needs for a
-// toll-free verification. Saving here does NOT spend money — an admin (operator)
-// reviews and triggers the actual number purchase + verification submission.
-
-const OPT_IN_TYPES = ['VERBAL', 'WEB_FORM', 'PAPER_FORM', 'VIA_TEXT', 'MOBILE_QR_CODE']
+// Self-service: the photographer enters only their BUSINESS IDENTITY (needed
+// because the toll-free number is registered to their business). The opt-in /
+// consent details are standardized platform-side, so they're not asked here.
+// Saving does NOT spend money.
 
 const REQUIRED: (keyof TenantBusiness)[] = [
   'legalName',
@@ -24,9 +23,6 @@ const REQUIRED: (keyof TenantBusiness)[] = [
   'contactLastName',
   'contactEmail',
   'contactPhone',
-  'optInDetails',
-  'messageSample',
-  'monthlyVolume',
 ]
 
 export async function GET(request: NextRequest) {
@@ -63,10 +59,6 @@ export async function PUT(request: NextRequest) {
     contactLastName: str(body.contactLastName).slice(0, 80),
     contactEmail: str(body.contactEmail).toLowerCase().slice(0, 160),
     contactPhone: str(body.contactPhone).slice(0, 24),
-    optInType: OPT_IN_TYPES.includes(str(body.optInType)) ? str(body.optInType) as TenantBusiness['optInType'] : 'WEB_FORM',
-    optInDetails: str(body.optInDetails).slice(0, 600),
-    messageSample: str(body.messageSample).slice(0, 600),
-    monthlyVolume: str(body.monthlyVolume).slice(0, 16) || '100',
     updatedAt: new Date().toISOString(),
   }
 

@@ -114,7 +114,7 @@ export default function PrivacyPage() {
             <strong>We do not share your number.</strong> Mobile information — your phone number and the fact that
             you opted in to reminders — is used only to deliver these reminder messages. We do not sell, rent, or
             share mobile opt-in data or phone numbers with third parties or affiliates for their own marketing
-            purposes. Carriers are not liable for delayed or undelivered messages.
+            purposes.
           </p>
           <p>
             Supported carriers may include AT&amp;T, T-Mobile, Verizon, and others. Carriers are not liable for

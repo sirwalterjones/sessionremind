@@ -1,17 +1,22 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { kv } from '@vercel/kv'
+import { getCurrentUser } from '@/lib/auth'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { userId, secret } = await request.json()
-    
-    // Secret must be configured via env; endpoint is disabled if unset.
+
+    // SECURITY: only an existing admin may grant admin (is_admin bypasses the
+    // paid-number gate). The very first admin is seeded via lib/seed-admin, not
+    // here. The shared-secret path is kept as an optional extra factor but is no
+    // longer sufficient on its own.
+    const caller = await getCurrentUser(request)
+    if (!caller?.is_admin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const expected = process.env.ADMIN_SETUP_SECRET
-    if (!expected || secret !== expected) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    if (expected && secret !== expected) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     if (!userId) {

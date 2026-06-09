@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
         sms_limit: user.sms_limit || 500,
         is_admin: user.is_admin || false,
         payment_override: user.payment_override || false,
-        stripe_customer_id: user.stripe_customer_id || null
+        stripe_customer_id: user.stripe_customer_id || null,
+        stripe_subscription_id: user.stripe_subscription_id || null
       }
     })
 
