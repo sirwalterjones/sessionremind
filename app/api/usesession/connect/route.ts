@@ -28,10 +28,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('connect: connectUseSession failed:', error)
     return NextResponse.json(
-      {
-        error: 'That token did not work. Make sure you are logged into UseSession and try again.',
-        detail: String((error as any)?.message || error),
-      },
+      { error: 'That token did not work. Make sure you are logged into UseSession and try again.' },
       { status: 400 }
     )
   }

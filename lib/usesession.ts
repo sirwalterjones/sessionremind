@@ -20,20 +20,48 @@ export interface ViewerInfo {
   businessName: string
 }
 
+// The token comes from the browser's localStorage, which often stores it
+// JSON-stringified — so the raw value can arrive wrapped in literal quotes
+// (e.g. `"eyJ..."`) or even double-encoded. UseSession's JWT verifier rejects
+// any such wrapper as `invalid token` (HTTP 401). Strip quotes/backslashes/
+// whitespace (and unwrap repeated JSON-string encodings) to recover the bare JWT.
+// A valid JWT never contains quotes/backslashes, so this can't over-strip.
+export function sanitizeToken(raw: string): string {
+  let t = (raw || '').trim()
+  let prev = ''
+  while (t !== prev) {
+    prev = t
+    if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
+      try {
+        const parsed = JSON.parse(t)
+        if (typeof parsed === 'string') {
+          t = parsed.trim()
+          continue
+        }
+      } catch {
+        /* not valid JSON — fall through to manual strip */
+      }
+      t = t.slice(1, -1).trim()
+    }
+    t = t.replace(/^[\s\\]+|[\s\\]+$/g, '')
+  }
+  return t
+}
+
 async function gql<T = any>(
   token: string,
   query: string,
   variables?: Record<string, unknown>,
   operationName?: string
 ): Promise<T> {
+  const clean = sanitizeToken(token)
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
       accept: 'application/json',
-      // UseSession's API requires "Authorization: Bearer <jwt>". The token we
-      // capture from localStorage is the raw JWT, so prefix it (idempotently).
-      authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`,
+      // UseSession's API requires "Authorization: Bearer <jwt>".
+      authorization: clean.startsWith('Bearer ') ? clean : `Bearer ${clean}`,
     },
     body: JSON.stringify({ query, variables, operationName }),
   })

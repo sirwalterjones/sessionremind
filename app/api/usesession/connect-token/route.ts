@@ -50,10 +50,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('connect-token: connectUseSession failed:', error)
     return NextResponse.json(
-      {
-        error: 'Could not validate your UseSession token. Make sure you are logged in and try again.',
-        detail: String((error as any)?.message || error),
-      },
+      { error: 'Could not validate your UseSession token. Make sure you are logged in and try again.' },
       { status: 400, headers: CORS_HEADERS }
     )
   }

@@ -7,7 +7,7 @@
 
 import { getUserSettings, patchUserSettings, setUseSessionToken } from './settings'
 import { syncUserBookings } from './sync'
-import { discoverListField, fetchViewer } from './usesession'
+import { discoverListField, fetchViewer, sanitizeToken } from './usesession'
 import { SyncResult } from './sync'
 
 export interface ConnectResult {
@@ -19,8 +19,12 @@ export interface ConnectResult {
 export async function connectUseSession(
   userId: string,
   username: string,
-  token: string
+  rawToken: string
 ): Promise<ConnectResult> {
+  // localStorage often stores the JWT JSON-stringified (wrapped in quotes);
+  // strip any wrapper so we validate and persist the bare token.
+  const token = sanitizeToken(rawToken)
+
   // Throws if the token is invalid/expired.
   const viewer = await fetchViewer(token)
 
