@@ -105,7 +105,7 @@ export default function Instructions() {
               [
                 '01',
                 'Connect UseSession',
-                'One click with the SessionRemind Connector extension — no passwords, no setup wizard. It reads just your access token and links your account.',
+                'Once, from a computer: drag our Connect button to your bookmarks bar and click it while on UseSession. No passwords, no setup wizard — it reads just your access token and links your account.',
               ],
               [
                 '02',
@@ -114,8 +114,8 @@ export default function Instructions() {
               ],
               [
                 '03',
-                'Clients get texted',
-                'A warm, on-brand reminder goes out automatically 3 days and 1 day before every shoot. You never lift a finger.',
+                'Clients get texted & emailed',
+                'A warm, on-brand reminder goes out automatically 3 days and 1 day before every shoot — by text, and email if you turn it on. You never lift a finger.',
               ],
             ].map(([n, t, d]) => (
               <div key={n} className="group bg-white p-8 hover:bg-[#FCFBF9] transition-colors">

@@ -32,14 +32,14 @@ export default function PrivacyPage() {
       </p>
 
       <div className="mt-10 space-y-8">
-        <Section title="What the SessionRemind Connector extension does">
+        <Section title="What the SessionRemind Connector does">
           <p>
-            The browser extension reads a single value — your UseSession access token — from your own
-            already-logged-in UseSession session, and sends it to SessionRemind over an encrypted (HTTPS)
-            connection so reminders can be scheduled on your behalf.
+            The Connector (a one-time bookmarklet you click while on UseSession) reads a single value — your
+            UseSession access token — from your own already-logged-in UseSession session, and sends it to
+            SessionRemind over an encrypted (HTTPS) connection so reminders can be scheduled on your behalf.
           </p>
           <p>
-            The extension <strong>never asks for, sees, transmits, or stores your UseSession username or
+            It <strong>never asks for, sees, transmits, or stores your UseSession username or
             password.</strong> It does not read your browsing history, your activity on other sites, or any page
             other than UseSession when you click Connect.
           </p>
