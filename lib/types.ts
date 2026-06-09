@@ -79,5 +79,8 @@ export interface UserSettings {
   sendHourEastern: number
   // When true, new synced bookings auto-schedule reminders immediately.
   autoSchedule: boolean
+  // When true, send an email reminder alongside the SMS (needs a client email +
+  // a verified Resend domain).
+  emailReminders?: boolean
   usesession: UseSessionConnection
 }

@@ -131,6 +131,25 @@ export function renderBrandedEmail(o: BrandedEmailOpts): string {
 </html>`
 }
 
+function escapeHtml(s: string): string {
+  return (s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
+// A branded email reminder sent alongside the SMS. `body` is the already-
+// rendered reminder text (same copy as the SMS).
+export async function sendReminderEmail(to: string, studioName: string, body: string): Promise<boolean> {
+  const html = renderBrandedEmail({
+    preheader: body.slice(0, 120),
+    eyebrow: 'Session reminder',
+    heading: 'A friendly reminder',
+    bodyHtml: `<p style="margin:0;white-space:pre-line;">${escapeHtml(body)}</p>`,
+  })
+  return sendEmail(to, `Reminder from ${studioName || 'your photographer'}`, html)
+}
+
 export async function sendVerificationEmail(to: string, link: string): Promise<boolean> {
   const html = renderBrandedEmail({
     preheader: 'Confirm your email to finish setting up SessionRemind.',

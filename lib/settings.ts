@@ -23,6 +23,7 @@ export function defaultSettings(studioName: string): UserSettings {
     offsetsDays: [3, 1],
     sendHourEastern: 10,
     autoSchedule: true,
+    emailReminders: false,
     usesession: { connected: false },
   }
 }

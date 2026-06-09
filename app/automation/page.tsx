@@ -31,6 +31,7 @@ interface Settings {
   offsetsDays: number[]
   sendHourEastern: number
   autoSchedule: boolean
+  emailReminders?: boolean
   usesession: UseSessionStatus
 }
 
@@ -204,6 +205,7 @@ export default function AutomationPage() {
           offsetsDays: settings.offsetsDays,
           sendHourEastern: settings.sendHourEastern,
           autoSchedule: settings.autoSchedule,
+          emailReminders: settings.emailReminders,
         }),
       })
       const data = await res.json()
@@ -462,6 +464,21 @@ export default function AutomationPage() {
                   <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-[#16a34a]' : 'bg-muted'}`} />
                   {settings.autoSchedule ? 'On' : 'Off'}
                 </button>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-ink mb-2">Email reminders (alongside SMS)</label>
+                <button
+                  onClick={() => setSettings({ ...settings, emailReminders: !settings.emailReminders })}
+                  className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                    settings.emailReminders
+                      ? 'border-[#cfe8d4] text-[#16a34a]'
+                      : 'border-hairline text-muted'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.emailReminders ? 'bg-[#16a34a]' : 'bg-muted'}`} />
+                  {settings.emailReminders ? 'On' : 'Off'}
+                </button>
+                <p className="text-xs text-muted mt-1.5">Also emails clients who have an email on file. Needs a verified sending domain.</p>
               </div>
             </div>
             <button

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getScheduledMessagesPendingDelivery, updateMessageStatus } from '@/lib/storage'
+import { getUserSettings } from '@/lib/settings'
+import { sendReminderEmail } from '@/lib/email'
 import { kv } from '@vercel/kv'
 
 // This endpoint should be called periodically (e.g., every 15 minutes) by a cron job
@@ -44,6 +46,16 @@ export async function POST(request: NextRequest) {
       })
     }
     
+    // Cache per-user settings within this run (for the email-reminder opt-in).
+    const settingsCache = new Map<string, any>()
+    const userSettingsFor = async (userId?: string) => {
+      if (!userId) return null
+      if (settingsCache.has(userId)) return settingsCache.get(userId)
+      const s = await getUserSettings(userId, '')
+      settingsCache.set(userId, s)
+      return s
+    }
+
     // Process each message
     for (const message of messagesToSend) {
       console.log(`Processing message ${message.id} for ${message.clientName}`)
@@ -92,8 +104,22 @@ export async function POST(request: NextRequest) {
         })
         console.log(`❌ Message ${message.id} failed to send`)
       }
+
+      // Email reminder alongside the SMS, if the user enabled it and the client
+      // has an email. No-ops cleanly until the Resend domain is verified.
+      try {
+        if (message.userId && message.email) {
+          const s = await userSettingsFor(message.userId)
+          if (s?.emailReminders) {
+            const ok = await sendReminderEmail(message.email, s.studioName || '', message.message)
+            console.log(`Email reminder for ${message.id}: ${ok ? 'sent' : 'skipped/failed'}`)
+          }
+        }
+      } catch (e) {
+        console.error('Email reminder error:', e)
+      }
     }
-    
+
     console.log(`=== CRON JOB PROCESSING COMPLETE ===`)
     console.log(`Processed: ${processedMessages.length} messages`)
     

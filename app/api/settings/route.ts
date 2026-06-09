@@ -36,6 +36,7 @@ export async function PUT(request: NextRequest) {
   if (typeof body.sendHourEastern === 'number')
     patch.sendHourEastern = Math.min(20, Math.max(6, Math.round(body.sendHourEastern)))
   if (typeof body.autoSchedule === 'boolean') patch.autoSchedule = body.autoSchedule
+  if (typeof body.emailReminders === 'boolean') patch.emailReminders = body.emailReminders
   if (Array.isArray(body.offsetsDays)) {
     const offsets = body.offsetsDays
       .map((n) => Math.round(Number(n)))
