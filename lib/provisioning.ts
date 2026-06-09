@@ -17,7 +17,9 @@ import {
   getTenantSmsSender,
   patchTenantSmsSender,
   getTenantBusiness,
+  setTenantBusiness,
   getUserSettings,
+  setSharedSmsSender,
   addPendingVerification,
   removePendingVerification,
   listPendingVerifications,
@@ -33,6 +35,23 @@ import {
 } from './twilio'
 import { getUserById } from './auth'
 import { sendTollfreeApprovedEmail, sendTollfreeRejectedEmail } from './email'
+
+// The shared platform toll-free number is provisioned through the SAME pipeline
+// as a tenant's, under a reserved pseudo-tenant id. That means it auto-activates
+// via the same cron verification poll, and when it's approved we copy its sender
+// into the shared-sender slot that every studio falls back to (see settings).
+export const PLATFORM_SHARED_USER_ID = '__platform_shared__'
+
+// Admin-only. Provision (or retry) the shared platform toll-free number: buys a
+// number, creates a Messaging Service, and submits a toll-free verification with
+// SessionRemind's OWN business details. On approval the verification poll copies
+// it into the shared-sender slot (see refreshVerificationStatus). This is the
+// MONEY step (a ~$2/mo number), so it MUST be gated behind admin auth.
+export async function provisionSharedNumber(business: TenantBusiness): Promise<ProvisionResult> {
+  // Persist so retries and the outcome email can resolve the platform business.
+  await setTenantBusiness(PLATFORM_SHARED_USER_ID, { ...business, updatedAt: nowIso() })
+  return provisionTollFree(PLATFORM_SHARED_USER_ID, 'SessionRemind', business)
+}
 
 // --- Platform-standardized consent (same for EVERY tenant) ----------------
 // In the ISV model the opt-in flow is identical for all studios (clients give
@@ -274,6 +293,15 @@ export async function refreshVerificationStatus(userId: string): Promise<Provisi
     patch.status = 'pending_verification'
   }
   const updated = await patchTenantSmsSender(userId, patch)
+
+  // When the SHARED platform number is approved, copy it into the shared-sender
+  // slot so every studio without their own number starts sending from it.
+  if (userId === PLATFORM_SHARED_USER_ID && updated.status === 'active') {
+    await setSharedSmsSender({
+      messagingServiceSid: updated.messagingServiceSid,
+      phoneNumber: updated.phoneNumber,
+    }).catch((e) => console.error('setSharedSmsSender failed:', e))
+  }
 
   // Fire the studio's outcome email exactly once, the first time we land on a
   // terminal status — regardless of whether cron or a manual refresh got here.
