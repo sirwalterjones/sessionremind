@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { stripe } from '@/lib/stripe'
+import { planByKey, DEFAULT_PLAN_KEY } from '@/lib/plans'
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,9 +30,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get redirect path from request body (optional)
+    // Get redirect path + chosen plan from request body.
     const body = await request.json().catch(() => ({}))
     const redirectPath = body.redirectPath || '/dashboard'
+    const plan = planByKey(body.plan) || planByKey(DEFAULT_PLAN_KEY)!
 
     // Create Stripe customer if not exists
     let customerId = user.stripe_customer_id
@@ -64,7 +66,7 @@ export async function POST(request: NextRequest) {
       mode: 'subscription',
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID, // Your $20/month price ID
+          price: plan.priceId,
           quantity: 1,
         },
       ],
@@ -72,8 +74,12 @@ export async function POST(request: NextRequest) {
       cancel_url: `${origin}/payment-required?payment=cancelled&redirect=${encodeURIComponent(redirectPath)}`,
       metadata: {
         userId: user.id,
-        redirectPath: redirectPath
-      }
+        redirectPath: redirectPath,
+        plan: plan.key,
+      },
+      subscription_data: {
+        metadata: { userId: user.id, plan: plan.key },
+      },
     })
 
     return NextResponse.json({

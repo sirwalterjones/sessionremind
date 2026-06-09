@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { kv } from '@vercel/kv'
 import Stripe from 'stripe'
 import { mapStripeStatus, resolveUserId } from '@/lib/subscriptions'
+import { planByPriceId, planByKey } from '@/lib/plans'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -32,12 +33,14 @@ export async function POST(request: NextRequest) {
         const customerId = session.customer as string
         const userId = await resolveUserId(customerId, session.metadata?.userId)
         if (userId) {
+          const plan = planByKey(session.metadata?.plan)
           await kv.hset(`user:${userId}`, {
             stripe_customer_id: customerId,
             subscription_status: 'active',
             subscription_tier: 'professional',
+            ...(plan ? { plan: plan.key, sms_limit: plan.includedTexts } : {}),
           })
-          console.log(`Webhook: user ${userId} activated via checkout`)
+          console.log(`Webhook: user ${userId} activated via checkout (${plan?.key || 'plan?'})`)
         } else {
           console.error('Webhook: could not resolve user for checkout', { customerId, sessionId: session.id })
         }
@@ -49,12 +52,15 @@ export async function POST(request: NextRequest) {
         const sub = event.data.object as Stripe.Subscription
         const userId = await resolveUserId(sub.customer as string)
         if (userId) {
+          const priceId = sub.items?.data?.[0]?.price?.id
+          const plan = planByPriceId(priceId) || planByKey(sub.metadata?.plan)
           await kv.hset(`user:${userId}`, {
             subscription_status: mapStripeStatus(sub.status),
             subscription_tier: 'professional',
             stripe_subscription_id: sub.id,
+            ...(plan ? { plan: plan.key, sms_limit: plan.includedTexts } : {}),
           })
-          console.log(`Webhook: user ${userId} subscription -> ${mapStripeStatus(sub.status)}`)
+          console.log(`Webhook: user ${userId} subscription -> ${mapStripeStatus(sub.status)} (${plan?.key || 'plan?'})`)
         } else {
           console.error('Webhook: could not resolve user for subscription', { customerId: sub.customer })
         }

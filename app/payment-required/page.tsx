@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CreditCardIcon, ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { useToast } from '@/components/Notifications'
+import { PLANS } from '@/lib/plans'
 
 export default function PaymentRequiredPage() {
   // useSearchParams must be inside a Suspense boundary (Next.js 14 requirement).
@@ -38,7 +39,7 @@ function PaymentRequiredContent() {
     }
   }
 
-  const handlePayment = async () => {
+  const handlePayment = async (plan: string) => {
     setIsLoading(true)
     try {
       const response = await fetch('/api/stripe/create-checkout', {
@@ -47,7 +48,8 @@ function PaymentRequiredContent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          redirectPath: redirectPath
+          redirectPath: redirectPath,
+          plan,
         })
       })
 
@@ -126,51 +128,35 @@ function PaymentRequiredContent() {
             </div>
           </div>
 
-          {/* Professional Plan Details */}
-          <div className="rounded-2xl border border-hairline p-8">
-            <div className="text-center">
-              <div className="eyebrow mb-4">Professional · everything included</div>
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="font-display text-5xl font-semibold text-ink">$20</span>
-                <span className="text-[#6E6A63]">/ month</span>
+          {/* Plan picker */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {PLANS.map((plan) => (
+              <div key={plan.key} className="flex flex-col rounded-2xl border border-hairline p-6">
+                <div className="eyebrow mb-2">{plan.name}</div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display text-3xl font-semibold text-ink">${plan.price}</span>
+                  <span className="text-sm text-[#6E6A63]">/ mo</span>
+                </div>
+                <p className="mt-1 text-xs text-[#6E6A63]">
+                  {plan.includedTexts.toLocaleString()} texts included · then ${plan.overage}/text
+                </p>
+                <ul className="mt-4 flex-1 space-y-2">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-[13px] text-ink">
+                      <CheckCircleIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => handlePayment(plan.key)}
+                  disabled={isLoading}
+                  className="mt-5 w-full rounded-full bg-ink px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isLoading ? 'Processing…' : `Choose ${plan.name}`}
+                </button>
               </div>
-              <p className="mt-3 text-sm text-[#6E6A63]">
-                Everything you need for session management.
-              </p>
-            </div>
-
-            <ul className="mt-8 space-y-4">
-              {[
-                '500 SMS messages per month',
-                'Automated session reminders',
-                'Custom message templates',
-                'Usage analytics',
-                'Priority support',
-              ].map((feature) => (
-                <li key={feature} className="flex items-start gap-3 text-[15px] text-ink">
-                  <CheckCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              onClick={handlePayment}
-              disabled={isLoading}
-              className="mt-8 flex w-full items-center justify-center rounded-full bg-ink px-6 py-3 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
-                  Processing...
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <CreditCardIcon className="mr-2 h-5 w-5" />
-                  Subscribe now
-                </div>
-              )}
-            </button>
+            ))}
           </div>
 
           <div className="text-center">

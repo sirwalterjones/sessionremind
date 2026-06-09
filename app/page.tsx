@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PLANS } from '@/lib/plans'
 
 // Sleek Swiss-editorial marketing page — white canvas, ink type, one accent,
 // hairline rules, generous whitespace, high-impact hero. Server component.
@@ -225,54 +226,56 @@ export default function Home() {
       {/* ───────────── PRICING ───────────── */}
       <section className="full-bleed bg-white">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div>
-              <div className="eyebrow mb-4">Pricing</div>
-              <h2 className="font-display text-4xl sm:text-6xl font-semibold leading-[1.0]">
-                One plan.
-                <br />
-                Everything in it.
-              </h2>
-              <p className="mt-5 text-[#6E6A63] text-lg max-w-sm leading-relaxed">
-                No tiers to decode. No per-text nickel-and-diming. Just every feature, one price.
-              </p>
-              <div className="mt-8 flex items-baseline gap-2">
-                <span className="font-display text-7xl font-semibold">$20</span>
-                <span className="text-[#8A857C] text-lg">/ month</span>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-hairline p-8 sm:p-10">
-              <div className="eyebrow mb-6">Professional · everything included</div>
-              <ul className="space-y-4">
-                {[
-                  'Automatic UseSession sync',
-                  '3-day & 1-day reminders, sent for you',
-                  'Your studio name & custom templates',
-                  'Up to 500 texts every month',
-                  'Encrypted & private — data never touched',
-                  'Edit or cancel any reminder anytime',
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-[15px]">
-                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill={A}>
-                      <path
-                        fillRule="evenodd"
-                        d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8">
-                <ArrowCta href="/register">Start your subscription</ArrowCta>
-              </div>
-              <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
-                No setup fees · Cancel anytime
-              </p>
-            </div>
+          <div className="text-center mb-14">
+            <div className="eyebrow mb-3">Pricing</div>
+            <h2 className="font-display text-4xl sm:text-6xl font-semibold leading-[1.0]">
+              Plans that scale with you.
+            </h2>
+            <p className="mt-5 text-[#6E6A63] text-lg max-w-md mx-auto leading-relaxed">
+              Every plan includes SMS &amp; email reminders, auto-sync, and your own templates. Pick by how
+              many texts you send.
+            </p>
           </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {PLANS.map((plan) => (
+              <div
+                key={plan.key}
+                className={`flex flex-col rounded-2xl border p-6 ${
+                  plan.key === 'studio'
+                    ? 'border-ink shadow-[0_20px_50px_-30px_rgba(0,0,0,0.4)]'
+                    : 'border-hairline'
+                }`}
+              >
+                {plan.key === 'studio' && (
+                  <div className="eyebrow mb-2" style={{ color: A }}>
+                    Most popular
+                  </div>
+                )}
+                <div className="font-display text-lg font-semibold">{plan.name}</div>
+                <div className="mt-2 flex items-baseline gap-1.5">
+                  <span className="font-display text-4xl font-semibold">${plan.price}</span>
+                  <span className="text-[#8A857C] text-sm">/ mo</span>
+                </div>
+                <p className="mt-1 text-xs text-[#8A857C]">
+                  {plan.includedTexts.toLocaleString()} texts · then ${plan.overage}/text
+                </p>
+                <p className="mt-3 flex-1 text-[13px] leading-relaxed text-[#5F5B54]">{plan.blurb}</p>
+                <Link
+                  href={`/register?plan=${plan.key}`}
+                  className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
+                    plan.key === 'studio'
+                      ? 'bg-ink text-white hover:opacity-90'
+                      : 'border border-hairline text-ink hover:bg-[#FAFAF8]'
+                  }`}
+                >
+                  Get started
+                </Link>
+              </div>
+            ))}
+          </div>
+          <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
+            Every plan: SMS &amp; email reminders · auto-sync · cancel anytime
+          </p>
         </div>
       </section>
 
