@@ -7,10 +7,10 @@ export default function NavLinks() {
   const { user, logout } = useAuth()
 
   const linkClass =
-    'text-sm font-medium text-[#6E6A63] hover:text-ink transition-colors'
+    'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-[#4F4B44] hover:bg-[#F4F2EE] hover:text-ink transition-colors'
 
   return (
-    <div className="hidden md:flex items-center gap-7">
+    <div className="hidden md:flex items-center gap-2">
       <Link href="/instructions" className={linkClass}>
         How it works
       </Link>
@@ -39,7 +39,7 @@ export default function NavLinks() {
       {user ? (
         <button
           onClick={logout}
-          className="text-sm font-medium text-[#6E6A63] hover:text-ink transition-colors"
+          className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-[#4F4B44] hover:bg-[#F4F2EE] hover:text-ink transition-colors"
         >
           Log out
         </button>

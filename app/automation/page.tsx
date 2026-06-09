@@ -63,7 +63,7 @@ export default function AutomationPage() {
   const [bookmarklet, setBookmarklet] = useState('')
   const [connecting, setConnecting] = useState(false)
   const [syncing, setSyncing] = useState(false)
-  const [savingSettings, setSavingSettings] = useState(false)
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
 
   useEffect(() => {
     if (!user) {
@@ -192,31 +192,24 @@ export default function AutomationPage() {
     loadAll()
   }
 
-  const saveSettings = async () => {
-    if (!settings) return
-    setSavingSettings(true)
+  // Auto-save a single changed field (no Save button). Toggles save on click;
+  // text fields save on blur.
+  const autoSave = async (patch: Partial<Settings>) => {
+    setSaveState('saving')
     try {
       const res = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          studioName: settings.studioName,
-          reminderTemplate: settings.reminderTemplate,
-          offsetsDays: settings.offsetsDays,
-          sendHourEastern: settings.sendHourEastern,
-          autoSchedule: settings.autoSchedule,
-          emailReminders: settings.emailReminders,
-        }),
+        body: JSON.stringify(patch),
       })
       const data = await res.json()
-      if (res.ok) {
-        setSettings(data.settings)
-        flash('ok', 'Settings saved.')
-      } else {
-        flash('err', data.error || 'Could not save settings.')
-      }
-    } finally {
-      setSavingSettings(false)
+      if (!res.ok) throw new Error(data.error || 'Could not save settings.')
+      setSettings(data.settings)
+      setSaveState('saved')
+      setTimeout(() => setSaveState((s) => (s === 'saved' ? 'idle' : s)), 1500)
+    } catch (e: any) {
+      setSaveState('idle')
+      toast.error(e?.message || 'Could not save settings.')
     }
   }
 
@@ -408,6 +401,7 @@ export default function AutomationPage() {
               <input
                 value={settings.studioName}
                 onChange={(e) => setSettings({ ...settings, studioName: e.target.value })}
+                onBlur={() => autoSave({ studioName: settings.studioName })}
                 className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
               />
             </div>
@@ -418,6 +412,7 @@ export default function AutomationPage() {
               <textarea
                 value={settings.reminderTemplate}
                 onChange={(e) => setSettings({ ...settings, reminderTemplate: e.target.value })}
+                onBlur={() => autoSave({ reminderTemplate: settings.reminderTemplate })}
                 className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] h-24 focus:border-ink focus:outline-none"
               />
               <p className="font-mono text-xs text-muted mt-1.5">
@@ -433,14 +428,13 @@ export default function AutomationPage() {
                     return (
                       <button
                         key={d}
-                        onClick={() =>
-                          setSettings({
-                            ...settings,
-                            offsetsDays: on
-                              ? settings.offsetsDays.filter((x) => x !== d)
-                              : [...settings.offsetsDays, d].sort((a, b) => b - a),
-                          })
-                        }
+                        onClick={() => {
+                          const next = on
+                            ? settings.offsetsDays.filter((x) => x !== d)
+                            : [...settings.offsetsDays, d].sort((a, b) => b - a)
+                          setSettings({ ...settings, offsetsDays: next })
+                          autoSave({ offsetsDays: next })
+                        }}
                         className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                           on ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-hairline hover:bg-[#FAFAF8]'
                         }`}
@@ -454,7 +448,11 @@ export default function AutomationPage() {
               <div>
                 <label className="block text-sm font-medium text-ink mb-2">Auto-schedule new bookings</label>
                 <button
-                  onClick={() => setSettings({ ...settings, autoSchedule: !settings.autoSchedule })}
+                  onClick={() => {
+                    const v = !settings.autoSchedule
+                    setSettings({ ...settings, autoSchedule: v })
+                    autoSave({ autoSchedule: v })
+                  }}
                   className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     settings.autoSchedule
                       ? 'border-[#cfe8d4] text-[#16a34a]'
@@ -468,7 +466,11 @@ export default function AutomationPage() {
               <div>
                 <label className="block text-sm font-medium text-ink mb-2">Email reminders (alongside SMS)</label>
                 <button
-                  onClick={() => setSettings({ ...settings, emailReminders: !settings.emailReminders })}
+                  onClick={() => {
+                    const v = !settings.emailReminders
+                    setSettings({ ...settings, emailReminders: v })
+                    autoSave({ emailReminders: v })
+                  }}
                   className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     settings.emailReminders
                       ? 'border-[#cfe8d4] text-[#16a34a]'
@@ -481,13 +483,9 @@ export default function AutomationPage() {
                 <p className="text-xs text-muted mt-1.5">Also emails clients who have an email on file. Needs a verified sending domain.</p>
               </div>
             </div>
-            <button
-              onClick={saveSettings}
-              disabled={savingSettings}
-              className="rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {savingSettings ? 'Saving…' : 'Save settings'}
-            </button>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted h-4" aria-live="polite">
+              {saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved ✓' : 'Changes save automatically'}
+            </p>
           </div>
         </div>
       )}

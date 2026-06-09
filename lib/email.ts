@@ -114,12 +114,13 @@ export function renderBrandedEmail(o: BrandedEmailOpts): string {
           <!-- Footer -->
           <tr>
             <td style="padding:22px 8px 8px;font-family:${mono};font-size:11px;line-height:1.7;letter-spacing:0.1em;text-transform:uppercase;color:#A7A29A;">
-              SessionRemind · Automatic SMS reminders for photographers
+              SessionRemind · SMS &amp; E-mail Reminders for Sessions
             </td>
           </tr>
           <tr>
             <td style="padding:0 8px;font-family:${sans};font-size:11px;line-height:1.6;color:#B5B0A8;">
               You received this because someone used this address to sign up at sessionremind.com.
+              <br>Not affiliated with Session Technologies, LLC.
             </td>
           </tr>
 

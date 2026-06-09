@@ -263,13 +263,14 @@ export default function Instructions() {
             <div>
               <div className="eyebrow mb-4">Step 03 · in detail</div>
               <h2 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">
-                Two texts per shoot,
+                Two reminders per shoot,
                 <br />
                 <span style={{ color: A }}>sent for you.</span>
               </h2>
               <p className="mt-6 text-[#5F5B54] text-lg leading-relaxed max-w-md">
                 As soon as a booking syncs, two reminders are scheduled automatically — one three
-                days out and one the day before. On-brand, in your voice, and completely hands-off.
+                days out and one the day before. Sent by text (and email, if you turn it on),
+                on-brand and completely hands-off.
               </p>
               <div className="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-5">
                 {[

@@ -170,11 +170,20 @@ function SMSAnalyticsComponent({ userId }: { userId: string }) {
             </div>
             <div>
               <p className="eyebrow mb-3">Latest Messages</p>
-              <div className="divide-y divide-hairline max-h-24 overflow-y-auto">
-                {activity.latestMessages?.slice(0, 3).map((msg: any, idx: number) => (
-                  <div key={idx} className="text-sm flex justify-between py-2">
-                    <span className="truncate text-ink">{msg.clientName}</span>
-                    <span className={`ml-2 font-mono text-xs uppercase tracking-[0.12em] ${
+              <div className="divide-y divide-hairline max-h-60 overflow-y-auto">
+                {activity.latestMessages?.slice(0, 5).map((msg: any, idx: number) => (
+                  <div key={idx} className="flex items-start justify-between gap-3 py-2.5">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-ink truncate">{msg.clientName}</div>
+                      {msg.sessionTitle && <div className="text-xs text-muted truncate">{msg.sessionTitle}</div>}
+                      <div className="text-xs text-muted">
+                        {msg.sessionTime ||
+                          (msg.scheduledFor
+                            ? new Date(msg.scheduledFor).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                            : '')}
+                      </div>
+                    </div>
+                    <span className={`flex-shrink-0 font-mono text-xs uppercase tracking-[0.12em] ${
                       msg.status === 'sent' ? 'text-[#16a34a]' :
                       msg.status === 'scheduled' ? 'text-muted' :
                       'text-accent'
@@ -683,25 +692,22 @@ function DashboardContent() {
               Track your session reminders and client communications in one place.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            <span>Welcome, {user.username}</span>
+          <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            <span className="mr-1">Welcome, {user.username}</span>
             {user.is_admin && (
               <>
-                <span className="w-px h-3 bg-hairline" />
                 <a
                   href="/admin"
-                  className="text-ink hover:text-accent transition-colors"
+                  className="rounded-full border border-hairline px-3 py-1 text-ink hover:bg-[#FAFAF8] transition-colors"
                 >
                   Admin Console
                 </a>
-                <span className="rounded-full border border-hairline px-2 py-0.5 text-muted">
-                  Admin
-                </span>
+                <span className="rounded-full border border-[#cfe8d4] px-2.5 py-1 text-[#16a34a]">Admin</span>
               </>
             )}
             <button
               onClick={logout}
-              className="text-ink hover:text-accent transition-colors"
+              className="rounded-full border border-hairline px-3 py-1 text-ink hover:bg-[#FAFAF8] transition-colors"
             >
               Logout
             </button>

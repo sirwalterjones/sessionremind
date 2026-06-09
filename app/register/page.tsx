@@ -64,7 +64,7 @@ export default function RegisterPage() {
             Create your account
           </h1>
           <p className="mt-3 text-[15px] text-[#6E6A63]">
-            Start sending automatic SMS reminders.
+            Start sending SMS &amp; email reminders for your sessions.
           </p>
         </div>
 

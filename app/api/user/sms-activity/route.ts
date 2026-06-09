@@ -111,7 +111,9 @@ export async function GET(request: NextRequest) {
             status: msg.status,
             createdAt: msg.createdAt,
             scheduledFor: msg.scheduledFor,
-            sentAt: msg.sentAt
+            sentAt: msg.sentAt,
+            sessionTitle: msg.sessionTitle,
+            sessionTime: msg.sessionTime
           }))
       }
     })

@@ -153,9 +153,14 @@ export default function RootLayout({
                   </span>
                   <span className="text-sm font-semibold tracking-tight">SessionRemind</span>
                 </div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#9A958C]">
-                  Automatic SMS reminders · Built for photographers
-                </p>
+                <div className="text-center sm:text-right">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#9A958C]">
+                    SMS &amp; E-mail Reminders for Sessions
+                  </p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#B5B0A8] mt-1">
+                    Not affiliated with Session Technologies, LLC
+                  </p>
+                </div>
               </div>
             </footer>
           </div>

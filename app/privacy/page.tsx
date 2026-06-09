@@ -26,7 +26,7 @@ export default function PrivacyPage() {
       </p>
 
       <p className="mt-8 text-[15px] leading-relaxed text-[#4F4B44]">
-        SessionRemind helps photographers send automatic SMS reminders to clients who book through UseSession.
+        SessionRemind helps photographers send SMS &amp; email reminders for sessions to clients who book through UseSession.
         This policy explains exactly what we access, why, and how we protect it. The short version: we touch only
         what&apos;s needed to send a reminder, and we never read, store, mine, share, or sell your client data.
       </p>
