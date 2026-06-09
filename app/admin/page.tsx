@@ -674,6 +674,12 @@ export default function AdminPage() {
             </div>
             <div className="flex items-center space-x-4">
               <a
+                href="/admin/subscriptions"
+                className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+              >
+                Subscriptions
+              </a>
+              <a
                 href="/admin/spam"
                 className="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
               >
