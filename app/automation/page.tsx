@@ -60,7 +60,6 @@ export default function AutomationPage() {
   // Connect flow
   const [pairCode, setPairCode] = useState('')
   const [bookmarklet, setBookmarklet] = useState('')
-  const [pasteToken, setPasteToken] = useState('')
   const [connecting, setConnecting] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [savingSettings, setSavingSettings] = useState(false)
@@ -161,28 +160,6 @@ export default function AutomationPage() {
       }
       if (tries > 150) clearInterval(interval) // ~5 min
     }, 2000)
-  }
-
-  // --- Connect: paste-token fallback ---
-  const connectWithToken = async () => {
-    if (!pasteToken.trim()) return
-    setConnecting(true)
-    try {
-      const res = await fetch('/api/usesession/connect', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ token: pasteToken.trim() }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed')
-      setPasteToken('')
-      flash('ok', `Connected${data.businessName ? ' to ' + data.businessName : ''}!`)
-      loadAll()
-    } catch (e: any) {
-      flash('err', e.message || 'Could not connect with that token.')
-    } finally {
-      setConnecting(false)
-    }
   }
 
   const syncNow = async () => {
@@ -338,50 +315,20 @@ export default function AutomationPage() {
               automatic: bookings sync on their own, and you can log in from your phone to manage reminders anytime.
             </p>
 
-            {/* Recommended: true one-click via the browser extension (no dragging) */}
-            <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5 mb-5">
-              <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  <p className="font-display text-sm font-semibold text-ink">Optional: one-click Chrome extension</p>
-                </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em] border border-hairline rounded-full px-2.5 py-0.5 text-muted">
-                  Chrome only
-                </span>
-              </div>
-              <p className="text-sm text-muted mb-3">
-                Use Chrome and want a toolbar button? Install the extension. Otherwise the{' '}
-                <strong className="text-ink font-medium">recommended option below works in any browser</strong> (a true
-                one-click &ldquo;Add to Chrome&rdquo; listing is coming soon). To load it now — about a minute:
-              </p>
-              <ol className="text-sm text-ink/80 space-y-2 list-decimal list-inside">
-                <li>
-                  <a href="/sessionremind-connector.zip" className="text-accent underline">
-                    Download the connector
-                  </a>{' '}
-                  and unzip it.
-                </li>
-                <li>
-                  Open <code className="font-mono text-xs bg-white px-1.5 py-0.5 rounded border border-hairline">chrome://extensions</code>, turn on
-                  Developer mode, click &ldquo;Load unpacked&rdquo;, and choose the folder.
-                </li>
-                <li>
-                  On UseSession (logged in), click the SessionRemind icon → <strong className="text-ink font-medium">Connect</strong>. That&apos;s it.
-                </li>
-              </ol>
-            </div>
-            <div className="text-center font-mono text-[11px] uppercase tracking-[0.16em] text-muted mb-5">
-              recommended · works in any browser · connect once from a computer
-            </div>
-
             {!pairCode ? (
-              <button
-                onClick={startConnect}
-                disabled={connecting}
-                className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-              >
-                {connecting ? 'Starting…' : 'Connect UseSession'}
-              </button>
+              <div>
+                <button
+                  onClick={startConnect}
+                  disabled={connecting}
+                  className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {connecting ? 'Starting…' : 'Connect UseSession'}
+                </button>
+                <p className="text-xs text-muted mt-3 max-w-md">
+                  One button to drag, one click on UseSession — about a minute. We grab what we need automatically;
+                  you never have to find or copy anything.
+                </p>
+              </div>
             ) : (
               <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5">
                 <p className="font-display text-sm font-semibold text-ink mb-4">Almost there — two steps:</p>
@@ -435,28 +382,6 @@ export default function AutomationPage() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-4">Waiting for you to click it · code expires in 10 minutes</p>
               </div>
             )}
-
-            {/* Paste fallback */}
-            <details className="mt-5">
-              <summary className="text-sm text-muted cursor-pointer hover:text-ink transition-colors">
-                Prefer not to use a bookmark? Paste your token instead
-              </summary>
-              <div className="mt-3">
-                <textarea
-                  value={pasteToken}
-                  onChange={(e) => setPasteToken(e.target.value)}
-                  placeholder="Paste your UseSession session-token here"
-                  className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] h-20 font-mono focus:border-ink focus:outline-none"
-                />
-                <button
-                  onClick={connectWithToken}
-                  disabled={connecting || !pasteToken.trim()}
-                  className="mt-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  Connect with token
-                </button>
-              </div>
-            </details>
 
             {/* Trust copy */}
             <div className="mt-6 flex items-start gap-2.5 text-xs text-muted bg-[#FAFAF8] border border-hairline rounded-lg p-4">
