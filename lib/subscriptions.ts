@@ -23,6 +23,60 @@ export function mapStripeStatus(s: Stripe.Subscription.Status | string): string 
   }
 }
 
+// Persist a fast customer -> user mapping so webhooks never depend solely on
+// Stripe customer metadata (which can go missing and silently lock a user out).
+export async function setCustomerIndex(customerId: string, userId: string): Promise<void> {
+  if (customerId && userId) await kv.set(`stripe:customer:${customerId}`, userId)
+}
+
+// Resolve the SessionRemind user for a Stripe customer, most-reliable first:
+// 1) explicit metadata userId (and cache it), 2) our KV index, 3) the live
+// Stripe customer's metadata, 4) a full user scan as a last resort.
+export async function resolveUserId(
+  customerId: string,
+  metadataUserId?: string | null
+): Promise<string | null> {
+  if (!customerId) return null
+
+  if (metadataUserId) {
+    await setCustomerIndex(customerId, metadataUserId)
+    return metadataUserId
+  }
+
+  const idx = await kv.get<string>(`stripe:customer:${customerId}`)
+  if (idx) return idx
+
+  try {
+    const customer = await stripe.customers.retrieve(customerId)
+    if (customer && !(customer as { deleted?: boolean }).deleted) {
+      const uid = (customer as Stripe.Customer).metadata?.userId
+      if (uid) {
+        await setCustomerIndex(customerId, uid)
+        return uid
+      }
+    }
+  } catch (e) {
+    console.error('resolveUserId: stripe retrieve failed:', e)
+  }
+
+  try {
+    const emailKeys = await kv.keys('user:email:*')
+    for (const ek of emailKeys) {
+      const uid = await kv.get<string>(ek)
+      if (!uid) continue
+      const u = await kv.hgetall<Record<string, any>>(`user:${uid}`)
+      if (u && u.stripe_customer_id === customerId) {
+        await setCustomerIndex(customerId, uid)
+        return uid
+      }
+    }
+  } catch (e) {
+    console.error('resolveUserId: scan failed:', e)
+  }
+
+  return null
+}
+
 export interface ResyncResult {
   userId: string
   email?: string

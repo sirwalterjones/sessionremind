@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { kv } from '@vercel/kv'
 import Stripe from 'stripe'
+import { mapStripeStatus, resolveUserId } from '@/lib/subscriptions'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -11,180 +12,81 @@ export async function POST(request: NextRequest) {
     const sig = request.headers.get('stripe-signature')!
 
     let event: Stripe.Event
-
     try {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
     } catch (err) {
       console.error('Webhook signature verification failed:', err)
-      return NextResponse.json(
-        { error: 'Webhook signature verification failed' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 })
     }
 
-    // Handle the event
+    // Idempotency — process each Stripe event id at most once (24h window).
+    // kv.set with nx returns null if the key already exists.
+    const fresh = await kv.set(`stripe:event:${event.id}`, '1', { nx: true, ex: 86400 })
+    if (fresh === null) {
+      return NextResponse.json({ received: true, duplicate: true })
+    }
+
     switch (event.type) {
-      case 'checkout.session.completed':
+      case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        await handleCheckoutCompleted(session)
+        const customerId = session.customer as string
+        const userId = await resolveUserId(customerId, session.metadata?.userId)
+        if (userId) {
+          await kv.hset(`user:${userId}`, {
+            stripe_customer_id: customerId,
+            subscription_status: 'active',
+            subscription_tier: 'professional',
+          })
+          console.log(`Webhook: user ${userId} activated via checkout`)
+        } else {
+          console.error('Webhook: could not resolve user for checkout', { customerId, sessionId: session.id })
+        }
         break
+      }
 
       case 'customer.subscription.created':
-        const subscription = event.data.object as Stripe.Subscription
-        await handleSubscriptionCreated(subscription)
+      case 'customer.subscription.updated': {
+        const sub = event.data.object as Stripe.Subscription
+        const userId = await resolveUserId(sub.customer as string)
+        if (userId) {
+          await kv.hset(`user:${userId}`, {
+            subscription_status: mapStripeStatus(sub.status),
+            subscription_tier: 'professional',
+            stripe_subscription_id: sub.id,
+          })
+          console.log(`Webhook: user ${userId} subscription -> ${mapStripeStatus(sub.status)}`)
+        } else {
+          console.error('Webhook: could not resolve user for subscription', { customerId: sub.customer })
+        }
         break
+      }
 
-      case 'customer.subscription.updated':
-        const updatedSubscription = event.data.object as Stripe.Subscription
-        await handleSubscriptionUpdated(updatedSubscription)
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as Stripe.Subscription
+        const userId = await resolveUserId(sub.customer as string)
+        if (userId) await kv.hset(`user:${userId}`, { subscription_status: 'canceled' })
         break
-
-      case 'customer.subscription.deleted':
-        const deletedSubscription = event.data.object as Stripe.Subscription
-        await handleSubscriptionDeleted(deletedSubscription)
-        break
+      }
 
       case 'invoice.payment_succeeded':
+      case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
-        await handlePaymentSucceeded(invoice)
+        const userId = await resolveUserId(invoice.customer as string)
+        if (userId) {
+          await kv.hset(`user:${userId}`, {
+            subscription_status: event.type === 'invoice.payment_succeeded' ? 'active' : 'past_due',
+          })
+        }
         break
-
-      case 'invoice.payment_failed':
-        const failedInvoice = event.data.object as Stripe.Invoice
-        await handlePaymentFailed(failedInvoice)
-        break
+      }
 
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
-
   } catch (error) {
     console.error('Webhook error:', error)
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }
-
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  console.log('Checkout completed:', session.id)
-  
-  if (session.metadata?.userId) {
-    const userId = session.metadata.userId
-    
-    // Update user record with customer ID and activate subscription
-    await kv.hset(`user:${userId}`, {
-      stripe_customer_id: session.customer as string,
-      subscription_status: 'active',
-      subscription_tier: 'professional'
-    })
-    
-    console.log(`User ${userId} subscription activated via checkout`)
-  }
-}
-
-async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
-  console.log('Subscription created:', subscription.id)
-  
-  const customerId = subscription.customer as string
-  const customer = await stripe.customers.retrieve(customerId)
-  
-  if (customer && !customer.deleted && customer.metadata?.userId) {
-    const userId = customer.metadata.userId
-    
-    await kv.hset(`user:${userId}`, {
-      subscription_status: 'active',
-      subscription_tier: 'professional',
-      stripe_subscription_id: subscription.id
-    })
-    
-    console.log(`User ${userId} subscription created and activated`)
-  }
-}
-
-async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  console.log('Subscription updated:', subscription.id)
-  
-  const customerId = subscription.customer as string
-  const customer = await stripe.customers.retrieve(customerId)
-  
-  if (customer && !customer.deleted && customer.metadata?.userId) {
-    const userId = customer.metadata.userId
-    
-    let status = 'inactive'
-    if (subscription.status === 'active') {
-      status = 'active'
-    } else if (subscription.status === 'past_due') {
-      status = 'past_due'
-    } else if (subscription.status === 'canceled') {
-      status = 'canceled'
-    }
-    
-    await kv.hset(`user:${userId}`, {
-      subscription_status: status,
-      stripe_subscription_id: subscription.id
-    })
-    
-    console.log(`User ${userId} subscription updated to ${status}`)
-  }
-}
-
-async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  console.log('Subscription deleted:', subscription.id)
-  
-  const customerId = subscription.customer as string
-  const customer = await stripe.customers.retrieve(customerId)
-  
-  if (customer && !customer.deleted && customer.metadata?.userId) {
-    const userId = customer.metadata.userId
-    
-    await kv.hset(`user:${userId}`, {
-      subscription_status: 'canceled'
-    })
-    
-    console.log(`User ${userId} subscription canceled`)
-  }
-}
-
-async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
-  console.log('Payment succeeded:', invoice.id)
-  
-  if (invoice.subscription) {
-    const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string)
-    const customerId = subscription.customer as string
-    const customer = await stripe.customers.retrieve(customerId)
-    
-    if (customer && !customer.deleted && customer.metadata?.userId) {
-      const userId = customer.metadata.userId
-      
-      await kv.hset(`user:${userId}`, {
-        subscription_status: 'active'
-      })
-      
-      console.log(`User ${userId} payment succeeded - subscription active`)
-    }
-  }
-}
-
-async function handlePaymentFailed(invoice: Stripe.Invoice) {
-  console.log('Payment failed:', invoice.id)
-  
-  if (invoice.subscription) {
-    const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string)
-    const customerId = subscription.customer as string
-    const customer = await stripe.customers.retrieve(customerId)
-    
-    if (customer && !customer.deleted && customer.metadata?.userId) {
-      const userId = customer.metadata.userId
-      
-      await kv.hset(`user:${userId}`, {
-        subscription_status: 'past_due'
-      })
-      
-      console.log(`User ${userId} payment failed - subscription past due`)
-    }
-  }
-} 

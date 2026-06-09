@@ -44,12 +44,14 @@ export async function POST(request: NextRequest) {
         }
       })
       customerId = customer.id
-      
-      // Update user record with customer ID
+
+      // Update user record with customer ID + the reverse index used by webhooks.
       const { kv } = await import('@vercel/kv')
       await kv.hset(`user:${user.id}`, {
         stripe_customer_id: customerId
       })
+      const { setCustomerIndex } = await import('@/lib/subscriptions')
+      await setCustomerIndex(customerId, user.id)
     }
 
     // Get the origin for redirect URLs
