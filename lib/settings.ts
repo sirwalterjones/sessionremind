@@ -7,9 +7,10 @@ import { UserSettings } from './types'
 
 const CONNECTED_SET = 'usesession:connected' // set of userIds with a stored token
 
+// Keep this GSM-7 (no em dash / smart quotes) and lean so it sends as ONE SMS
+// segment. A single "—" forces Unicode (UCS-2) encoding = ~3x the segments/cost.
 const DEFAULT_REMINDER_TEMPLATE =
-  "Hi {name}! This is a friendly reminder about your {sessionTitle} session on {sessionTime}. " +
-  "Can't wait to see you! — {studioName}"
+  'Hi {name}! Reminder: your {sessionTitle} session is on {sessionTime}. See you then! {studioName}'
 
 const DEFAULT_REGISTRATION_TEMPLATE =
   "Hi {name}! You're all set for text reminders from {studioName}. Your {sessionTitle} session is on " +
