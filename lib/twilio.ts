@@ -150,6 +150,12 @@ export interface TollfreeVerificationInput {
   businessContactLastName: string
   businessContactEmail: string
   businessContactPhone: string
+  // Defaults to SOLE_PROPRIETOR (no registration number needed). For a
+  // registered entity (LLC/CORP/etc.) the registration fields become required.
+  businessType?: string
+  businessRegistrationNumber?: string
+  businessRegistrationAuthority?: string
+  businessRegistrationCountry?: string
   additionalInformation?: string
 }
 
@@ -166,6 +172,14 @@ export async function submitTollfreeVerification(
     const v = await client.messaging.v1.tollfreeVerifications.create({
       tollfreePhoneNumberSid: input.tollfreePhoneNumberSid,
       businessName: input.businessName,
+      businessType: input.businessType || 'SOLE_PROPRIETOR',
+      ...(input.businessType && input.businessType !== 'SOLE_PROPRIETOR'
+        ? {
+            businessRegistrationNumber: input.businessRegistrationNumber,
+            businessRegistrationAuthority: input.businessRegistrationAuthority,
+            businessRegistrationCountry: input.businessRegistrationCountry,
+          }
+        : {}),
       businessWebsite: input.businessWebsite,
       notificationEmail: input.notificationEmail,
       // Appointment reminders are transactional account/service notifications.
