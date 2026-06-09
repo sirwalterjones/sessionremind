@@ -163,3 +163,62 @@ export async function sendVerificationEmail(to: string, link: string): Promise<b
   })
   return sendEmail(to, 'Verify your SessionRemind email', html)
 }
+
+const BASE = process.env.NEXT_PUBLIC_BASE_URL || 'https://sessionremind.com'
+
+// Format a US E.164 number as (XXX) XXX-XXXX for display; pass through otherwise.
+function prettyUsNumber(e164?: string): string {
+  if (!e164) return ''
+  const d = e164.replace(/[^\d]/g, '')
+  const ten = d.length === 11 && d.startsWith('1') ? d.slice(1) : d
+  if (ten.length !== 10) return e164
+  return `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}`
+}
+
+// Sent (once) when a tenant's dedicated toll-free verification is APPROVED.
+export async function sendTollfreeApprovedEmail(
+  to: string,
+  studioName: string,
+  phoneNumber?: string
+): Promise<boolean> {
+  const pretty = prettyUsNumber(phoneNumber)
+  const numLine = pretty
+    ? ` <strong style="color:${INK};">${escapeHtml(pretty)}</strong>`
+    : ''
+  const html = renderBrandedEmail({
+    preheader: 'Your dedicated texting number is verified and live.',
+    eyebrow: 'Dedicated number approved',
+    heading: 'Your texting number is live',
+    bodyHtml:
+      `<p style="margin:0 0 12px;">Great news${studioName ? `, ${escapeHtml(studioName)}` : ''} — carrier verification is complete. ` +
+      `Your reminders now send from your own dedicated toll-free number${numLine}.</p>` +
+      `<p style="margin:0;">There's nothing else to do. Scheduled reminders will automatically start sending from your number.</p>`,
+    ctaText: 'Open your dashboard',
+    ctaUrl: `${BASE}/automation`,
+  })
+  return sendEmail(to, 'Your SessionRemind texting number is live', html)
+}
+
+// Sent (once) when a tenant's dedicated toll-free verification is REJECTED.
+export async function sendTollfreeRejectedEmail(
+  to: string,
+  studioName: string,
+  reason?: string
+): Promise<boolean> {
+  const reasonBlock = reason
+    ? `<p style="margin:0 0 12px;padding:12px 14px;background:${PAPER};border-radius:10px;color:${INK};white-space:pre-line;">${escapeHtml(reason)}</p>`
+    : ''
+  const html = renderBrandedEmail({
+    preheader: 'Your dedicated number needs a quick fix.',
+    eyebrow: 'Action needed',
+    heading: 'Your number needs a quick fix',
+    bodyHtml:
+      `<p style="margin:0 0 12px;">The carrier couldn't approve your dedicated texting number just yet${reason ? ':' : '.'}</p>` +
+      reasonBlock +
+      `<p style="margin:0;">Don't worry — your reminders are still going out from our shared number in the meantime, so nothing is interrupted. Reply to this email or contact support and we'll help you get it sorted.</p>`,
+    ctaText: 'Review details',
+    ctaUrl: `${BASE}/automation`,
+    afterCtaHtml: `Questions? Email <a href="mailto:support@sessionremind.com" style="color:${MUTED};">support@sessionremind.com</a>.`,
+  })
+  return sendEmail(to, 'Your SessionRemind number needs a quick fix', html)
+}

@@ -1,11 +1,13 @@
 // Single entry point for sending an SMS for a tenant.
-// Routes to the tenant's own Twilio sender when active (the per-tenant/ISV
-// model); otherwise falls back to the shared TextMagic account. This lets us
-// migrate studios to Twilio one at a time without a big-bang cutover.
+// Sender priority:
+//   1. the tenant's OWN active Twilio number (per-tenant/ISV upgrade)
+//   2. the SHARED platform toll-free number (the default for everyone else)
+//   3. the legacy TextMagic account (last resort, until fully migrated)
+// Per-tenant always wins over shared, so studios can be upgraded one at a time.
 
 import { kv } from '@vercel/kv'
 import { cleanPhone } from './reminders'
-import { getTenantSmsSender } from './settings'
+import { getSharedSmsSender, getTenantSmsSender } from './settings'
 import { sendViaTwilio } from './twilio'
 
 export interface SendResult {
@@ -46,12 +48,28 @@ export async function sendTenantSms(
         await kv.sadd('sms:optout', e164).catch(() => {})
         return { ok: false, provider: 'none', suppressed: true, error: r.error }
       }
-      // Otherwise don't silently drop the reminder — fall back to TextMagic.
-      console.error(`Twilio send failed for user ${userId}, falling back to TextMagic:`, r.error)
+      // Otherwise don't silently drop the reminder — fall back to the shared sender.
+      console.error(`Twilio send failed for user ${userId}, falling back to shared sender:`, r.error)
     }
   }
 
-  // 2) Shared TextMagic fallback.
+  // 2) Shared platform Twilio toll-free number (default for everyone without
+  //    their own active number).
+  const shared = await getSharedSmsSender()
+  if (shared && (shared.messagingServiceSid || shared.phoneNumber)) {
+    const r = await sendViaTwilio(e164, body, {
+      messagingServiceSid: shared.messagingServiceSid,
+      from: shared.phoneNumber,
+    })
+    if (r.ok) return { ok: true, provider: 'twilio' }
+    if (r.code && OPT_OUT_CODES.has(r.code)) {
+      await kv.sadd('sms:optout', e164).catch(() => {})
+      return { ok: false, provider: 'none', suppressed: true, error: r.error }
+    }
+    console.error('Shared Twilio send failed, falling back to TextMagic:', r.error)
+  }
+
+  // 3) Legacy TextMagic fallback (until the shared Twilio number is live).
   const ok = await sendViaTextMagic(tenDigit, body)
   return { ok, provider: ok ? 'textmagic' : 'none' }
 }

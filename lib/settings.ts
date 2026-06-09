@@ -124,6 +124,9 @@ export interface TenantSmsSender {
   rejectionReason?: string
   error?: string
   updatedAt?: string
+  // Set once when we've emailed the studio about the verification outcome
+  // (approved/rejected) so the notification fires exactly once.
+  outcomeNotifiedAt?: string
   // legacy 10DLC fields (unused on the toll-free path, kept for back-compat)
   brandSid?: string
   campaignSid?: string
@@ -197,6 +200,66 @@ export async function listConnectedUserIds(): Promise<string[]> {
     return (await kv.smembers(CONNECTED_SET)) || []
   } catch (error) {
     console.error('listConnectedUserIds error:', error)
+    return []
+  }
+}
+
+// --- Shared platform SMS sender (toll-free) -------------------------------
+// The default sender for every tenant that doesn't have their OWN active
+// number. It's a single toll-free number/Messaging Service that we verify ONCE
+// platform-side, so studios can send immediately (no per-studio verification).
+// Per-tenant senders always take priority over this (see sendTenantSms).
+//
+// Configured either via env (TWILIO_SHARED_MESSAGING_SERVICE_SID /
+// TWILIO_SHARED_NUMBER) or set at runtime by an admin (stored in KV, which
+// wins). Returns null when not configured, so sending falls through to the
+// legacy TextMagic account and nothing breaks before it's set up.
+
+export interface SharedSmsSender {
+  messagingServiceSid?: string
+  phoneNumber?: string // E.164, e.g. +18005551234
+}
+
+const SHARED_SENDER_KEY = 'platform:shared_sms_sender'
+
+export async function getSharedSmsSender(): Promise<SharedSmsSender | null> {
+  let stored: SharedSmsSender | null = null
+  try {
+    stored = await kv.get<SharedSmsSender>(SHARED_SENDER_KEY)
+  } catch (error) {
+    console.error('getSharedSmsSender error:', error)
+  }
+  const messagingServiceSid =
+    stored?.messagingServiceSid || process.env.TWILIO_SHARED_MESSAGING_SERVICE_SID || undefined
+  const phoneNumber = stored?.phoneNumber || process.env.TWILIO_SHARED_NUMBER || undefined
+  if (!messagingServiceSid && !phoneNumber) return null
+  return { messagingServiceSid, phoneNumber }
+}
+
+export async function setSharedSmsSender(sender: SharedSmsSender): Promise<void> {
+  await kv.set(SHARED_SENDER_KEY, { ...sender })
+}
+
+// --- Pending toll-free verification index ---------------------------------
+// Tenants awaiting Twilio's toll-free verification. The cron polls this set so
+// the studio gets an automatic "approved"/"needs a fix" email the moment Twilio
+// decides — no one has to click "refresh".
+
+const PENDING_VERIFICATION_SET = 'sms:pending_verification'
+
+export async function addPendingVerification(userId: string): Promise<void> {
+  await kv.sadd(PENDING_VERIFICATION_SET, userId).catch(() => {})
+}
+
+export async function removePendingVerification(userId: string): Promise<void> {
+  await kv.srem(PENDING_VERIFICATION_SET, userId).catch(() => {})
+}
+
+export async function listPendingVerifications(): Promise<string[]> {
+  try {
+    return (await kv.smembers(PENDING_VERIFICATION_SET)) || []
+  } catch (error) {
+    console.error('listPendingVerifications error:', error)
     return []
   }
 }

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { syncAllConnected } from '@/lib/sync'
+import { pollPendingVerifications } from '@/lib/provisioning'
 
 // This endpoint can be called by external cron services like cron-job.org
 // or by Vercel Cron Jobs to: (1) pull new UseSession bookings for every
-// connected photographer and auto-schedule reminders, then (2) send any
-// reminders that are now due.
+// connected photographer and auto-schedule reminders, (2) poll pending
+// toll-free verifications (auto-emailing studios on approval/rejection), then
+// (3) send any reminders that are now due.
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,8 +38,19 @@ export async function GET(request: NextRequest) {
       syncSummary = { error: String(syncError instanceof Error ? syncError.message : syncError) }
     }
 
-    // 2) Call the background processor directly (internal call)
-    const baseUrl = process.env.VERCEL_URL 
+    // 2) Poll pending toll-free verifications; auto-emails studios when Twilio
+    //    approves/rejects. Never let this block sending.
+    let verifySummary: { checked: number } | { error: string }
+    try {
+      verifySummary = await pollPendingVerifications()
+      console.log('Toll-free verification poll:', JSON.stringify(verifySummary))
+    } catch (verifyError) {
+      console.error('Verification poll failed (continuing to send):', verifyError)
+      verifySummary = { error: String(verifyError instanceof Error ? verifyError.message : verifyError) }
+    }
+
+    // 3) Call the background processor directly (internal call)
+    const baseUrl = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}` 
       : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
     
@@ -58,6 +71,7 @@ export async function GET(request: NextRequest) {
       success: true,
       timestamp: new Date().toISOString(),
       sync: syncSummary,
+      verification: verifySummary,
       processed: result.processed,
       messages: result.messages,
     })

@@ -18,6 +18,9 @@ import {
   patchTenantSmsSender,
   getTenantBusiness,
   getUserSettings,
+  addPendingVerification,
+  removePendingVerification,
+  listPendingVerifications,
 } from './settings'
 import {
   findAvailableTollFree,
@@ -28,6 +31,8 @@ import {
   releaseNumber,
   twilioConfigured,
 } from './twilio'
+import { getUserById } from './auth'
+import { sendTollfreeApprovedEmail, sendTollfreeRejectedEmail } from './email'
 
 // --- Platform-standardized consent (same for EVERY tenant) ----------------
 // In the ISV model the opt-in flow is identical for all studios (clients give
@@ -221,8 +226,11 @@ export async function provisionTollFree(
       verificationSid: verification.sid,
       verificationStatus: verification.status || 'PENDING_REVIEW',
       error: undefined,
+      outcomeNotifiedAt: undefined, // reset so a re-submission can notify again
       updatedAt: nowIso(),
     })
+    // Track for the cron to poll until Twilio decides, then auto-email the studio.
+    await addPendingVerification(userId)
     return { ok: true, sender }
   } catch (e: any) {
     // Any unexpected throw (incl. a KV write failure) lands here so the tenant is
@@ -241,7 +249,9 @@ export async function provisionTollFree(
 }
 
 // Re-check a pending verification with Twilio and flip the tenant to active when
-// approved. Safe to call repeatedly (e.g. from a cron or an admin "refresh").
+// approved (or failed when rejected). Safe to call repeatedly — from the cron OR
+// an admin/self-serve "refresh". On the FIRST transition to a terminal state it
+// emails the studio exactly once and drops them from the pending-poll set.
 export async function refreshVerificationStatus(userId: string): Promise<ProvisionResult> {
   const sender = await getTenantSmsSender(userId)
   if (!sender?.verificationSid) return { ok: false, error: 'No verification on file' }
@@ -264,7 +274,60 @@ export async function refreshVerificationStatus(userId: string): Promise<Provisi
     patch.status = 'pending_verification'
   }
   const updated = await patchTenantSmsSender(userId, patch)
+
+  // Fire the studio's outcome email exactly once, the first time we land on a
+  // terminal status — regardless of whether cron or a manual refresh got here.
+  const terminal = updated.status === 'active' || updated.status === 'failed'
+  if (terminal && !sender.outcomeNotifiedAt) {
+    await removePendingVerification(userId)
+    await notifyOutcome(userId, updated).catch((e) =>
+      console.error('notifyOutcome failed for', userId, e)
+    )
+    await patchTenantSmsSender(userId, { outcomeNotifiedAt: nowIso() })
+  } else if (terminal) {
+    await removePendingVerification(userId)
+  }
+
   return { ok: true, sender: updated }
+}
+
+// Cron entry point: poll every tenant still awaiting verification. The email +
+// set-removal happen inside refreshVerificationStatus, so this just drives it.
+export async function pollPendingVerifications(): Promise<{ checked: number }> {
+  const ids = await listPendingVerifications()
+  for (const userId of ids) {
+    try {
+      await refreshVerificationStatus(userId)
+    } catch (e) {
+      console.error('pollPendingVerifications error for', userId, e)
+    }
+  }
+  return { checked: ids.length }
+}
+
+// Email the studio about their dedicated-number verification outcome. Prefers
+// the business contact email, falling back to the account email.
+async function notifyOutcome(userId: string, sender: TenantSmsSender): Promise<void> {
+  const to = await recipientEmail(userId)
+  if (!to) return
+  const settings = await getUserSettings(userId)
+  const studioName = settings.studioName || ''
+  if (sender.status === 'active') {
+    await sendTollfreeApprovedEmail(to, studioName, sender.phoneNumber)
+  } else if (sender.status === 'failed') {
+    await sendTollfreeRejectedEmail(to, studioName, sender.rejectionReason)
+  }
+}
+
+async function recipientEmail(userId: string): Promise<string | null> {
+  const biz = await getTenantBusiness(userId)
+  if (biz?.contactEmail) return biz.contactEmail
+  try {
+    const user = await getUserById(userId)
+    return user?.email || null
+  } catch {
+    return null
+  }
 }
 
 function nowIso(): string {
