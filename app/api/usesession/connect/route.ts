@@ -26,8 +26,12 @@ export async function POST(request: NextRequest) {
     const result = await connectUseSession(user.id, user.username, token)
     return NextResponse.json({ success: true, ...result })
   } catch (error) {
+    console.error('connect: connectUseSession failed:', error)
     return NextResponse.json(
-      { error: 'That token did not work. Make sure you are logged into UseSession and try again.' },
+      {
+        error: 'That token did not work. Make sure you are logged into UseSession and try again.',
+        detail: String((error as any)?.message || error),
+      },
       { status: 400 }
     )
   }

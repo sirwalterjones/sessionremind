@@ -115,7 +115,7 @@ export default function AutomationPage() {
         `if(!t){alert('Open UseSession and make sure you are logged in, then click Connect again.');return;}` +
         `fetch('${origin}/api/usesession/connect-token',{method:'POST',headers:{'content-type':'application/json'},` +
         `body:JSON.stringify({code:'${code}',token:t})}).then(function(r){return r.json()}).then(function(d){` +
-        `alert(d.success?'\\u2705 Connected to SessionRemind!'+(d.sync&&typeof d.sync.scheduled==='number'?' Scheduled '+d.sync.scheduled+' reminders.':''):'\\u274c '+(d.error||'Failed'))})` +
+        `alert(d.success?'\\u2705 Connected to SessionRemind!'+(d.sync&&typeof d.sync.scheduled==='number'?' Scheduled '+d.sync.scheduled+' reminders.':''):'\\u274c '+(d.error||'Failed')+(d.detail?'\\n\\n'+d.detail:''))})` +
         `.catch(function(e){alert('\\u274c '+e)})})();`
       setBookmarklet(bm)
       pollForConnection()

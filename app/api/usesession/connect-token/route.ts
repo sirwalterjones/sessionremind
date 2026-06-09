@@ -47,9 +47,13 @@ export async function POST(request: NextRequest) {
   try {
     const result = await connectUseSession(userId, user?.username || '', token)
     return NextResponse.json({ success: true, ...result }, { headers: CORS_HEADERS })
-  } catch {
+  } catch (error) {
+    console.error('connect-token: connectUseSession failed:', error)
     return NextResponse.json(
-      { error: 'Could not validate your UseSession token. Make sure you are logged in and try again.' },
+      {
+        error: 'Could not validate your UseSession token. Make sure you are logged in and try again.',
+        detail: String((error as any)?.message || error),
+      },
       { status: 400, headers: CORS_HEADERS }
     )
   }
