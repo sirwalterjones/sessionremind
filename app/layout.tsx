@@ -124,9 +124,11 @@ export default function RootLayout({
                 <div className="flex justify-between items-center h-16">
                   <Link href="/" className="flex items-center gap-2.5 group">
                     <span
-                      className="inline-block w-2.5 h-2.5 rounded-full transition-transform group-hover:scale-125"
-                      style={{ background: '#DD4D24' }}
-                    />
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-white text-[13px] font-bold tracking-tight transition-transform group-hover:scale-105"
+                      style={{ background: '#141414' }}
+                    >
+                      Sr
+                    </span>
                     <span className="text-[17px] font-semibold tracking-tight text-[#141414]">SessionRemind</span>
                   </Link>
 
@@ -141,7 +143,12 @@ export default function RootLayout({
             <footer className="border-t border-[#ECEAE4] mt-auto">
               <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
-                  <span className="inline-block w-2 h-2 rounded-full" style={{ background: '#DD4D24' }} />
+                  <span
+                    className="inline-flex items-center justify-center w-6 h-6 rounded-md text-white text-[11px] font-bold tracking-tight"
+                    style={{ background: '#141414' }}
+                  >
+                    Sr
+                  </span>
                   <span className="text-sm font-semibold tracking-tight">SessionRemind</span>
                 </div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#9A958C]">
