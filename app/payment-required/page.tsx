@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CreditCardIcon, ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
+import { useToast } from '@/components/Notifications'
 
 export default function PaymentRequiredPage() {
   // useSearchParams must be inside a Suspense boundary (Next.js 14 requirement).
@@ -19,6 +20,7 @@ function PaymentRequiredContent() {
   const redirectPath = searchParams.get('redirect') || '/dashboard'
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const toast = useToast()
 
   useEffect(() => {
     fetchUserInfo()
@@ -55,11 +57,11 @@ function PaymentRequiredContent() {
         // Redirect to Stripe checkout
         window.location.href = data.url
       } else {
-        alert('Failed to create checkout session: ' + (data.error || 'Unknown error'))
+        toast.error('Failed to create checkout session: ' + (data.error || 'Unknown error'))
       }
     } catch (error) {
       console.error('Payment error:', error)
-      alert('Failed to initiate payment process')
+      toast.error('Failed to initiate payment process')
     } finally {
       setIsLoading(false)
     }
