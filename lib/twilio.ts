@@ -168,7 +168,9 @@ export async function submitTollfreeVerification(
       businessName: input.businessName,
       businessWebsite: input.businessWebsite,
       notificationEmail: input.notificationEmail,
-      useCaseCategories: ['NOTIFICATIONS'],
+      // Appointment reminders are transactional account/service notifications.
+      // Must be one of Twilio's enum values (NOT the free-form 'NOTIFICATIONS').
+      useCaseCategories: ['ACCOUNT_NOTIFICATIONS'],
       useCaseSummary: input.useCaseSummary,
       productionMessageSample: input.productionMessageSample,
       optInImageUrls: input.optInImageUrls,
