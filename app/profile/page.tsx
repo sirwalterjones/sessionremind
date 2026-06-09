@@ -28,10 +28,14 @@ interface Notification {
 }
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth()
+  const { user, logout, refreshUser } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [userDetails, setUserDetails] = useState<User | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [editUsername, setEditUsername] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [savingProfile, setSavingProfile] = useState(false)
   const [notification, setNotification] = useState<Notification | null>(null)
   const [showPasswordReset, setShowPasswordReset] = useState(false)
   const [passwordData, setPasswordData] = useState({
@@ -112,6 +116,38 @@ export default function ProfilePage() {
       showNotification('error', 'Error updating password')
     } finally {
       setIsResettingPassword(false)
+    }
+  }
+
+  const startEdit = () => {
+    if (!userDetails) return
+    setEditUsername(userDetails.username)
+    setEditEmail(userDetails.email)
+    setEditing(true)
+  }
+
+  const saveProfile = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSavingProfile(true)
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: editUsername, email: editEmail }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Update failed')
+      setUserDetails((u) => (u ? { ...u, username: data.user.username, email: data.user.email } : u))
+      if (refreshUser) await refreshUser()
+      setEditing(false)
+      showNotification(
+        'success',
+        data.emailChanged ? 'Profile updated — check your new email to verify it.' : 'Profile updated.'
+      )
+    } catch (err: any) {
+      showNotification('error', err?.message || 'Could not update profile.')
+    } finally {
+      setSavingProfile(false)
     }
   }
 
@@ -234,19 +270,73 @@ export default function ProfilePage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Account Information */}
           <div className="rounded-2xl border border-hairline p-6 sm:p-8">
-            <h2 className="font-display text-xl font-semibold">Account information</h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="font-display text-xl font-semibold">Account information</h2>
+              {!editing && (
+                <button
+                  onClick={startEdit}
+                  className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
 
-            <div className="mt-6 divide-y divide-hairline">
-              <div className="flex flex-col gap-1 py-4 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
-                <span className="eyebrow">Username</span>
-                <span className="text-[15px] font-medium text-ink">{userDetails.username}</span>
+            {editing ? (
+              <form onSubmit={saveProfile} className="mt-6 space-y-5">
+                <div>
+                  <label className="eyebrow mb-2 block">Username</label>
+                  <input
+                    value={editUsername}
+                    onChange={(e) => setEditUsername(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="eyebrow mb-2 block">Email</label>
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+                  />
+                  <p className="mt-1.5 text-xs text-muted">
+                    Changing your email requires re-verifying the new address.
+                  </p>
+                </div>
+                <div className="flex gap-2.5">
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    className="rounded-full bg-ink px-5 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                  >
+                    {savingProfile ? 'Saving…' : 'Save changes'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditing(false)}
+                    className="rounded-full border border-hairline px-5 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="mt-6 divide-y divide-hairline">
+                <div className="flex flex-col gap-1 py-4 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="eyebrow">Username</span>
+                  <span className="text-[15px] font-medium text-ink">{userDetails.username}</span>
+                </div>
+                <div className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="eyebrow">Email</span>
+                  <span className="text-[15px] font-medium text-ink">{userDetails.email}</span>
+                </div>
               </div>
+            )}
 
-              <div className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <span className="eyebrow">Email</span>
-                <span className="text-[15px] font-medium text-ink">{userDetails.email}</span>
-              </div>
-
+            <div className="mt-2 divide-y divide-hairline border-t border-hairline">
               <div className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <span className="eyebrow">Subscription</span>
                 {getSubscriptionBadge(userDetails.subscription_tier, userDetails.subscription_status, userDetails.payment_override)}

@@ -4,23 +4,27 @@ import { getCurrentUser } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { customer_id } = await request.json()
-    
-    // Get current user
-    const user = await getCurrentUser()
+    // Always use the authenticated user's OWN customer id — never a
+    // client-supplied one (which would expose other people's billing).
+    const user = await getCurrentUser(request)
     if (!user) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    // Validate input
-    if (!customer_id) {
-      return NextResponse.json({ error: 'Customer ID is required' }, { status: 400 })
+    const customerId = (user as { stripe_customer_id?: string | null }).stripe_customer_id
+    if (!customerId) {
+      return NextResponse.json({ error: 'No active subscription on this account.' }, { status: 400 })
     }
 
-    // Create Stripe customer portal session
+    const base =
+      request.headers.get('origin') ||
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      'https://sessionremind.com'
+
     const session = await stripe.billingPortal.sessions.create({
-      customer: customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile`, // Return to profile page
+      customer: customerId,
+      return_url: `${base}/profile`,
     })
 
     return NextResponse.json({ url: session.url })
