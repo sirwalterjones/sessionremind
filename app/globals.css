@@ -40,11 +40,16 @@ body {
 
 html {
   scroll-behavior: smooth;
+  /* Contain the full-bleed (100vw) marketing bands so they can't create a
+     horizontal scrollbar / clip content. `clip` is sticky-nav safe. */
+  overflow-x: clip;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* Tight display headings (uses the grotesque, just heavier + tighter) */
