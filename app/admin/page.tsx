@@ -673,6 +673,12 @@ export default function AdminPage() {
               <p className="text-gray-600">Manage your application and users</p>
             </div>
             <div className="flex items-center space-x-4">
+              <a
+                href="/admin/spam"
+                className="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              >
+                Spam cleanup
+              </a>
               <button
                 onClick={() => router.push('/dashboard')}
                 className="text-gray-500 hover:text-gray-700"

@@ -83,6 +83,25 @@ body {
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
 }
 
+/* Notification animations (toasts + confirm modal) */
+@keyframes srToastIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.sr-toast-in { animation: srToastIn 0.18s ease-out both; }
+
+@keyframes srFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.sr-fade-in { animation: srFadeIn 0.15s ease-out both; }
+
+@keyframes srPopIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.sr-pop-in { animation: srPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
 /* Staggered page-load reveal */
 @keyframes rise {
   from {

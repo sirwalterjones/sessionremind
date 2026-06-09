@@ -3,6 +3,7 @@ import { Hanken_Grotesk, IBM_Plex_Mono } from 'next/font/google'
 import Link from 'next/link'
 import MobileNav from '@/components/MobileNav'
 import { AuthProvider } from '@/lib/auth-context'
+import { NotificationsProvider } from '@/components/Notifications'
 import NavLinks from '@/components/NavLinks'
 import './globals.css'
 
@@ -118,6 +119,7 @@ export default function RootLayout({
           }}
         />
         <AuthProvider>
+          <NotificationsProvider>
           <div className="min-h-screen bg-white text-[#141414]">
             <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-[#ECEAE4]">
               <div className="max-w-6xl mx-auto px-5 sm:px-8">
@@ -157,6 +159,7 @@ export default function RootLayout({
               </div>
             </footer>
           </div>
+          </NotificationsProvider>
         </AuthProvider>
       </body>
     </html>
