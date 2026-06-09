@@ -5,7 +5,7 @@ export const metadata = {
   description: 'How SessionRemind handles your data and your UseSession connection.',
 }
 
-const UPDATED = 'June 8, 2026'
+const UPDATED = 'June 9, 2026'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -75,8 +75,50 @@ export default function PrivacyPage() {
 
         <Section title="Sending text messages">
           <p>
-            Reminders are delivered via our SMS provider (TextMagic), which receives the recipient&apos;s phone number
-            and the message text solely to deliver it. Clients can reply STOP to opt out at any time.
+            Reminders are delivered through our SMS provider (Twilio), which receives the recipient&apos;s phone number
+            and the message text solely to deliver it. Each photographer sends from their own dedicated number.
+            Recipients can reply STOP to opt out at any time, or HELP for assistance.
+          </p>
+        </Section>
+
+        <Section title="SMS messaging program terms">
+          <p>
+            <strong>Program description.</strong> SessionRemind sends appointment reminder text messages on behalf
+            of the photographer you booked your session with. Messages include reminders about your upcoming
+            session&apos;s date, time, and location, and occasional related logistics. We do not send marketing or
+            promotional text messages through this program.
+          </p>
+          <p>
+            <strong>How you opt in.</strong> You provide your mobile number to your photographer when you book a
+            session through UseSession, and consent to receive reminder texts about that session. Consent to
+            receive reminder texts is not a condition of any purchase.
+          </p>
+          <p>
+            <strong>Message frequency.</strong> Message frequency varies and depends on how many sessions you have
+            booked — typically one to a few reminder messages per session.
+          </p>
+          <p>
+            <strong>Cost.</strong> Message and data rates may apply, depending on your mobile carrier and plan.
+            SessionRemind and your photographer do not charge you for reminder messages.
+          </p>
+          <p>
+            <strong>Opting out.</strong> You can opt out at any time by replying <strong>STOP</strong> to any
+            message. You will receive a one-time confirmation and no further reminder texts. For help, reply{' '}
+            <strong>HELP</strong> or email{' '}
+            <a href="mailto:support@sessionremind.com" className="text-accent underline">
+              support@sessionremind.com
+            </a>
+            .
+          </p>
+          <p>
+            <strong>We do not share your number.</strong> Mobile information — your phone number and the fact that
+            you opted in to reminders — is used only to deliver these reminder messages. We do not sell, rent, or
+            share mobile opt-in data or phone numbers with third parties or affiliates for their own marketing
+            purposes. Carriers are not liable for delayed or undelivered messages.
+          </p>
+          <p>
+            Supported carriers may include AT&amp;T, T-Mobile, Verizon, and others. Carriers are not liable for
+            delayed or undelivered messages.
           </p>
         </Section>
 

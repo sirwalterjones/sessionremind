@@ -98,13 +98,33 @@ export async function clearUseSessionToken(userId: string): Promise<void> {
 
 // --- Per-tenant SMS sender (Twilio) -------------------------------------
 // When a tenant has an ACTIVE Twilio sender, their SMS sends from their own
-// number/Messaging Service. Absent/pending => fall back to the shared TextMagic
-// account during migration.
+// toll-free number / Messaging Service. Anything other than 'active' => fall
+// back to the shared TextMagic account during migration.
+//
+// Lifecycle: none -> provisioning -> pending_verification -> active | failed
+//   - provisioning:         number bought, messaging service being set up
+//   - pending_verification: toll-free verification submitted, awaiting Twilio
+//   - active:               Twilio approved; tenant sends from their own number
+//   - failed:               provisioning errored or verification rejected
+
+export type TenantSmsStatus =
+  | 'none'
+  | 'provisioning'
+  | 'pending_verification'
+  | 'active'
+  | 'failed'
 
 export interface TenantSmsSender {
-  status: 'active' | 'pending'
+  status: TenantSmsStatus
   messagingServiceSid?: string
-  phoneNumber?: string
+  phoneNumber?: string // E.164 toll-free, e.g. +18005551234
+  phoneNumberSid?: string // Twilio PN... sid for the purchased number
+  verificationSid?: string // Twilio HH... toll-free verification sid
+  verificationStatus?: string // PENDING_REVIEW | IN_REVIEW | TWILIO_APPROVED | TWILIO_REJECTED
+  rejectionReason?: string
+  error?: string
+  updatedAt?: string
+  // legacy 10DLC fields (unused on the toll-free path, kept for back-compat)
   brandSid?: string
   campaignSid?: string
 }
@@ -119,7 +139,53 @@ export async function getTenantSmsSender(userId: string): Promise<TenantSmsSende
 }
 
 export async function setTenantSmsSender(userId: string, sender: TenantSmsSender): Promise<void> {
-  await kv.set(`user:${userId}:sms_sender`, sender)
+  await kv.set(`user:${userId}:sms_sender`, { ...sender })
+}
+
+export async function patchTenantSmsSender(
+  userId: string,
+  patch: Partial<TenantSmsSender>
+): Promise<TenantSmsSender> {
+  const current = (await getTenantSmsSender(userId)) || { status: 'none' as TenantSmsStatus }
+  const next: TenantSmsSender = { ...current, ...patch }
+  await setTenantSmsSender(userId, next)
+  return next
+}
+
+// --- Per-tenant business details (for toll-free verification) ------------
+// Collected during onboarding; submitted to Twilio's toll-free verification
+// API and retained so we can resubmit if a verification is rejected.
+
+export interface TenantBusiness {
+  legalName: string
+  website: string
+  addressStreet: string
+  addressCity: string
+  addressState: string
+  addressZip: string
+  addressCountry: string // ISO-2, e.g. 'US'
+  contactFirstName: string
+  contactLastName: string
+  contactEmail: string
+  contactPhone: string // E.164
+  optInType: 'VERBAL' | 'WEB_FORM' | 'PAPER_FORM' | 'VIA_TEXT' | 'MOBILE_QR_CODE'
+  optInDetails: string
+  messageSample: string
+  monthlyVolume: string // Twilio expects a string bucket, e.g. '10', '100', '1,000'
+  updatedAt?: string
+}
+
+export async function getTenantBusiness(userId: string): Promise<TenantBusiness | null> {
+  try {
+    return (await kv.get<TenantBusiness>(`user:${userId}:business`)) || null
+  } catch (error) {
+    console.error('getTenantBusiness error:', error)
+    return null
+  }
+}
+
+export async function setTenantBusiness(userId: string, biz: TenantBusiness): Promise<void> {
+  await kv.set(`user:${userId}:business`, { ...biz })
 }
 
 // All userIds with a stored UseSession token — used by the cron to sync everyone.

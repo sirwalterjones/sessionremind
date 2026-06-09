@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import CsvImport from '@/components/CsvImport'
 import { useToast, useConfirm } from '@/components/Notifications'
@@ -12,6 +13,7 @@ import {
   ClipboardDocumentIcon,
   TrashIcon,
   ArrowLeftIcon,
+  DevicePhoneMobileIcon,
 } from '@heroicons/react/24/outline'
 
 interface UseSessionStatus {
@@ -390,6 +392,26 @@ export default function AutomationPage() {
           </div>
         )}
       </div>
+
+      {/* Your texting number */}
+      <Link
+        href="/onboarding"
+        className="group mb-6 flex items-center gap-4 rounded-2xl border border-hairline p-6 sm:p-8 transition-colors hover:bg-[#FAFAF8]"
+      >
+        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-ink">
+          <DevicePhoneMobileIcon className="h-5 w-5 text-white" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-xl font-semibold text-ink">Your texting number</h2>
+          <p className="mt-1 text-[14px] leading-relaxed text-[#6E6A63]">
+            Send reminders from a dedicated number registered to your business. We register and verify it for you —
+            no separate texting account needed.
+          </p>
+        </div>
+        <span className="hidden flex-shrink-0 text-sm font-medium text-[#6E6A63] transition-colors group-hover:text-ink sm:inline">
+          Set up →
+        </span>
+      </Link>
 
       {/* Settings */}
       {settings && (

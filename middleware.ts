@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 
 // Routes that require authentication
-const protectedRoutes = ['/dashboard', '/new', '/admin', '/automation', '/reminders']
+const protectedRoutes = ['/dashboard', '/new', '/admin', '/automation', '/reminders', '/onboarding']
 
 // Public routes (auth pages and marketing pages)
 const publicRoutes = ['/login', '/register', '/', '/payment-required', '/verify-email']

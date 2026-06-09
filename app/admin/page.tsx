@@ -95,6 +95,9 @@ export default function AdminPage() {
   const [filterTier, setFilterTier] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
   const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null)
+  const [smsSender, setSmsSender] = useState<any>(null)
+  const [smsBusiness, setSmsBusiness] = useState<any>(null)
+  const [smsBusy, setSmsBusy] = useState(false)
 
   // Form states
   const [formData, setFormData] = useState({
@@ -322,7 +325,74 @@ export default function AdminPage() {
       stripe_customer_id: user.stripe_customer_id || '',
       sms_limit: user.sms_limit
     })
+    setSmsSender(null)
+    setSmsBusiness(null)
+    loadSmsStatus(user.id)
     setShowUserModal(true)
+  }
+
+  const loadSmsStatus = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/admin/provision-sms?userId=${userId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setSmsSender(data.sender || null)
+        setSmsBusiness(data.business || null)
+      }
+    } catch (e) {
+      console.error('loadSmsStatus error:', e)
+    }
+  }
+
+  const handleProvisionSms = async () => {
+    if (!selectedUser) return
+    const ok = window.confirm(
+      `Buy a toll-free number and submit a carrier verification for ${selectedUser.username}?\n\n` +
+        'This purchases a real number (~$2/mo) on the SessionRemind Twilio account.'
+    )
+    if (!ok) return
+    setSmsBusy(true)
+    try {
+      const res = await fetch('/api/admin/provision-sms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser.id, action: 'provision' }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setSmsSender(data.sender || null)
+        showNotification('success', `Provisioned ${data.sender?.phoneNumber || 'number'} — verification submitted.`)
+      } else {
+        showNotification('error', data.error || 'Provisioning failed')
+      }
+    } catch (e: any) {
+      showNotification('error', e?.message || 'Provisioning failed')
+    } finally {
+      setSmsBusy(false)
+    }
+  }
+
+  const handleRefreshSms = async () => {
+    if (!selectedUser) return
+    setSmsBusy(true)
+    try {
+      const res = await fetch('/api/admin/provision-sms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser.id, action: 'refresh' }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setSmsSender(data.sender || null)
+        showNotification('success', `Status: ${data.sender?.status || 'unknown'}`)
+      } else {
+        showNotification('error', data.error || 'Refresh failed')
+      }
+    } catch (e: any) {
+      showNotification('error', e?.message || 'Refresh failed')
+    } finally {
+      setSmsBusy(false)
+    }
   }
 
   const openDeleteModal = (user: User) => {
@@ -1370,6 +1440,76 @@ export default function AdminPage() {
                         This user will have premium access without payment requirements.
                       </p>
                     </div>
+                  </div>
+                )}
+
+                {/* Toll-free SMS provisioning (ISV) */}
+                {!isCreating && (
+                  <div className="border-t border-gray-200 pt-4">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Dedicated texting number
+                    </label>
+                    {(() => {
+                      const status = smsSender?.status || 'none'
+                      const badge: Record<string, string> = {
+                        none: 'bg-gray-100 text-gray-700',
+                        provisioning: 'bg-blue-100 text-blue-800',
+                        pending_verification: 'bg-yellow-100 text-yellow-800',
+                        active: 'bg-green-100 text-green-800',
+                        failed: 'bg-red-100 text-red-800',
+                      }
+                      return (
+                        <div className="rounded-lg bg-gray-50 border border-gray-200 p-3 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badge[status] || badge.none}`}
+                            >
+                              {status.replace('_', ' ')}
+                            </span>
+                            {smsSender?.phoneNumber && (
+                              <span className="font-mono text-xs text-gray-700">{smsSender.phoneNumber}</span>
+                            )}
+                          </div>
+                          {smsSender?.verificationStatus && (
+                            <p className="mt-2 text-xs text-gray-600">
+                              Verification: {smsSender.verificationStatus}
+                            </p>
+                          )}
+                          {(smsSender?.rejectionReason || smsSender?.error) && (
+                            <p className="mt-1 text-xs text-red-700">
+                              {smsSender.rejectionReason || smsSender.error}
+                            </p>
+                          )}
+                          <p className="mt-2 text-xs text-gray-600">
+                            {smsBusiness
+                              ? `Business on file: ${smsBusiness.legalName}`
+                              : 'No business details on file — the user must complete onboarding first.'}
+                          </p>
+                          <div className="mt-3 flex gap-2">
+                            {(status === 'none' || status === 'failed') && (
+                              <button
+                                type="button"
+                                onClick={handleProvisionSms}
+                                disabled={smsBusy || !smsBusiness}
+                                className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {smsBusy ? 'Working…' : 'Buy number + verify'}
+                              </button>
+                            )}
+                            {(status === 'pending_verification' || status === 'provisioning') && (
+                              <button
+                                type="button"
+                                onClick={handleRefreshSms}
+                                disabled={smsBusy}
+                                className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-medium hover:bg-gray-800 disabled:opacity-50"
+                              >
+                                {smsBusy ? 'Checking…' : 'Refresh status'}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })()}
                   </div>
                 )}
               </div>
