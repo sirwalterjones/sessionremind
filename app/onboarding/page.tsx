@@ -331,9 +331,14 @@ export default function OnboardingPage() {
               <div className="min-w-0 flex-1">
                 <h2 className="font-display text-xl font-semibold">Create your texting number</h2>
                 <p className="mt-1 text-[14px] leading-relaxed text-[#6E6A63]">
-                  Registers a dedicated toll-free number to your business and submits it for carrier verification.
-                  Included with your subscription.
+                  A dedicated number registered to your business — an upgrade from the shared SessionRemind number.
+                  Included with your subscription. Here’s exactly what happens:
                 </p>
+                <ol className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-[#4F4B44]">
+                  <li><strong>1.</strong> We register a toll-free number to your business and submit it to the carriers.</li>
+                  <li><strong>2.</strong> The carriers verify it — this typically takes <strong>1–3 weeks</strong>.</li>
+                  <li><strong>3.</strong> <strong>We email you the moment it’s approved</strong> (or if anything needs fixing). Your reminders keep sending on the shared number until then — nothing pauses.</li>
+                </ol>
 
                 {!hasSaved && (
                   <p className="mt-3 text-[13px] text-[#B23A1E]">Save your business details first.</p>
