@@ -6,7 +6,11 @@ import { getCurrentUser } from '@/lib/auth'
 const protectedRoutes = ['/dashboard', '/new', '/admin', '/automation', '/reminders']
 
 // Public routes (auth pages and marketing pages)
-const publicRoutes = ['/login', '/register', '/', '/payment-required']
+const publicRoutes = ['/login', '/register', '/', '/payment-required', '/verify-email']
+
+// Opt-in: only hard-block unverified users when explicitly enabled, so we never
+// lock people out before email sending is verified in Resend.
+const REQUIRE_EMAIL_VERIFICATION = process.env.REQUIRE_EMAIL_VERIFICATION === 'true'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -50,6 +54,16 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL('/login', request.url)
         loginUrl.searchParams.set('redirect', pathname)
         return NextResponse.redirect(loginUrl)
+      }
+
+      // Email verification gate (opt-in). Existing users (no email_verified
+      // field) are treated as verified so they're never locked out.
+      if (
+        REQUIRE_EMAIL_VERIFICATION &&
+        (user as { email_verified?: boolean }).email_verified === false &&
+        !user.is_admin
+      ) {
+        return NextResponse.redirect(new URL('/verify-email', request.url))
       }
 
       // Check payment requirements (after authentication)

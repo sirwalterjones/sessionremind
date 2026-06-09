@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createUser, getUserByEmail, createSession, setSessionCookie } from '@/lib/auth'
 import { verifyTurnstile } from '@/lib/turnstile'
+import { createVerifyToken } from '@/lib/email-verify'
+import { sendVerificationEmail } from '@/lib/email'
+import { kv } from '@vercel/kv'
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,7 +45,17 @@ export async function POST(request: NextRequest) {
 
     // Create user
     const user = await createUser(username, email, password)
-    
+
+    // Mark unverified and send a verification email (best-effort — never blocks signup).
+    await kv.hset(`user:${user.id}`, { email_verified: false })
+    try {
+      const token = await createVerifyToken(user.id)
+      const base = request.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://sessionremind.com'
+      await sendVerificationEmail(user.email, `${base}/api/auth/verify-email?token=${token}`)
+    } catch (e) {
+      console.error('register: verification email failed', e)
+    }
+
     // Create session
     const sessionId = await createSession(user.id)
 
