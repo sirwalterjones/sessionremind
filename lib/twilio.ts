@@ -1,22 +1,27 @@
 // Twilio client + send wrapper for the per-tenant (ISV) SMS model.
-// Auth uses an API Key (SK.../secret) scoped to the account SID — never the
-// raw Auth Token. All no-op cleanly if Twilio isn't configured.
+// Accepts EITHER credential style so whatever you have works:
+//   (a) API Key:  TWILIO_ACCOUNT_SID + TWILIO_API_KEY_SID + TWILIO_API_KEY_SECRET
+//   (b) Auth Token: TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN
+// API Key is preferred when both are present. No-ops cleanly if unconfigured.
 
 import twilio from 'twilio'
 
 export function twilioConfigured(): boolean {
-  return !!(
-    process.env.TWILIO_API_KEY_SID &&
-    process.env.TWILIO_API_KEY_SECRET &&
-    process.env.TWILIO_ACCOUNT_SID
-  )
+  const hasAccount = !!process.env.TWILIO_ACCOUNT_SID
+  const hasApiKey = !!(process.env.TWILIO_API_KEY_SID && process.env.TWILIO_API_KEY_SECRET)
+  const hasAuthToken = !!process.env.TWILIO_AUTH_TOKEN
+  return hasAccount && (hasApiKey || hasAuthToken)
 }
 
 function getClient() {
   if (!twilioConfigured()) return null
-  return twilio(process.env.TWILIO_API_KEY_SID!, process.env.TWILIO_API_KEY_SECRET!, {
-    accountSid: process.env.TWILIO_ACCOUNT_SID!,
-  })
+  const accountSid = process.env.TWILIO_ACCOUNT_SID!
+  // Prefer an API Key (SK.../secret) scoped to the account; otherwise use the
+  // account's Auth Token. Either works for everything we do.
+  if (process.env.TWILIO_API_KEY_SID && process.env.TWILIO_API_KEY_SECRET) {
+    return twilio(process.env.TWILIO_API_KEY_SID, process.env.TWILIO_API_KEY_SECRET, { accountSid })
+  }
+  return twilio(accountSid, process.env.TWILIO_AUTH_TOKEN!)
 }
 
 export interface TwilioSender {
