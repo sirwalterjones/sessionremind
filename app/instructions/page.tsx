@@ -41,7 +41,7 @@ export default function Instructions() {
   const primaryLabel = user ? 'Connect UseSession' : 'Get started'
 
   return (
-    <div className="overflow-x-clip -mt-6 sm:-mt-10 text-ink">
+    <div className="-mt-6 sm:-mt-10 text-ink">
       {/* ───────────── HERO ───────────── */}
       <section className="full-bleed relative bg-white">
         <div className="grid-lines absolute inset-0 h-[420px]" aria-hidden />
