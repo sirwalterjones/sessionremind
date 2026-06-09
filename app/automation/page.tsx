@@ -289,6 +289,11 @@ export default function AutomationPage() {
                       : 'Waiting for first sync…'}
                     {typeof status.lastSyncBookings === 'number' && ` · ${status.lastSyncBookings} upcoming booking(s)`}
                   </p>
+                  <p className="text-xs text-muted mt-1.5 max-w-md">
+                    Syncs automatically every few minutes — new bookings, reschedules, and cancellations are
+                    handled for you. <span className="text-ink/70">&ldquo;Sync now&rdquo; is optional.</span> Manage
+                    reminders from any device, including your phone.
+                  </p>
                   {status.lastSyncStatus === 'error' && (
                     <p className="text-sm text-accent mt-1">Last sync error: {status.lastSyncError}</p>
                   )}
@@ -319,7 +324,8 @@ export default function AutomationPage() {
               <h2 className="font-display text-xl font-semibold text-ink">Connect your UseSession account</h2>
             </div>
             <p className="text-sm text-muted mb-6">
-              One-time setup. After this, new bookings sync automatically — you never have to touch it again.
+              Connect once from a computer (any browser — Chrome, Safari, Firefox). After that it&apos;s fully
+              automatic: bookings sync on their own, and you can log in from your phone to manage reminders anytime.
             </p>
 
             {/* Recommended: true one-click via the browser extension (no dragging) */}
@@ -327,15 +333,16 @@ export default function AutomationPage() {
               <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  <p className="font-display text-sm font-semibold text-ink">One-click connect — browser extension</p>
+                  <p className="font-display text-sm font-semibold text-ink">Optional: one-click Chrome extension</p>
                 </div>
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] border border-hairline rounded-full px-2.5 py-0.5 text-muted">
-                  Easiest
+                  Chrome only
                 </span>
               </div>
               <p className="text-sm text-muted mb-3">
-                A true one-click <strong className="text-ink font-medium">&ldquo;Add to Chrome&rdquo;</strong> install is
-                coming soon via the Chrome Web Store. For now, load it manually — it takes about a minute:
+                Use Chrome and want a toolbar button? Install the extension. Otherwise the{' '}
+                <strong className="text-ink font-medium">recommended option below works in any browser</strong> (a true
+                one-click &ldquo;Add to Chrome&rdquo; listing is coming soon). To load it now — about a minute:
               </p>
               <ol className="text-sm text-ink/80 space-y-2 list-decimal list-inside">
                 <li>
@@ -354,7 +361,7 @@ export default function AutomationPage() {
               </ol>
             </div>
             <div className="text-center font-mono text-[11px] uppercase tracking-[0.16em] text-muted mb-5">
-              or use the no-install option below
+              recommended · works in any browser · connect once from a computer
             </div>
 
             {!pairCode ? (

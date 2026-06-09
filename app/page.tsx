@@ -162,8 +162,8 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
             {[
-              ['01', 'Connect UseSession', 'One click with our connector. Your account links securely — your login is encrypted the instant it arrives.'],
-              ['02', 'We sync your bookings', 'Every few minutes we read just the details a reminder needs: name, session, time. Nothing else.'],
+              ['01', 'Connect once, from a computer', 'A quick drag-and-click in any browser links your account securely — your login is encrypted the instant it arrives. After that, manage everything from your phone.'],
+              ['02', 'We keep your bookings in sync', 'Every few minutes we read just what a reminder needs — name, session, time. Reschedule or cancel a shoot and the reminders update automatically.'],
               ['03', 'Clients get texted', 'A warm, on-brand reminder goes out 3 days and 1 day before each shoot — in your voice. You do nothing.'],
             ].map(([n, t, d]) => (
               <div key={n} className="group bg-white p-8 hover:bg-[#FCFBF9] transition-colors">
