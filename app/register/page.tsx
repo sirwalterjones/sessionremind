@@ -4,6 +4,9 @@ import { useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Turnstile from '@/components/Turnstile'
+
+const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('')
@@ -12,10 +15,11 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
   const { register } = useAuth()
   const router = useRouter()
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -29,10 +33,15 @@ export default function RegisterPage() {
       setError('Password must be at least 6 characters')
       return
     }
-    
+
+    if (TURNSTILE_ENABLED && !turnstileToken) {
+      setError('Please complete the verification challenge below.')
+      return
+    }
+
     setLoading(true)
 
-    const result = await register(username, email, password)
+    const result = await register(username, email, password, turnstileToken)
     
     if (result.success) {
       router.push('/dashboard')
@@ -130,6 +139,8 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          <Turnstile onVerify={setTurnstileToken} />
+
           {error && (
             <div className="rounded-lg border border-hairline bg-[#FAFAF8] px-4 py-3 text-sm text-accent">
               {error}
@@ -138,7 +149,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
             className="w-full rounded-full bg-ink px-6 py-3 text-center font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Creating account...' : 'Create account'}

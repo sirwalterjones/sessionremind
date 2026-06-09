@@ -4,24 +4,33 @@ import { useState, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Turnstile from '@/components/Turnstile'
+
+const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
   const { login } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (TURNSTILE_ENABLED && !turnstileToken) {
+      setError('Please complete the verification challenge below.')
+      return
+    }
     setLoading(true)
 
     try {
-      const result = await login(email, password)
+      const result = await login(email, password, turnstileToken)
       
       if (result.success) {
         // Force a full page reload to ensure cookies are set
@@ -92,6 +101,8 @@ function LoginForm() {
             </div>
           </div>
 
+          <Turnstile onVerify={setTurnstileToken} />
+
           {error && (
             <div className="rounded-lg border border-hairline bg-[#FAFAF8] px-4 py-3 text-sm text-accent">
               {error}
@@ -100,7 +111,7 @@ function LoginForm() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
             className="w-full rounded-full bg-ink px-6 py-3 text-center font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Signing in... Please wait' : 'Sign in'}

@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyUser, createSession, setSessionCookie } from '@/lib/auth'
+import { verifyTurnstile } from '@/lib/turnstile'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const { email, password, turnstileToken } = await request.json()
+
+    // Bot check (Cloudflare Turnstile).
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null
+    const human = await verifyTurnstile(turnstileToken, ip)
+    if (!human) {
+      return NextResponse.json(
+        { error: 'Please complete the verification challenge and try again.' },
+        { status: 400 }
+      )
+    }
 
     // Validate input
     if (!email || !password) {

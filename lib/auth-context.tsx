@@ -17,8 +17,8 @@ interface User {
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  register: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string, turnstileToken?: string | null) => Promise<{ success: boolean; error?: string }>
+  register: (username: string, email: string, password: string, turnstileToken?: string | null) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
 }
@@ -69,12 +69,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, turnstileToken?: string | null) => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken }),
         credentials: 'include'
       })
 
@@ -109,12 +109,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const register = async (username: string, email: string, password: string) => {
+  const register = async (username: string, email: string, password: string, turnstileToken?: string | null) => {
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, email, password, turnstileToken })
       })
 
       const data = await response.json()
