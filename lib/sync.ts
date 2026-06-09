@@ -3,25 +3,22 @@
 // scheduled, enforces the per-user SMS quota, and records sync health.
 
 import { getUserById } from './auth'
-import { buildReminders } from './reminders'
-import {
-  addScheduledMessages,
-  countUserMessages,
-  getExistingExternalKeys,
-} from './storage'
+import { reconcilePlan } from './reminders'
+import { getScheduledMessages, saveScheduledMessages } from './storage'
 import {
   getUserSettings,
   getUseSessionToken,
   listConnectedUserIds,
   patchUserSettings,
 } from './settings'
-import { ScheduledMessage } from './types'
 import { discoverListField, fetchUpcomingBookings } from './usesession'
 
 export interface SyncResult {
   ok: boolean
   bookings: number
   scheduled: number
+  updated: number
+  cancelled: number
   skippedForQuota: number
   error?: string
 }
@@ -29,7 +26,7 @@ export interface SyncResult {
 export async function syncUserBookings(userId: string): Promise<SyncResult> {
   const token = await getUseSessionToken(userId)
   if (!token) {
-    return { ok: false, bookings: 0, scheduled: 0, skippedForQuota: 0, error: 'UseSession not connected' }
+    return { ok: false, bookings: 0, scheduled: 0, updated: 0, cancelled: 0, skippedForQuota: 0, error: 'UseSession not connected' }
   }
 
   const user = await getUserById(userId)
@@ -47,29 +44,25 @@ export async function syncUserBookings(userId: string): Promise<SyncResult> {
     const bookings = await fetchUpcomingBookings(token, listField, now)
 
     let scheduled = 0
+    let updated = 0
+    let cancelled = 0
     let skippedForQuota = 0
 
     if (settings.autoSchedule) {
-      const existingKeys = await getExistingExternalKeys(userId)
+      // Reconcile stored reminders against the live bookings: add new ones,
+      // update any whose session moved, and cancel any whose session was
+      // deleted/cancelled. Only this user's still-scheduled UseSession reminders
+      // are affected.
       const smsLimit = Number(user?.sms_limit) || 500
-      const used = await countUserMessages(userId)
-      let remaining = Math.max(0, smsLimit - used)
-
-      const toAdd: ScheduledMessage[] = []
-      for (const booking of bookings) {
-        const reminders = buildReminders(booking, settings, userId, now).filter(
-          (r) => !r.externalKey || !existingKeys.has(r.externalKey)
-        )
-        for (const reminder of reminders) {
-          if (remaining <= 0) {
-            skippedForQuota++
-            continue
-          }
-          toAdd.push(reminder)
-          remaining--
-        }
+      const all = await getScheduledMessages()
+      const plan = reconcilePlan(all, userId, 'usesession', bookings, settings, smsLimit, now)
+      if (plan.added || plan.updated || plan.cancelled) {
+        await saveScheduledMessages(plan.next)
       }
-      scheduled = await addScheduledMessages(toAdd)
+      scheduled = plan.added
+      updated = plan.updated
+      cancelled = plan.cancelled
+      skippedForQuota = plan.skippedForQuota
     }
 
     await patchUserSettings(
@@ -88,7 +81,7 @@ export async function syncUserBookings(userId: string): Promise<SyncResult> {
       user?.username || ''
     )
 
-    return { ok: true, bookings: bookings.length, scheduled, skippedForQuota }
+    return { ok: true, bookings: bookings.length, scheduled, updated, cancelled, skippedForQuota }
   } catch (error: any) {
     const message = String(error?.message || error)
     await patchUserSettings(
@@ -103,7 +96,7 @@ export async function syncUserBookings(userId: string): Promise<SyncResult> {
       },
       user?.username || ''
     )
-    return { ok: false, bookings: 0, scheduled: 0, skippedForQuota: 0, error: message }
+    return { ok: false, bookings: 0, scheduled: 0, updated: 0, cancelled: 0, skippedForQuota: 0, error: message }
   }
 }
 

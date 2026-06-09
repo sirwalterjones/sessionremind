@@ -3,7 +3,7 @@
 // Previously this logic was duplicated (and subtly different) across
 // send-sms, schedule-reminders, and process-scheduled.
 
-import { Booking, ReminderType, ScheduledMessage, UserSettings } from './types'
+import { Booking, BookingSource, ReminderType, ScheduledMessage, UserSettings } from './types'
 
 // ---------------------------------------------------------------------------
 // Phone
@@ -150,48 +150,175 @@ function sendTimeFor(sessionDate: Date, offsetDays: number, sendHourEastern: num
 
 // Turn a Booking into the set of ScheduledMessages it should produce, honoring
 // the user's offsets and skipping reminders whose send time is already past.
+// Build the reminder for a single offset (e.g. 3 days before), regardless of
+// whether its send time is past — callers decide. Returns null only if the
+// session date can't be parsed.
+export function buildReminderForOffset(
+  booking: Booking,
+  settings: UserSettings,
+  userId: string,
+  offset: number,
+  now: Date = new Date()
+): ScheduledMessage | null {
+  const sessionDate = parseSessionDate(booking.sessionDateISO) || parseSessionDate(booking.sessionTimeLabel)
+  if (!sessionDate) return null
+
+  const scheduledFor = sendTimeFor(sessionDate, offset, settings.sendHourEastern)
+  const reminderType: ReminderType = `${offset}-day`
+  const message = renderTemplate(settings.reminderTemplate, {
+    name: booking.clientName,
+    sessionTitle: booking.sessionTitle,
+    sessionTime: booking.sessionTimeLabel,
+    studioName: settings.studioName,
+    email: booking.email,
+    phone: booking.phone,
+  })
+
+  return {
+    id: generateId(),
+    clientName: booking.clientName,
+    phone: booking.phone,
+    email: booking.email,
+    sessionTitle: booking.sessionTitle,
+    sessionTime: booking.sessionTimeLabel,
+    message,
+    scheduledFor: scheduledFor.toISOString(),
+    sessionDate: sessionDate.toISOString(),
+    reminderType,
+    status: 'scheduled',
+    createdAt: now.toISOString(),
+    userId,
+    source: booking.source,
+    externalId: booking.externalId,
+    externalKey: dedupeKey(userId, booking, reminderType),
+  }
+}
+
+// Turn a Booking into the set of NEW ScheduledMessages it should produce,
+// honoring the user's offsets and skipping reminders whose send time is already
+// past (we don't create a reminder that's already late).
 export function buildReminders(
   booking: Booking,
   settings: UserSettings,
   userId: string,
   now: Date = new Date()
 ): ScheduledMessage[] {
-  const sessionDate = parseSessionDate(booking.sessionDateISO) || parseSessionDate(booking.sessionTimeLabel)
-  if (!sessionDate) return []
-
   const out: ScheduledMessage[] = []
   for (const offset of settings.offsetsDays) {
-    const scheduledFor = sendTimeFor(sessionDate, offset, settings.sendHourEastern)
-    // Skip if the send moment has already passed (e.g. session is sooner than the offset).
-    if (scheduledFor.getTime() <= now.getTime()) continue
-
-    const reminderType: ReminderType = `${offset}-day`
-    const message = renderTemplate(settings.reminderTemplate, {
-      name: booking.clientName,
-      sessionTitle: booking.sessionTitle,
-      sessionTime: booking.sessionTimeLabel,
-      studioName: settings.studioName,
-      email: booking.email,
-      phone: booking.phone,
-    })
-
-    out.push({
-      id: generateId(),
-      clientName: booking.clientName,
-      phone: booking.phone,
-      email: booking.email,
-      sessionTitle: booking.sessionTitle,
-      sessionTime: booking.sessionTimeLabel,
-      message,
-      scheduledFor: scheduledFor.toISOString(),
-      sessionDate: sessionDate.toISOString(),
-      reminderType,
-      status: 'scheduled',
-      createdAt: now.toISOString(),
-      userId,
-      source: booking.source,
-      externalKey: dedupeKey(userId, booking, reminderType),
-    })
+    const r = buildReminderForOffset(booking, settings, userId, offset, now)
+    if (r && new Date(r.scheduledFor).getTime() > now.getTime()) out.push(r)
   }
   return out
+}
+
+// Parse the numeric offset out of a reminderType like "3-day" -> 3. Returns null
+// for non-offset types (manual, registration, test-*).
+export function parseOffsetDays(reminderType: ReminderType): number | null {
+  const m = /^(\d+)-day$/.exec(reminderType)
+  return m ? Number(m[1]) : null
+}
+
+export interface ReconcilePlan {
+  next: ScheduledMessage[]
+  added: number
+  updated: number
+  cancelled: number
+  skippedForQuota: number
+}
+
+// Reconcile a user's stored reminders against the live set of bookings for a
+// given source. Pure (no I/O) so it can be unit-tested.
+//   - cancel  : a pending reminder whose booking/slot is no longer active
+//               (session deleted, cancelled, no-show, or no longer upcoming)
+//   - update  : a pending reminder whose session's date/time/details changed
+//   - add     : a newly-desired reminder (future send time) within SMS quota
+// Only the user's still-'scheduled' reminders for `source` are touched; sent/
+// failed reminders, other sources, and other users are preserved untouched.
+export function reconcilePlan(
+  all: ScheduledMessage[],
+  userId: string,
+  source: BookingSource,
+  bookings: Booking[],
+  settings: UserSettings,
+  smsLimit: number,
+  now: Date = new Date()
+): ReconcilePlan {
+  const isMine = (m: ScheduledMessage) =>
+    m.userId === userId && m.status === 'scheduled' && m.source === source
+  const mine = all.filter(isMine)
+  const others = all.filter((m) => !isMine(m))
+
+  const bookingBySlot = new Map<string, Booking>()
+  for (const b of bookings) if (b.externalId) bookingBySlot.set(b.externalId, b)
+
+  const kept: ScheduledMessage[] = []
+  const keptKeys = new Set<string>()
+  let updated = 0
+  let cancelled = 0
+
+  // 1) Existing pending reminders: cancel if the booking is gone, else keep
+  //    (updating mutable fields if the session changed).
+  for (const m of mine) {
+    const booking = m.externalId ? bookingBySlot.get(m.externalId) : undefined
+    if (!booking) {
+      cancelled++ // session deleted / cancelled / no-show / no longer upcoming
+      continue
+    }
+    const offset = parseOffsetDays(m.reminderType)
+    const want = offset == null ? null : buildReminderForOffset(booking, settings, userId, offset, now)
+    if (want) {
+      const timeMoved = m.scheduledFor !== want.scheduledFor
+      const wantPast = new Date(want.scheduledFor).getTime() <= now.getTime()
+      // If a reschedule pushed this offset's send time into the past, its window
+      // has passed — drop it. (A reminder that's merely due-but-unsent has an
+      // UNCHANGED past send time and is kept so it still fires.)
+      if (timeMoved && wantPast) {
+        cancelled++
+        continue
+      }
+      const changed =
+        timeMoved ||
+        m.message !== want.message ||
+        m.sessionTime !== want.sessionTime ||
+        m.sessionDate !== want.sessionDate ||
+        m.sessionTitle !== want.sessionTitle ||
+        m.clientName !== want.clientName ||
+        m.phone !== want.phone ||
+        m.email !== want.email
+      if (changed) {
+        m.scheduledFor = want.scheduledFor
+        m.message = want.message
+        m.sessionTime = want.sessionTime
+        m.sessionDate = want.sessionDate
+        m.sessionTitle = want.sessionTitle
+        m.clientName = want.clientName
+        m.phone = want.phone
+        m.email = want.email
+        updated++
+      }
+    }
+    kept.push(m)
+    if (m.externalKey) keptKeys.add(m.externalKey)
+  }
+
+  // 2) Add newly-desired (future) reminders not already present, within quota.
+  const usedFixed = others.filter((m) => m.userId === userId).length
+  let remaining = Math.max(0, smsLimit - usedFixed - kept.length)
+  let added = 0
+  let skippedForQuota = 0
+  for (const b of bookings) {
+    for (const d of buildReminders(b, settings, userId, now)) {
+      if (d.externalKey && keptKeys.has(d.externalKey)) continue
+      if (remaining <= 0) {
+        skippedForQuota++
+        continue
+      }
+      kept.push(d)
+      if (d.externalKey) keptKeys.add(d.externalKey)
+      added++
+      remaining--
+    }
+  }
+
+  return { next: [...others, ...kept], added, updated, cancelled, skippedForQuota }
 }

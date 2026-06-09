@@ -48,6 +48,10 @@ export interface ScheduledMessage {
   source?: BookingSource
   // De-dupe key: `${userId}:${externalId|phone+date}:${reminderType}`.
   externalKey?: string
+  // The source booking/slot id (e.g. "usesession:slot:123"), used to reconcile
+  // a reminder against the live booking — cancel it if the slot disappears, or
+  // update it if the session's date/time changed.
+  externalId?: string
 }
 
 export interface UseSessionConnection {
