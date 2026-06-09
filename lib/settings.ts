@@ -96,6 +96,32 @@ export async function clearUseSessionToken(userId: string): Promise<void> {
   await kv.srem(CONNECTED_SET, userId)
 }
 
+// --- Per-tenant SMS sender (Twilio) -------------------------------------
+// When a tenant has an ACTIVE Twilio sender, their SMS sends from their own
+// number/Messaging Service. Absent/pending => fall back to the shared TextMagic
+// account during migration.
+
+export interface TenantSmsSender {
+  status: 'active' | 'pending'
+  messagingServiceSid?: string
+  phoneNumber?: string
+  brandSid?: string
+  campaignSid?: string
+}
+
+export async function getTenantSmsSender(userId: string): Promise<TenantSmsSender | null> {
+  try {
+    return (await kv.get<TenantSmsSender>(`user:${userId}:sms_sender`)) || null
+  } catch (error) {
+    console.error('getTenantSmsSender error:', error)
+    return null
+  }
+}
+
+export async function setTenantSmsSender(userId: string, sender: TenantSmsSender): Promise<void> {
+  await kv.set(`user:${userId}:sms_sender`, sender)
+}
+
 // All userIds with a stored UseSession token — used by the cron to sync everyone.
 export async function listConnectedUserIds(): Promise<string[]> {
   try {

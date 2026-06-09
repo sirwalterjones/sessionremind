@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getScheduledMessagesPendingDelivery, updateMessageStatus } from '@/lib/storage'
 import { getUserSettings } from '@/lib/settings'
 import { sendReminderEmail } from '@/lib/email'
+import { sendTenantSms } from '@/lib/sms'
 import { kv } from '@vercel/kv'
 
 // This endpoint should be called periodically (e.g., every 15 minutes) by a cron job
@@ -140,60 +141,21 @@ export async function POST(request: NextRequest) {
 
 async function sendScheduledSMS(message: any): Promise<boolean> {
   try {
-    const apiKey = process.env.TEXTMAGIC_API_KEY
-    const username = process.env.TEXTMAGIC_USERNAME
+    // Personalize (defensive — the stored message is usually already rendered).
+    const finalMessage = (message.message || '')
+      .replace(/{name}/g, message.clientName || '')
+      .replace(/{sessionTitle}/g, message.sessionTitle || '')
+      .replace(/{sessionTime}/g, message.sessionTime || '')
+      .replace(/{email}/g, message.email || '')
+      .replace(/{phone}/g, message.phone || '')
 
-    if (!apiKey || !username) {
-      console.error('TextMagic API credentials not configured')
+    // Routes to the tenant's own Twilio sender when active, else TextMagic.
+    const r = await sendTenantSms(message.userId, message.phone, finalMessage)
+    if (!r.ok) {
+      console.error(`Scheduled SMS failed for ${message.clientName} (${message.phone}):`, r.error)
       return false
     }
-
-    // Clean phone number - TextMagic expects numbers without + prefix
-    let cleanPhone = message.phone.replace(/[^\d]/g, '')
-    
-    // Ensure 10-digit US format (TextMagic doesn't want + prefix)
-    if (cleanPhone.length === 11 && cleanPhone.startsWith('1')) {
-      cleanPhone = cleanPhone.substring(1) // Remove leading 1
-    } else if (cleanPhone.length !== 10) {
-      // If not 10 digits, assume US and pad/trim as needed
-      if (cleanPhone.length > 10) {
-        cleanPhone = cleanPhone.substring(cleanPhone.length - 10)
-      }
-    }
-
-    // Replace template variables in the message
-    let finalMessage = message.message
-      .replace(/{name}/g, message.clientName)
-      .replace(/{sessionTitle}/g, message.sessionTitle)
-      .replace(/{sessionTime}/g, message.sessionTime)
-      .replace(/{email}/g, message.email)
-      .replace(/{phone}/g, message.phone)
-
-    const textMagicPayload = {
-      text: finalMessage,
-      phones: cleanPhone,
-    }
-
-    console.log('Sending SMS via TextMagic:', textMagicPayload)
-
-    const response = await fetch('https://rest.textmagic.com/api/v2/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-TM-Username': username,
-        'X-TM-Key': apiKey,
-      },
-      body: JSON.stringify(textMagicPayload),
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('TextMagic API error:', errorText)
-      return false
-    }
-
-    const result = await response.json()
-    console.log(`Scheduled SMS sent successfully to ${message.clientName} (${message.phone}):`, result)
+    console.log(`Scheduled SMS sent to ${message.clientName} via ${r.provider}`)
     return true
   } catch (error) {
     console.error('Error sending scheduled SMS:', error)
