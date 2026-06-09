@@ -38,6 +38,18 @@ function fromLocalInput(v: string) {
   const d = new Date(v)
   return isNaN(d.getTime()) ? null : d.toISOString()
 }
+function dateKey(iso?: string) {
+  if (!iso) return 'nodate'
+  const d = new Date(iso)
+  return isNaN(d.getTime()) ? 'nodate' : d.toISOString().slice(0, 10)
+}
+function sessionDateLabel(iso?: string) {
+  if (!iso) return 'Date TBD'
+  const d = new Date(iso)
+  return isNaN(d.getTime())
+    ? 'Date TBD'
+    : d.toLocaleDateString(undefined, { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' })
+}
 
 export default function RemindersPage() {
   const { user, loading } = useAuth()
@@ -53,6 +65,13 @@ export default function RemindersPage() {
   const [editMsg, setEditMsg] = useState('')
   const [editWhen, setEditWhen] = useState('')
   const [saving, setSaving] = useState(false)
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const toggleGroup = (k: string) =>
+    setCollapsed((s) => {
+      const n = new Set(s)
+      n.has(k) ? n.delete(k) : n.add(k)
+      return n
+    })
 
   const load = useCallback(async () => {
     setFetching(true)
@@ -88,6 +107,23 @@ export default function RemindersPage() {
       .filter((r) => !q || `${r.clientName || ''} ${r.sessionTitle || ''} ${r.phone || ''}`.toLowerCase().includes(q))
       .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
   }, [items, statusFilter, search])
+
+  // Group reminders into a folder per session (session title + date).
+  const groups = useMemo(() => {
+    const m = new Map<string, { key: string; title: string; date?: string; items: Reminder[] }>()
+    for (const r of rows) {
+      const d = r.sessionDate || r.scheduledFor
+      const key = `${r.sessionTitle || 'Session'}__${dateKey(d)}`
+      if (!m.has(key)) m.set(key, { key, title: r.sessionTitle || 'Session', date: d, items: [] })
+      m.get(key)!.items.push(r)
+    }
+    const arr = Array.from(m.values())
+    arr.forEach((g) =>
+      g.items.sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
+    )
+    arr.sort((a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime())
+    return arr
+  }, [rows])
 
   const openEdit = (r: Reminder) => {
     setEditing(r)
@@ -184,55 +220,69 @@ export default function RemindersPage() {
         />
       </div>
 
-      <div className="mt-4 space-y-2.5">
+      <div className="mt-4 space-y-3">
         {fetching && <p className="text-sm text-muted">Loading…</p>}
-        {!fetching && rows.length === 0 && (
+        {!fetching && groups.length === 0 && (
           <p className="rounded-xl border border-hairline bg-[#FAFAF8] px-4 py-8 text-center text-sm text-muted">
             No {statusFilter === 'all' ? '' : statusFilter} reminders.
           </p>
         )}
-        {rows.map((r) => {
-          const isScheduled = r.status === 'scheduled'
-          const dot = r.status === 'sent' ? '#16a34a' : r.status === 'failed' ? '#dc2626' : '#DD4D24'
+        {groups.map((g) => {
+          const open = !collapsed.has(g.key)
           return (
-            <div
-              key={r.id}
-              className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-hairline bg-white px-4 py-3.5"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: dot }} />
-                  <span className="font-medium text-ink">{r.clientName || '(no name)'}</span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
-                    {r.reminderType}
-                  </span>
-                  {r.source === 'usesession' && (
-                    <span className="rounded-full bg-[#FAFAF8] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
-                      auto
-                    </span>
-                  )}
+            <div key={g.key} className="overflow-hidden rounded-xl border border-hairline">
+              <button
+                onClick={() => toggleGroup(g.key)}
+                className="flex w-full items-center justify-between gap-3 bg-[#FAFAF8] px-4 py-3 text-left transition-colors hover:bg-[#F4F2EE]"
+              >
+                <div className="min-w-0">
+                  <div className="truncate font-medium text-ink">{g.title}</div>
+                  <div className="text-xs text-muted">
+                    {sessionDateLabel(g.date)} · {g.items.length} reminder{g.items.length === 1 ? '' : 's'}
+                  </div>
                 </div>
-                <div className="mt-0.5 text-sm text-ink/80">{r.sessionTitle || 'Session'}</div>
-                <div className="mt-0.5 text-xs text-muted">
-                  {r.status === 'sent' ? `Sent ${fmt(r.sentAt || r.scheduledFor)}` : `Sends ${fmt(r.scheduledFor)}`}
-                </div>
-                <div className="mt-1.5 line-clamp-2 text-xs text-muted">{r.message}</div>
-              </div>
-              {isScheduled && (
-                <div className="flex flex-shrink-0 items-center gap-2">
-                  <button
-                    onClick={() => openEdit(r)}
-                    className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => cancel(r)}
-                    className="rounded-full px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
-                    style={{ background: '#dc2626' }}
-                  >
-                    Cancel
-                  </button>
+                <span className="flex-shrink-0 text-muted">{open ? '▾' : '▸'}</span>
+              </button>
+              {open && (
+                <div className="divide-y divide-hairline">
+                  {g.items.map((r) => {
+                    const isScheduled = r.status === 'scheduled'
+                    const dot = r.status === 'sent' ? '#16a34a' : r.status === 'failed' ? '#dc2626' : '#DD4D24'
+                    return (
+                      <div key={r.id} className="flex flex-wrap items-start justify-between gap-3 bg-white px-4 py-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: dot }} />
+                            <span className="font-medium text-ink">{r.clientName || '(no name)'}</span>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+                              {r.reminderType}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 text-xs text-muted">
+                            {r.status === 'sent' ? `Sent ${fmt(r.sentAt || r.scheduledFor)}` : `Sends ${fmt(r.scheduledFor)}`}
+                          </div>
+                          <div className="mt-1 line-clamp-2 text-xs text-muted">{r.message}</div>
+                        </div>
+                        {isScheduled && (
+                          <div className="flex flex-shrink-0 items-center gap-2">
+                            <button
+                              onClick={() => openEdit(r)}
+                              className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => cancel(r)}
+                              className="rounded-full px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
+                              style={{ background: '#dc2626' }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </div>
