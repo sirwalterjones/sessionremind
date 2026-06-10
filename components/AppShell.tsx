@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import {
   Squares2X2Icon,
@@ -29,15 +30,15 @@ const RESOURCES = [
 ]
 
 // Signed-in app shell: left sidebar (collapses to a top bar on mobile) plus a
-// scrollable content column. `active` highlights the current nav item.
-export default function AppShell({
-  active,
-  children,
-}: {
-  active: string
-  children: React.ReactNode
-}) {
+// scrollable content column. The active nav item is derived from the URL.
+export default function AppShell({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth()
+  const pathname = usePathname() || ''
+  // Longest-prefix match so e.g. /new/foo still highlights "New reminder".
+  const activeHref =
+    WORKSPACE.map((w) => w.href)
+      .filter((href) => pathname === href || pathname.startsWith(href + '/'))
+      .sort((a, b) => b.length - a.length)[0] || ''
 
   return (
     <div className="flex min-h-screen bg-white text-ink">
@@ -61,7 +62,7 @@ export default function AppShell({
                 key={href}
                 href={href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  active === key
+                  href === activeHref
                     ? 'bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-hairline'
                     : 'text-[#6E6A63] hover:bg-white hover:text-ink'
                 }`}

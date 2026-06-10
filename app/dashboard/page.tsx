@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
 import { DashboardSetupStatus } from '@/components/SetupStatus'
-import AppShell from '@/components/AppShell'
 import {
   CheckCircleIcon,
   ClockIcon,
@@ -77,6 +76,12 @@ function DashboardContent() {
   const [searchTerm, setSearchTerm] = useState('')
   const [cancellingMessages, setCancellingMessages] = useState<Set<string>>(new Set())
   const [cancelledMessages, setCancelledMessages] = useState<Set<string>>(new Set())
+  // Inline editing of a scheduled reminder (message text + send time).
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editText, setEditText] = useState('')
+  const [editWhen, setEditWhen] = useState('')
+  const [savingEdit, setSavingEdit] = useState(false)
+  const [editError, setEditError] = useState('')
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active')
 
   useEffect(() => {
@@ -303,6 +308,69 @@ function DashboardContent() {
         newSet.delete(messageId)
         return newSet
       })
+    }
+  }
+
+  // Convert a stored ISO/date string into the value a <input type="datetime-local">
+  // expects (YYYY-MM-DDTHH:mm) in the viewer's local time.
+  const toLocalInput = (value: string): string => {
+    const d = new Date(value)
+    if (isNaN(d.getTime())) return ''
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+  }
+
+  const startEdit = (message: ScheduledMessage | SentMessage) => {
+    setEditError('')
+    setEditingId(message.id.toString())
+    setEditText(message.message || '')
+    setEditWhen(toLocalInput(message.scheduledFor || ''))
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditError('')
+  }
+
+  const saveEdit = async (messageId: string) => {
+    setEditError('')
+    if (!editText.trim()) {
+      setEditError('Message text cannot be empty.')
+      return
+    }
+    const when = editWhen ? new Date(editWhen) : null
+    if (editWhen && isNaN(when!.getTime())) {
+      setEditError('That send time is not valid.')
+      return
+    }
+    setSavingEdit(true)
+    try {
+      const res = await fetch(`/api/scheduled/${messageId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: editText,
+          ...(when ? { scheduledFor: when.toISOString() } : {}),
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data?.error || 'Could not save changes.')
+
+      // Reflect the edit in the open modal immediately, then reload the lists.
+      if (selectedClient) {
+        const updatedMessages = selectedClient.messages.map((msg) =>
+          msg.id.toString() === messageId
+            ? { ...msg, message: editText, ...(when ? { scheduledFor: when.toISOString() } : {}) }
+            : msg
+        )
+        setSelectedClient({ ...selectedClient, messages: updatedMessages })
+      }
+      setEditingId(null)
+      await loadScheduledMessages()
+    } catch (e: any) {
+      setEditError(e?.message || 'Could not save changes.')
+    } finally {
+      setSavingEdit(false)
     }
   }
 
@@ -536,7 +604,7 @@ function DashboardContent() {
   const pct = (n: number) => `${(n / barTotal) * 100}%`
 
   return (
-    <AppShell active="dashboard">
+    <>
             {/* Page header */}
             <header className="flex flex-col gap-5 border-b border-hairline pb-8 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -846,6 +914,17 @@ function DashboardContent() {
                           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(message.status)}`}>
                             {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
                           </span>
+                          {message.status === 'scheduled' && editingId !== message.id.toString() && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                startEdit(message)
+                              }}
+                              className="px-3 py-1 text-xs font-medium rounded-full border border-hairline text-ink transition-colors hover:bg-[#FAFAF8]"
+                            >
+                              Edit
+                            </button>
+                          )}
                           {message.status === 'scheduled' && (
                             <button
                               onClick={(e) => {
@@ -876,12 +955,65 @@ function DashboardContent() {
                         </div>
                       </div>
 
-                      <div className="rounded-lg bg-[#FAFAF8] border border-hairline p-4">
-                        <p className="eyebrow mb-2">Message Content</p>
-                        <p className="text-ink leading-relaxed text-sm">
-                          “{message.message || 'No message content stored'}”
-                        </p>
-                      </div>
+                      {editingId === message.id.toString() ? (
+                        <div className="rounded-lg border border-hairline p-4">
+                          <label className="eyebrow mb-2 block">Message</label>
+                          <textarea
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            rows={4}
+                            className="w-full resize-y rounded-lg border border-hairline bg-white p-3 text-sm text-ink focus:border-ink focus:outline-none"
+                          />
+                          <div className="mt-1 text-right font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                            {editText.length} chars
+                          </div>
+
+                          <label className="eyebrow mb-2 mt-3 block">Send time</label>
+                          <input
+                            type="datetime-local"
+                            value={editWhen}
+                            onChange={(e) => setEditWhen(e.target.value)}
+                            className="w-full rounded-lg border border-hairline bg-white p-2.5 text-sm text-ink focus:border-ink focus:outline-none"
+                          />
+                          <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                            Nothing sends before 8 AM ET regardless of the exact time.
+                          </p>
+
+                          {editError && (
+                            <p className="mt-3 text-sm text-accent">{editError}</p>
+                          )}
+
+                          <div className="mt-4 flex items-center gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                saveEdit(message.id.toString())
+                              }}
+                              disabled={savingEdit}
+                              className="rounded-full bg-ink px-4 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                            >
+                              {savingEdit ? 'Saving…' : 'Save changes'}
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                cancelEdit()
+                              }}
+                              disabled={savingEdit}
+                              className="rounded-full border border-hairline px-4 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-50"
+                            >
+                              Discard
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="rounded-lg bg-[#FAFAF8] border border-hairline p-4">
+                          <p className="eyebrow mb-2">Message Content</p>
+                          <p className="text-ink leading-relaxed text-sm">
+                            “{message.message || 'No message content stored'}”
+                          </p>
+                        </div>
+                      )}
 
                       <div className="flex justify-between items-center mt-3 font-mono text-xs text-muted">
                         <span>Created: {formatDate(message.createdAt || (message as SentMessage).timestamp || message.scheduledFor || '')}</span>
@@ -894,6 +1026,6 @@ function DashboardContent() {
             </div>
           </div>
         )}
-    </AppShell>
+    </>
   )
 }

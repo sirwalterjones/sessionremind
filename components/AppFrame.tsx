@@ -4,18 +4,24 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import MobileNav from '@/components/MobileNav'
 import NavLinks from '@/components/NavLinks'
+import AppShell from '@/components/AppShell'
 
-// Site chrome (top nav + footer). The signed-in dashboard renders its own
-// full-screen sidebar shell, so we suppress the marketing chrome there.
-const APP_SHELL_ROUTES = ['/dashboard', '/usage']
+// Site chrome. Signed-in app pages render inside the sidebar AppShell; the
+// marketing/auth pages (visible logged-out) keep the top nav + footer.
+// NOTE: /admin has its own console chrome and is intentionally not shelled.
+const APP_SHELL_ROUTES = ['/dashboard', '/usage', '/reminders', '/connect', '/new', '/profile']
 
 export default function AppFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isAppShell = APP_SHELL_ROUTES.some((r) => pathname === r || pathname?.startsWith(r + '/'))
 
   if (isAppShell) {
-    // The page owns the entire viewport chrome (see app/dashboard).
-    return <div className="min-h-screen bg-white text-[#141414]">{children}</div>
+    // Wrap the page in the sidebar shell so every app page shares one chrome.
+    return (
+      <div className="min-h-screen bg-white text-[#141414]">
+        <AppShell>{children}</AppShell>
+      </div>
+    )
   }
 
   return (

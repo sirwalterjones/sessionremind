@@ -1,7 +1,6 @@
 'use client'
 
 import { useAuth } from '@/lib/auth-context'
-import AppShell from '@/components/AppShell'
 import SmsUsage from '@/components/SmsUsage'
 
 export default function UsagePage() {
@@ -9,26 +8,24 @@ export default function UsagePage() {
 
   if (loading) {
     return (
-      <AppShell active="usage">
-        <div className="animate-pulse space-y-4">
-          <div className="h-3 w-24 rounded bg-[#F1EFE9]" />
-          <div className="h-10 w-1/3 rounded bg-[#F1EFE9]" />
-          <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white p-6">
-                <div className="mb-3 h-3 w-20 rounded bg-[#F1EFE9]" />
-                <div className="h-8 w-16 rounded bg-[#F1EFE9]" />
-              </div>
-            ))}
-          </div>
+      <div className="animate-pulse space-y-4">
+        <div className="h-3 w-24 rounded bg-[#F1EFE9]" />
+        <div className="h-10 w-1/3 rounded bg-[#F1EFE9]" />
+        <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline md:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="bg-white p-6">
+              <div className="mb-3 h-3 w-20 rounded bg-[#F1EFE9]" />
+              <div className="h-8 w-16 rounded bg-[#F1EFE9]" />
+            </div>
+          ))}
         </div>
-      </AppShell>
+      </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center py-12 text-ink">
+      <div className="flex min-h-[60vh] items-center justify-center text-ink">
         <div className="w-full max-w-sm rounded-2xl border border-hairline bg-white p-10 text-center">
           <p className="eyebrow mb-3">Restricted</p>
           <h1 className="font-display text-3xl font-semibold">Please sign in</h1>
@@ -45,7 +42,7 @@ export default function UsagePage() {
   }
 
   return (
-    <AppShell active="usage">
+    <>
       <header className="flex flex-col gap-5 border-b border-hairline pb-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow mb-3">Usage</p>
@@ -60,6 +57,6 @@ export default function UsagePage() {
       <div className="mt-8">
         <SmsUsage userId={user.id} />
       </div>
-    </AppShell>
+    </>
   )
 }
