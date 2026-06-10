@@ -4,7 +4,24 @@ import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
 import { DashboardSetupStatus } from '@/components/SetupStatus'
-import { CheckCircleIcon, ClockIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import {
+  CheckCircleIcon,
+  ClockIcon,
+  PlusIcon,
+  XMarkIcon,
+  MagnifyingGlassIcon,
+  CalendarIcon,
+  PhoneIcon,
+  Squares2X2Icon,
+  BellIcon,
+  LinkIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+  ArrowRightOnRectangleIcon,
+  ChevronRightIcon,
+  QuestionMarkCircleIcon,
+} from '@heroicons/react/24/outline'
 
 interface SentMessage {
   id: string | number
@@ -678,199 +695,229 @@ function DashboardContent() {
     )
   }
 
-  return (
-    <div className="text-ink">
-      <div>
+  const navItems = [
+    { label: 'Dashboard', href: '/dashboard', icon: Squares2X2Icon, active: true },
+    { label: 'Reminders', href: '/reminders', icon: BellIcon },
+    { label: 'Connect', href: '/connect', icon: LinkIcon },
+    { label: 'New reminder', href: '/new', icon: PlusIcon },
+    { label: 'Profile', href: '/profile', icon: UserCircleIcon },
+  ]
+  const secondaryNav = [
+    { label: 'How it works', href: '/instructions', icon: QuestionMarkCircleIcon },
+    { label: 'Help', href: '/help', icon: QuestionMarkCircleIcon },
+  ]
 
-        {/* Header */}
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-hairline pb-10 mb-12">
-          <div>
-            <p className="eyebrow mb-3">Dashboard</p>
-            <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
-              Session reminders
-            </h1>
-            <p className="mt-3 text-muted max-w-xl leading-relaxed">
-              Track your session reminders and client communications in one place.
-            </p>
+  // Stacked status bar for the performance card (sent / scheduled / failed).
+  const barTotal = Math.max(sentCount + scheduledCount + failedCount, 1)
+  const pct = (n: number) => `${(n / barTotal) * 100}%`
+
+  return (
+    <div className="flex min-h-screen bg-white text-ink">
+      {/* ───────── Sidebar ───────── */}
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-hairline bg-[#FAFAF8] lg:flex">
+        <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-hairline">
+          <span
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[15px] font-bold tracking-tight text-white"
+            style={{ background: '#141414' }}
+          >
+            Sr
+          </span>
+          <span className="text-[17px] font-semibold tracking-tight">SessionRemind</span>
+        </Link>
+
+        <nav className="flex-1 overflow-y-auto px-3 py-5">
+          <p className="eyebrow px-2 pb-2">Workspace</p>
+          <div className="space-y-1">
+            {navItems.map(({ label, href, icon: Icon, active }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  active
+                    ? 'bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-hairline'
+                    : 'text-[#6E6A63] hover:bg-white hover:text-ink'
+                }`}
+              >
+                <Icon className="h-[18px] w-[18px]" />
+                {label}
+              </Link>
+            ))}
           </div>
-          <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            <span className="mr-1">Welcome, {user.username}</span>
+
+          <p className="eyebrow px-2 pb-2 pt-6">Resources</p>
+          <div className="space-y-1">
+            {secondaryNav.map(({ label, href, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#6E6A63] transition-colors hover:bg-white hover:text-ink"
+              >
+                <Icon className="h-[18px] w-[18px]" />
+                {label}
+              </Link>
+            ))}
             {user.is_admin && (
-              <>
-                <a
-                  href="/admin"
-                  className="rounded-full border border-hairline px-3 py-1 text-ink hover:bg-[#FAFAF8] transition-colors"
-                >
-                  Admin Console
-                </a>
-                <span className="rounded-full border border-[#cfe8d4] px-2.5 py-1 text-[#16a34a]">Admin</span>
-              </>
+              <Link
+                href="/admin"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#6E6A63] transition-colors hover:bg-white hover:text-ink"
+              >
+                <Cog6ToothIcon className="h-[18px] w-[18px]" />
+                Admin Console
+              </Link>
             )}
+          </div>
+        </nav>
+
+        <div className="border-t border-hairline p-3">
+          <div className="flex items-center justify-between gap-2 rounded-lg px-3 py-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-ink">{user.username}</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                {user.is_admin ? 'Admin' : 'Professional'}
+              </p>
+            </div>
             <button
               onClick={logout}
-              className="rounded-full border border-hairline px-3 py-1 text-ink hover:bg-[#FAFAF8] transition-colors"
+              aria-label="Log out"
+              className="rounded-lg border border-hairline bg-white p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
             >
+              <ArrowRightOnRectangleIcon className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* ───────── Main column ───────── */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Mobile top bar (sidebar is hidden < lg) */}
+        <div className="flex items-center justify-between border-b border-hairline px-5 h-16 lg:hidden">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-bold tracking-tight text-white"
+              style={{ background: '#141414' }}
+            >
+              Sr
+            </span>
+            <span className="text-base font-semibold tracking-tight">SessionRemind</span>
+          </Link>
+          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            <Link href="/reminders" className="rounded-full border border-hairline px-3 py-1 text-ink">Reminders</Link>
+            {user.is_admin && (
+              <a href="/admin" className="rounded-full border border-hairline px-3 py-1 text-ink">Admin</a>
+            )}
+            <button onClick={logout} className="rounded-full border border-hairline px-3 py-1 text-ink">
               Logout
             </button>
           </div>
         </div>
 
-        {/* Setup status: UseSession connection + texting-number verification */}
-        <DashboardSetupStatus />
-
-        {/* Primary action */}
-        <div className="mb-12">
-          <a
-            href="/new"
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity"
-          >
-            <PlusIcon className="h-4 w-4" />
-            New reminder
-          </a>
-        </div>
-
-        {/* SMS Analytics Section */}
-        <div className="mb-14">
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <p className="eyebrow mb-2">Usage</p>
-              <h2 className="font-display text-2xl font-semibold text-ink">Your SMS usage</h2>
-              <p className="text-sm text-muted mt-1">Track your personal SMS analytics and remaining limit.</p>
-            </div>
-            <span className="rounded-full border border-hairline px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-              Professional Plan
-            </span>
-          </div>
-
-          <SMSAnalyticsComponent userId={user.id} />
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline mb-14">
-          <div className="bg-white p-6">
-            <p className="eyebrow">Messages Sent</p>
-            <p className="font-display text-4xl font-semibold text-ink mt-3">{sentCount}</p>
-            <p className="font-mono text-xs text-muted mt-1">{totalMessages} total</p>
-          </div>
-
-          <div className="bg-white p-6">
-            <p className="eyebrow">Delivery Rate</p>
-            <p className="font-display text-4xl font-semibold text-ink mt-3">{deliveryRate}%</p>
-            <p className="font-mono text-xs text-muted mt-1">
-              {failedCount > 0 ? `${failedCount} failed` : 'No failures'}
-            </p>
-          </div>
-
-          <div className="bg-white p-6">
-            <p className="eyebrow">SMS Cost</p>
-            <p className="font-display text-4xl font-semibold text-ink mt-3">${estimatedCost}</p>
-            <p className="font-mono text-xs text-muted mt-1">$0.049/message</p>
-          </div>
-
-          <div className="bg-white p-6">
-            <p className="eyebrow">Scheduled</p>
-            <p className="font-display text-4xl font-semibold text-ink mt-3">{scheduledCount}</p>
-            <p className="font-mono text-xs text-muted mt-1">{uniqueClients} clients</p>
-          </div>
-        </div>
-
-        {/* Tabs and Search */}
-        <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          {/* Tab Navigation */}
-          <div className="inline-flex rounded-full border border-hairline p-1">
-            <button
-              onClick={() => setActiveTab('active')}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeTab === 'active'
-                  ? 'bg-ink text-white'
-                  : 'text-muted hover:text-ink'
-              }`}
-            >
-              Active ({activeClientsCount})
-            </button>
-            <button
-              onClick={() => setActiveTab('archived')}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeTab === 'archived'
-                  ? 'bg-ink text-white'
-                  : 'text-muted hover:text-ink'
-              }`}
-            >
-              Archived ({archivedClientsCount})
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative w-full sm:max-w-xs">
-            <MagnifyingGlassIcon className="h-4 w-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-muted" />
-            <input
-              type="text"
-              placeholder={`Search ${activeTab} clients...`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-hairline bg-white text-sm text-ink placeholder:text-muted focus:outline-none focus:border-ink transition-colors"
-            />
-          </div>
-        </div>
-
-        {/* Client Groups */}
-        <div>
-          {filteredClients.length === 0 ? (
-            <div className="rounded-2xl border border-hairline p-16 text-center">
-              <div className="flex items-center justify-center mx-auto mb-6 text-muted">
-                {searchTerm ? <MagnifyingGlassIcon className="h-8 w-8" /> : <ClockIcon className="h-8 w-8" />}
+        <div className="flex-1 px-5 py-8 sm:px-8">
+          <div className="mx-auto w-full max-w-[1500px]">
+            {/* Page header */}
+            <header className="flex flex-col gap-5 border-b border-hairline pb-8 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow mb-3">Dashboard</p>
+                <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                  Session reminders
+                </h1>
+                <p className="mt-2 text-muted">
+                  Track your reminders and client communications in one place.
+                </p>
               </div>
-              <h3 className="font-display text-2xl font-semibold text-ink mb-3">
-                {searchTerm
-                  ? 'No matching clients found'
-                  : activeTab === 'active'
-                    ? 'No active reminders'
-                    : 'No archived sessions yet'
-                }
-              </h3>
-              <p className="text-muted mb-8 max-w-md mx-auto leading-relaxed">
-                {searchTerm
-                  ? 'Try adjusting your search terms or check the spelling.'
-                  : activeTab === 'active'
-                    ? 'Start sending personalized SMS reminders to your photography clients and keep track of them here.'
-                    : 'Sessions will automatically appear here after their scheduled date has passed.'
-                }
-              </p>
-              {!searchTerm && (
+              <div className="flex items-center gap-3">
+                <div className="relative w-full sm:w-64">
+                  <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                  <input
+                    type="text"
+                    placeholder={`Search ${activeTab}…`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full rounded-full border border-hairline bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-muted transition-colors focus:border-ink focus:outline-none"
+                  />
+                </div>
                 <a
                   href="/new"
-                  className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-ink px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
                 >
                   <PlusIcon className="h-4 w-4" />
-                  Create your first reminder
+                  <span className="hidden sm:inline">New reminder</span>
+                  <span className="sm:hidden">New</span>
                 </a>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-baseline gap-3">
-                  <h2 className="font-display text-2xl font-semibold text-ink">
-                    {searchTerm
-                      ? `Search Results`
-                      : activeTab === 'active'
-                        ? 'Active Client Reminders'
-                        : 'Archived Sessions'
-                    }
-                  </h2>
-                  <span className="font-mono text-xs text-muted">{filteredClients.length}</span>
-                </div>
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="text-muted hover:text-ink text-sm font-medium transition-colors"
-                  >
-                    Clear search
-                  </button>
-                )}
               </div>
-              
-              {filteredClients.map((client) => {
+            </header>
+
+            {/* Setup status: UseSession connection + texting-number verification */}
+            <div className="mt-8">
+              <DashboardSetupStatus />
+            </div>
+
+            <div className="mt-8 grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+              {/* ── Left: reminders table ── */}
+              <section className="min-w-0">
+                {/* Tabs */}
+                <div className="mb-5 inline-flex rounded-full border border-hairline p-1">
+                  <button
+                    onClick={() => setActiveTab('active')}
+                    className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                      activeTab === 'active' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
+                    }`}
+                  >
+                    Active ({activeClientsCount})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('archived')}
+                    className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                      activeTab === 'archived' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
+                    }`}
+                  >
+                    Archived ({archivedClientsCount})
+                  </button>
+                </div>
+
+                {filteredClients.length === 0 ? (
+                  <div className="rounded-2xl border border-hairline p-16 text-center">
+                    <div className="mx-auto mb-6 flex items-center justify-center text-muted">
+                      {searchTerm ? <MagnifyingGlassIcon className="h-8 w-8" /> : <ClockIcon className="h-8 w-8" />}
+                    </div>
+                    <h3 className="font-display mb-3 text-2xl font-semibold text-ink">
+                      {searchTerm
+                        ? 'No matching clients found'
+                        : activeTab === 'active'
+                          ? 'No active reminders'
+                          : 'No archived sessions yet'}
+                    </h3>
+                    <p className="mx-auto mb-8 max-w-md leading-relaxed text-muted">
+                      {searchTerm
+                        ? 'Try adjusting your search terms or check the spelling.'
+                        : activeTab === 'active'
+                          ? 'Start sending personalized SMS reminders to your photography clients and keep track of them here.'
+                          : 'Sessions will automatically appear here after their scheduled date has passed.'}
+                    </p>
+                    {!searchTerm && (
+                      <a
+                        href="/new"
+                        className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+                      >
+                        <PlusIcon className="h-4 w-4" />
+                        Create your first reminder
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <div className="overflow-hidden rounded-2xl border border-hairline">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[640px] text-left text-sm">
+                        <thead className="border-b border-hairline bg-[#FAFAF8] font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                          <tr>
+                            <th className="px-5 py-3 font-medium">Client</th>
+                            <th className="px-5 py-3 font-medium">Session</th>
+                            <th className="px-5 py-3 font-medium">Date</th>
+                            <th className="px-5 py-3 font-medium">Status</th>
+                            <th className="px-5 py-3" />
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-hairline">
+                          {filteredClients.map((client) => {
                 const scheduledMessages = client.messages.filter(msg => msg.status === 'scheduled')
                 const sentMessages = client.messages.filter(msg => msg.status === 'sent')
                 const failedMessages = client.messages.filter(msg => msg.status === 'failed')
@@ -887,97 +934,126 @@ function DashboardContent() {
                 const sessionPassed = isSessionPassed(client.sessionTime, sessionDate)
                 
                 return (
-                  <div
+                  <tr
                     key={`${client.clientName}-${client.phone}`}
-                    className={`group rounded-2xl border border-hairline p-6 transition-colors cursor-pointer hover:bg-[#FAFAF8] ${
-                      sessionPassed ? 'opacity-75 hover:opacity-100' : ''
-                    }`}
                     onClick={() => openClientModal(client)}
+                    className={`group cursor-pointer transition-colors hover:bg-[#FAFAF8] ${
+                      sessionPassed ? 'opacity-70 hover:opacity-100' : ''
+                    }`}
                   >
-                    <div className="flex items-start justify-between mb-5">
-                      <div>
-                        <div className="flex items-center gap-2.5 mb-1.5">
-                          <h4 className="font-display text-xl font-semibold text-ink">{client.clientName}</h4>
-                          {sessionPassed && (
-                            <span className="rounded-full border border-hairline px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                              Archived
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-                          <span className="flex items-center gap-1.5">
-                            <PhoneIcon className="h-4 w-4" />
-                            <span className="font-mono">{client.phone}</span>
+                    <td className="px-5 py-4 align-top">
+                      <div className="font-medium text-ink">{client.clientName}</div>
+                      <div className="font-mono text-xs text-muted">{client.phone}</div>
+                    </td>
+                    <td className="px-5 py-4 align-top text-muted">
+                      {client.sessionTitle || 'Photography Session'}
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4 align-top text-muted">
+                      {formatDate(client.sessionTime)}
+                    </td>
+                    <td className="px-5 py-4 align-top">
+                      <div className="flex flex-wrap gap-1.5">
+                        {sessionPassed && (
+                          <span className="rounded-full border border-hairline px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                            Archived
                           </span>
-                          {client.messages[0]?.email && (
-                            <span>{client.messages[0].email}</span>
-                          )}
-                        </div>
+                        )}
+                        {sentMessages.length > 0 && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe8d4] px-2.5 py-0.5 text-xs font-medium text-[#16a34a]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
+                            {sentMessages.length} sent
+                          </span>
+                        )}
+                        {scheduledMessages.length > 0 && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                            <span className="h-1.5 w-1.5 rounded-full bg-muted" />
+                            {scheduledMessages.length} scheduled
+                          </span>
+                        )}
+                        {failedMessages.length > 0 && (
+                          <span className="inline-flex items-center rounded-full border border-[#f1c9bd] px-2.5 py-0.5 text-xs font-medium text-accent">
+                            {failedMessages.length} failed
+                          </span>
+                        )}
+                        {cancelledMessages.length > 0 && (
+                          <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                            {cancelledMessages.length} cancelled
+                          </span>
+                        )}
+                        {client.messages.length === 0 && <span className="text-xs text-muted">—</span>}
                       </div>
-                      <div className="text-right">
-                        <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mb-2">
-                          {client.messages.length} message{client.messages.length !== 1 ? 's' : ''}
-                        </div>
-                        <div className="flex gap-1.5 flex-wrap justify-end">
-                          {registrationMessages.length > 0 && (
-                            <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
-                              {registrationMessages.length} registration
-                            </span>
-                          )}
-                          {manualMessages.length > 0 && (
-                            <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
-                              {manualMessages.length} manual
-                            </span>
-                          )}
-                          {reminderMessages.length > 0 && (
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe8d4] px-2.5 py-0.5 text-xs font-medium text-[#16a34a]">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" />
-                              {reminderMessages.length} reminder{reminderMessages.length !== 1 ? 's' : ''}
-                            </span>
-                          )}
-                          {scheduledMessages.length > 0 && (
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
-                              <span className="w-1.5 h-1.5 rounded-full bg-muted" />
-                              {scheduledMessages.length} scheduled
-                            </span>
-                          )}
-                          {failedMessages.length > 0 && (
-                            <span className="inline-flex items-center rounded-full border border-[#f1c9bd] px-2.5 py-0.5 text-xs font-medium text-accent">
-                              {failedMessages.length} failed
-                            </span>
-                          )}
-                          {cancelledMessages.length > 0 && (
-                            <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
-                              {cancelledMessages.length} cancelled
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-hairline rounded-xl overflow-hidden border border-hairline mb-5">
-                      <div className="bg-white p-4">
-                        <p className="eyebrow mb-1.5">Session Type</p>
-                        <p className="text-ink font-medium text-sm">{client.sessionTitle || 'Photography Session'}</p>
-                      </div>
-                      <div className="bg-white p-4">
-                        <p className="eyebrow mb-1.5">Session Date</p>
-                        <p className="text-ink font-medium text-sm">{formatDate(client.sessionTime)}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm text-muted border-t border-hairline pt-4">
-                      <span className="flex items-center gap-1.5">
-                        <CalendarIcon className="h-4 w-4" />
-                        <span className="font-mono text-xs">Created {formatDate(client.messages[0]?.createdAt || (client.messages[0] as SentMessage)?.timestamp || '')}</span>
-                      </span>
-                      <span className="text-ink font-medium group-hover:text-accent transition-colors">View details →</span>
-                    </div>
-                  </div>
+                    </td>
+                    <td className="px-5 py-4 text-right align-top">
+                      <ChevronRightIcon className="ml-auto h-4 w-4 text-muted transition-colors group-hover:text-accent" />
+                    </td>
+                  </tr>
                 )
               })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              {/* ── Right: stats rail ── */}
+              <aside className="space-y-6">
+                {/* Performance */}
+                <div className="rounded-2xl border border-hairline p-6">
+                  <p className="eyebrow mb-2">Delivery rate</p>
+                  <span className="font-display text-4xl font-semibold text-ink">{deliveryRate}%</span>
+                  <p className="mt-1 text-sm text-muted">
+                    {sentCount} of {totalMessages} delivered
+                  </p>
+                  <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-[#F1EFE9]">
+                    <div style={{ width: pct(sentCount) }} className="bg-[#16a34a]" />
+                    <div style={{ width: pct(scheduledCount) }} className="bg-[#C9C4BB]" />
+                    <div style={{ width: pct(failedCount) }} className="bg-accent" />
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#16a34a]" />Sent</span>
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#C9C4BB]" />Scheduled</span>
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-accent" />Failed</span>
+                  </div>
+                </div>
+
+                {/* At a glance */}
+                <div className="overflow-hidden rounded-2xl border border-hairline">
+                  <div className="border-b border-hairline px-6 py-3">
+                    <p className="eyebrow">At a glance</p>
+                  </div>
+                  <dl className="divide-y divide-hairline">
+                    {[
+                      ['Messages sent', String(sentCount)],
+                      ['Scheduled', String(scheduledCount)],
+                      ['Failed', String(failedCount)],
+                      ['SMS cost', `$${estimatedCost}`],
+                      ['Clients', String(uniqueClients)],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex items-center justify-between px-6 py-3">
+                        <dt className="text-sm text-muted">{k}</dt>
+                        <dd className="font-display text-lg font-semibold text-ink">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </aside>
             </div>
-          )}
+
+            {/* Detailed usage — full width below */}
+            <div className="mt-10">
+              <div className="mb-4 flex items-end justify-between">
+                <div>
+                  <p className="eyebrow mb-1">Usage</p>
+                  <h2 className="font-display text-xl font-semibold text-ink">Your SMS usage</h2>
+                </div>
+                <span className="rounded-full border border-hairline px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                  Professional Plan
+                </span>
+              </div>
+              <SMSAnalyticsComponent userId={user.id} />
+            </div>
+          </div>
         </div>
 
 

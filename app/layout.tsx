@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Hanken_Grotesk, IBM_Plex_Mono } from 'next/font/google'
-import Link from 'next/link'
-import MobileNav from '@/components/MobileNav'
 import { AuthProvider } from '@/lib/auth-context'
 import { NotificationsProvider } from '@/components/Notifications'
-import NavLinks from '@/components/NavLinks'
+import AppFrame from '@/components/AppFrame'
 import './globals.css'
 
 // Swiss-editorial system: one clean grotesque for everything, with a monospaced
@@ -111,59 +109,7 @@ export default function RootLayout({
         />
         <AuthProvider>
           <NotificationsProvider>
-          <div className="min-h-screen bg-white text-[#141414]">
-            <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-[#ECEAE4]">
-              <div className="max-w-6xl mx-auto px-5 sm:px-8">
-                <div className="flex justify-between items-center h-16">
-                  <Link href="/" className="flex items-center gap-3 group">
-                    <span
-                      className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-white text-[16px] font-bold tracking-tight transition-transform group-hover:scale-105"
-                      style={{ background: '#141414' }}
-                    >
-                      Sr
-                    </span>
-                    <span className="text-[21px] font-semibold tracking-tight text-[#141414]">SessionRemind</span>
-                  </Link>
-
-                  <NavLinks />
-                  <MobileNav />
-                </div>
-              </div>
-            </nav>
-
-            <main className="max-w-6xl mx-auto py-6 px-5 sm:py-10 sm:px-8">{children}</main>
-
-            <footer className="border-t border-[#ECEAE4] mt-auto">
-              <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex flex-col items-center sm:items-start gap-3">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-white text-[14px] font-bold tracking-tight"
-                      style={{ background: '#141414' }}
-                    >
-                      Sr
-                    </span>
-                    <span className="text-base font-semibold tracking-tight">SessionRemind</span>
-                  </div>
-                  <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[13px] text-[#6E6A63]">
-                    <Link href="/help" className="hover:text-[#141414] transition-colors">Help</Link>
-                    <Link href="/faq" className="hover:text-[#141414] transition-colors">FAQ</Link>
-                    <Link href="/contact" className="hover:text-[#141414] transition-colors">Contact</Link>
-                    <Link href="/privacy" className="hover:text-[#141414] transition-colors">Privacy</Link>
-                    <Link href="/sms-opt-in" className="hover:text-[#141414] transition-colors">SMS terms</Link>
-                  </nav>
-                </div>
-                <div className="text-center sm:text-right">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#9A958C]">
-                    SMS &amp; E-mail Reminders for Sessions
-                  </p>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#B5B0A8] mt-1">
-                    Not affiliated with Session Technologies, LLC
-                  </p>
-                </div>
-              </div>
-            </footer>
-          </div>
+            <AppFrame>{children}</AppFrame>
           </NotificationsProvider>
         </AuthProvider>
       </body>
