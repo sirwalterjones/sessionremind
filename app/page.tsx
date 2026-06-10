@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { PLANS } from '@/lib/plans'
-import HeroDemo from '@/components/HeroDemo'
 
 // Sleek Swiss-editorial marketing page — white canvas, ink type, one accent,
 // hairline rules, generous whitespace, high-impact hero. Server component.
@@ -77,9 +76,22 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: animated product demo (sync → schedule → text → delivered) */}
+            {/* Right: product walkthrough video */}
             <div className="rise relative" style={{ animationDelay: '0.3s' }}>
-              <HeroDemo />
+              <div className="overflow-hidden rounded-2xl border border-hairline bg-ink shadow-[0_30px_80px_-40px_rgba(0,0,0,0.3)]">
+                <video
+                  className="block h-auto w-full"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  preload="metadata"
+                  aria-label="SessionRemind product walkthrough"
+                >
+                  <source src="/hero.mp4" type="video/mp4" />
+                </video>
+              </div>
             </div>
           </div>
         </div>
