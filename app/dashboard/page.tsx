@@ -4,23 +4,15 @@ import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
 import { DashboardSetupStatus } from '@/components/SetupStatus'
-import Link from 'next/link'
+import AppShell from '@/components/AppShell'
 import {
   CheckCircleIcon,
   ClockIcon,
   PlusIcon,
   XMarkIcon,
   MagnifyingGlassIcon,
-  CalendarIcon,
   PhoneIcon,
-  Squares2X2Icon,
-  BellIcon,
-  LinkIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-  ArrowRightOnRectangleIcon,
   ChevronRightIcon,
-  QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline'
 
 interface SentMessage {
@@ -61,162 +53,6 @@ interface ClientGroup {
   sessionTitle: string
   sessionTime: string
   messages: (ScheduledMessage | SentMessage)[]
-}
-
-// Enhanced SMS Analytics Component
-function SMSAnalyticsComponent({ userId }: { userId: string }) {
-  const [analyticsData, setAnalyticsData] = useState<any>(null)
-  const [activityData, setActivityData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        // Fetch both usage data and activity data
-        const [analyticsResponse, activityResponse] = await Promise.all([
-          fetch('/api/user/sms-analytics'),
-          fetch('/api/user/sms-activity')
-        ])
-        
-        if (analyticsResponse.ok) {
-          const data = await analyticsResponse.json()
-          setAnalyticsData(data)
-        }
-        
-        if (activityResponse.ok) {
-          const data = await activityResponse.json()
-          setActivityData(data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch SMS analytics:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchAnalytics()
-  }, [userId])
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white p-6 animate-pulse">
-            <div className="h-3 w-20 bg-[#F1EFE9] rounded mb-3"></div>
-            <div className="h-8 w-16 bg-[#F1EFE9] rounded"></div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  if (!analyticsData?.success && !activityData?.success) {
-    return (
-      <div className="text-center py-6">
-        <p className="text-muted text-sm">Unable to load SMS analytics</p>
-      </div>
-    )
-  }
-
-  const { smsAnalytics } = analyticsData || {}
-  const { activity } = activityData || {}
-
-  return (
-    <div className="space-y-6">
-      {/* Usage Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
-        <div className="bg-white p-6">
-          <p className="eyebrow">SMS Used</p>
-          <p className="font-display text-4xl font-semibold text-ink mt-3">
-            {activity?.currentUsage || smsAnalytics?.current?.smsUsage || 0}
-          </p>
-          <p className="font-mono text-xs text-muted mt-1">
-            of {activity?.limit || smsAnalytics?.current?.smsLimit || 500}
-          </p>
-        </div>
-
-        <div className="bg-white p-6">
-          <p className="eyebrow">Usage</p>
-          <p className="font-display text-4xl font-semibold text-ink mt-3">
-            {activity ? Math.round((activity.currentUsage / activity.limit) * 100) : smsAnalytics?.current?.usagePercentage || 0}%
-          </p>
-          <p className="font-mono text-xs text-muted mt-1">
-            {activity ? `${Math.max(0, activity.limit - activity.currentUsage)} left` :
-             smsAnalytics?.current?.remainingSms === 'unlimited' ? 'Unlimited' :
-             `${smsAnalytics?.current?.remainingSms || 0} left`}
-          </p>
-        </div>
-
-        <div className="bg-white p-6">
-          <p className="eyebrow">Success Rate</p>
-          <p className="font-display text-4xl font-semibold text-ink mt-3">
-            {activity?.deliveryRate || 0}%
-          </p>
-          <p className="font-mono text-xs text-muted mt-1">
-            {activity?.totalMessages || 0} total messages
-          </p>
-        </div>
-      </div>
-
-      {/* Message Activity (if we have activity data) */}
-      {activity && (
-        <div className="rounded-2xl border border-hairline p-6">
-          <p className="eyebrow mb-5">Recent Activity</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <p className="eyebrow mb-3">Message Status</p>
-              <div className="divide-y divide-hairline">
-                <div className="flex justify-between text-sm py-2">
-                  <span className="flex items-center gap-2 text-[#16a34a]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" /> Sent
-                  </span>
-                  <span className="font-mono text-ink">{activity.messagesByStatus?.sent || 0}</span>
-                </div>
-                <div className="flex justify-between text-sm py-2">
-                  <span className="flex items-center gap-2 text-muted">
-                    <span className="w-1.5 h-1.5 rounded-full bg-muted" /> Scheduled
-                  </span>
-                  <span className="font-mono text-ink">{activity.messagesByStatus?.scheduled || 0}</span>
-                </div>
-                <div className="flex justify-between text-sm py-2">
-                  <span className="flex items-center gap-2 text-accent">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Failed
-                  </span>
-                  <span className="font-mono text-ink">{activity.messagesByStatus?.failed || 0}</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="eyebrow mb-3">Latest Messages</p>
-              <div className="divide-y divide-hairline max-h-60 overflow-y-auto">
-                {activity.latestMessages?.slice(0, 5).map((msg: any, idx: number) => (
-                  <div key={idx} className="flex items-start justify-between gap-3 py-2.5">
-                    <div className="min-w-0">
-                      <div className="text-sm font-medium text-ink truncate">{msg.clientName}</div>
-                      {msg.sessionTitle && <div className="text-xs text-muted truncate">{msg.sessionTitle}</div>}
-                      <div className="text-xs text-muted">
-                        {msg.sessionTime ||
-                          (msg.scheduledFor
-                            ? new Date(msg.scheduledFor).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
-                            : '')}
-                      </div>
-                    </div>
-                    <span className={`flex-shrink-0 font-mono text-xs uppercase tracking-[0.12em] ${
-                      msg.status === 'sent' ? 'text-[#16a34a]' :
-                      msg.status === 'scheduled' ? 'text-muted' :
-                      'text-accent'
-                    }`}>
-                      {msg.status}
-                    </span>
-                  </div>
-                )) || <p className="text-sm text-muted py-2">No recent messages</p>}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
 }
 
 export default function Dashboard() {
@@ -695,124 +531,12 @@ function DashboardContent() {
     )
   }
 
-  const navItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: Squares2X2Icon, active: true },
-    { label: 'Reminders', href: '/reminders', icon: BellIcon },
-    { label: 'Connect', href: '/connect', icon: LinkIcon },
-    { label: 'New reminder', href: '/new', icon: PlusIcon },
-    { label: 'Profile', href: '/profile', icon: UserCircleIcon },
-  ]
-  const secondaryNav = [
-    { label: 'How it works', href: '/instructions', icon: QuestionMarkCircleIcon },
-    { label: 'Help', href: '/help', icon: QuestionMarkCircleIcon },
-  ]
-
   // Stacked status bar for the performance card (sent / scheduled / failed).
   const barTotal = Math.max(sentCount + scheduledCount + failedCount, 1)
   const pct = (n: number) => `${(n / barTotal) * 100}%`
 
   return (
-    <div className="flex min-h-screen bg-white text-ink">
-      {/* ───────── Sidebar ───────── */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-hairline bg-[#FAFAF8] lg:flex">
-        <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-hairline">
-          <span
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[15px] font-bold tracking-tight text-white"
-            style={{ background: '#141414' }}
-          >
-            Sr
-          </span>
-          <span className="text-[17px] font-semibold tracking-tight">SessionRemind</span>
-        </Link>
-
-        <nav className="flex-1 overflow-y-auto px-3 py-5">
-          <p className="eyebrow px-2 pb-2">Workspace</p>
-          <div className="space-y-1">
-            {navItems.map(({ label, href, icon: Icon, active }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  active
-                    ? 'bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-hairline'
-                    : 'text-[#6E6A63] hover:bg-white hover:text-ink'
-                }`}
-              >
-                <Icon className="h-[18px] w-[18px]" />
-                {label}
-              </Link>
-            ))}
-          </div>
-
-          <p className="eyebrow px-2 pb-2 pt-6">Resources</p>
-          <div className="space-y-1">
-            {secondaryNav.map(({ label, href, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#6E6A63] transition-colors hover:bg-white hover:text-ink"
-              >
-                <Icon className="h-[18px] w-[18px]" />
-                {label}
-              </Link>
-            ))}
-            {user.is_admin && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#6E6A63] transition-colors hover:bg-white hover:text-ink"
-              >
-                <Cog6ToothIcon className="h-[18px] w-[18px]" />
-                Admin Console
-              </Link>
-            )}
-          </div>
-        </nav>
-
-        <div className="border-t border-hairline p-3">
-          <div className="flex items-center justify-between gap-2 rounded-lg px-3 py-2">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-ink">{user.username}</p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                {user.is_admin ? 'Admin' : 'Professional'}
-              </p>
-            </div>
-            <button
-              onClick={logout}
-              aria-label="Log out"
-              className="rounded-lg border border-hairline bg-white p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
-            >
-              <ArrowRightOnRectangleIcon className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* ───────── Main column ───────── */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile top bar (sidebar is hidden < lg) */}
-        <div className="flex items-center justify-between border-b border-hairline px-5 h-16 lg:hidden">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-bold tracking-tight text-white"
-              style={{ background: '#141414' }}
-            >
-              Sr
-            </span>
-            <span className="text-base font-semibold tracking-tight">SessionRemind</span>
-          </Link>
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            <Link href="/reminders" className="rounded-full border border-hairline px-3 py-1 text-ink">Reminders</Link>
-            {user.is_admin && (
-              <a href="/admin" className="rounded-full border border-hairline px-3 py-1 text-ink">Admin</a>
-            )}
-            <button onClick={logout} className="rounded-full border border-hairline px-3 py-1 text-ink">
-              Logout
-            </button>
-          </div>
-        </div>
-
-        <div className="flex-1 px-5 py-8 sm:px-8">
-          <div className="mx-auto w-full max-w-[1500px]">
+    <AppShell active="dashboard">
             {/* Page header */}
             <header className="flex flex-col gap-5 border-b border-hairline pb-8 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -1040,23 +764,6 @@ function DashboardContent() {
               </aside>
             </div>
 
-            {/* Detailed usage — full width below */}
-            <div className="mt-10">
-              <div className="mb-4 flex items-end justify-between">
-                <div>
-                  <p className="eyebrow mb-1">Usage</p>
-                  <h2 className="font-display text-xl font-semibold text-ink">Your SMS usage</h2>
-                </div>
-                <span className="rounded-full border border-hairline px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                  Professional Plan
-                </span>
-              </div>
-              <SMSAnalyticsComponent userId={user.id} />
-            </div>
-          </div>
-        </div>
-
-
         {/* Client Detail Modal */}
         {showClientModal && selectedClient && (
           <div className="fixed inset-0 bg-ink/40 flex items-center justify-center z-50 p-4">
@@ -1187,7 +894,6 @@ function DashboardContent() {
             </div>
           </div>
         )}
-      </div>
-    </div>
+    </AppShell>
   )
 }

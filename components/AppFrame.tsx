@@ -7,7 +7,7 @@ import NavLinks from '@/components/NavLinks'
 
 // Site chrome (top nav + footer). The signed-in dashboard renders its own
 // full-screen sidebar shell, so we suppress the marketing chrome there.
-const APP_SHELL_ROUTES = ['/dashboard']
+const APP_SHELL_ROUTES = ['/dashboard', '/usage']
 
 export default function AppFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
