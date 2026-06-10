@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PLANS } from '@/lib/plans'
+import HeroDemo from '@/components/HeroDemo'
 
 // Sleek Swiss-editorial marketing page — white canvas, ink type, one accent,
 // hairline rules, generous whitespace, high-impact hero. Server component.
@@ -76,55 +77,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: sleek product panel */}
+            {/* Right: animated product demo (sync → schedule → text → delivered) */}
             <div className="rise relative" style={{ animationDelay: '0.3s' }}>
-              <div className="relative rounded-2xl border border-hairline bg-white shadow-[0_30px_80px_-40px_rgba(0,0,0,0.3)] overflow-hidden">
-                {/* panel header */}
-                <div className="flex items-center justify-between px-5 py-3.5 border-b border-hairline">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full" style={{ background: A }} />
-                    <span className="text-sm font-semibold tracking-tight">Connect</span>
-                  </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#16a34a] flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" /> Synced
-                  </span>
-                </div>
-                {/* reminder rows */}
-                <div className="divide-y divide-hairline">
-                  {[
-                    ['Ashley D.', 'Summer Greenhouse Mini', 'in 3 days'],
-                    ['Maria Z.', 'Senior Session 2026', 'in 3 days'],
-                    ['Kayla W.', 'Watermelon Mini', 'tomorrow'],
-                  ].map(([n, s, w], i) => (
-                    <div key={i} className="flex items-center justify-between px-5 py-3.5">
-                      <div>
-                        <div className="text-sm font-medium">{n}</div>
-                        <div className="text-xs text-[#8A857C]">{s}</div>
-                      </div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8A857C]">
-                        Texts {w}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-5 py-3.5 border-t border-hairline bg-[#FAFAF8] flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#9A958C]">
-                    12 scheduled this week
-                  </span>
-                  <span className="text-xs font-medium" style={{ color: A }}>
-                    Hands-off
-                  </span>
-                </div>
-              </div>
-              {/* floating text bubble */}
-              <div className="absolute -bottom-6 -left-4 sm:-left-8 w-56 rounded-2xl bg-ink text-white p-4 shadow-xl rotate-[-3deg]">
-                <p className="text-[13px] leading-snug">
-                  Hi Ashley! Reminder about your shoot Saturday at 10 AM. Can’t wait! 📸
-                </p>
-                <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.16em] text-white/50">
-                  Sent automatically
-                </div>
-              </div>
+              <HeroDemo />
             </div>
           </div>
         </div>

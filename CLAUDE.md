@@ -54,6 +54,25 @@ Technologies, LLC** — that disclaimer must stay in the footer and emails.
   not-yet-connected users there). Setup status surfaces: dashboard card +
   Connect page's texting-number card (`components/SetupStatus.tsx`); the
   connector bookmarklet builder is shared in `lib/bookmarklet.ts`.
+- **Forgot-password flow** (2026-06-10): `/forgot-password` → Turnstile-gated,
+  enumeration-safe `/api/auth/forgot-password` → branded Resend email → 1h
+  single-use token (`lib/password-reset.ts`, KV `pwreset:<token>`) →
+  `/reset-password?token=` → `/api/auth/forgot-password/confirm` writes the
+  hash to `user:<id>:password` (the key login checks). The logged-in change
+  route (`/api/auth/reset-password`) was rewritten the same day — it had been
+  kv.get/kv.set-ing the hash-stored user record (WRONGTYPE → 500 since the
+  hash migration).
+- **Auth/marketing visual refresh** (2026-06-10): `/register` and `/login` are
+  split editorial layouts (pitch left, panel-card form right); homepage hero
+  panel is now `components/HeroDemo.tsx`, a looping animated demo (sync → rows
+  → typing → DELIVERED). OG/Twitter cards are build-time-rendered from
+  `app/opengraph-image.tsx` using fonts in `assets/fonts/` (satori: every
+  multi-child div needs explicit display:flex; no JSX entities — they split
+  text into multiple children). Nav order: app pages first, Help/Profile last.
+- **Admin master number list**: `/admin/numbers` (API
+  `/api/admin/sms-senders`, scans KV `user:*:sms_sender`) shows every tenant
+  toll-free request + the platform shared number with provisioning/verification
+  status and a per-row "Refresh from Twilio".
 
 ### In flight / waiting
 1. **Shared Twilio toll-free number (844) 455-1042 is IN_REVIEW** (toll-free

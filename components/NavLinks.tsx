@@ -11,29 +11,12 @@ export default function NavLinks() {
 
   return (
     <div className="hidden md:flex items-center gap-2">
-      <Link href="/instructions" className={linkClass}>
-        How it works
-      </Link>
-
-      {/* Keep the signed-in header lean: docs/contact live under Help (and in
+      {/* Most-used destinations lead; Help and Profile sit at the end.
+          Signed-in headers stay lean: docs/contact live under Help (and in
           the footer); signed-out visitors get the full marketing set. */}
-      {!user && (
-        <Link href="/faq" className={linkClass}>
-          FAQ
-        </Link>
-      )}
-      <Link href="/help" className={linkClass}>
-        Help
-      </Link>
-      {!user && (
-        <Link href="/contact" className={linkClass}>
-          Contact
-        </Link>
-      )}
-
       {user && (
-        <Link href="/connect" className={linkClass}>
-          Connect
+        <Link href="/dashboard" className={linkClass}>
+          Dashboard
         </Link>
       )}
       {user && (
@@ -42,10 +25,27 @@ export default function NavLinks() {
         </Link>
       )}
       {user && (
-        <Link href="/dashboard" className={linkClass}>
-          Dashboard
+        <Link href="/connect" className={linkClass}>
+          Connect
         </Link>
       )}
+
+      <Link href="/instructions" className={linkClass}>
+        How it works
+      </Link>
+      {!user && (
+        <Link href="/faq" className={linkClass}>
+          FAQ
+        </Link>
+      )}
+      {!user && (
+        <Link href="/contact" className={linkClass}>
+          Contact
+        </Link>
+      )}
+      <Link href="/help" className={linkClass}>
+        Help
+      </Link>
       {user && (
         <Link href="/profile" className={linkClass}>
           Profile

@@ -35,21 +35,10 @@ export default function MobileNav() {
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 bg-white border-t border-hairline py-2">
-          <Link href="/instructions" className={item} onClick={() => setIsOpen(false)}>
-            How it works
-          </Link>
-          <Link href="/help" className={item} onClick={() => setIsOpen(false)}>
-            Help
-          </Link>
-          <Link href="/faq" className={item} onClick={() => setIsOpen(false)}>
-            FAQ
-          </Link>
-          <Link href="/contact" className={item} onClick={() => setIsOpen(false)}>
-            Contact
-          </Link>
+          {/* Most-used destinations lead; Help and Profile sit at the end. */}
           {user && (
-            <Link href="/connect" className={item} onClick={() => setIsOpen(false)}>
-              Connect
+            <Link href="/dashboard" className={item} onClick={() => setIsOpen(false)}>
+              Dashboard
             </Link>
           )}
           {user && (
@@ -58,10 +47,22 @@ export default function MobileNav() {
             </Link>
           )}
           {user && (
-            <Link href="/dashboard" className={item} onClick={() => setIsOpen(false)}>
-              Dashboard
+            <Link href="/connect" className={item} onClick={() => setIsOpen(false)}>
+              Connect
             </Link>
           )}
+          <Link href="/instructions" className={item} onClick={() => setIsOpen(false)}>
+            How it works
+          </Link>
+          <Link href="/faq" className={item} onClick={() => setIsOpen(false)}>
+            FAQ
+          </Link>
+          <Link href="/contact" className={item} onClick={() => setIsOpen(false)}>
+            Contact
+          </Link>
+          <Link href="/help" className={item} onClick={() => setIsOpen(false)}>
+            Help
+          </Link>
           {user && (
             <Link href="/profile" className={item} onClick={() => setIsOpen(false)}>
               Profile

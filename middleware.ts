@@ -6,7 +6,7 @@ import { getCurrentUser } from '@/lib/auth'
 const protectedRoutes = ['/dashboard', '/new', '/admin', '/automation', '/connect', '/reminders', '/onboarding', '/welcome']
 
 // Public routes (auth pages and marketing pages)
-const publicRoutes = ['/login', '/register', '/', '/payment-required', '/verify-email', '/sms-opt-in', '/privacy', '/contact', '/faq', '/help']
+const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/', '/payment-required', '/verify-email', '/sms-opt-in', '/privacy', '/contact', '/faq', '/help']
 
 // Opt-in: only hard-block unverified users when explicitly enabled, so we never
 // lock people out before email sending is verified in Resend.

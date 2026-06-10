@@ -164,6 +164,19 @@ export async function sendVerificationEmail(to: string, link: string): Promise<b
   return sendEmail(to, 'Verify your SessionRemind email', html)
 }
 
+export async function sendPasswordResetEmail(to: string, link: string): Promise<boolean> {
+  const html = renderBrandedEmail({
+    preheader: 'Use this link to choose a new SessionRemind password.',
+    eyebrow: 'Account access',
+    heading: 'Reset your password',
+    bodyHtml: `<p style="margin:0;">Someone (hopefully you) asked to reset the password for this SessionRemind account. Tap the button below to choose a new one.</p>`,
+    ctaText: 'Choose a new password',
+    ctaUrl: link,
+    afterCtaHtml: `Button not working? Paste this link into your browser:<br><a href="${link}" style="color:${MUTED};word-break:break-all;">${link}</a><br><br>This link expires in 1 hour and can be used once. If you didn’t ask for this, you can safely ignore it — your password won’t change.`,
+  })
+  return sendEmail(to, 'Reset your SessionRemind password', html)
+}
+
 const BASE = process.env.NEXT_PUBLIC_BASE_URL || 'https://sessionremind.com'
 
 // Format a US E.164 number as (XXX) XXX-XXXX for display; pass through otherwise.

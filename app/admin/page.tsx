@@ -764,6 +764,12 @@ export default function AdminPage() {
                 Shared number
               </a>
               <a
+                href="/admin/numbers"
+                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
+              >
+                Numbers
+              </a>
+              <a
                 href="/admin/subscriptions"
                 className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
               >

@@ -44,24 +44,15 @@ export const metadata: Metadata = {
     title: 'Session Remind - SMS Reminders for Photography Sessions',
     description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
     siteName: 'Session Remind',
-    images: [
-      {
-        url: '/logo.svg',
-        width: 512,
-        height: 512,
-        alt: 'Session Reminder Logo'
-      }
-    ]
+    // og:image / twitter:image come from app/opengraph-image.tsx + app/twitter-image.tsx
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Session Remind - SMS Reminders for Photography Sessions',
-    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
-    images: ['/logo.svg']
+    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.'
   },
   other: {
-    'mobile-web-app-capable': 'yes',
-    'fb:app_id': '1234567890' // Replace with your Facebook App ID if you have one
+    'mobile-web-app-capable': 'yes'
   }
 }
 
