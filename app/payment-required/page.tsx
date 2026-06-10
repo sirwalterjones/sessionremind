@@ -15,10 +15,16 @@ export default function PaymentRequiredPage() {
   )
 }
 
+// sessionStorage key that carries the user's original destination across the
+// Stripe checkout round-trip (checkout now returns to this page so we can
+// confirm the subscription before routing).
+const POST_CHECKOUT_REDIRECT_KEY = 'sr-post-checkout-redirect'
+
 function PaymentRequiredContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectPath = searchParams.get('redirect') || '/dashboard'
+  const paymentStatus = searchParams.get('payment')
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<any>(null)
   const toast = useToast()
@@ -26,6 +32,74 @@ function PaymentRequiredContent() {
   useEffect(() => {
     fetchUserInfo()
   }, [])
+
+  // ?payment=success — Stripe sent the user back here after checkout. Poll
+  // /api/auth/me until the webhook has recorded the subscription (it also
+  // clears the middleware payment gate), then route: new subscribers who
+  // haven't connected UseSession yet go to the /welcome wizard; already-
+  // connected users continue to their original destination exactly as before.
+  useEffect(() => {
+    if (paymentStatus !== 'success') return
+    let finished = false
+
+    const finish = async () => {
+      if (finished) return
+      finished = true
+      // Recover the destination stashed before redirecting to Stripe.
+      let dest = '/dashboard'
+      try {
+        const stored = sessionStorage.getItem(POST_CHECKOUT_REDIRECT_KEY)
+        if (stored && stored.startsWith('/') && !stored.startsWith('/payment-required')) {
+          dest = stored
+        }
+        sessionStorage.removeItem(POST_CHECKOUT_REDIRECT_KEY)
+      } catch {
+        /* sessionStorage unavailable — fall back to /dashboard */
+      }
+      let connected = false
+      try {
+        const res = await fetch('/api/settings')
+        if (res.ok) {
+          const data = await res.json()
+          connected = Boolean(data?.settings?.usesession?.connected)
+        }
+      } catch {
+        /* treat as not connected — the wizard handles it gracefully */
+      }
+      // Same landing as before for connected users (?payment=success preserved);
+      // everyone else gets the guided setup wizard.
+      router.replace(connected ? `${dest}?payment=success` : '/welcome')
+    }
+
+    let tries = 0
+    const interval = setInterval(async () => {
+      tries++
+      try {
+        const res = await fetch('/api/auth/me')
+        if (res.ok) {
+          const data = await res.json()
+          const u = data?.user
+          // Mirrors the server-side eligibility gate: a real Stripe sub id is
+          // only set by the signature-verified webhook.
+          if (u && (u.stripe_subscription_id || u.payment_override || u.is_admin)) {
+            clearInterval(interval)
+            await finish()
+            return
+          }
+        }
+      } catch {
+        /* transient — keep polling */
+      }
+      if (tries >= 30) {
+        // ~60s: webhook is unusually slow — proceed anyway rather than strand
+        // the user; downstream pages re-check entitlements themselves.
+        clearInterval(interval)
+        await finish()
+      }
+    }, 2000)
+    return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentStatus])
 
   const fetchUserInfo = async () => {
     try {
@@ -42,13 +116,23 @@ function PaymentRequiredContent() {
   const handlePayment = async (plan: string) => {
     setIsLoading(true)
     try {
+      // Stash the real destination, then have Stripe return to THIS page
+      // (?payment=success gets appended by create-checkout) so we can confirm
+      // the subscription and route new subscribers into the /welcome wizard.
+      try {
+        if (!redirectPath.startsWith('/payment-required')) {
+          sessionStorage.setItem(POST_CHECKOUT_REDIRECT_KEY, redirectPath)
+        }
+      } catch {
+        /* sessionStorage unavailable — success handler falls back to /dashboard */
+      }
       const response = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          redirectPath: redirectPath,
+          redirectPath: '/payment-required',
           plan,
         })
       })
@@ -76,6 +160,27 @@ function PaymentRequiredContent() {
     } catch (error) {
       console.error('Logout error:', error)
     }
+  }
+
+  // Post-checkout confirmation state (the effect above routes onward).
+  if (paymentStatus === 'success') {
+    return (
+      <div className="flex min-h-[70vh] flex-col items-center justify-center py-12 text-center">
+        <div className="eyebrow flex items-center justify-center gap-2">
+          <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#16a34a' }} />
+          Payment received
+        </div>
+        <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05] text-ink">
+          Thank you.
+        </h1>
+        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-[#6E6A63]">
+          Confirming your subscription — this only takes a moment&hellip;
+        </p>
+        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C] animate-pulse">
+          Setting things up
+        </p>
+      </div>
+    )
   }
 
   return (

@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context'
 import CsvImport from '@/components/CsvImport'
 import { useToast, useConfirm } from '@/components/Notifications'
 import { TextingNumberCard } from '@/components/SetupStatus'
+import { buildConnectorBookmarklet } from '@/lib/bookmarklet'
 import {
   ArrowPathIcon,
   LockClosedIcon,
@@ -113,29 +114,10 @@ export default function ConnectPage() {
       if (!res.ok) throw new Error('Could not start connect')
       const { code } = await res.json()
       setPairCode(code)
-      const origin = window.location.origin
-      // Self-contained bookmarklet: injects a small branded SessionRemind modal
-      // into the UseSession page (no native alert). CSP-safe — built with
-      // createElement + style.cssText, never innerHTML with style attrs.
-      const bm =
-        `javascript:(function(){` +
-        `function box(icon,clr,title,msg,auto){var e=document.getElementById('srm');if(e)e.remove();` +
-        `var w=document.createElement('div');w.id='srm';w.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#fff;color:#141414;font-family:-apple-system,Segoe UI,Roboto,sans-serif;border:1px solid #ECEAE4;border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.18);padding:16px 18px;min-width:300px;max-width:380px;display:flex;gap:12px;align-items:flex-start';` +
-        `var i=document.createElement('div');i.textContent=icon;i.style.cssText='flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:'+clr+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1';` +
-        `var c=document.createElement('div');c.style.cssText='flex:1';` +
-        `var h=document.createElement('div');h.textContent=title;h.style.cssText='font-weight:600;font-size:14px;margin-bottom:2px';` +
-        `var p=document.createElement('div');p.textContent=msg;p.style.cssText='font-size:13px;color:#5F5B54;line-height:1.45';` +
-        `c.appendChild(h);c.appendChild(p);` +
-        `var x=document.createElement('button');x.textContent='\\u00d7';x.style.cssText='background:none;border:none;font-size:20px;color:#9A958C;cursor:pointer;line-height:1;padding:0;margin-left:4px';x.onclick=function(){w.remove()};` +
-        `w.appendChild(i);w.appendChild(c);w.appendChild(x);document.body.appendChild(w);if(auto)setTimeout(function(){w.remove()},6000);}` +
-        `var t=localStorage.getItem('session-token');` +
-        `if(!t){box('!','#d97706','Not logged in','Open UseSession and log in, then click Connect again.');return;}` +
-        `box('\\u2026','#8A857C','SessionRemind','Connecting your account\\u2026');` +
-        `fetch('${origin}/api/usesession/connect-token',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code:'${code}',token:t})}).then(function(r){return r.json()}).then(function(d){` +
-        `if(d.success){box('\\u2713','#16a34a','Connected!',(d.sync&&typeof d.sync.scheduled==='number'?'Scheduled '+d.sync.scheduled+' reminder(s). ':'')+'You can close this tab.',true);}` +
-        `else{box('\\u00d7','#dc2626','Could not connect',d.error||'Something went wrong.');}` +
-        `}).catch(function(e){box('\\u00d7','#dc2626','Error',String(e));});})();`
-      setBookmarklet(bm)
+      // Self-contained bookmarklet — see lib/bookmarklet.ts (shared with the
+      // /welcome wizard): injects a small branded SessionRemind modal into the
+      // UseSession page and reports the token back to /api/usesession/connect-token.
+      setBookmarklet(buildConnectorBookmarklet(window.location.origin, code))
       pollForConnection()
     } catch (e) {
       flash('err', 'Could not start the connect process. Please try again.')
