@@ -737,39 +737,47 @@ export default function AdminPage() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-600">Manage your application and users</p>
+          <div className="flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <p className="text-gray-600">Manage your application and users</p>
+              </div>
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="whitespace-nowrap text-sm text-gray-500 hover:text-gray-700 lg:hidden"
+              >
+                ← Dashboard
+              </button>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-2">
               <a
                 href="/admin/support"
-                className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
               >
                 Support
               </a>
               <a
                 href="/admin/shared-number"
-                className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
               >
                 Shared number
               </a>
               <a
                 href="/admin/subscriptions"
-                className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
               >
                 Subscriptions
               </a>
               <a
                 href="/admin/spam"
-                className="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                className="rounded-full bg-red-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-red-700"
               >
                 Spam cleanup
               </a>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="text-gray-500 hover:text-gray-700"
+                className="hidden whitespace-nowrap text-sm text-gray-500 hover:text-gray-700 lg:inline"
               >
                 ← Back to Dashboard
               </button>
