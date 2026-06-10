@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { kv } from '@vercel/kv'
-import { getCurrentUser, hashPassword, verifyPassword } from '@/lib/auth'
+import {
+  getCurrentUser,
+  hashPassword,
+  verifyPassword,
+  deleteAllUserSessions,
+  createSession,
+  setSessionCookie,
+} from '@/lib/auth'
 
 // Logged-in password change (used from /profile). Password hashes live at
 // user:<id>:password — the same key login verifies against. (This route
@@ -28,6 +35,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+    if (newPassword === currentPassword) {
+      return NextResponse.json(
+        { error: 'New password must be different from your current password' },
+        { status: 400 }
+      )
+    }
 
     const storedHash = await kv.get(`user:${user.id}:password`)
     if (!storedHash) {
@@ -41,7 +54,14 @@ export async function POST(request: NextRequest) {
 
     await kv.set(`user:${user.id}:password`, await hashPassword(newPassword))
 
-    return NextResponse.json({ message: 'Password updated successfully' })
+    // Revoke every existing session (logs out other devices), then mint a fresh
+    // one so the current device stays signed in.
+    await deleteAllUserSessions(user.id).catch(() => {})
+    const sessionId = await createSession(user.id)
+
+    const response = NextResponse.json({ message: 'Password updated successfully' })
+    response.headers.set('Set-Cookie', setSessionCookie(sessionId))
+    return response
   } catch (error) {
     console.error('Password reset error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

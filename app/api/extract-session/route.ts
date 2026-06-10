@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { validateExtractUrl } from '@/lib/url-guard'
 
 export async function POST(request: NextRequest) {
   try {
     const { url } = await request.json()
-    
-    if (!url || !url.includes('session.com')) {
+
+    // SSRF guard: only fetch public Session/UseSession hosts (the old
+    // `url.includes('session.com')` check was bypassable, e.g. a metadata IP
+    // with `?x=session.com`).
+    const safeUrl = validateExtractUrl(url)
+    if (!safeUrl) {
       return NextResponse.json(
         { error: 'Invalid Session URL' },
         { status: 400 }
@@ -12,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the Session page
-    const response = await fetch(url, {
+    const response = await fetch(safeUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',

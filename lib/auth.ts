@@ -108,6 +108,9 @@ export async function createSession(userId: string): Promise<string> {
 
   await kv.hset(`session:${sessionId}`, session as unknown as Record<string, unknown>)
   await kv.expireat(`session:${sessionId}`, Math.floor(expiresAt.getTime() / 1000))
+  // Track this session under the user so a password reset/change can revoke
+  // every active session, not just the current cookie.
+  await kv.sadd(`user:${userId}:sessions`, sessionId)
 
   return sessionId
 }
@@ -120,7 +123,22 @@ export async function getSession(sessionId: string): Promise<Session | null> {
 
 // Delete session
 export async function deleteSession(sessionId: string): Promise<void> {
+  const session = await getSession(sessionId)
   await kv.del(`session:${sessionId}`)
+  if (session?.user_id) {
+    await kv.srem(`user:${session.user_id}:sessions`, sessionId).catch(() => {})
+  }
+}
+
+// Revoke every session for a user (e.g. after a password reset/change). Returns
+// the number of sessions cleared.
+export async function deleteAllUserSessions(userId: string): Promise<number> {
+  const ids = await kv.smembers(`user:${userId}:sessions`)
+  if (ids && ids.length) {
+    await Promise.all(ids.map((id) => kv.del(`session:${id}`)))
+  }
+  await kv.del(`user:${userId}:sessions`)
+  return ids?.length || 0
 }
 
 // Get current user from request

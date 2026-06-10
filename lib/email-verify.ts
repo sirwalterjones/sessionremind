@@ -11,10 +11,9 @@ export async function createVerifyToken(userId: string): Promise<string> {
   return token
 }
 
-// Single-use: returns the userId and deletes the token.
+// Single-use: atomically returns the userId and deletes the token (GETDEL is
+// atomic, unlike a separate get-then-del that two requests could race).
 export async function consumeVerifyToken(token: string): Promise<string | null> {
   if (!token) return null
-  const userId = await kv.get<string>(`emailverify:${token}`)
-  if (userId) await kv.del(`emailverify:${token}`)
-  return userId || null
+  return (await kv.getdel<string>(`emailverify:${token}`)) || null
 }

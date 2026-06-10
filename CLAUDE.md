@@ -90,6 +90,38 @@ Technologies, LLC** — that disclaimer must stay in the footer and emails.
 4. Old local Twilio number +17703366289 has a FAILED 10DLC campaign — unusable
    for A2P; candidates for release if not needed for anything else.
 
+### Security audit (2026-06-10)
+A 4-agent audit (API authz, auth/session, injection/XSS, billing/cron) ran and
+the confirmed holes were fixed in the same session:
+- **Fixed CRITICAL**: `DELETE /api/cancel-message/[id]` had NO auth — anyone
+  could delete any tenant's reminder by id. Now session-gated + owner-scoped
+  via `deleteScheduledMessage(id, user.id)`.
+- **Fixed HIGH**: `/api/cron` and `/api/process-scheduled` trusted a
+  `User-Agent: vercel` substring as auth (spoofable). Now gate ONLY on
+  `Authorization: Bearer ${CRON_SECRET}` — keep CRON_SECRET set in Vercel or
+  the cron 401s (Vercel Cron sends that header automatically).
+- **Fixed HIGH**: SSRF in `/api/extract-session` + `/api/extract-usesession`
+  (`url.includes('session.com')` was bypassable). Now use
+  `lib/url-guard.ts validateExtractUrl` (host allowlist + private/metadata-IP
+  block). These ARE live (used by `/new`, SimpleMobile, URLExtractor).
+- **Fixed MEDIUM**: deleted dead `/api/test-textmagic` (leaked operator
+  TextMagic name+balance, no auth) and `/api/debug-form`. Sessions now revoked
+  on password reset/change (`deleteAllUserSessions`, backed by a
+  `user:<id>:sessions` set populated in `createSession`). Single-use tokens use
+  atomic `kv.getdel`. Password min raised 6→8 everywhere.
+- **Known/accepted, NOT yet done** (see audit, lower priority): no rate
+  limiting on login / forgot-password / resend-verification (only `/contact`
+  has it — consider Upstash ratelimit); register still leaks "email already
+  exists" (enumeration); email not normalized/lowercased at register (mixed
+  case = distinct accounts — DON'T fix naively, it strands existing accounts
+  since login lookup is case-exact too); `send-sms` trusts client `optedIn`
+  bool (TCPA gap, not free-SMS — quota still gates); Turnstile fails OPEN if
+  `TURNSTILE_SECRET_KEY` unset (matters during the pending secret rotation);
+  `CRON_SECRET` doubles as the token-encryption key seed (split once cron auth
+  is hardened). middleware referer-bypass is defense-in-depth only today (all
+  protected pages are client components that re-auth via API) — becomes a real
+  hole if anyone adds a server-component protected page that reads data.
+
 ## Gotchas — read before editing
 
 - **NEVER set `ENCRYPTION_KEY`.** Stored UseSession tokens are encrypted with the

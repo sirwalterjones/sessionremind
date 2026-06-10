@@ -12,13 +12,15 @@ import { billPendingOverage } from '@/lib/usage'
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify Vercel cron job or allow with optional auth
-    const isVercelCron = request.headers.get('user-agent')?.includes('vercel')
+    // This endpoint drives sync + sending + billing, so it must not be publicly
+    // triggerable. Gate solely on the CRON_SECRET bearer token — Vercel Cron
+    // sends `Authorization: Bearer ${CRON_SECRET}` automatically when the env
+    // var is set. (We previously also trusted any request whose User-Agent
+    // contained "vercel", which is attacker-controlled and bypassed the secret.)
     const authHeader = request.headers.get('authorization')
     const expectedAuth = process.env.CRON_SECRET
-    
-    // Allow Vercel cron jobs automatically, otherwise check auth if secret is set
-    if (!isVercelCron && expectedAuth && authHeader !== `Bearer ${expectedAuth}`) {
+
+    if (expectedAuth && authHeader !== `Bearer ${expectedAuth}`) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

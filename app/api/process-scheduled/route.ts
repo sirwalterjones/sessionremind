@@ -27,13 +27,12 @@ function isBeforeEightAmEST(): boolean {
 export async function POST(request: NextRequest) {
   try {
     // This endpoint sends real texts and records billable usage, so it must
-    // not be publicly triggerable. The internal cron passes CRON_SECRET;
-    // Vercel's own cron is identified by user-agent.
+    // not be publicly triggerable. Gate solely on the CRON_SECRET bearer token
+    // (the internal /api/cron call passes it). We no longer trust a "vercel"
+    // User-Agent — that header is attacker-controlled and bypassed the secret.
     const expectedAuth = process.env.CRON_SECRET
-    const isVercelCron = request.headers.get('user-agent')?.includes('vercel')
     if (
       expectedAuth &&
-      !isVercelCron &&
       request.headers.get('authorization') !== `Bearer ${expectedAuth}`
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

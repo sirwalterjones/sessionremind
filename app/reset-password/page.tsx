@@ -24,8 +24,8 @@ function ResetPasswordForm() {
       setError('Passwords do not match')
       return
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters')
       return
     }
 
@@ -106,7 +106,7 @@ function ResetPasswordForm() {
             Choose a new password.
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
-            Make it at least 6 characters — something you&apos;ll remember this time.
+            Make it at least 8 characters — something you&apos;ll remember this time.
           </p>
         </div>
 
@@ -127,7 +127,7 @@ function ResetPasswordForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={input}
-              placeholder="6+ characters"
+              placeholder="8+ characters"
             />
           </div>
 
