@@ -48,6 +48,12 @@ Technologies, LLC** — that disclaimer must stay in the footer and emails.
   unset). Flip to `true` in Vercel env when Walter wants it.
 - Admin: `/admin` (+ `/admin/support`, `/admin/shared-number`, `/admin/subscriptions`,
   `/admin/spam`), all linked from the admin header.
+- **The UseSession page is `/connect`** (renamed from `/automation`, which now
+  redirects). Onboarding wizard at `/welcome` runs after first checkout
+  (payment-required polls for the webhook-recorded sub, then routes
+  not-yet-connected users there). Setup status surfaces: dashboard card +
+  Connect page's texting-number card (`components/SetupStatus.tsx`); the
+  connector bookmarklet builder is shared in `lib/bookmarklet.ts`.
 
 ### In flight / waiting
 1. **Shared Twilio toll-free number (844) 455-1042 is IN_REVIEW** (toll-free
