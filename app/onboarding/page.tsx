@@ -223,7 +223,7 @@ export default function OnboardingPage() {
     <div className="text-ink">
       <div className="flex items-start gap-3">
         <button
-          onClick={() => router.push('/automation')}
+          onClick={() => router.push('/connect')}
           aria-label="Back"
           className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
         >

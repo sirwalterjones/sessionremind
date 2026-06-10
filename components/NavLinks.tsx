@@ -32,8 +32,8 @@ export default function NavLinks() {
       )}
 
       {user && (
-        <Link href="/automation" className={linkClass}>
-          Automation
+        <Link href="/connect" className={linkClass}>
+          Connect
         </Link>
       )}
       {user && (

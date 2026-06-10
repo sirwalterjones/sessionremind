@@ -194,7 +194,7 @@ export async function sendTollfreeApprovedEmail(
       `Your reminders now send from your own dedicated toll-free number${numLine}.</p>` +
       `<p style="margin:0;">There's nothing else to do. Scheduled reminders will automatically start sending from your number.</p>`,
     ctaText: 'Open your dashboard',
-    ctaUrl: `${BASE}/automation`,
+    ctaUrl: `${BASE}/connect`,
   })
   return sendEmail(to, 'Your SessionRemind texting number is live', html)
 }
@@ -217,7 +217,7 @@ export async function sendTollfreeRejectedEmail(
       reasonBlock +
       `<p style="margin:0;">Don't worry — your reminders are still going out from our shared number in the meantime, so nothing is interrupted. Reply to this email or contact support and we'll help you get it sorted.</p>`,
     ctaText: 'Review details',
-    ctaUrl: `${BASE}/automation`,
+    ctaUrl: `${BASE}/connect`,
     afterCtaHtml: `Questions? Email <a href="mailto:support@sessionremind.com" style="color:${MUTED};">support@sessionremind.com</a>.`,
   })
   return sendEmail(to, 'Your SessionRemind number needs a quick fix', html)

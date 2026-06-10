@@ -63,8 +63,8 @@ export default function FaqPage() {
             <p>
               It&apos;s a one-time setup, and you&apos;ll need a computer (any desktop browser works). On
               the{' '}
-              <Link href="/automation" className="text-accent underline">
-                Automation
+              <Link href="/connect" className="text-accent underline">
+                Connect
               </Link>{' '}
               page, click <strong>Connect UseSession</strong>, drag the button it gives you to your
               bookmarks bar, then click that bookmark while you&apos;re logged into UseSession. That&apos;s
@@ -87,8 +87,8 @@ export default function FaqPage() {
           <QA q="I don't use UseSession. Can I still use SessionRemind?">
             <p>
               Yes. The{' '}
-              <Link href="/automation" className="text-accent underline">
-                Automation
+              <Link href="/connect" className="text-accent underline">
+                Connect
               </Link>{' '}
               page has a CSV import that works without connecting anything — upload your client and session
               list and reminders are scheduled the same way.
@@ -159,7 +159,7 @@ export default function FaqPage() {
           <QA q="Can I get my own number registered to my studio?">
             <p>
               Yes — studios on a paid plan can get their own dedicated toll-free number registered to their
-              business, right inside the app. Go to <strong>Automation → Your texting number</strong>, fill
+              business, right inside the app. Go to <strong>Connect → Your texting number</strong>, fill
               in your business details once, and click <strong>Create my number</strong>.
             </p>
             <p>

@@ -36,8 +36,8 @@ function ArrowCta({
 export default function Instructions() {
   const { user } = useAuth()
 
-  // Logged-in photographers connect from the Automation page; new visitors register.
-  const primaryHref = user ? '/automation' : '/register'
+  // Logged-in photographers connect from the Connect page; new visitors register.
+  const primaryHref = user ? '/connect' : '/register'
   const primaryLabel = user ? 'Connect UseSession' : 'Get started'
 
   return (

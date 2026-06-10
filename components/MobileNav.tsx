@@ -48,8 +48,8 @@ export default function MobileNav() {
             Contact
           </Link>
           {user && (
-            <Link href="/automation" className={item} onClick={() => setIsOpen(false)}>
-              Automation
+            <Link href="/connect" className={item} onClick={() => setIsOpen(false)}>
+              Connect
             </Link>
           )}
           {user && (

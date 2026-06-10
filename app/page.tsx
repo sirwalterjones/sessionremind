@@ -83,7 +83,7 @@ export default function Home() {
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-hairline">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full" style={{ background: A }} />
-                    <span className="text-sm font-semibold tracking-tight">Automation</span>
+                    <span className="text-sm font-semibold tracking-tight">Connect</span>
                   </div>
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#16a34a] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" /> Synced

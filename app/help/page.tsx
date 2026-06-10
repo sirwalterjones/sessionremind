@@ -211,11 +211,11 @@ export default function HelpPage() {
             <Steps
               items={[
                 [
-                  'Open the Automation page on a computer',
+                  'Open the Connect page on a computer',
                   <>
                     Log in to SessionRemind and go to{' '}
-                    <Link href="/automation" className="text-accent underline">
-                      Automation
+                    <Link href="/connect" className="text-accent underline">
+                      Connect
                     </Link>
                     , then click <strong className="text-ink">Connect UseSession</strong>. This
                     generates your personal connect button and pairing code.
@@ -242,7 +242,7 @@ export default function HelpPage() {
                   'Click the bookmark once',
                   <>
                     A small <strong className="text-ink">Connected!</strong> confirmation appears right
-                    on the UseSession page, and the Automation tab detects it automatically. Your first
+                    on the UseSession page, and the Connect tab detects it automatically. Your first
                     sync starts immediately and reminders begin scheduling themselves.
                   </>,
                 ],
@@ -263,7 +263,7 @@ export default function HelpPage() {
                 </li>
                 <li>
                   <strong className="text-ink">Pairing code expired?</strong> Codes are valid for 10
-                  minutes. Just go back to Automation, click Connect UseSession again, and drag the
+                  minutes. Just go back to Connect, click Connect UseSession again, and drag the
                   fresh button to your bookmarks bar.
                 </li>
               </ul>
@@ -271,7 +271,7 @@ export default function HelpPage() {
             <p>
               Your UseSession access is AES-256 encrypted at rest and used only to read your upcoming
               bookings. It’s read-only — we never change, post, or delete anything in your account —
-              and you can disconnect anytime from the Automation page.
+              and you can disconnect anytime from the Connect page.
             </p>
           </Section>
 
@@ -317,8 +317,8 @@ export default function HelpPage() {
           <Section id="customize-messages" eyebrow="Your voice" title="Customize your messages">
             <p>
               Reminders go out in your voice. On the{' '}
-              <Link href="/automation" className="text-accent underline">
-                Automation
+              <Link href="/connect" className="text-accent underline">
+                Connect
               </Link>{' '}
               page, under <strong className="text-ink">Reminder settings</strong>, you can adjust:
             </p>
@@ -356,7 +356,7 @@ export default function HelpPage() {
           <Section id="email-reminders" eyebrow="Belt and suspenders" title="Email reminders">
             <p>
               Want clients reminded in two places? Flip on{' '}
-              <strong className="text-ink">Email reminders</strong> in the Automation settings. When a
+              <strong className="text-ink">Email reminders</strong> in the Connect settings. When a
               client has an email address on file, SessionRemind sends a clean, branded email alongside
               each text — same message, same timing.
             </p>
@@ -406,7 +406,7 @@ export default function HelpPage() {
               </li>
             </ul>
             <p>
-              The Automation page also shows your upcoming reminders at a glance, with a one-click
+              The Connect page also shows your upcoming reminders at a glance, with a one-click
               cancel on each.
             </p>
           </Section>
@@ -429,8 +429,8 @@ export default function HelpPage() {
                   'Open “Your texting number”',
                   <>
                     From the{' '}
-                    <Link href="/automation" className="text-accent underline">
-                      Automation
+                    <Link href="/connect" className="text-accent underline">
+                      Connect
                     </Link>{' '}
                     page, click <strong className="text-ink">Your texting number</strong>.
                   </>,
@@ -470,8 +470,8 @@ export default function HelpPage() {
             <p>
               Not on UseSession, or just need a backup path? You can schedule reminders for a whole
               session day from a spreadsheet — right from the{' '}
-              <Link href="/automation" className="text-accent underline">
-                Automation
+              <Link href="/connect" className="text-accent underline">
+                Connect
               </Link>{' '}
               page, and it works great on your phone.
             </p>

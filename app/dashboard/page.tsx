@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useSearchParams } from 'next/navigation'
+import { DashboardSetupStatus } from '@/components/SetupStatus'
 import { CheckCircleIcon, ClockIcon, PlusIcon, XMarkIcon, MagnifyingGlassIcon, CalendarIcon, PhoneIcon } from '@heroicons/react/24/outline'
 
 interface SentMessage {
@@ -713,6 +714,9 @@ function DashboardContent() {
             </button>
           </div>
         </div>
+
+        {/* Setup status: UseSession connection + texting-number verification */}
+        <DashboardSetupStatus />
 
         {/* Primary action */}
         <div className="mb-12">

@@ -1,0 +1,548 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useAuth } from '@/lib/auth-context'
+import CsvImport from '@/components/CsvImport'
+import { useToast, useConfirm } from '@/components/Notifications'
+import { TextingNumberCard } from '@/components/SetupStatus'
+import {
+  ArrowPathIcon,
+  LockClosedIcon,
+  ShieldCheckIcon,
+  ClipboardDocumentIcon,
+  TrashIcon,
+  ArrowLeftIcon,
+} from '@heroicons/react/24/outline'
+
+interface UseSessionStatus {
+  connected: boolean
+  connectedAt?: string
+  lastSyncAt?: string
+  lastSyncStatus?: 'ok' | 'error'
+  lastSyncError?: string
+  lastSyncBookings?: number
+  businessName?: string
+}
+
+interface Settings {
+  studioName: string
+  reminderTemplate: string
+  registrationTemplate: string
+  offsetsDays: number[]
+  sendHourEastern: number
+  autoSchedule: boolean
+  emailReminders?: boolean
+  usesession: UseSessionStatus
+}
+
+interface ScheduledMessage {
+  id: string
+  clientName: string
+  phone: string
+  sessionTitle: string
+  sessionTime: string
+  message: string
+  scheduledFor: string
+  reminderType: string
+  status: string
+  source?: string
+}
+
+export default function ConnectPage() {
+  const { user } = useAuth()
+  const toast = useToast()
+  const confirmDialog = useConfirm()
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [settings, setSettings] = useState<Settings | null>(null)
+  const [status, setStatus] = useState<UseSessionStatus>({ connected: false })
+  const [scheduled, setScheduled] = useState<ScheduledMessage[]>([])
+
+  // Connect flow
+  const [pairCode, setPairCode] = useState('')
+  const [bookmarklet, setBookmarklet] = useState('')
+  const [connecting, setConnecting] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+    loadAll()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
+
+  const loadAll = useCallback(async () => {
+    try {
+      const [sRes, statusRes, schedRes] = await Promise.all([
+        fetch('/api/settings'),
+        fetch('/api/usesession/sync'),
+        fetch('/api/schedule-reminders'),
+      ])
+      if (sRes.ok) {
+        const data = await sRes.json()
+        setSettings(data.settings)
+      }
+      if (statusRes.ok) {
+        const data = await statusRes.json()
+        setStatus(data.usesession || { connected: false })
+      }
+      if (schedRes.ok) {
+        const data = await schedRes.json()
+        setScheduled(data.scheduledMessages || [])
+      }
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const flash = (type: 'ok' | 'err', text: string) => {
+    if (type === 'ok') toast.success(text)
+    else toast.error(text)
+  }
+
+  // --- Connect: generate pairing code + bookmarklet ---
+  const startConnect = async () => {
+    setConnecting(true)
+    try {
+      const res = await fetch('/api/usesession/pair', { method: 'POST' })
+      if (!res.ok) throw new Error('Could not start connect')
+      const { code } = await res.json()
+      setPairCode(code)
+      const origin = window.location.origin
+      // Self-contained bookmarklet: injects a small branded SessionRemind modal
+      // into the UseSession page (no native alert). CSP-safe — built with
+      // createElement + style.cssText, never innerHTML with style attrs.
+      const bm =
+        `javascript:(function(){` +
+        `function box(icon,clr,title,msg,auto){var e=document.getElementById('srm');if(e)e.remove();` +
+        `var w=document.createElement('div');w.id='srm';w.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#fff;color:#141414;font-family:-apple-system,Segoe UI,Roboto,sans-serif;border:1px solid #ECEAE4;border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.18);padding:16px 18px;min-width:300px;max-width:380px;display:flex;gap:12px;align-items:flex-start';` +
+        `var i=document.createElement('div');i.textContent=icon;i.style.cssText='flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:'+clr+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1';` +
+        `var c=document.createElement('div');c.style.cssText='flex:1';` +
+        `var h=document.createElement('div');h.textContent=title;h.style.cssText='font-weight:600;font-size:14px;margin-bottom:2px';` +
+        `var p=document.createElement('div');p.textContent=msg;p.style.cssText='font-size:13px;color:#5F5B54;line-height:1.45';` +
+        `c.appendChild(h);c.appendChild(p);` +
+        `var x=document.createElement('button');x.textContent='\\u00d7';x.style.cssText='background:none;border:none;font-size:20px;color:#9A958C;cursor:pointer;line-height:1;padding:0;margin-left:4px';x.onclick=function(){w.remove()};` +
+        `w.appendChild(i);w.appendChild(c);w.appendChild(x);document.body.appendChild(w);if(auto)setTimeout(function(){w.remove()},6000);}` +
+        `var t=localStorage.getItem('session-token');` +
+        `if(!t){box('!','#d97706','Not logged in','Open UseSession and log in, then click Connect again.');return;}` +
+        `box('\\u2026','#8A857C','SessionRemind','Connecting your account\\u2026');` +
+        `fetch('${origin}/api/usesession/connect-token',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code:'${code}',token:t})}).then(function(r){return r.json()}).then(function(d){` +
+        `if(d.success){box('\\u2713','#16a34a','Connected!',(d.sync&&typeof d.sync.scheduled==='number'?'Scheduled '+d.sync.scheduled+' reminder(s). ':'')+'You can close this tab.',true);}` +
+        `else{box('\\u00d7','#dc2626','Could not connect',d.error||'Something went wrong.');}` +
+        `}).catch(function(e){box('\\u00d7','#dc2626','Error',String(e));});})();`
+      setBookmarklet(bm)
+      pollForConnection()
+    } catch (e) {
+      flash('err', 'Could not start the connect process. Please try again.')
+    } finally {
+      setConnecting(false)
+    }
+  }
+
+  // Poll until the bookmarklet reports back and the account is connected.
+  const pollForConnection = () => {
+    let tries = 0
+    const interval = setInterval(async () => {
+      tries++
+      const res = await fetch('/api/usesession/sync')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.usesession?.connected) {
+          clearInterval(interval)
+          setStatus(data.usesession)
+          setPairCode('')
+          setBookmarklet('')
+          flash('ok', `Connected${data.usesession.businessName ? ' to ' + data.usesession.businessName : ''}! Your reminders are syncing.`)
+          loadAll()
+        }
+      }
+      if (tries > 150) clearInterval(interval) // ~5 min
+    }, 2000)
+  }
+
+  const syncNow = async () => {
+    setSyncing(true)
+    try {
+      const res = await fetch('/api/usesession/sync', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok) {
+        flash('ok', `Synced ${data.bookings} upcoming booking(s), scheduled ${data.scheduled} new reminder(s).`)
+      } else {
+        flash('err', data.error || 'Sync failed.')
+      }
+      loadAll()
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const disconnect = async () => {
+    const ok = await confirmDialog({
+      title: 'Disconnect UseSession?',
+      message: 'Already-scheduled reminders are kept, but no new bookings will sync until you reconnect.',
+      confirmLabel: 'Disconnect',
+      tone: 'danger',
+    })
+    if (!ok) return
+    await fetch('/api/usesession/disconnect', { method: 'POST' })
+    flash('ok', 'Disconnected from UseSession.')
+    loadAll()
+  }
+
+  // Auto-save a single changed field (no Save button). Toggles save on click;
+  // text fields save on blur.
+  const autoSave = async (patch: Partial<Settings>) => {
+    setSaveState('saving')
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(patch),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Could not save settings.')
+      setSettings(data.settings)
+      setSaveState('saved')
+      setTimeout(() => setSaveState((s) => (s === 'saved' ? 'idle' : s)), 1500)
+    } catch (e: any) {
+      setSaveState('idle')
+      toast.error(e?.message || 'Could not save settings.')
+    }
+  }
+
+  const cancelReminder = async (id: string) => {
+    await fetch(`/api/scheduled/${id}`, { method: 'DELETE' })
+    setScheduled((prev) => prev.filter((m) => m.id !== id))
+  }
+
+  const copyBookmarklet = () => {
+    navigator.clipboard.writeText(bookmarklet)
+    flash('ok', 'Connect link copied. Create a bookmark and paste it as the URL.')
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <ArrowPathIcon className="w-7 h-7 text-muted animate-spin" />
+      </div>
+    )
+  }
+
+  const upcoming = scheduled
+    .filter((m) => m.status === 'scheduled')
+    .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
+
+  return (
+    <div className="text-ink">
+      <button
+        onClick={() => router.push('/dashboard')}
+        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink transition-colors mb-10"
+      >
+        <ArrowLeftIcon className="w-3.5 h-3.5" /> Back to dashboard
+      </button>
+
+      <div className="border-b border-hairline pb-10 mb-12">
+        <p className="eyebrow mb-3">Connect</p>
+        <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
+          Automatic reminders
+        </h1>
+        <p className="mt-3 text-muted max-w-xl leading-relaxed">
+          Connect UseSession once and we&apos;ll automatically text your clients reminders before every session.
+        </p>
+      </div>
+
+      {/* Connection card */}
+      <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+        {status.connected ? (
+          <div>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-start gap-3">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-[#16a34a] flex-shrink-0" />
+                <div>
+                  <p className="font-display font-semibold text-ink">
+                    Connected{status.businessName ? ` · ${status.businessName}` : ''}
+                  </p>
+                  <p className="text-sm text-muted mt-0.5">
+                    {status.lastSyncAt
+                      ? `Last synced ${new Date(status.lastSyncAt).toLocaleString()}`
+                      : 'Waiting for first sync…'}
+                    {typeof status.lastSyncBookings === 'number' && ` · ${status.lastSyncBookings} upcoming booking(s)`}
+                  </p>
+                  <p className="text-xs text-muted mt-1.5 max-w-md">
+                    Syncs automatically every few minutes — new bookings, reschedules, and cancellations are
+                    handled for you. <span className="text-ink/70">&ldquo;Sync now&rdquo; is optional.</span> Manage
+                    reminders from any device, including your phone.
+                  </p>
+                  {status.lastSyncStatus === 'error' && (
+                    <p className="text-sm text-accent mt-1">Last sync error: {status.lastSyncError}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={syncNow}
+                  disabled={syncing}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  <ArrowPathIcon className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                  Sync now
+                </button>
+                <button
+                  onClick={disconnect}
+                  className="rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-[#FAFAF8] transition-colors"
+                >
+                  Disconnect
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="flex items-center gap-2.5 mb-1.5">
+              <span className="w-2 h-2 rounded-full bg-accent" />
+              <h2 className="font-display text-xl font-semibold text-ink">Connect your UseSession account</h2>
+            </div>
+            <p className="text-sm text-muted mb-6">
+              Connect once from a computer (any browser — Chrome, Safari, Firefox). After that it&apos;s fully
+              automatic: bookings sync on their own, and you can log in from your phone to manage reminders anytime.
+            </p>
+
+            {!pairCode ? (
+              <div>
+                <button
+                  onClick={startConnect}
+                  disabled={connecting}
+                  className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {connecting ? 'Starting…' : 'Connect UseSession'}
+                </button>
+                <p className="text-xs text-muted mt-3 max-w-md">
+                  One button to drag, one click on UseSession — about a minute. We grab what we need automatically;
+                  you never have to find or copy anything.
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5">
+                <p className="font-display text-sm font-semibold text-ink mb-4">Almost there — two steps:</p>
+                <ol className="text-sm text-ink/80 space-y-4 list-decimal list-inside">
+                  <li>
+                    Drag this button to your bookmarks bar (or{' '}
+                    <button onClick={copyBookmarklet} className="text-accent underline inline-flex items-center gap-0.5">
+                      <ClipboardDocumentIcon className="w-3.5 h-3.5" />
+                      copy the link
+                    </button>
+                    ):
+                    {/*
+                      Rendered as raw HTML so the javascript: href survives (React
+                      strips javascript: URLs). onClickCapture stops it from running
+                      on this page if clicked — it's meant to be dragged, not clicked.
+                    */}
+                    <div
+                      className="mt-3"
+                      onClickCapture={(e) => e.preventDefault()}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          '<a href="' +
+                          bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
+                          '" draggable="true" title="Drag me to your bookmarks bar" ' +
+                          'style="background:#141414" ' +
+                          'class="inline-flex items-center px-4 py-2 rounded-full text-white text-sm font-medium cursor-grab no-underline">' +
+                          'Connect to SessionRemind</a>',
+                      }}
+                    />
+                    <p className="text-xs text-muted mt-2">
+                      Can&apos;t drag it?{' '}
+                      <button onClick={copyBookmarklet} className="text-accent underline">
+                        Copy the link
+                      </button>
+                      , then make a new bookmark and paste it as the URL.
+                    </p>
+                  </li>
+                  <li>
+                    Open{' '}
+                    <a href="https://app.usesession.com/sessions" target="_blank" rel="noreferrer" className="text-accent underline">
+                      UseSession
+                    </a>{' '}
+                    (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
+                    <div className="mt-2 rounded-lg border border-[#f1c9bd] px-3 py-2 text-xs text-ink/80">
+                      <strong className="text-accent font-medium">Important:</strong> Click the bookmark while you&apos;re
+                      on the UseSession tab (<span className="font-mono">app.usesession.com</span>) — <strong className="text-ink font-medium">not</strong>{' '}
+                      on this SessionRemind tab. It reads your UseSession login, so it only works there.
+                    </div>
+                  </li>
+                </ol>
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-4">Waiting for you to click it · code expires in 10 minutes</p>
+              </div>
+            )}
+
+            {/* Trust copy */}
+            <div className="mt-6 flex items-start gap-2.5 text-xs text-muted bg-[#FAFAF8] border border-hairline rounded-lg p-4">
+              <ShieldCheckIcon className="w-4 h-4 text-muted mt-0.5 flex-shrink-0" />
+              <span className="leading-relaxed">
+                Your UseSession access is <strong className="text-ink font-medium">AES-256 encrypted</strong> and used only to read <em>your</em>{' '}
+                upcoming bookings so reminders can send. We never store, mine, share, or sell your client data, and
+                you can disconnect anytime.
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Your texting number — live status (number, verification state, and the
+          "texts keep sending while you wait" reassurance) */}
+      <TextingNumberCard />
+
+      {/* Settings */}
+      {settings && (
+        <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+          <h2 className="font-display text-xl font-semibold text-ink mb-6">Reminder settings</h2>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-ink mb-1.5">Studio name</label>
+              <input
+                value={settings.studioName}
+                onChange={(e) => setSettings({ ...settings, studioName: e.target.value })}
+                onBlur={() => autoSave({ studioName: settings.studioName })}
+                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-ink mb-1.5">
+                Reminder message template
+              </label>
+              <textarea
+                value={settings.reminderTemplate}
+                onChange={(e) => setSettings({ ...settings, reminderTemplate: e.target.value })}
+                onBlur={() => autoSave({ reminderTemplate: settings.reminderTemplate })}
+                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] h-24 focus:border-ink focus:outline-none"
+              />
+              <p className="font-mono text-xs text-muted mt-1.5">
+                Placeholders: {'{name}'} {'{sessionTitle}'} {'{sessionTime}'} {'{studioName}'}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-8">
+              <div>
+                <label className="block text-sm font-medium text-ink mb-2">Send reminders</label>
+                <div className="flex gap-2">
+                  {[7, 3, 2, 1].map((d) => {
+                    const on = settings.offsetsDays.includes(d)
+                    return (
+                      <button
+                        key={d}
+                        onClick={() => {
+                          const next = on
+                            ? settings.offsetsDays.filter((x) => x !== d)
+                            : [...settings.offsetsDays, d].sort((a, b) => b - a)
+                          setSettings({ ...settings, offsetsDays: next })
+                          autoSave({ offsetsDays: next })
+                        }}
+                        className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                          on ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-hairline hover:bg-[#FAFAF8]'
+                        }`}
+                      >
+                        {d}-day
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-ink mb-2">Auto-schedule new bookings</label>
+                <button
+                  onClick={() => {
+                    const v = !settings.autoSchedule
+                    setSettings({ ...settings, autoSchedule: v })
+                    autoSave({ autoSchedule: v })
+                  }}
+                  className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                    settings.autoSchedule
+                      ? 'border-[#cfe8d4] text-[#16a34a]'
+                      : 'border-hairline text-muted'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-[#16a34a]' : 'bg-muted'}`} />
+                  {settings.autoSchedule ? 'On' : 'Off'}
+                </button>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-ink mb-2">Email reminders (alongside SMS)</label>
+                <button
+                  onClick={() => {
+                    const v = !settings.emailReminders
+                    setSettings({ ...settings, emailReminders: v })
+                    autoSave({ emailReminders: v })
+                  }}
+                  className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                    settings.emailReminders
+                      ? 'border-[#cfe8d4] text-[#16a34a]'
+                      : 'border-hairline text-muted'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.emailReminders ? 'bg-[#16a34a]' : 'bg-muted'}`} />
+                  {settings.emailReminders ? 'On' : 'Off'}
+                </button>
+                <p className="text-xs text-muted mt-1.5">Also emails clients who have an email on file. Needs a verified sending domain.</p>
+              </div>
+            </div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted h-4" aria-live="polite">
+              {saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved ✓' : 'Changes save automatically'}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* CSV import (no-connection fallback) */}
+      <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+        <h2 className="font-display text-xl font-semibold text-ink mb-1.5">Import from a CSV</h2>
+        <p className="font-mono text-xs text-muted mb-5">Works without connecting — great on mobile, or as a backup.</p>
+        <CsvImport onImported={loadAll} />
+      </div>
+
+      {/* Upcoming auto-scheduled reminders */}
+      <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+        <div className="flex items-baseline gap-3 mb-5">
+          <h2 className="font-display text-xl font-semibold text-ink">Upcoming reminders</h2>
+          {upcoming.length > 0 && <span className="font-mono text-xs text-muted">{upcoming.length}</span>}
+        </div>
+        {upcoming.length === 0 ? (
+          <p className="text-sm text-muted">
+            No reminders scheduled yet. Connect UseSession (or sync) and they&apos;ll appear here automatically.
+          </p>
+        ) : (
+          <div className="divide-y divide-hairline">
+            {upcoming.slice(0, 50).map((m) => (
+              <div key={m.id} className="py-3.5 flex items-start justify-between gap-3 -mx-3 px-3 rounded-lg hover:bg-[#FAFAF8] transition-colors">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-ink truncate">
+                    {m.clientName} <span className="text-muted">· {m.sessionTitle}</span>
+                  </p>
+                  <p className="font-mono text-xs text-muted mt-0.5">
+                    {m.reminderType} reminder · sends {new Date(m.scheduledFor).toLocaleString()}
+                    {m.source === 'usesession' && ' · auto'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => cancelReminder(m.id)}
+                  className="text-muted hover:text-accent transition-colors flex-shrink-0"
+                  title="Cancel this reminder"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 flex items-center justify-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+        <LockClosedIcon className="w-3.5 h-3.5" />
+        Your UseSession token is encrypted at rest and never shared
+      </div>
+    </div>
+  )
+}
