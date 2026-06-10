@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { kv } from '@vercel/kv'
 import { addScheduledMessage } from '@/lib/storage'
 import { sendTenantSms } from '@/lib/sms'
+import { recordSmsSent, getSendAllowance } from '@/lib/usage'
 
 interface SMSRequest {
   name: string
@@ -61,6 +62,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Monthly quota gate (included texts + overage headroom for subscribers).
+    const allowance = await getSendAllowance(currentUser.id)
+    if (allowance.remaining <= 0) {
+      return NextResponse.json(
+        {
+          error:
+            allowance.cap > 0
+              ? `You've reached this month's limit (${allowance.included} included + ${allowance.cap} overage texts). Upgrade your plan to keep sending.`
+              : `You've used all ${allowance.included} texts included this month. Upgrade your plan to keep sending.`,
+        },
+        { status: 402 }
+      )
+    }
+
     // Check if it's too early to send messages (before 8am EST)
     if (isBeforeEightAmEST()) {
       console.log('⏰ SMS rejected: Time restriction - before 8am EST')
@@ -98,19 +113,9 @@ export async function POST(request: NextRequest) {
     }
     console.log('SMS sent via', sendResult.provider)
 
-    // Update user's SMS usage counter
-    try {
-      const userData = await kv.hgetall(`user:${currentUser.id}`)
-      if (userData) {
-        const currentUsage = Number(userData.sms_usage) || 0
-        const newUsage = currentUsage + 1
-        await kv.hset(`user:${currentUser.id}`, { sms_usage: newUsage })
-        console.log(`Updated SMS usage for user ${currentUser.id}: ${currentUsage} -> ${newUsage}`)
-      }
-    } catch (error) {
-      console.error('Failed to update SMS usage counter:', error)
-      // Don't fail the SMS send if usage tracking fails
-    }
+    // Record usage: legacy lifetime counter + monthly quota/overage accounting
+    // (manual sends past the included quota bill at the plan's overage rate).
+    await recordSmsSent(currentUser.id)
 
     // Store the sent message in persistent storage so it appears on user's dashboard
     try {

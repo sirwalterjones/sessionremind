@@ -139,7 +139,7 @@ function PaymentRequiredContent() {
                   <span className="text-sm text-[#6E6A63]">/ mo</span>
                 </div>
                 <p className="mt-1 text-xs text-[#6E6A63]">
-                  {plan.includedTexts.toLocaleString()} texts/mo included · upgrade anytime for more
+                  {plan.includedTexts.toLocaleString()} texts/mo included · then ${plan.overage.toFixed(2)}/text
                 </p>
                 <ul className="mt-4 flex-1 space-y-2">
                   {plan.features.map((f) => (

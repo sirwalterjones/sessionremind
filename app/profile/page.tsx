@@ -19,6 +19,7 @@ interface User {
   payment_override: boolean
   stripe_customer_id: string | null
   sms_usage: number
+  sms_usage_month?: number
   sms_limit: number
 }
 
@@ -344,15 +345,15 @@ export default function ProfilePage() {
 
               <div className="py-4 last:pb-0">
                 <div className="flex items-center justify-between">
-                  <span className="eyebrow">SMS Usage</span>
+                  <span className="eyebrow">Texts this month</span>
                   <span className="font-mono text-[12px] text-[#6E6A63]">
-                    {userDetails.sms_usage} / {userDetails.sms_limit}
+                    {userDetails.sms_usage_month ?? userDetails.sms_usage} / {userDetails.sms_limit}
                   </span>
                 </div>
                 <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-hairline">
                   <div
                     className="h-full rounded-full bg-ink transition-all"
-                    style={{ width: `${Math.min((userDetails.sms_usage / userDetails.sms_limit) * 100, 100)}%` }}
+                    style={{ width: `${Math.min(((userDetails.sms_usage_month ?? userDetails.sms_usage) / userDetails.sms_limit) * 100, 100)}%` }}
                   />
                 </div>
               </div>

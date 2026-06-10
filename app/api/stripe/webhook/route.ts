@@ -70,7 +70,17 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.deleted': {
         const sub = event.data.object as Stripe.Subscription
         const userId = await resolveUserId(sub.customer as string)
-        if (userId) await kv.hset(`user:${userId}`, { subscription_status: 'canceled' })
+        if (userId) {
+          await kv.hset(`user:${userId}`, { subscription_status: 'canceled' })
+          // Clear the sub pointer so overage headroom / dedicated-number
+          // eligibility end with the subscription — but only if it still
+          // points at THIS subscription (an out-of-order deleted event from
+          // an old sub must not wipe a newly created one).
+          const stored = await kv.hget<string>(`user:${userId}`, 'stripe_subscription_id')
+          if (stored === sub.id) {
+            await kv.hdel(`user:${userId}`, 'stripe_subscription_id')
+          }
+        }
         break
       }
 

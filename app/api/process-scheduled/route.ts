@@ -3,6 +3,7 @@ import { getScheduledMessagesPendingDelivery, updateMessageStatus } from '@/lib/
 import { getUserSettings } from '@/lib/settings'
 import { sendReminderEmail } from '@/lib/email'
 import { sendTenantSms } from '@/lib/sms'
+import { recordSmsSent } from '@/lib/usage'
 import { kv } from '@vercel/kv'
 
 // This endpoint should be called periodically (e.g., every 15 minutes) by a cron job
@@ -25,8 +26,21 @@ function isBeforeEightAmEST(): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    // This endpoint sends real texts and records billable usage, so it must
+    // not be publicly triggerable. The internal cron passes CRON_SECRET;
+    // Vercel's own cron is identified by user-agent.
+    const expectedAuth = process.env.CRON_SECRET
+    const isVercelCron = request.headers.get('user-agent')?.includes('vercel')
+    if (
+      expectedAuth &&
+      !isVercelCron &&
+      request.headers.get('authorization') !== `Bearer ${expectedAuth}`
+    ) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     console.log('=== MANUAL CRON JOB PROCESSING START ===')
-    
+
     // Get messages that need to be sent
     const messagesToSend = await getScheduledMessagesPendingDelivery()
     const now = new Date()
@@ -61,26 +75,33 @@ export async function POST(request: NextRequest) {
     for (const message of messagesToSend) {
       console.log(`Processing message ${message.id} for ${message.clientName}`)
       console.log(`Scheduled for: ${message.scheduledFor}, Now: ${now.toISOString()}`)
-      
+
+      // Messages without an owner can't be quota'd or billed — never send them.
+      if (!message.userId) {
+        console.error(`Message ${message.id} has no userId — marking failed, not sending`)
+        await updateMessageStatus(message.id, 'failed')
+        continue
+      }
+
+      // Atomic per-message claim: if two runs overlap (Vercel cron + an
+      // external cron, or a concurrent manual trigger), only one may send a
+      // given message. The non-atomic message store can't guarantee this.
+      const claimed = await kv.set(`sent:claim:${message.id}`, '1', { nx: true, ex: 600 })
+      if (claimed === null) {
+        console.log(`Message ${message.id} already claimed by a concurrent run — skipping`)
+        continue
+      }
+
       const success = await sendScheduledSMS(message)
       
       if (success) {
         // Update message status to 'sent' in persistent storage
         await updateMessageStatus(message.id, 'sent')
         
-        // Update user's SMS usage counter if message has userId
+        // Record usage: legacy lifetime counter + monthly quota/overage
+        // accounting (queues overage texts for invoice-item billing).
         if (message.userId) {
-          try {
-            const userData = await kv.hgetall(`user:${message.userId}`)
-            if (userData) {
-              const currentUsage = Number(userData.sms_usage) || 0
-              const newUsage = currentUsage + 1
-              await kv.hset(`user:${message.userId}`, { sms_usage: newUsage })
-              console.log(`Updated SMS usage for user ${message.userId}: ${currentUsage} -> ${newUsage}`)
-            }
-          } catch (error) {
-            console.error('Failed to update SMS usage counter:', error)
-          }
+          await recordSmsSent(message.userId)
         }
         
         processedMessages.push({

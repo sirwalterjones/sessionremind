@@ -124,14 +124,14 @@ export default function RootLayout({
             <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-[#ECEAE4]">
               <div className="max-w-6xl mx-auto px-5 sm:px-8">
                 <div className="flex justify-between items-center h-16">
-                  <Link href="/" className="flex items-center gap-2.5 group">
+                  <Link href="/" className="flex items-center gap-3 group">
                     <span
-                      className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-white text-[13px] font-bold tracking-tight transition-transform group-hover:scale-105"
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-white text-[16px] font-bold tracking-tight transition-transform group-hover:scale-105"
                       style={{ background: '#141414' }}
                     >
                       Sr
                     </span>
-                    <span className="text-[17px] font-semibold tracking-tight text-[#141414]">SessionRemind</span>
+                    <span className="text-[21px] font-semibold tracking-tight text-[#141414]">SessionRemind</span>
                   </Link>
 
                   <NavLinks />
@@ -145,14 +145,14 @@ export default function RootLayout({
             <footer className="border-t border-[#ECEAE4] mt-auto">
               <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex flex-col items-center sm:items-start gap-3">
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-3">
                     <span
-                      className="inline-flex items-center justify-center w-6 h-6 rounded-md text-white text-[11px] font-bold tracking-tight"
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-white text-[14px] font-bold tracking-tight"
                       style={{ background: '#141414' }}
                     >
                       Sr
                     </span>
-                    <span className="text-sm font-semibold tracking-tight">SessionRemind</span>
+                    <span className="text-base font-semibold tracking-tight">SessionRemind</span>
                   </div>
                   <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[13px] text-[#6E6A63]">
                     <Link href="/help" className="hover:text-[#141414] transition-colors">Help</Link>

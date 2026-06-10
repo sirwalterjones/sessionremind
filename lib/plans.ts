@@ -1,8 +1,8 @@
 // Subscription plan catalog. Stripe price IDs created live on 2026-06-09.
-// sms_limit per plan is the included texts. NOTE: texts beyond sms_limit are
-// NOT billed — they are skipped (skippedForQuota in lib/sync.ts). The `overage`
-// rates below are reserved for a future metered-billing implementation and
-// must not be shown as a promise in marketing copy until that exists.
+// sms_limit per plan is the included monthly texts. Texts beyond it ARE billed:
+// lib/usage.ts records monthly usage at send time and the cron turns the
+// excess into Stripe invoice items at the `overage` rate below, capped at 1x
+// the included quota per month (the cap lives in lib/sync.ts).
 
 export type PlanKey = 'starter' | 'studio' | 'pro' | 'volume'
 
@@ -12,7 +12,7 @@ export interface Plan {
   priceId: string
   price: number // USD / month
   includedTexts: number
-  overage: number // USD per text over the included amount (future metered billing — not yet charged)
+  overage: number // USD per text over the included amount (billed via invoice items, lib/usage.ts)
   blurb: string
   features: string[]
 }

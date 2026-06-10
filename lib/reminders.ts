@@ -226,6 +226,33 @@ export interface ReconcilePlan {
   skippedForQuota: number
 }
 
+// UTC calendar month of an ISO timestamp ('' when unparseable).
+export function quotaMonthOf(iso?: string): string {
+  const d = iso ? new Date(iso) : null
+  return d && !isNaN(d.getTime())
+    ? `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
+    : ''
+}
+
+// How many of `messages` consume the CURRENT month's quota for `userId`:
+// everything still pending that sends this month (or is past-due), plus
+// everything sent this month. Shared by the CSV-import quota gate so it uses
+// the same monthly semantics as reconcilePlan above.
+export function monthlyQuotaUsed(
+  messages: ScheduledMessage[],
+  userId: string,
+  now: Date = new Date()
+): number {
+  const nowMonth = quotaMonthOf(now.toISOString())
+  return messages.filter((m) => {
+    if (m.userId !== userId) return false
+    if (m.status === 'sent') return quotaMonthOf(m.sentAt || m.scheduledFor) === nowMonth
+    if (m.status !== 'scheduled') return false
+    const sendMonth = quotaMonthOf(m.scheduledFor)
+    return !sendMonth || sendMonth <= nowMonth
+  }).length
+}
+
 // Reconcile a user's stored reminders against the live set of bookings for a
 // given source. Pure (no I/O) so it can be unit-tested.
 //   - cancel  : a pending reminder whose booking/slot is no longer active
@@ -234,6 +261,12 @@ export interface ReconcilePlan {
 //   - add     : a newly-desired reminder (future send time) within SMS quota
 // Only the user's still-'scheduled' reminders for `source` are touched; sent/
 // failed reminders, other sources, and other users are preserved untouched.
+//
+// Quota is MONTHLY: what counts against the limit is messages sent in the
+// current calendar month (UTC) plus everything still pending. `overageCapTexts`
+// is extra headroom beyond `smsLimit` for plans with overage billing (those
+// texts are billed per-text at the plan's overage rate when they send); pass 0
+// to hard-stop at the included quota.
 export function reconcilePlan(
   all: ScheduledMessage[],
   userId: string,
@@ -241,7 +274,8 @@ export function reconcilePlan(
   bookings: Booking[],
   settings: UserSettings,
   smsLimit: number,
-  now: Date = new Date()
+  now: Date = new Date(),
+  overageCapTexts = 0
 ): ReconcilePlan {
   const isMine = (m: ScheduledMessage) =>
     m.userId === userId && m.status === 'scheduled' && m.source === source
@@ -302,21 +336,46 @@ export function reconcilePlan(
   }
 
   // 2) Add newly-desired (future) reminders not already present, within quota.
-  const usedFixed = others.filter((m) => m.userId === userId).length
-  let remaining = Math.max(0, smsLimit - usedFixed - kept.length)
+  // Quota is bucketed by the calendar month (UTC) a message consumes: pending
+  // reminders count in the month they will SEND (past-due clamps to now), sent
+  // ones in the month they actually sent. Each month gets its own capacity, so
+  // far-future bookings can't starve this month's reminders, and historical
+  // sends from prior months never consume current quota (previously every
+  // message ever stored counted, which would eventually lock accounts out).
+  const nowMonth = quotaMonthOf(now.toISOString())
+  const quotaMonth = (m: ScheduledMessage): string => {
+    if (m.status === 'sent') return quotaMonthOf(m.sentAt || m.scheduledFor)
+    if (m.status !== 'scheduled') return '' // cancelled/failed don't consume
+    const sendMonth = quotaMonthOf(m.scheduledFor)
+    return sendMonth && sendMonth > nowMonth ? sendMonth : nowMonth
+  }
+  const capacity = smsLimit + overageCapTexts
+  const used = new Map<string, number>()
+  const bump = (mo: string) => used.set(mo, (used.get(mo) || 0) + 1)
+  for (const m of others) {
+    if (m.userId !== userId) continue
+    const mo = quotaMonth(m)
+    if (mo) bump(mo)
+  }
+  for (const m of kept) {
+    const mo = quotaMonth(m)
+    if (mo) bump(mo)
+  }
+
   let added = 0
   let skippedForQuota = 0
   for (const b of bookings) {
     for (const d of buildReminders(b, settings, userId, now)) {
       if (d.externalKey && keptKeys.has(d.externalKey)) continue
-      if (remaining <= 0) {
+      const mo = quotaMonth(d)
+      if ((used.get(mo) || 0) >= capacity) {
         skippedForQuota++
         continue
       }
+      bump(mo)
       kept.push(d)
       if (d.externalKey) keptKeys.add(d.externalKey)
       added++
-      remaining--
     }
   }
 

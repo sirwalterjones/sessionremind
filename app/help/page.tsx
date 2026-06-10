@@ -305,10 +305,11 @@ export default function HelpPage() {
               </li>
             </ul>
             <Note>
-              <strong className="text-ink">Monthly text limit.</strong> Each plan includes a set number
-              of texts per month. If you reach your limit, new reminders pause until your next billing
-              month (or until you upgrade) — you’ll never get a surprise charge. Already-scheduled
-              reminders and your settings are untouched.
+              <strong className="text-ink">Monthly text limit &amp; overage.</strong> Each plan includes
+              a set number of texts per month. Go over and reminders keep sending — extra texts are
+              billed at your plan&apos;s per-text overage rate (3–5¢) on your next invoice, capped at
+              one extra plan&apos;s worth of texts per month so a busy season can&apos;t surprise you.
+              Regularly over? Upgrading is cheaper and takes effect immediately.
             </Note>
           </Section>
 

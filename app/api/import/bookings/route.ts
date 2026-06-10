@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
-import { buildReminders, cleanPhone } from '@/lib/reminders'
+import { buildReminders, cleanPhone, monthlyQuotaUsed } from '@/lib/reminders'
 import { getUserSettings } from '@/lib/settings'
 import {
   addScheduledMessages,
-  countUserMessages,
   getExistingExternalKeys,
+  getScheduledMessages,
 } from '@/lib/storage'
 import { Booking } from '@/lib/types'
 
@@ -30,8 +30,14 @@ export async function POST(request: NextRequest) {
   const settings = await getUserSettings(user.id, user.username)
   const now = new Date()
   const existingKeys = await getExistingExternalKeys(user.id)
+  // Monthly quota (same semantics as the auto-sync scheduler): this month's
+  // sends + pending, against the included texts plus overage headroom for
+  // users with a real Stripe subscription. Previously this counted every
+  // message ever stored, permanently blocking imports on established accounts.
   const smsLimit = Number(user.sms_limit) || 500
-  let remaining = Math.max(0, smsLimit - (await countUserMessages(user.id)))
+  const overageCap = user.stripe_subscription_id ? smsLimit : 0
+  const used = monthlyQuotaUsed(await getScheduledMessages(), user.id, now)
+  let remaining = Math.max(0, smsLimit + overageCap - used)
 
   const toAdd = []
   let skippedInvalid = 0

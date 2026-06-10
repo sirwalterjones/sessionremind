@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { syncAllConnected } from '@/lib/sync'
 import { pollPendingVerifications } from '@/lib/provisioning'
+import { billPendingOverage } from '@/lib/usage'
 
 // This endpoint can be called by external cron services like cron-job.org
 // or by Vercel Cron Jobs to: (1) pull new UseSession bookings for every
 // connected photographer and auto-schedule reminders, (2) poll pending
-// toll-free verifications (auto-emailing studios on approval/rejection), then
-// (3) send any reminders that are now due.
+// toll-free verifications (auto-emailing studios on approval/rejection),
+// (3) send any reminders that are now due, then (4) bill accrued SMS overage
+// as Stripe invoice items.
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,23 +51,40 @@ export async function GET(request: NextRequest) {
       verifySummary = { error: String(verifyError instanceof Error ? verifyError.message : verifyError) }
     }
 
-    // 3) Call the background processor directly (internal call)
-    const baseUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}` 
-      : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
-    
-    const response = await fetch(`${baseUrl}/api/process-scheduled`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    // 3) Call the background processor (internal call, authenticated with the
+    //    cron secret). Never let a processing failure block overage billing.
+    let result: { processed?: number; messages?: unknown; error?: string }
+    try {
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
 
-    if (!response.ok) {
-      throw new Error('Failed to process scheduled messages')
+      const response = await fetch(`${baseUrl}/api/process-scheduled`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(expectedAuth ? { authorization: `Bearer ${expectedAuth}` } : {}),
+        },
+      })
+      if (!response.ok) throw new Error(`process-scheduled returned ${response.status}`)
+      result = await response.json()
+    } catch (processError) {
+      console.error('Message processing failed (continuing to billing):', processError)
+      result = { error: String(processError instanceof Error ? processError.message : processError) }
     }
 
-    const result = await response.json()
+    // 4) Bill any un-billed SMS overage as Stripe invoice items (swept onto
+    //    each customer's next subscription invoice). Never blocks the cron.
+    let overageSummary: Awaited<ReturnType<typeof billPendingOverage>> | { error: string }
+    try {
+      overageSummary = await billPendingOverage()
+      if (overageSummary.customersBilled || overageSummary.errors) {
+        console.log('Overage billing:', JSON.stringify(overageSummary))
+      }
+    } catch (overageError) {
+      console.error('Overage billing failed:', overageError)
+      overageSummary = { error: String(overageError instanceof Error ? overageError.message : overageError) }
+    }
 
     return NextResponse.json({
       success: true,
@@ -74,6 +93,7 @@ export async function GET(request: NextRequest) {
       verification: verifySummary,
       processed: result.processed,
       messages: result.messages,
+      overage: overageSummary,
     })
   } catch (error) {
     console.error('Cron job error:', error)

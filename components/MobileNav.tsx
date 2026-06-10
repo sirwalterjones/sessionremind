@@ -38,6 +38,19 @@ export default function MobileNav() {
           <Link href="/instructions" className={item} onClick={() => setIsOpen(false)}>
             How it works
           </Link>
+          <Link href="/help" className={item} onClick={() => setIsOpen(false)}>
+            Help
+          </Link>
+          {!user && (
+            <Link href="/faq" className={item} onClick={() => setIsOpen(false)}>
+              FAQ
+            </Link>
+          )}
+          {!user && (
+            <Link href="/contact" className={item} onClick={() => setIsOpen(false)}>
+              Contact
+            </Link>
+          )}
           {user && (
             <Link href="/automation" className={item} onClick={() => setIsOpen(false)}>
               Automation

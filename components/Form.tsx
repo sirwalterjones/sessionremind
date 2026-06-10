@@ -24,6 +24,75 @@ interface FormProps {
   isSubmitting?: boolean
 }
 
+const inputCls =
+  'w-full rounded-lg border border-hairline bg-white px-3.5 py-2.5 text-[15px] text-ink placeholder-[#A8A49C] focus:border-ink focus:outline-none'
+
+function Toggle({
+  checked,
+  onChange,
+  srLabel,
+}: {
+  checked: boolean
+  onChange: (value: boolean) => void
+  srLabel: string
+}) {
+  return (
+    <Switch
+      checked={checked}
+      onChange={onChange}
+      className={`${
+        checked ? 'bg-ink' : 'bg-[#D8D5CE]'
+      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2`}
+    >
+      <span className="sr-only">{srLabel}</span>
+      <span
+        aria-hidden="true"
+        className={`${
+          checked ? 'translate-x-5' : 'translate-x-0'
+        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+      />
+    </Switch>
+  )
+}
+
+function PlaceholderChips({ onInsert }: { onInsert: (placeholder: string) => void }) {
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-[#6E6A63]">
+      <span className="mr-0.5">Insert:</span>
+      {['{name}', '{sessionTitle}', '{sessionTime}'].map((p) => (
+        <button
+          key={p}
+          type="button"
+          onClick={() => onInsert(p)}
+          className="rounded-full border border-hairline px-2.5 py-1 font-mono text-[11px] text-[#6E6A63] transition-colors hover:border-ink hover:text-ink"
+        >
+          {p}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function OptInRow({
+  checked,
+  onChange,
+}: {
+  checked: boolean
+  onChange: (value: boolean) => void
+}) {
+  return (
+    <div className="flex items-start gap-3.5 rounded-xl border border-hairline bg-[#FAFAF8] p-4">
+      <div className="mt-0.5">
+        <Toggle checked={checked} onChange={onChange} srLabel="Client has opted in to SMS" />
+      </div>
+      <div>
+        <span className="text-sm font-medium text-ink">Client has opted in to SMS reminders</span>
+        <p className="mt-0.5 text-xs text-[#6E6A63]">Required for compliance with SMS regulations.</p>
+      </div>
+    </div>
+  )
+}
+
 export default function Form({ initialData = {}, onSubmit, isSubmitting = false }: FormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: initialData.name || '',
@@ -39,7 +108,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     sendManualText: initialData.sendManualText || false,
     manualMessage: initialData.manualMessage || 'Hi {name}! Just wanted to reach out about your {sessionTitle} session. Let me know if you have any questions!',
   })
-  
+
   // Update form data when initialData changes
   useEffect(() => {
     if (Object.keys(initialData).some(key => initialData[key as keyof FormData])) {
@@ -54,7 +123,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
       }))
     }
   }, [initialData])
-  
+
   const handleChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
@@ -74,135 +143,113 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
   };
 
   return (
-    <div className="space-y-8">
-      <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-5 text-ink">
 
-        {/* Client Information Section */}
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
-          <div className="flex items-center mb-8">
-            <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center mr-4">
-              <span className="text-stone-600 text-xl">👤</span>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900">Client Information</h3>
-              <p className="text-gray-600">Who's coming to the session?</p>
-            </div>
+      {/* Client */}
+      <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+        <h3 className="font-display text-lg font-semibold">Client</h3>
+        <p className="mt-0.5 text-sm text-[#6E6A63]">Who&apos;s coming to the session.</p>
+
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="name" className="eyebrow mb-2 block">
+              Client name
+            </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              value={formData.name}
+              onChange={(e) => handleChange('name', e.target.value)}
+              className={inputCls}
+              placeholder="Sarah Johnson"
+            />
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-800 mb-2">
-                📝 Client Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                required
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
-                placeholder="e.g., Sarah Johnson"
-              />
-            </div>
 
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-800 mb-2">
-                📱 Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                id="phone"
-                required
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
-                placeholder="e.g., (555) 123-4567"
-              />
-            </div>
+          <div>
+            <label htmlFor="phone" className="eyebrow mb-2 block">
+              Phone number
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              id="phone"
+              required
+              value={formData.phone}
+              onChange={(e) => handleChange('phone', e.target.value)}
+              className={inputCls}
+              placeholder="(555) 123-4567"
+            />
+          </div>
 
-            <div className="md:col-span-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-2">
-                ✉️ Email Address <span className="text-gray-500 font-normal">(optional)</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
-                placeholder="e.g., sarah@example.com"
-              />
-            </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="email" className="eyebrow mb-2 block">
+              Email <span className="normal-case tracking-normal">(optional)</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => handleChange('email', e.target.value)}
+              className={inputCls}
+              placeholder="sarah@example.com"
+            />
           </div>
         </div>
+      </section>
 
-        {/* Session Details Section */}
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
-          <div className="flex items-center mb-8">
-            <div className="w-12 h-12 bg-stone-300 rounded-full flex items-center justify-center mr-4">
-              <span className="text-stone-700 text-xl">📸</span>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900">Session Details</h3>
-              <p className="text-gray-600">What type of session and when?</p>
-            </div>
+      {/* Session */}
+      <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+        <h3 className="font-display text-lg font-semibold">Session</h3>
+        <p className="mt-0.5 text-sm text-[#6E6A63]">What they booked and when.</p>
+
+        <div className="mt-6 grid grid-cols-1 gap-4">
+          <div>
+            <label htmlFor="sessionTitle" className="eyebrow mb-2 block">
+              Session type
+            </label>
+            <input
+              type="text"
+              name="sessionTitle"
+              id="sessionTitle"
+              required
+              value={formData.sessionTitle}
+              onChange={(e) => handleChange('sessionTitle', e.target.value)}
+              className={inputCls}
+              placeholder="Sunflower Field Summer 2025"
+            />
           </div>
-          
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <label htmlFor="sessionTitle" className="block text-sm font-medium text-gray-800 mb-2">
-                🎯 Session Type
-              </label>
-              <input
-                type="text"
-                name="sessionTitle"
-                id="sessionTitle"
-                required
-                value={formData.sessionTitle}
-                onChange={(e) => handleChange('sessionTitle', e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
-                placeholder="e.g., Sunflower Field Summer 2025"
-              />
-            </div>
 
-            <div>
-              <label htmlFor="sessionTime" className="block text-sm font-medium text-gray-800 mb-2">
-                📅 Date & Time
-              </label>
-              <input
-                type="text"
-                name="sessionTime"
-                id="sessionTime"
-                required
-                placeholder="e.g., Sunday, June 29th, 2025 at 8:20 PM"
-                value={formData.sessionTime}
-                onChange={(e) => handleChange('sessionTime', e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200"
-              />
-            </div>
+          <div>
+            <label htmlFor="sessionTime" className="eyebrow mb-2 block">
+              Date &amp; time
+            </label>
+            <input
+              type="text"
+              name="sessionTime"
+              id="sessionTime"
+              required
+              placeholder="Sunday, June 29th, 2025 at 8:20 PM"
+              value={formData.sessionTime}
+              onChange={(e) => handleChange('sessionTime', e.target.value)}
+              className={inputCls}
+            />
           </div>
         </div>
+      </section>
 
-        {/* Message Section - Hidden when manual text is enabled */}
-        {!formData.sendManualText && (
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
-          <div className="flex items-center mb-8">
-            <div className="w-12 h-12 bg-stone-400 rounded-full flex items-center justify-center mr-4">
-              <span className="text-white text-xl">💬</span>
-            </div>
+      {/* Reminder message — hidden when manual text is enabled */}
+      {!formData.sendManualText && (
+        <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+          <h3 className="font-display text-lg font-semibold">Reminder message</h3>
+          <p className="mt-0.5 text-sm text-[#6E6A63]">What your client receives before the session.</p>
+
+          <div className="mt-6 space-y-5">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Your Message</h3>
-              <p className="text-gray-600">Customize what your client will receive</p>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-800 mb-2">
-                📝 SMS Message
+              <label htmlFor="message" className="eyebrow mb-2 block">
+                SMS message
               </label>
               <textarea
                 name="message"
@@ -211,280 +258,130 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                 required
                 value={formData.message}
                 onChange={(e) => handleChange('message', e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-stone-400 transition-all duration-200 resize-none"
-                placeholder="Your personalized message..."
+                className={`${inputCls} resize-none`}
+                placeholder="Your message…"
               />
-              <div className="mt-2 text-sm text-gray-500">
-                💡 Click to insert: 
-                <button
-                  type="button"
-                  onClick={() => insertPlaceholder('message', '{name}')}
-                  className="mx-1 px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-150"
-                >
-                  {'{name}'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertPlaceholder('message', '{sessionTitle}')}
-                  className="mx-1 px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-150"
-                >
-                  {'{sessionTitle}'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertPlaceholder('message', '{sessionTime}')}
-                  className="mx-1 px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-150"
-                >
-                  {'{sessionTime}'}
-                </button>
+              <PlaceholderChips onInsert={(p) => insertPlaceholder('message', p)} />
+            </div>
+
+            <OptInRow checked={formData.optedIn} onChange={(checked) => handleChange('optedIn', checked)} />
+          </div>
+        </section>
+      )}
+
+      {/* Schedule — hidden when manual text is enabled */}
+      {!formData.sendManualText && (
+        <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+          <h3 className="font-display text-lg font-semibold">Schedule</h3>
+          <p className="mt-0.5 text-sm text-[#6E6A63]">When messages go out.</p>
+
+          <div className="mt-6 space-y-5">
+            <div className="flex items-start gap-3.5">
+              <div className="mt-0.5">
+                <Toggle
+                  checked={formData.sendRegistrationMessage}
+                  onChange={(checked) => handleChange('sendRegistrationMessage', checked)}
+                  srLabel="Send registration confirmation"
+                />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-ink">Registration confirmation</span>
+                <p className="mt-0.5 text-xs text-[#6E6A63]">
+                  One text sent now to confirm the booking and session details.
+                </p>
               </div>
             </div>
 
-            <div className="bg-stone-100 border border-stone-300 rounded-2xl p-6">
-              <div className="flex items-start">
-                <Switch
-                  checked={formData.optedIn}
-                  onChange={(checked) => handleChange('optedIn', checked)}
-                  className={`${formData.optedIn ? 'bg-stone-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 mt-1`}
-                >
-                  <span className="sr-only">Client has opted in to SMS</span>
-                  <span
-                    aria-hidden="true"
-                    className={`${formData.optedIn ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+            <div className="border-t border-hairline pt-5">
+              <p className="eyebrow mb-3">Automatic reminders</p>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="threeDayReminder"
+                    checked={formData.threeDayReminder}
+                    onChange={(e) => handleChange('threeDayReminder', e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#141414]"
                   />
-                </Switch>
-                <div className="ml-4">
-                  <span className="text-base font-medium text-stone-800">
-                    ✅ Client has opted in to SMS reminders
-                  </span>
-                  <p className="text-sm text-stone-700 mt-1">
-                    Required for compliance with SMS regulations
-                  </p>
+                  <label htmlFor="threeDayReminder">
+                    <span className="text-sm font-medium text-ink">3-day reminder</span>
+                    <p className="text-xs text-[#6E6A63]">Sent 3 days before the session at 10:00 AM.</p>
+                  </label>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="oneDayReminder"
+                    checked={formData.oneDayReminder}
+                    onChange={(e) => handleChange('oneDayReminder', e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#141414]"
+                  />
+                  <label htmlFor="oneDayReminder">
+                    <span className="text-sm font-medium text-ink">1-day reminder</span>
+                    <p className="text-xs text-[#6E6A63]">Sent 1 day before the session at 10:00 AM.</p>
+                  </label>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        )}
+        </section>
+      )}
 
-        {/* Scheduling Section - Hidden when manual text is enabled */}
-        {!formData.sendManualText && (
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
-          <div className="flex items-center mb-8">
-            <div className="w-12 h-12 bg-stone-500 rounded-full flex items-center justify-center mr-4">
-              <span className="text-white text-xl">📅</span>
-            </div>
+      {/* Manual text */}
+      <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="font-display text-lg font-semibold">Manual text</h3>
+            <p className="mt-0.5 text-sm text-[#6E6A63]">
+              Send one custom message right now instead of the schedule above.
+            </p>
+          </div>
+          <div className="mt-1">
+            <Toggle
+              checked={formData.sendManualText}
+              onChange={(checked) => handleChange('sendManualText', checked)}
+              srLabel="Send manual text message"
+            />
+          </div>
+        </div>
+
+        {formData.sendManualText && (
+          <div className="mt-6 space-y-5">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Reminder Schedule</h3>
-              <p className="text-gray-600">Choose when to send session reminders</p>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-              <div className="flex items-start">
-                <span className="text-blue-600 text-xl mr-3">📧</span>
-                <div className="flex-1">
-                  <h4 className="text-blue-800 font-semibold mb-2">Registration Confirmation</h4>
-                  <p className="text-blue-700 text-sm mb-4">
-                    Send one confirmation text immediately to register the client and provide their session details.
-                  </p>
-                  <div className="flex items-center">
-                    <Switch
-                      checked={formData.sendRegistrationMessage}
-                      onChange={(checked) => handleChange('sendRegistrationMessage', checked)}
-                      className={`${formData.sendRegistrationMessage ? 'bg-blue-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
-                    >
-                      <span className="sr-only">Send registration confirmation</span>
-                      <span
-                        aria-hidden="true"
-                        className={`${formData.sendRegistrationMessage ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
-                      />
-                    </Switch>
-                    <span className="ml-3 text-sm font-medium text-blue-800">
-                      {formData.sendRegistrationMessage ? 'Send registration confirmation' : 'Skip registration confirmation'}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <label htmlFor="manualMessage" className="eyebrow mb-2 block">
+                Custom message
+              </label>
+              <textarea
+                name="manualMessage"
+                id="manualMessage"
+                rows={3}
+                value={formData.manualMessage}
+                onChange={(e) => handleChange('manualMessage', e.target.value)}
+                className={`${inputCls} resize-none`}
+                placeholder="Your message…"
+              />
+              <PlaceholderChips onInsert={(p) => insertPlaceholder('manualMessage', p)} />
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-              <div className="flex items-start">
-                <span className="text-amber-600 text-xl mr-3">⏰</span>
-                <div>
-                  <h4 className="text-amber-800 font-semibold mb-2">Reminder Schedule</h4>
-                  <p className="text-amber-700 text-sm mb-4">
-                    Choose which automatic reminders to send before the session date.
-                  </p>
-                  <div className="bg-amber-100 border border-amber-300 rounded-xl p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="threeDayReminder"
-                          checked={formData.threeDayReminder}
-                          onChange={(e) => handleChange('threeDayReminder', e.target.checked)}
-                          className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="threeDayReminder" className="ml-3">
-                          <span className="text-sm font-medium text-amber-800">3-Day Reminder</span>
-                          <p className="text-xs text-amber-700">Sent 3 days before session at 10:00 AM</p>
-                        </label>
-                      </div>
-
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="oneDayReminder"
-                          checked={formData.oneDayReminder}
-                          onChange={(e) => handleChange('oneDayReminder', e.target.checked)}
-                          className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="oneDayReminder" className="ml-3">
-                          <span className="text-sm font-medium text-amber-800">1-Day Reminder</span>
-                          <p className="text-xs text-amber-700">Sent 1 day before session at 10:00 AM</p>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <OptInRow checked={formData.optedIn} onChange={(checked) => handleChange('optedIn', checked)} />
           </div>
-        </div>
         )}
+      </section>
 
-        {/* Manual Text Section */}
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-8">
-          <div className="flex items-center mb-8">
-            <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mr-4">
-              <span className="text-white text-xl">💬</span>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900">Send Manual Text</h3>
-              <p className="text-gray-600">Send a custom message immediately (outside of schedule)</p>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-purple-50 border border-purple-200 rounded-2xl p-6">
-              <div className="flex items-start">
-                <span className="text-purple-600 text-xl mr-3">⚡</span>
-                <div className="flex-1">
-                  <h4 className="text-purple-800 font-semibold mb-2">Instant Message</h4>
-                  <p className="text-purple-700 text-sm mb-4">
-                    Send a custom text message right now, separate from the automated reminder schedule.
-                  </p>
-                  <div className="flex items-center mb-4">
-                    <Switch
-                      checked={formData.sendManualText}
-                      onChange={(checked) => handleChange('sendManualText', checked)}
-                      className={`${formData.sendManualText ? 'bg-purple-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`}
-                    >
-                      <span className="sr-only">Send manual text message</span>
-                      <span
-                        aria-hidden="true"
-                        className={`${formData.sendManualText ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
-                      />
-                    </Switch>
-                    <span className="ml-3 text-sm font-medium text-purple-800">
-                      {formData.sendManualText ? 'Send manual text now' : 'Skip manual text'}
-                    </span>
-                  </div>
-                  
-                  {formData.sendManualText && (
-                    <div className="mt-4">
-                      <label htmlFor="manualMessage" className="block text-sm font-medium text-purple-800 mb-2">
-                        Custom Message
-                      </label>
-                      <textarea
-                        name="manualMessage"
-                        id="manualMessage"
-                        rows={3}
-                        value={formData.manualMessage}
-                        onChange={(e) => handleChange('manualMessage', e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-purple-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-all duration-200 resize-none"
-                        placeholder="Your custom message..."
-                      />
-                      <div className="mt-2 text-sm text-purple-600">
-                        💡 Click to insert: 
-                        <button
-                          type="button"
-                          onClick={() => insertPlaceholder('manualMessage', '{name}')}
-                          className="mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors duration-150"
-                        >
-                          {'{name}'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertPlaceholder('manualMessage', '{sessionTitle}')}
-                          className="mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors duration-150"
-                        >
-                          {'{sessionTitle}'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertPlaceholder('manualMessage', '{sessionTime}')}
-                          className="mx-1 px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors duration-150"
-                        >
-                          {'{sessionTime}'}
-                        </button>
-                      </div>
-                      
-                      {/* Opt-in toggle for manual text */}
-                      <div className="mt-6 bg-purple-100 border border-purple-300 rounded-xl p-4">
-                        <div className="flex items-start">
-                          <Switch
-                            checked={formData.optedIn}
-                            onChange={(checked) => handleChange('optedIn', checked)}
-                            className={`${formData.optedIn ? 'bg-purple-600' : 'bg-gray-300'} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 mt-1`}
-                          >
-                            <span className="sr-only">Client has opted in to SMS</span>
-                            <span
-                              aria-hidden="true"
-                              className={`${formData.optedIn ? 'translate-x-5' : 'translate-x-0'} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
-                            />
-                          </Switch>
-                          <div className="ml-4">
-                            <span className="text-base font-medium text-purple-800">
-                              ✅ Client has opted in to SMS reminders
-                            </span>
-                            <p className="text-sm text-purple-700 mt-1">
-                              Required for compliance with SMS regulations
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-center pt-8">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={isSubmitting 
-              ? 'inline-flex items-center px-8 py-4 font-medium rounded-full transition-all duration-200 shadow-sm text-lg bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'inline-flex items-center px-8 py-4 font-medium rounded-full transition-all duration-200 shadow-sm text-lg bg-stone-800 text-white hover:bg-stone-900 hover:shadow-md transform hover:-translate-y-0.5'
-            }
-          >
-            {isSubmitting ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                Sending...
-              </>
-            ) : (
-              'Send Messages'
-            )}
-          </button>
-        </div>
-      </form>
-    </div>
+      {/* Submit */}
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-ink px-8 py-3 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+        >
+          {isSubmitting && (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          )}
+          {isSubmitting ? 'Sending…' : 'Send messages'}
+        </button>
+      </div>
+    </form>
   )
 }

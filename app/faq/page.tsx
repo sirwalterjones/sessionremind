@@ -193,9 +193,13 @@ export default function FaqPage() {
 
           <QA q="What happens if I hit my monthly text limit?">
             <p>
-              Additional reminders pause until your next billing cycle starts — or until you upgrade to a
-              bigger plan, which takes effect right away. You&apos;ll never be surprised by texts you
-              didn&apos;t plan for.
+              Your reminders keep sending — texts beyond your plan&apos;s included amount are simply
+              billed per text at your plan&apos;s overage rate (3–5¢ each, shown on the pricing page)
+              on your next invoice. As a safety net, overage is capped at one extra plan&apos;s worth
+              of texts per month, so a runaway month can never surprise you. If you&apos;re regularly
+              going over, upgrading to a bigger plan is cheaper — it takes effect right away.
+              (Usage months are calendar months in UTC, which rolls over around 7–8pm Eastern on the
+              last day of the month.)
             </p>
           </QA>
 

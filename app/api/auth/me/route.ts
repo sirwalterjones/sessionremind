@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
+import { getMonthlyUsage } from '@/lib/usage'
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
         subscription_tier: user.subscription_tier,
         subscription_status: user.subscription_status || 'active',
         sms_usage: user.sms_usage || 0,
+        sms_usage_month: (await getMonthlyUsage(user.id)).sent,
         sms_limit: user.sms_limit || 500,
         is_admin: user.is_admin || false,
         payment_override: user.payment_override || false,

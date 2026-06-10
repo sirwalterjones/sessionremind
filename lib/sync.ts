@@ -54,8 +54,13 @@ export async function syncUserBookings(userId: string): Promise<SyncResult> {
       // deleted/cancelled. Only this user's still-scheduled UseSession reminders
       // are affected.
       const smsLimit = Number(user?.sms_limit) || 500
+      // Overage headroom (billed per text via lib/usage.ts) is only for users
+      // with a REAL Stripe subscription we can invoice — capped at 1x the
+      // included quota so a runaway month can never surprise-bill more than
+      // one extra plan's worth of texts. Everyone else hard-stops at the limit.
+      const overageCap = user?.stripe_subscription_id ? smsLimit : 0
       const all = await getScheduledMessages()
-      const plan = reconcilePlan(all, userId, 'usesession', bookings, settings, smsLimit, now)
+      const plan = reconcilePlan(all, userId, 'usesession', bookings, settings, smsLimit, now, overageCap)
       if (plan.added || plan.updated || plan.cancelled) {
         await saveScheduledMessages(plan.next)
       }

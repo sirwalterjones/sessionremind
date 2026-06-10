@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addScheduledMessage, getScheduledMessages } from '@/lib/storage'
 import { getCurrentUser } from '@/lib/auth'
+import { getSendAllowance } from '@/lib/usage'
 
 interface ScheduleRequest {
   name: string
@@ -50,6 +51,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Client must opt in to receive SMS reminders' },
         { status: 400 }
+      )
+    }
+
+    // Monthly quota gate: count this month's sends PLUS everything already
+    // queued to send, so manual scheduling can't blow past the included
+    // texts + overage headroom.
+    const allowance = await getSendAllowance(user.id)
+    const pendingCount = (await getScheduledMessages()).filter(
+      (m) => m.userId === user.id && m.status === 'scheduled'
+    ).length
+    if (allowance.remaining - pendingCount <= 0) {
+      return NextResponse.json(
+        {
+          error: `You've reached this month's text limit (${allowance.included} included${
+            allowance.cap > 0 ? ` + ${allowance.cap} overage` : ''
+          }, with ${pendingCount} already scheduled). Upgrade your plan to schedule more.`,
+        },
+        { status: 402 }
       )
     }
 

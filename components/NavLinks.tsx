@@ -15,6 +15,22 @@ export default function NavLinks() {
         How it works
       </Link>
 
+      {/* Keep the signed-in header lean: docs/contact live under Help (and in
+          the footer); signed-out visitors get the full marketing set. */}
+      {!user && (
+        <Link href="/faq" className={linkClass}>
+          FAQ
+        </Link>
+      )}
+      <Link href="/help" className={linkClass}>
+        Help
+      </Link>
+      {!user && (
+        <Link href="/contact" className={linkClass}>
+          Contact
+        </Link>
+      )}
+
       {user && (
         <Link href="/automation" className={linkClass}>
           Automation

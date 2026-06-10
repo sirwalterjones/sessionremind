@@ -257,7 +257,7 @@ export default function Home() {
                   <span className="text-[#8A857C] text-sm">/ mo</span>
                 </div>
                 <p className="mt-1 text-xs text-[#8A857C]">
-                  {plan.includedTexts.toLocaleString()} texts / month included
+                  {plan.includedTexts.toLocaleString()} texts/mo · then ${plan.overage.toFixed(2)}/text
                 </p>
                 <p className="mt-3 flex-1 text-[13px] leading-relaxed text-[#5F5B54]">{plan.blurb}</p>
                 <Link
