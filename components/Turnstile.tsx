@@ -72,5 +72,6 @@ export default function Turnstile({ onVerify }: { onVerify: (token: string | nul
   }, [siteKey])
 
   if (!siteKey) return null
-  return <div ref={ref} className="my-3" />
+  // Centered within whatever form it sits in (the widget itself is fixed-width).
+  return <div ref={ref} className="my-3 flex justify-center" />
 }

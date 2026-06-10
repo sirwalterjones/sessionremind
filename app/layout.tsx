@@ -143,15 +143,24 @@ export default function RootLayout({
             <main className="max-w-6xl mx-auto py-6 px-5 sm:py-10 sm:px-8">{children}</main>
 
             <footer className="border-t border-[#ECEAE4] mt-auto">
-              <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-2.5">
-                  <span
-                    className="inline-flex items-center justify-center w-6 h-6 rounded-md text-white text-[11px] font-bold tracking-tight"
-                    style={{ background: '#141414' }}
-                  >
-                    Sr
-                  </span>
-                  <span className="text-sm font-semibold tracking-tight">SessionRemind</span>
+              <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex flex-col items-center sm:items-start gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="inline-flex items-center justify-center w-6 h-6 rounded-md text-white text-[11px] font-bold tracking-tight"
+                      style={{ background: '#141414' }}
+                    >
+                      Sr
+                    </span>
+                    <span className="text-sm font-semibold tracking-tight">SessionRemind</span>
+                  </div>
+                  <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[13px] text-[#6E6A63]">
+                    <Link href="/help" className="hover:text-[#141414] transition-colors">Help</Link>
+                    <Link href="/faq" className="hover:text-[#141414] transition-colors">FAQ</Link>
+                    <Link href="/contact" className="hover:text-[#141414] transition-colors">Contact</Link>
+                    <Link href="/privacy" className="hover:text-[#141414] transition-colors">Privacy</Link>
+                    <Link href="/sms-opt-in" className="hover:text-[#141414] transition-colors">SMS terms</Link>
+                  </nav>
                 </div>
                 <div className="text-center sm:text-right">
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#9A958C]">

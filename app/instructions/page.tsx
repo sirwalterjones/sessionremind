@@ -110,7 +110,7 @@ export default function Instructions() {
               [
                 '02',
                 'We sync your bookings',
-                'Behind the scenes we pull only what a reminder needs — name, session, date and time. Encrypted, read-only, and private to you.',
+                'Behind the scenes we pull only what a reminder needs — name, phone, email, session, date and time. Encrypted, read-only, and private to you.',
               ],
               [
                 '03',
@@ -151,9 +151,10 @@ export default function Instructions() {
                 <span style={{ color: A }}>not a password.</span>
               </h2>
               <p className="mt-6 text-[#5F5B54] text-lg leading-relaxed max-w-md">
-                Install the SessionRemind Connector, open UseSession while you&apos;re logged in, and
-                hit Connect. That&apos;s the whole setup. We never see your login — only a read-only
-                access token, encrypted the instant it arrives.
+                Drag the SessionRemind Connector to your bookmarks bar, open UseSession while
+                you&apos;re logged in, and click it. That&apos;s the whole setup. We never see your
+                login — only an access token we use strictly read-only, encrypted the instant it
+                arrives.
               </p>
               <div className="mt-8">
                 <ArrowCta href={primaryHref}>{primaryLabel}</ArrowCta>
@@ -218,7 +219,7 @@ export default function Instructions() {
               </h2>
               <p className="mt-6 text-[#B6AE9E] text-lg leading-relaxed max-w-md">
                 SessionRemind reads only what a reminder needs and nothing more. Your client list is
-                your business — never ours to mine, store, or sell.
+                your business — never ours to mine, share, or sell.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 gap-x-10 gap-y-9">
@@ -229,7 +230,7 @@ export default function Instructions() {
                 ],
                 [
                   'Never read or sold',
-                  'We don’t read your client lists or run analytics on your people. We never store, share, or sell a single detail.',
+                  'We don’t mine your client lists or run analytics on your people. We store only what a reminder needs — and never share or sell a single detail.',
                 ],
                 [
                   'Read-only access',

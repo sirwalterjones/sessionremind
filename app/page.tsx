@@ -41,9 +41,9 @@ export default function Home() {
                 className="rise font-display mt-6 text-[3.4rem] sm:text-7xl lg:text-[5.2rem] leading-[0.92] font-semibold"
                 style={{ animationDelay: '0.1s' }}
               >
-                End no-shows
+                They book. We remind.
                 <br />
-                on <span style={{ color: A }}>autopilot.</span>
+                <span style={{ color: A }}>You shoot.</span>
               </h1>
 
               <p
@@ -203,7 +203,7 @@ export default function Home() {
             <div className="grid sm:grid-cols-2 gap-x-10 gap-y-9">
               {[
                 ['Encrypted, always', 'Your UseSession access is sealed with AES-256 at rest. It exists only to fetch your reminders.'],
-                ['Never mined or sold', 'No reading your client lists. No analytics on your people. We never store, share, or sell a single detail.'],
+                ['Never mined or sold', 'No mining your client lists. No analytics on your people. We store only what a reminder needs — a name, a number, the session details — and never share or sell a single detail.'],
                 ['Read-only', 'We never change, delete, or post anything in your account. We look at upcoming bookings — that’s the whole footprint.'],
                 ['Leave in one click', 'Disconnect anytime and your stored access is deleted on the spot. Your clients, your data, your call.'],
               ].map(([t, d]) => (
@@ -257,7 +257,7 @@ export default function Home() {
                   <span className="text-[#8A857C] text-sm">/ mo</span>
                 </div>
                 <p className="mt-1 text-xs text-[#8A857C]">
-                  {plan.includedTexts.toLocaleString()} texts · then ${plan.overage}/text
+                  {plan.includedTexts.toLocaleString()} texts / month included
                 </p>
                 <p className="mt-3 flex-1 text-[13px] leading-relaxed text-[#5F5B54]">{plan.blurb}</p>
                 <Link

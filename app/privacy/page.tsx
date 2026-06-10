@@ -75,9 +75,10 @@ export default function PrivacyPage() {
 
         <Section title="Sending text messages">
           <p>
-            Reminders are delivered through our SMS provider (Twilio), which receives the recipient&apos;s phone number
-            and the message text solely to deliver it. Each photographer sends from their own dedicated number.
-            Recipients can reply STOP to opt out at any time, or HELP for assistance.
+            Reminders are delivered through our SMS providers (Twilio and TextMagic), which receive the
+            recipient&apos;s phone number and the message text solely to deliver it. Messages are sent from a
+            SessionRemind toll-free number — or, for studios that have set one up, from the studio&apos;s own
+            dedicated number. Recipients can reply STOP to opt out at any time, or HELP for assistance.
           </p>
         </Section>
 
@@ -85,7 +86,7 @@ export default function PrivacyPage() {
           <p>
             <strong>Program description.</strong> SessionRemind sends appointment reminder text messages on behalf
             of the photographer you booked your session with. Messages include reminders about your upcoming
-            session&apos;s date, time, and location, and occasional related logistics. We do not send marketing or
+            session&apos;s date and time, and occasional related logistics. We do not send marketing or
             promotional text messages through this program.
           </p>
           <p>

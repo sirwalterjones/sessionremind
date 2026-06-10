@@ -58,7 +58,7 @@ export default function RegisterPage() {
         <div className="text-center">
           <div className="eyebrow flex items-center justify-center gap-2">
             <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#DD4D24' }} />
-            $20 / month · cancel anytime
+            Plans from $15/mo · cancel anytime
           </div>
           <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
             Create your account

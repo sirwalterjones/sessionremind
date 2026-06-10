@@ -1,5 +1,8 @@
 // Subscription plan catalog. Stripe price IDs created live on 2026-06-09.
-// sms_limit per plan is the included texts; overage is billed per text beyond it.
+// sms_limit per plan is the included texts. NOTE: texts beyond sms_limit are
+// NOT billed — they are skipped (skippedForQuota in lib/sync.ts). The `overage`
+// rates below are reserved for a future metered-billing implementation and
+// must not be shown as a promise in marketing copy until that exists.
 
 export type PlanKey = 'starter' | 'studio' | 'pro' | 'volume'
 
@@ -9,7 +12,7 @@ export interface Plan {
   priceId: string
   price: number // USD / month
   includedTexts: number
-  overage: number // USD per text over the included amount
+  overage: number // USD per text over the included amount (future metered billing — not yet charged)
   blurb: string
   features: string[]
 }
@@ -23,7 +26,7 @@ export const PLANS: Plan[] = [
     includedTexts: 150,
     overage: 0.05,
     blurb: 'For a smaller book of sessions.',
-    features: ['150 texts/mo included', 'Email reminders included', 'Auto-sync from UseSession'],
+    features: ['150 texts/mo included', 'Email reminders included', 'Auto-sync from UseSession', 'Optional dedicated sending number'],
   },
   {
     key: 'studio',
@@ -33,7 +36,7 @@ export const PLANS: Plan[] = [
     includedTexts: 500,
     overage: 0.04,
     blurb: 'The everyday plan for a busy studio.',
-    features: ['500 texts/mo included', 'Email reminders included', 'Your own sending number'],
+    features: ['500 texts/mo included', 'Email reminders included', 'Optional dedicated sending number'],
   },
   {
     key: 'pro',
@@ -43,7 +46,7 @@ export const PLANS: Plan[] = [
     includedTexts: 1500,
     overage: 0.03,
     blurb: 'High-volume shooters and small teams.',
-    features: ['1,500 texts/mo included', 'Email reminders included', 'Priority support'],
+    features: ['1,500 texts/mo included', 'Email reminders included', 'Optional dedicated sending number', 'Priority support'],
   },
   {
     key: 'volume',
@@ -53,7 +56,7 @@ export const PLANS: Plan[] = [
     includedTexts: 4000,
     overage: 0.03,
     blurb: 'Studios running at scale.',
-    features: ['4,000 texts/mo included', 'Email reminders included', 'Priority support'],
+    features: ['4,000 texts/mo included', 'Email reminders included', 'Optional dedicated sending number', 'Priority support'],
   },
 ]
 

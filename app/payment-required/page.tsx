@@ -121,8 +121,9 @@ function PaymentRequiredContent() {
                   Access restricted
                 </h2>
                 <p className="mt-1 text-sm leading-relaxed text-[#6E6A63]">
-                  Your administrator has required payment for your account.
-                  Please complete payment to access SessionRemind features.
+                  A paid subscription is required to use SessionRemind. Choose a
+                  plan below to continue — you can manage or cancel anytime from
+                  your profile.
                 </p>
               </div>
             </div>
@@ -138,7 +139,7 @@ function PaymentRequiredContent() {
                   <span className="text-sm text-[#6E6A63]">/ mo</span>
                 </div>
                 <p className="mt-1 text-xs text-[#6E6A63]">
-                  {plan.includedTexts.toLocaleString()} texts included · then ${plan.overage}/text
+                  {plan.includedTexts.toLocaleString()} texts/mo included · upgrade anytime for more
                 </p>
                 <ul className="mt-4 flex-1 space-y-2">
                   {plan.features.map((f) => (
@@ -170,7 +171,7 @@ function PaymentRequiredContent() {
         </div>
 
         <p className="mt-6 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
-          Questions? Contact your administrator for assistance.
+          Questions? Email support@sessionremind.com.
         </p>
       </div>
     </div>

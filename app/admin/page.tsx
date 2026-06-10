@@ -744,6 +744,12 @@ export default function AdminPage() {
             </div>
             <div className="flex items-center space-x-4">
               <a
+                href="/admin/support"
+                className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+              >
+                Support
+              </a>
+              <a
                 href="/admin/shared-number"
                 className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
               >

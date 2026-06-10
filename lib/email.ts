@@ -222,3 +222,61 @@ export async function sendTollfreeRejectedEmail(
   })
   return sendEmail(to, 'Your SessionRemind number needs a quick fix', html)
 }
+
+// Where new contact/support tickets are announced. Handled in /admin/support;
+// this email is just the heads-up.
+const SUPPORT_NOTIFY_EMAIL = process.env.SUPPORT_NOTIFY_EMAIL || 'walterjonesjr@gmail.com'
+
+const TOPIC_LABELS: Record<string, string> = {
+  support: 'Support',
+  billing: 'Billing',
+  bug: 'Bug report',
+  general: 'General',
+}
+
+// Notify the operator that a new contact/support ticket arrived.
+export async function sendSupportNotificationEmail(ticket: {
+  id: string
+  name: string
+  email: string
+  topic: string
+  message: string
+  username?: string
+}): Promise<boolean> {
+  const html = renderBrandedEmail({
+    preheader: `${ticket.name}: ${ticket.message.slice(0, 100)}`,
+    eyebrow: `New ${TOPIC_LABELS[ticket.topic] || 'support'} request`,
+    heading: `Message from ${escapeHtml(ticket.name)}`,
+    bodyHtml:
+      `<p style="margin:0 0 6px;"><strong style="color:${INK};">From:</strong> ${escapeHtml(ticket.name)} &lt;${escapeHtml(ticket.email)}&gt;${ticket.username ? ` · account: ${escapeHtml(ticket.username)}` : ''}</p>` +
+      `<p style="margin:0 0 12px;"><strong style="color:${INK};">Topic:</strong> ${TOPIC_LABELS[ticket.topic] || ticket.topic}</p>` +
+      `<p style="margin:0;padding:12px 14px;background:${PAPER};border-radius:10px;color:${INK};white-space:pre-line;">${escapeHtml(ticket.message)}</p>`,
+    ctaText: 'Open in admin panel',
+    ctaUrl: `${BASE}/admin/support`,
+  })
+  return sendEmail(
+    SUPPORT_NOTIFY_EMAIL,
+    `[SessionRemind] ${TOPIC_LABELS[ticket.topic] || 'Support'}: ${ticket.name}`,
+    html
+  )
+}
+
+// Send the admin's reply to the requester.
+export async function sendSupportReplyEmail(
+  to: string,
+  name: string,
+  originalMessage: string,
+  reply: string
+): Promise<boolean> {
+  const html = renderBrandedEmail({
+    preheader: reply.slice(0, 120),
+    eyebrow: 'Support reply',
+    heading: `Hi ${escapeHtml(name)},`,
+    bodyHtml:
+      `<p style="margin:0 0 16px;white-space:pre-line;">${escapeHtml(reply)}</p>` +
+      `<p style="margin:0 0 6px;font-size:13px;color:${MUTED};">You wrote:</p>` +
+      `<p style="margin:0;padding:12px 14px;background:${PAPER};border-radius:10px;font-size:13px;color:${MUTED};white-space:pre-line;">${escapeHtml(originalMessage)}</p>`,
+    afterCtaHtml: `Need to add more? <a href="${BASE}/contact" style="color:${MUTED};">Reply through our contact page</a> and we'll pick the thread right back up.`,
+  })
+  return sendEmail(to, 'Re: your SessionRemind support request', html)
+}

@@ -31,8 +31,8 @@ export default function SmsOptInPage() {
       <div className="mt-10 space-y-8">
         <Section title="Program description">
           <p>
-            You receive text message reminders about a photography session you booked — including the session date,
-            time, and location, and occasional related logistics. These are <strong>transactional reminders only</strong>.
+            You receive text message reminders about a photography session you booked — including the session
+            date and time, and occasional related logistics. These are <strong>transactional reminders only</strong>.
             We do not send marketing or promotional text messages through this program.
           </p>
         </Section>
