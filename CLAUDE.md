@@ -109,18 +109,26 @@ the confirmed holes were fixed in the same session:
   on password reset/change (`deleteAllUserSessions`, backed by a
   `user:<id>:sessions` set populated in `createSession`). Single-use tokens use
   atomic `kv.getdel`. Password min raised 6→8 everywhere.
-- **Known/accepted, NOT yet done** (see audit, lower priority): no rate
-  limiting on login / forgot-password / resend-verification (only `/contact`
-  has it — consider Upstash ratelimit); register still leaks "email already
-  exists" (enumeration); email not normalized/lowercased at register (mixed
-  case = distinct accounts — DON'T fix naively, it strands existing accounts
-  since login lookup is case-exact too); `send-sms` trusts client `optedIn`
-  bool (TCPA gap, not free-SMS — quota still gates); Turnstile fails OPEN if
-  `TURNSTILE_SECRET_KEY` unset (matters during the pending secret rotation);
-  `CRON_SECRET` doubles as the token-encryption key seed (split once cron auth
-  is hardened). middleware referer-bypass is defense-in-depth only today (all
-  protected pages are client components that re-auth via API) — becomes a real
-  hole if anyone adds a server-component protected page that reads data.
+- **Round 2 (also 2026-06-10), now DONE**: rate limiting added via
+  `lib/rate-limit.ts` (KV fixed-window, fails open on KV error) on login
+  (10/IP + 5/account per 15min), forgot-password (5/IP + 3/account per hr),
+  resend-verification (5/account per hr). Turnstile now fails CLOSED in
+  production *only when a site key is configured but the secret is missing*
+  (the silent-bypass case) — a deploy without Turnstile still fails open, so no
+  lockout. Email is normalized (trim+lowercase) at register/createUser and in
+  `getUserByEmail` (normalized lookup + raw fallback for un-migrated legacy
+  accounts); register now validates email format. **Run the one-time email
+  migration after deploy**: `GET /api/admin/migrate-emails` (dry run) then
+  `POST` (apply) — backfills lowercase index aliases for legacy mixed-case
+  accounts; idempotent, leaves old keys in place.
+- **Known/accepted, still NOT done** (lower priority): register still returns
+  "email already exists" (enumeration — accepted, signup forms leak this
+  inherently); `send-sms` trusts client `optedIn` bool (TCPA record gap, not
+  free-SMS — quota still gates); `CRON_SECRET` doubles as the
+  token-encryption key seed (split once convenient); middleware referer-bypass
+  is defense-in-depth only today (all protected pages are client components
+  that re-auth via API) — becomes a real hole if anyone adds a server-component
+  protected page that reads data.
 
 ## Gotchas — read before editing
 

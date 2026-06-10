@@ -31,6 +31,13 @@ export function generateId(): string {
   return crypto.randomUUID()
 }
 
+// Canonical email form for indexing/lookup. Emails are case-insensitive in
+// practice, so we key on the trimmed lowercase form to stop Foo@x.com and
+// foo@x.com from becoming two accounts.
+export function normalizeEmail(email: string): string {
+  return (email || '').trim().toLowerCase()
+}
+
 // Hash password
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12)
@@ -45,11 +52,12 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 export async function createUser(username: string, email: string, password: string): Promise<User> {
   const id = generateId()
   const passwordHash = await hashPassword(password)
-  
+  const normalizedEmail = normalizeEmail(email)
+
   const user: User = {
     id,
     username,
-    email,
+    email: normalizedEmail,
     subscription_tier: 'professional',
     subscription_status: 'active', // Professional plan users are active by default
     sms_usage: 0,
@@ -59,19 +67,25 @@ export async function createUser(username: string, email: string, password: stri
 
   // Store user
   await kv.hset(`user:${id}`, user as unknown as Record<string, unknown>)
-  // Index by email for login
-  await kv.set(`user:email:${email}`, id)
+  // Index by normalized email for login
+  await kv.set(`user:email:${normalizedEmail}`, id)
   // Store password hash separately
   await kv.set(`user:${id}:password`, passwordHash)
 
   return user
 }
 
-// Get user by email
+// Get user by email. Looks up the normalized (lowercase) index first, then
+// falls back to the raw string so legacy mixed-case accounts created before
+// normalization (and not yet migrated) still resolve.
 export async function getUserByEmail(email: string): Promise<User | null> {
-  const userId = await kv.get(`user:email:${email}`)
+  const normalized = normalizeEmail(email)
+  let userId = await kv.get(`user:email:${normalized}`)
+  if (!userId && email !== normalized) {
+    userId = await kv.get(`user:email:${email}`)
+  }
   if (!userId) return null
-  
+
   const user = await kv.hgetall(`user:${userId}`)
   return user as User | null
 }

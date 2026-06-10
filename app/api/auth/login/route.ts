@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyUser, createSession, setSessionCookie } from '@/lib/auth'
 import { verifyTurnstile } from '@/lib/turnstile'
+import { rateLimit, clientIp, tooManyRequests } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password, turnstileToken } = await request.json()
 
     // Bot check (Cloudflare Turnstile).
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null
+    const ip = clientIp(request)
     const human = await verifyTurnstile(turnstileToken, ip)
     if (!human) {
       return NextResponse.json(
@@ -21,6 +22,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Email and password are required' },
         { status: 400 }
+      )
+    }
+
+    // Brute-force throttle: per IP and per targeted account (15-min window).
+    const ipLimit = await rateLimit(`login:rl:ip:${ip}`, 10, 900)
+    const emailKey = String(email).trim().toLowerCase()
+    const acctLimit = await rateLimit(`login:rl:acct:${emailKey}`, 5, 900)
+    if (!ipLimit.ok || !acctLimit.ok) {
+      return tooManyRequests(
+        'Too many sign-in attempts. Please wait a few minutes and try again.',
+        Math.max(ipLimit.retryAfterSeconds, acctLimit.retryAfterSeconds)
       )
     }
 
