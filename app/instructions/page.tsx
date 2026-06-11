@@ -44,7 +44,7 @@ export default function Instructions() {
     <div className="-mt-6 sm:-mt-10 text-ink">
       {/* ───────────── HERO ───────────── */}
       <section className="full-bleed relative bg-white">
-        <div className="grid-lines absolute inset-0 h-[420px]" aria-hidden />
+        <div className="hero-glow absolute inset-0 h-[420px]" aria-hidden />
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-20">
           <div className="max-w-3xl">
             <div className="eyebrow flex items-center gap-2">

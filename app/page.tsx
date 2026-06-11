@@ -27,7 +27,7 @@ export default function Home() {
     <div className="-mt-6 sm:-mt-10 text-ink">
       {/* ───────────── HERO ───────────── */}
       <section className="full-bleed relative bg-white">
-        <div className="grid-lines absolute inset-0 h-[480px]" aria-hidden />
+        <div className="hero-glow absolute inset-0 h-[480px]" aria-hidden />
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16">
           <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-10 items-center">
             {/* Left: message + CTAs */}

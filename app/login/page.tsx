@@ -56,7 +56,7 @@ function LoginForm() {
   return (
     <div className="-mt-6 sm:-mt-10 text-ink">
       <section className="full-bleed relative bg-white">
-        <div className="grid-lines absolute inset-0 h-[420px]" aria-hidden />
+        <div className="hero-glow absolute inset-0 h-[420px]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-5 pb-16 pt-12 sm:px-8 sm:pb-24 sm:pt-20">
           <div className="grid items-start gap-12 lg:grid-cols-[1fr_minmax(0,28rem)] lg:gap-16">
             {/* ── Left: welcome back ── */}
