@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 
-export default function NavLinks() {
+export default function NavLinks({ dark = false }: { dark?: boolean }) {
   const { user, logout } = useAuth()
 
-  const linkClass =
-    'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-[#4F4B44] hover:bg-[#F4F2EE] hover:text-ink transition-colors'
+  const linkClass = dark
+    ? 'rounded-full border border-white/15 px-3.5 py-1.5 text-sm font-medium text-[#CFC8BC] hover:bg-white/10 hover:text-white transition-colors'
+    : 'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-[#4F4B44] hover:bg-[#F4F2EE] hover:text-ink transition-colors'
 
   return (
     <div className="hidden md:flex items-center gap-2">
@@ -53,16 +54,15 @@ export default function NavLinks() {
       )}
 
       {user ? (
-        <button
-          onClick={logout}
-          className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-[#4F4B44] hover:bg-[#F4F2EE] hover:text-ink transition-colors"
-        >
+        <button onClick={logout} className={linkClass}>
           Log out
         </button>
       ) : (
         <Link
           href="/login"
-          className="inline-flex items-center rounded-full bg-ink px-5 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+          className={`inline-flex items-center rounded-full px-5 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity ${
+            dark ? 'bg-[#DD4D24]' : 'bg-ink'
+          }`}
         >
           Sign in
         </Link>

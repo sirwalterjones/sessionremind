@@ -178,6 +178,15 @@ the confirmed holes were fixed in the same session:
 - Design system: white canvas, ink `#141414`, accent `#DD4D24`, hairline `#ECEAE4`,
   muted `#6E6A63`, tint `#FAFAF8`; `eyebrow` + `font-display` classes; rounded-2xl
   hairline cards; pill buttons. Match `/contact` or `/onboarding` for new pages.
+- **Homepage is the "darkroom" theme** (2026-06-11): warm black `#0D0B09`,
+  safelight accent, film-strip/contact-sheet motifs, Fraunces serif display
+  (`--font-serif` / `.font-serif-display`). Utilities in globals.css:
+  `.film-grain .safelight .sprocket-row .led .glow-accent .frame-develop .breathe`.
+  AppFrame flips its nav/footer dark when `pathname === '/'` (NavLinks/MobileNav
+  take a `dark` prop). All other marketing/auth pages stay light. Copy unchanged.
+- Headless-Chrome screenshots clamp to a 500px minimum window width — for real
+  mobile rendering use CDP `Emulation.setDeviceMetricsOverride`, or text appears
+  falsely clipped at 390px.
 - Notifications: `useToast`/`useConfirm` from `components/Notifications.tsx` —
   never native `alert()`/`confirm()`.
 - Before shipping money-path or compliance changes: typecheck, `npm run build`,

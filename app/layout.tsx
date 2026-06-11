@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Hanken_Grotesk, IBM_Plex_Mono } from 'next/font/google'
+import { Fraunces, Hanken_Grotesk, IBM_Plex_Mono } from 'next/font/google'
 import { AuthProvider } from '@/lib/auth-context'
 import { NotificationsProvider } from '@/components/Notifications'
 import AppFrame from '@/components/AppFrame'
@@ -13,6 +13,14 @@ const mono = IBM_Plex_Mono({
   weight: ['400', '500'],
   variable: '--font-mono',
   display: 'swap',
+})
+// Editorial serif reserved for the darkroom marketing page's display type.
+const serif = Fraunces({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+  axes: ['opsz', 'SOFT', 'WONK'],
 })
 
 export const metadata: Metadata = {
@@ -76,7 +84,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
-      <body className={`${body.variable} ${mono.variable} ${body.className}`}>
+      <body className={`${body.variable} ${mono.variable} ${serif.variable} ${body.className}`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `

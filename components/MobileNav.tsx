@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 
-export default function MobileNav() {
+export default function MobileNav({ dark = false }: { dark?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
   const { user, logout } = useAuth()
 
@@ -13,15 +13,16 @@ export default function MobileNav() {
     setIsOpen(false)
   }
 
-  const item =
-    'block px-5 py-3 text-[15px] font-medium text-[#4F4B44] hover:text-ink hover:bg-[#FAFAF8] transition-colors'
+  const item = dark
+    ? 'block px-5 py-3 text-[15px] font-medium text-[#CFC8BC] hover:text-white hover:bg-white/5 transition-colors'
+    : 'block px-5 py-3 text-[15px] font-medium text-[#4F4B44] hover:text-ink hover:bg-[#FAFAF8] transition-colors'
 
   return (
     <div className="md:hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Menu"
-        className="p-2 text-ink"
+        className={`p-2 ${dark ? 'text-white' : 'text-ink'}`}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -34,7 +35,11 @@ export default function MobileNav() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-t border-hairline py-2">
+        <div
+          className={`absolute top-full left-0 right-0 py-2 ${
+            dark ? 'bg-[#15110D] border-t border-white/10' : 'bg-white border-t border-hairline'
+          }`}
+        >
           {/* Most-used destinations lead; Help and Profile sit at the end. */}
           {user && (
             <Link href="/dashboard" className={item} onClick={() => setIsOpen(false)}>
@@ -72,7 +77,9 @@ export default function MobileNav() {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="w-full text-center rounded-full border border-hairline px-5 py-2.5 text-sm font-medium text-ink"
+                className={`w-full text-center rounded-full border px-5 py-2.5 text-sm font-medium ${
+                  dark ? 'border-white/15 text-white' : 'border-hairline text-ink'
+                }`}
               >
                 Log out
               </button>
@@ -80,7 +87,9 @@ export default function MobileNav() {
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="block text-center rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white"
+                className={`block text-center rounded-full px-5 py-2.5 text-sm font-medium text-white ${
+                  dark ? 'bg-[#DD4D24]' : 'bg-ink'
+                }`}
               >
                 Sign in
               </Link>
