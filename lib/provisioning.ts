@@ -29,6 +29,7 @@ import {
   purchaseNumber,
   createMessagingServiceWithNumber,
   submitTollfreeVerification,
+  updateTollfreeVerification,
   fetchTollfreeVerification,
   releaseNumber,
   twilioConfigured,
@@ -200,7 +201,11 @@ export async function provisionTollFree(
 
     // 3) Submit toll-free verification (bound to the number, not the service).
     // Consent fields are platform-standardized; identity fields are the tenant's.
-    const verification = await submitTollfreeVerification({
+    // Twilio allows only ONE verification per number: if a prior attempt was
+    // REJECTED, the existing HH record must be UPDATED (resubmitted) with the
+    // corrected details — creating a second one fails. Fall back to create if
+    // the update is no longer possible (e.g. the edit window expired).
+    const verificationInput = {
       tollfreePhoneNumberSid: phoneNumberSid,
       businessName: biz.legalName,
       businessWebsite: biz.website,
@@ -220,7 +225,19 @@ export async function provisionTollFree(
       businessContactEmail: biz.contactEmail,
       businessContactPhone: biz.contactPhone,
       additionalInformation: PLATFORM_OPT_IN_DETAILS,
-    })
+    }
+    let verification: { sid?: string; status?: string; error?: string }
+    if (existing?.verificationSid) {
+      verification = await updateTollfreeVerification(existing.verificationSid, verificationInput)
+      if (verification.error) {
+        console.error(
+          `Verification update failed for ${existing.verificationSid} (${verification.error}) — trying a fresh submission`
+        )
+        verification = await submitTollfreeVerification(verificationInput)
+      }
+    } else {
+      verification = await submitTollfreeVerification(verificationInput)
+    }
 
     // Number + service exist even if verification submission failed; KEEP them so
     // a retry reuses them (see isRetryable / the reuse logic above) instead of

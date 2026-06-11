@@ -24,10 +24,10 @@
   <rect x="160" y="514" width="760" height="56" rx="10" fill="#FFFFFF" stroke="#141414" stroke-width="2"/>
   <text x="184" y="550" font-size="22" fill="#141414">(770) 555-0142</text>
 
-  <!-- Consent -->
+  <!-- Consent — checkbox MUST render unchecked (carriers reject pre-selected
+       consent, Twilio error 30508). The client ticks it themselves. -->
   <rect x="160" y="592" width="760" height="116" rx="10" fill="#FAFAF8" stroke="#ECEAE4" stroke-width="2"/>
-  <rect x="180" y="612" width="26" height="26" rx="5" fill="#141414"/>
-  <path d="M186 625 l5 5 l9 -11" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="180" y="612" width="26" height="26" rx="5" fill="#FFFFFF" stroke="#141414" stroke-width="2.5"/>
   <text x="220" y="624" font-size="17" fill="#4F4B44">By providing my number I agree to receive appointment reminder texts about my</text>
   <text x="220" y="649" font-size="17" fill="#4F4B44">session from Moments by Candice. Msg frequency varies. Msg &amp; data rates may</text>
   <text x="220" y="674" font-size="17" fill="#4F4B44">apply. Reply STOP to opt out, HELP for help. See Privacy Policy &amp; Terms.</text>

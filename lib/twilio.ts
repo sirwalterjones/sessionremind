@@ -159,6 +159,48 @@ export interface TollfreeVerificationInput {
   additionalInformation?: string
 }
 
+// The editable field set shared by create + resubmit (everything except the
+// number binding, which can't change on an existing verification).
+function verificationParams(input: TollfreeVerificationInput): Record<string, unknown> {
+  return {
+    businessName: input.businessName,
+    businessType: input.businessType || 'SOLE_PROPRIETOR',
+    ...(input.businessType && input.businessType !== 'SOLE_PROPRIETOR'
+      ? {
+          businessRegistrationNumber: input.businessRegistrationNumber,
+          businessRegistrationAuthority: input.businessRegistrationAuthority,
+          businessRegistrationCountry: input.businessRegistrationCountry,
+        }
+      : {}),
+    businessWebsite: input.businessWebsite,
+    notificationEmail: input.notificationEmail,
+    // Appointment reminders are transactional account/service notifications.
+    // Must be one of Twilio's enum values (NOT the free-form 'NOTIFICATIONS').
+    useCaseCategories: ['ACCOUNT_NOTIFICATIONS'],
+    useCaseSummary: input.useCaseSummary,
+    productionMessageSample: input.productionMessageSample,
+    optInImageUrls: input.optInImageUrls,
+    optInType: input.optInType,
+    messageVolume: input.messageVolume,
+    businessStreetAddress: input.businessStreetAddress,
+    businessCity: input.businessCity,
+    businessStateProvinceRegion: input.businessStateProvinceRegion,
+    businessPostalCode: input.businessPostalCode,
+    businessCountry: input.businessCountry,
+    businessContactFirstName: input.businessContactFirstName,
+    businessContactLastName: input.businessContactLastName,
+    businessContactEmail: input.businessContactEmail,
+    businessContactPhone: input.businessContactPhone,
+    privacyPolicyUrl: `${APP_BASE_URL}/privacy`,
+    optInKeywords: ['START', 'YES'],
+    optInConfirmationMessage:
+      "You're subscribed to appointment reminders. Reply STOP to opt out, HELP for help. Msg & data rates may apply.",
+    helpMessageSample:
+      'SessionRemind reminders: contact support@sessionremind.com. Reply STOP to opt out. Msg & data rates may apply.',
+    ...(input.additionalInformation ? { additionalInformation: input.additionalInformation } : {}),
+  }
+}
+
 // Submit a toll-free verification. Returns HH... verification sid + status.
 // privacyPolicyUrl + the opt-in/HELP details are what the carriers actually
 // reject on (the prior 10DLC campaign failed for an unverifiable privacy
@@ -171,42 +213,28 @@ export async function submitTollfreeVerification(
   try {
     const v = await client.messaging.v1.tollfreeVerifications.create({
       tollfreePhoneNumberSid: input.tollfreePhoneNumberSid,
-      businessName: input.businessName,
-      businessType: input.businessType || 'SOLE_PROPRIETOR',
-      ...(input.businessType && input.businessType !== 'SOLE_PROPRIETOR'
-        ? {
-            businessRegistrationNumber: input.businessRegistrationNumber,
-            businessRegistrationAuthority: input.businessRegistrationAuthority,
-            businessRegistrationCountry: input.businessRegistrationCountry,
-          }
-        : {}),
-      businessWebsite: input.businessWebsite,
-      notificationEmail: input.notificationEmail,
-      // Appointment reminders are transactional account/service notifications.
-      // Must be one of Twilio's enum values (NOT the free-form 'NOTIFICATIONS').
-      useCaseCategories: ['ACCOUNT_NOTIFICATIONS'],
-      useCaseSummary: input.useCaseSummary,
-      productionMessageSample: input.productionMessageSample,
-      optInImageUrls: input.optInImageUrls,
-      optInType: input.optInType,
-      messageVolume: input.messageVolume,
-      businessStreetAddress: input.businessStreetAddress,
-      businessCity: input.businessCity,
-      businessStateProvinceRegion: input.businessStateProvinceRegion,
-      businessPostalCode: input.businessPostalCode,
-      businessCountry: input.businessCountry,
-      businessContactFirstName: input.businessContactFirstName,
-      businessContactLastName: input.businessContactLastName,
-      businessContactEmail: input.businessContactEmail,
-      businessContactPhone: input.businessContactPhone,
-      privacyPolicyUrl: `${APP_BASE_URL}/privacy`,
-      optInKeywords: ['START', 'YES'],
-      optInConfirmationMessage:
-        "You're subscribed to appointment reminders. Reply STOP to opt out, HELP for help. Msg & data rates may apply.",
-      helpMessageSample:
-        'SessionRemind reminders: contact support@sessionremind.com. Reply STOP to opt out. Msg & data rates may apply.',
-      ...(input.additionalInformation ? { additionalInformation: input.additionalInformation } : {}),
+      ...verificationParams(input),
     } as any)
+    return { sid: v.sid, status: v.status }
+  } catch (e: any) {
+    return { error: e?.message || String(e) }
+  }
+}
+
+// Resubmit a REJECTED toll-free verification with corrected details. Twilio
+// only allows ONE verification per number, so after a rejection the existing
+// HH... record must be updated (allowed until its edit_expiration, ~7 days
+// after rejection) rather than a new one created.
+export async function updateTollfreeVerification(
+  sid: string,
+  input: TollfreeVerificationInput
+): Promise<{ sid?: string; status?: string; error?: string }> {
+  const client = getClient()
+  if (!client) return { error: 'Twilio not configured' }
+  try {
+    const v = await client.messaging.v1.tollfreeVerifications(sid).update(
+      verificationParams(input) as any
+    )
     return { sid: v.sid, status: v.status }
   } catch (e: any) {
     return { error: e?.message || String(e) }
