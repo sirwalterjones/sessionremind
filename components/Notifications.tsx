@@ -114,25 +114,25 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
 function ToastCard({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const accent =
-    toast.type === 'success' ? '#16a34a' : toast.type === 'error' ? '#dc2626' : '#DD4D24'
+    toast.type === 'success' ? '#34d399' : toast.type === 'error' ? '#f87171' : '#C6F24E'
   const glyph = toast.type === 'success' ? '✓' : toast.type === 'error' ? '✕' : 'i'
   return (
-    <div className="sr-toast-in pointer-events-auto flex items-start gap-3 rounded-xl border border-[#ECEAE4] bg-white px-4 py-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+    <div className="sr-toast-in pointer-events-auto flex items-start gap-3 rounded-xl border border-hairline bg-card px-4 py-3.5 text-ink shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
       <span
-        className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
+        className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-accent-ink"
         style={{ background: accent }}
         aria-hidden
       >
         {glyph}
       </span>
       <div className="min-w-0 flex-1">
-        {toast.title && <div className="text-sm font-semibold text-[#141414]">{toast.title}</div>}
-        <div className="break-words text-[13px] leading-snug text-[#5F5B54]">{toast.message}</div>
+        {toast.title && <div className="text-sm font-semibold text-ink">{toast.title}</div>}
+        <div className="break-words text-[13px] leading-snug text-muted">{toast.message}</div>
       </div>
       <button
         onClick={onClose}
         aria-label="Dismiss"
-        className="-mr-1 text-lg leading-none text-[#9A958C] transition-colors hover:text-[#141414]"
+        className="-mr-1 text-lg leading-none text-faint transition-colors hover:text-ink"
       >
         ×
       </button>
@@ -147,28 +147,31 @@ function ConfirmModal({ state, onClose }: { state: ConfirmState; onClose: (resul
       className="sr-fade-in fixed inset-0 z-[110] flex items-center justify-center p-4"
       onClick={() => onClose(false)}
     >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
         role="dialog"
         aria-modal="true"
-        className="sr-pop-in relative w-full max-w-sm rounded-2xl border border-[#ECEAE4] bg-white p-6 shadow-2xl"
+        className="sr-pop-in relative w-full max-w-sm rounded-2xl border border-hairline bg-card p-6 text-ink shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]"
         onClick={(e) => e.stopPropagation()}
       >
         {state.title && (
-          <h2 className="font-display mb-1.5 text-lg font-semibold text-[#141414]">{state.title}</h2>
+          <h2 className="font-display mb-1.5 text-lg font-semibold text-ink">{state.title}</h2>
         )}
-        <p className="text-sm leading-relaxed text-[#5F5B54]">{state.message}</p>
+        <p className="text-sm leading-relaxed text-muted">{state.message}</p>
         <div className="mt-6 flex justify-end gap-2.5">
           <button
             onClick={() => onClose(false)}
-            className="rounded-full border border-[#ECEAE4] px-4 py-2 text-sm font-medium text-[#141414] transition-colors hover:bg-[#FAFAF8]"
+            className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5"
           >
             {state.cancelLabel || 'Cancel'}
           </button>
           <button
             onClick={() => onClose(true)}
-            className="rounded-full px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-            style={{ background: danger ? '#dc2626' : '#141414' }}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              danger
+                ? 'border border-red-400/30 bg-red-500/15 text-red-300 hover:bg-red-500/25'
+                : 'bg-accent text-accent-ink hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]'
+            }`}
           >
             {state.confirmLabel || 'Confirm'}
           </button>

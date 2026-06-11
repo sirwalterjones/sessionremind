@@ -41,13 +41,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       .sort((a, b) => b.length - a.length)[0] || ''
 
   return (
-    <div className="flex min-h-screen bg-white text-ink">
+    <div className="flex min-h-screen bg-canvas text-ink">
       {/* ───────── Sidebar ───────── */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-hairline bg-[#FAFAF8] lg:flex">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-hairline bg-panel lg:flex">
         <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-hairline">
           <span
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[15px] font-bold tracking-tight text-white"
-            style={{ background: '#141414' }}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[15px] font-bold tracking-tight"
+            style={{ background: '#C6F24E', color: '#11130A' }}
           >
             Sr
           </span>
@@ -63,8 +63,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href={href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   href === activeHref
-                    ? 'bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-hairline'
-                    : 'text-[#6E6A63] hover:bg-white hover:text-ink'
+                    ? 'bg-card text-accent border border-accent/30 shadow-[inset_2px_0_0_0_#C6F24E]'
+                    : 'text-muted hover:bg-card hover:text-ink'
                 }`}
               >
                 <Icon className="h-[18px] w-[18px]" />
@@ -79,7 +79,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#6E6A63] transition-colors hover:bg-white hover:text-ink"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-ink"
               >
                 <Icon className="h-[18px] w-[18px]" />
                 {label}
@@ -88,7 +88,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             {user?.is_admin && (
               <Link
                 href="/admin"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#6E6A63] transition-colors hover:bg-white hover:text-ink"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-ink"
               >
                 <Cog6ToothIcon className="h-[18px] w-[18px]" />
                 Admin Console
@@ -101,14 +101,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between gap-2 rounded-lg px-3 py-2">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-ink">{user?.username}</p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                 {user?.is_admin ? 'Admin' : 'Professional'}
               </p>
             </div>
             <button
               onClick={logout}
               aria-label="Log out"
-              className="rounded-lg border border-hairline bg-white p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
+              className="rounded-lg border border-hairline bg-card p-2 text-ink transition-colors hover:border-accent/40 hover:text-accent"
             >
               <ArrowRightOnRectangleIcon className="h-4 w-4" />
             </button>
@@ -122,8 +122,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex items-center justify-between border-b border-hairline px-5 h-16 lg:hidden">
           <Link href="/" className="flex items-center gap-2.5">
             <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-bold tracking-tight text-white"
-              style={{ background: '#141414' }}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-bold tracking-tight"
+              style={{ background: '#C6F24E', color: '#11130A' }}
             >
               Sr
             </span>

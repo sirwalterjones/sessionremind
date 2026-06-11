@@ -34,6 +34,7 @@ export default function Turnstile({ onVerify }: { onVerify: (token: string | nul
       if (!window.turnstile || !ref.current || widgetId) return
       widgetId = window.turnstile.render(ref.current, {
         sitekey: siteKey,
+        theme: 'dark',
         callback: (token: string) => cb.current(token),
         'expired-callback': () => cb.current(null),
         'error-callback': () => cb.current(null),

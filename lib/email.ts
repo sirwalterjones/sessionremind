@@ -5,11 +5,15 @@
 
 const FROM = process.env.RESEND_FROM || 'SessionRemind <onboarding@resend.dev>'
 
-const INK = '#141414'
-const ACCENT = '#DD4D24'
-const MUTED = '#6E6A63'
-const HAIRLINE = '#ECEAE4'
-const PAPER = '#F4F2EE'
+// Emails stay light for client compatibility, but carry the Ink & Acid brand:
+// graphite ink, lime CTA fills (dark text on lime), deep-lime eyebrow text.
+const INK = '#101113'
+const ACCENT = '#4D7C0F' // deep lime — readable as TEXT on white
+const LIME = '#C6F24E' // acid lime — FILLS only, with dark text
+const LIME_INK = '#11130A'
+const MUTED = '#5F646C'
+const HAIRLINE = '#E4E6E2'
+const PAPER = '#F2F4EF'
 
 export async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
   const key = process.env.RESEND_API_KEY
@@ -39,9 +43,9 @@ function button(text: string, url: string): string {
   return `
   <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin:8px 0 4px">
     <tr>
-      <td align="center" bgcolor="${INK}" style="border-radius:999px">
+      <td align="center" bgcolor="${LIME}" style="border-radius:999px">
         <a href="${url}" target="_blank"
-           style="display:inline-block;padding:14px 30px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;line-height:1;color:#ffffff;text-decoration:none;border-radius:999px">
+           style="display:inline-block;padding:14px 30px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;line-height:1;color:${LIME_INK};text-decoration:none;border-radius:999px">
           ${text}
         </a>
       </td>
@@ -85,7 +89,7 @@ export function renderBrandedEmail(o: BrandedEmailOpts): string {
             <td style="padding:4px 4px 20px;">
               <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td style="background:${INK};border-radius:8px;width:32px;height:32px;text-align:center;vertical-align:middle;font-family:${sans};font-weight:700;font-size:14px;color:#ffffff;">Sr</td>
+                  <td style="background:${LIME};border-radius:8px;width:32px;height:32px;text-align:center;vertical-align:middle;font-family:${sans};font-weight:700;font-size:14px;color:${LIME_INK};">Sr</td>
                   <td style="padding-left:10px;font-family:${sans};font-weight:600;font-size:17px;color:${INK};">SessionRemind</td>
                 </tr>
               </table>

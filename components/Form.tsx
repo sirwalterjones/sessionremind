@@ -25,7 +25,7 @@ interface FormProps {
 }
 
 const inputCls =
-  'w-full rounded-lg border border-hairline bg-white px-3.5 py-2.5 text-[15px] text-ink placeholder-[#A8A49C] focus:border-ink focus:outline-none'
+  'w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40'
 
 function Toggle({
   checked,
@@ -41,8 +41,8 @@ function Toggle({
       checked={checked}
       onChange={onChange}
       className={`${
-        checked ? 'bg-ink' : 'bg-[#D8D5CE]'
-      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2`}
+        checked ? 'bg-accent' : 'bg-white/15'
+      } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas`}
     >
       <span className="sr-only">{srLabel}</span>
       <span
@@ -57,14 +57,14 @@ function Toggle({
 
 function PlaceholderChips({ onInsert }: { onInsert: (placeholder: string) => void }) {
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-[#6E6A63]">
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-muted">
       <span className="mr-0.5">Insert:</span>
       {['{name}', '{sessionTitle}', '{sessionTime}'].map((p) => (
         <button
           key={p}
           type="button"
           onClick={() => onInsert(p)}
-          className="rounded-full border border-hairline px-2.5 py-1 font-mono text-[11px] text-[#6E6A63] transition-colors hover:border-ink hover:text-ink"
+          className="rounded-full border border-hairline px-2.5 py-1 font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
         >
           {p}
         </button>
@@ -81,13 +81,13 @@ function OptInRow({
   onChange: (value: boolean) => void
 }) {
   return (
-    <div className="flex items-start gap-3.5 rounded-xl border border-hairline bg-[#FAFAF8] p-4">
+    <div className="flex items-start gap-3.5 rounded-xl border border-hairline bg-panel p-4">
       <div className="mt-0.5">
         <Toggle checked={checked} onChange={onChange} srLabel="Client has opted in to SMS" />
       </div>
       <div>
         <span className="text-sm font-medium text-ink">Client has opted in to SMS reminders</span>
-        <p className="mt-0.5 text-xs text-[#6E6A63]">Required for compliance with SMS regulations.</p>
+        <p className="mt-0.5 text-xs text-muted">Required for compliance with SMS regulations.</p>
       </div>
     </div>
   )
@@ -146,9 +146,9 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
     <form onSubmit={handleSubmit} className="space-y-5 text-ink">
 
       {/* Client */}
-      <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+      <section className="rounded-2xl border border-hairline bg-panel p-5 sm:p-7">
         <h3 className="font-display text-lg font-semibold">Client</h3>
-        <p className="mt-0.5 text-sm text-[#6E6A63]">Who&apos;s coming to the session.</p>
+        <p className="mt-0.5 text-sm text-muted">Who&apos;s coming to the session.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
@@ -201,9 +201,9 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
       </section>
 
       {/* Session */}
-      <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+      <section className="rounded-2xl border border-hairline bg-panel p-5 sm:p-7">
         <h3 className="font-display text-lg font-semibold">Session</h3>
-        <p className="mt-0.5 text-sm text-[#6E6A63]">What they booked and when.</p>
+        <p className="mt-0.5 text-sm text-muted">What they booked and when.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4">
           <div>
@@ -242,9 +242,9 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
 
       {/* Reminder message — hidden when manual text is enabled */}
       {!formData.sendManualText && (
-        <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+        <section className="rounded-2xl border border-hairline bg-panel p-5 sm:p-7">
           <h3 className="font-display text-lg font-semibold">Reminder message</h3>
-          <p className="mt-0.5 text-sm text-[#6E6A63]">What your client receives before the session.</p>
+          <p className="mt-0.5 text-sm text-muted">What your client receives before the session.</p>
 
           <div className="mt-6 space-y-5">
             <div>
@@ -271,9 +271,9 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
 
       {/* Schedule — hidden when manual text is enabled */}
       {!formData.sendManualText && (
-        <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+        <section className="rounded-2xl border border-hairline bg-panel p-5 sm:p-7">
           <h3 className="font-display text-lg font-semibold">Schedule</h3>
-          <p className="mt-0.5 text-sm text-[#6E6A63]">When messages go out.</p>
+          <p className="mt-0.5 text-sm text-muted">When messages go out.</p>
 
           <div className="mt-6 space-y-5">
             <div className="flex items-start gap-3.5">
@@ -286,7 +286,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
               </div>
               <div>
                 <span className="text-sm font-medium text-ink">Registration confirmation</span>
-                <p className="mt-0.5 text-xs text-[#6E6A63]">
+                <p className="mt-0.5 text-xs text-muted">
                   One text sent now to confirm the booking and session details.
                 </p>
               </div>
@@ -301,11 +301,11 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                     id="threeDayReminder"
                     checked={formData.threeDayReminder}
                     onChange={(e) => handleChange('threeDayReminder', e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#141414]"
+                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#C6F24E]"
                   />
                   <label htmlFor="threeDayReminder">
                     <span className="text-sm font-medium text-ink">3-day reminder</span>
-                    <p className="text-xs text-[#6E6A63]">Sent 3 days before the session at 10:00 AM.</p>
+                    <p className="text-xs text-muted">Sent 3 days before the session at 10:00 AM.</p>
                   </label>
                 </div>
 
@@ -315,11 +315,11 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                     id="oneDayReminder"
                     checked={formData.oneDayReminder}
                     onChange={(e) => handleChange('oneDayReminder', e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#141414]"
+                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#C6F24E]"
                   />
                   <label htmlFor="oneDayReminder">
                     <span className="text-sm font-medium text-ink">1-day reminder</span>
-                    <p className="text-xs text-[#6E6A63]">Sent 1 day before the session at 10:00 AM.</p>
+                    <p className="text-xs text-muted">Sent 1 day before the session at 10:00 AM.</p>
                   </label>
                 </div>
               </div>
@@ -329,11 +329,11 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
       )}
 
       {/* Manual text */}
-      <section className="rounded-2xl border border-hairline p-5 sm:p-7">
+      <section className="rounded-2xl border border-hairline bg-panel p-5 sm:p-7">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="font-display text-lg font-semibold">Manual text</h3>
-            <p className="mt-0.5 text-sm text-[#6E6A63]">
+            <p className="mt-0.5 text-sm text-muted">
               Send one custom message right now instead of the schedule above.
             </p>
           </div>
@@ -374,10 +374,10 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-ink px-8 py-3 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-8 py-3 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           {isSubmitting && (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-ink/30 border-t-accent-ink" />
           )}
           {isSubmitting ? 'Sending…' : 'Send messages'}
         </button>

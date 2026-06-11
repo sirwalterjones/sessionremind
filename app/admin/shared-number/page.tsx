@@ -145,13 +145,13 @@ export default function SharedNumberAdminPage() {
   const live = Boolean(sender?.messagingServiceSid || sender?.phoneNumber) || state.status === 'active'
   const status = live ? 'active' : state.status || 'none'
   const editable = status === 'none' || status === 'failed'
-  const input = 'w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none disabled:bg-[#FAFAF8] disabled:text-[#9A958C]'
+  const input = 'w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 disabled:bg-panel disabled:text-faint'
   const tone: Record<string, string> = {
-    none: 'border-hairline bg-[#FAFAF8]',
-    provisioning: 'border-hairline bg-[#FAFAF8]',
-    pending_verification: 'border-hairline bg-[#FAFAF8]',
-    active: 'border-[#BFE3C9] bg-[#F1FAF3]',
-    failed: 'border-[#E7C3B8] bg-[#FBF4F1] text-[#B23A1E]',
+    none: 'border-hairline bg-panel',
+    provisioning: 'border-hairline bg-panel',
+    pending_verification: 'border-amber-300/20 bg-amber-300/10 text-amber-200',
+    active: 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300',
+    failed: 'border-red-400/30 bg-red-500/15 text-red-300',
   }
   const StatusIcon = status === 'active' ? CheckCircleIcon : status === 'failed' ? ExclamationTriangleIcon : ClockIcon
   const phone = sender?.phoneNumber || state.phoneNumber
@@ -162,14 +162,14 @@ export default function SharedNumberAdminPage() {
         <button
           onClick={() => router.push('/admin')}
           aria-label="Back to admin"
-          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
+          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-white/5"
         >
           <ArrowLeftIcon className="h-4 w-4" />
         </button>
         <div>
           <div className="eyebrow mb-2">Operator · shared number</div>
           <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.0]">Shared sending number</h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[#6E6A63]">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
             The one SessionRemind toll-free number every studio sends through by default. Verify it once; after that
             new studios are instant. Studios can still upgrade to their own number anytime.
           </p>
@@ -195,10 +195,10 @@ export default function SharedNumberAdminPage() {
         )}
 
         {editable && (
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8 space-y-6">
+          <div className="rounded-2xl border border-hairline bg-card p-6 sm:p-8 space-y-6">
             <div>
               <h2 className="font-display text-xl font-semibold">SessionRemind business details</h2>
-              <p className="mt-1.5 text-[14px] text-[#6E6A63]">Used to verify the shared number with the carriers.</p>
+              <p className="mt-1.5 text-[14px] text-muted">Used to verify the shared number with the carriers.</p>
             </div>
             <div>
               <label className="eyebrow mb-2 block">Legal business name</label>
@@ -249,7 +249,7 @@ export default function SharedNumberAdminPage() {
             <button
               onClick={provision}
               disabled={busy}
-              className="rounded-full bg-ink px-6 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {busy ? 'Working…' : status === 'failed' ? 'Try again' : 'Buy + verify shared number'}
             </button>
@@ -257,15 +257,15 @@ export default function SharedNumberAdminPage() {
         )}
 
         {(status === 'pending_verification' || status === 'provisioning') && (
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+          <div className="rounded-2xl border border-hairline bg-card p-6 sm:p-8">
             <h2 className="font-display text-xl font-semibold">Check verification status</h2>
-            <p className="mt-1 text-[14px] leading-relaxed text-[#6E6A63]">
+            <p className="mt-1 text-[14px] leading-relaxed text-muted">
               The cron re-checks automatically every few minutes and emails on approval. You can also re-check now.
             </p>
             <button
               onClick={refresh}
               disabled={busy}
-              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-50"
+              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
             >
               {busy ? 'Checking…' : 'Refresh status'}
             </button>

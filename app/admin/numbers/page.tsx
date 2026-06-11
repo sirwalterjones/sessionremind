@@ -24,15 +24,15 @@ interface SenderRow {
 }
 
 const STATUS_STYLE: Record<string, { color: string; label: string }> = {
-  active: { color: '#16a34a', label: 'Active' },
-  pending_verification: { color: '#d97706', label: 'Pending verification' },
-  provisioning: { color: '#2563eb', label: 'Provisioning' },
-  failed: { color: '#dc2626', label: 'Failed' },
-  none: { color: '#8A857C', label: 'None' },
+  active: { color: '#34D399', label: 'Active' },
+  pending_verification: { color: '#FBBF24', label: 'Pending verification' },
+  provisioning: { color: '#7DD3FC', label: 'Provisioning' },
+  failed: { color: '#F87171', label: 'Failed' },
+  none: { color: '#6E736C', label: 'None' },
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const s = STATUS_STYLE[status] || { color: '#8A857C', label: status }
+  const s = STATUS_STYLE[status] || { color: '#6E736C', label: status }
   return (
     <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-sm">
       <span className="h-2 w-2 rounded-full" style={{ background: s.color }} />
@@ -130,7 +130,7 @@ export default function NumbersPage() {
 
       <div className="mt-2 overflow-x-auto rounded-xl border border-hairline">
         <table className="w-full min-w-[760px] text-sm">
-          <thead className="bg-[#FAFAF8] text-left font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+          <thead className="bg-panel text-left font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
             <tr>
               <th className="px-3 py-2.5">Tenant</th>
               <th className="px-3 py-2.5">Number</th>
@@ -142,13 +142,13 @@ export default function NumbersPage() {
           </thead>
           <tbody className="divide-y divide-hairline">
             {rows.map((r) => (
-              <tr key={r.userId} className="bg-white align-top">
+              <tr key={r.userId} className="align-top hover:bg-card">
                 <td className="px-3 py-2.5">
                   <div className="font-medium text-ink">
                     {r.isShared ? (
                       <span className="inline-flex items-center gap-1.5">
                         {r.username}
-                        <span className="rounded-full bg-[#FAFAF8] border border-hairline px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+                        <span className="rounded-full bg-white/5 border border-hairline px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
                           Platform
                         </span>
                       </span>
@@ -169,7 +169,7 @@ export default function NumbersPage() {
                     {r.sender.verificationStatus || '—'}
                   </div>
                   {r.sender.rejectionReason && (
-                    <div className="mt-1 max-w-[260px] text-xs text-[#dc2626]">{r.sender.rejectionReason}</div>
+                    <div className="mt-1 max-w-[260px] text-xs text-red-300">{r.sender.rejectionReason}</div>
                   )}
                   {r.sender.error && (
                     <div className="mt-1 max-w-[260px] text-xs text-muted">{r.sender.error}</div>
@@ -183,7 +183,7 @@ export default function NumbersPage() {
                     <button
                       onClick={() => refreshOne(r.userId)}
                       disabled={busy.has(r.userId)}
-                      className="whitespace-nowrap rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-40"
+                      className="whitespace-nowrap rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-40"
                     >
                       {busy.has(r.userId) ? 'Checking…' : 'Refresh from Twilio'}
                     </button>
@@ -192,7 +192,7 @@ export default function NumbersPage() {
               </tr>
             ))}
             {!fetching && rows.length === 0 && (
-              <tr className="bg-white">
+              <tr>
                 <td colSpan={6} className="px-3 py-8 text-center text-sm text-muted">
                   No number requests yet.
                 </td>

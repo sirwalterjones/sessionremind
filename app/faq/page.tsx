@@ -6,7 +6,7 @@ export const metadata = {
     'Answers to common questions about SessionRemind — connecting UseSession, how reminders work, your texting number, plans, and privacy.',
 }
 
-// Swiss-editorial FAQ page — white canvas, ink type, one accent, hairline rules.
+// Swiss-editorial FAQ page — Ink & Acid dark canvas, light ink type, acid accent, hairline rules.
 // Server component; native <details>/<summary> so it works with zero JS.
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -20,7 +20,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function QA({ q, children }: { q: string; children: React.ReactNode }) {
   return (
-    <details className="group rounded-xl border border-hairline bg-white transition-colors open:bg-[#FAFAF8]">
+    <details className="group rounded-xl border border-hairline bg-card transition-colors open:bg-panel">
       <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-[15px] font-medium text-ink [&::-webkit-details-marker]:hidden">
         <span>{q}</span>
         <span
@@ -30,7 +30,7 @@ function QA({ q, children }: { q: string; children: React.ReactNode }) {
           +
         </span>
       </summary>
-      <div className="space-y-3 px-5 pb-5 text-[15px] leading-relaxed text-[#4F4B44]">{children}</div>
+      <div className="space-y-3 px-5 pb-5 text-[15px] leading-relaxed text-muted">{children}</div>
     </details>
   )
 }
@@ -42,7 +42,7 @@ export default function FaqPage() {
       <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">
         Questions, <span className="text-accent">answered.</span>
       </h1>
-      <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[#4F4B44]">
+      <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted">
         Everything photographers ask us most — how connecting works, when texts go out, what your clients
         see, and what it costs. Click any question to expand it.
       </p>
@@ -239,9 +239,9 @@ export default function FaqPage() {
       </div>
 
       {/* ───────────── Still stuck ───────────── */}
-      <div className="mt-14 rounded-2xl border border-hairline bg-[#FAFAF8] p-6 sm:p-8">
+      <div className="mt-14 rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
         <div className="eyebrow mb-2">Still stuck?</div>
-        <p className="text-[15px] leading-relaxed text-[#4F4B44]">
+        <p className="text-[15px] leading-relaxed text-muted">
           Didn&apos;t find your answer? We&apos;re happy to help —{' '}
           <Link href="/contact" className="font-medium text-accent underline">
             contact us
@@ -251,7 +251,7 @@ export default function FaqPage() {
       </div>
 
       <div className="mt-12 border-t border-hairline pt-6">
-        <Link href="/" className="text-sm font-medium text-[#6E6A63] hover:text-ink transition-colors">
+        <Link href="/" className="text-sm font-medium text-muted hover:text-ink transition-colors">
           ← Back to SessionRemind
         </Link>
       </div>

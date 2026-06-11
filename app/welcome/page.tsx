@@ -60,11 +60,11 @@ const PENDING_REASSURANCE =
   "Your text reminders keep sending normally while you wait — nothing pauses. We'll email you the moment it's approved (typically a few days to ~3 weeks)."
 
 const input =
-  'w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none'
+  'w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40'
 const primaryBtn =
-  'rounded-full bg-ink px-6 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+  'rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50'
 const secondaryBtn =
-  'rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-50'
+  'rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50'
 
 export default function WelcomePage() {
   const router = useRouter()
@@ -231,7 +231,7 @@ export default function WelcomePage() {
         <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
           Let&apos;s get you set up.
         </h1>
-        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted">
           Two quick steps — both skippable — and your clients start getting automatic
           session reminders.
         </p>
@@ -246,7 +246,7 @@ export default function WelcomePage() {
                     ? 'text-ink'
                     : i + 1 < step
                       ? 'text-[#16a34a]'
-                      : 'text-[#9A958C]'
+                      : 'text-faint'
                 }
               >
                 {i + 1 < step ? '✓' : s.n} {s.label}
@@ -267,7 +267,7 @@ export default function WelcomePage() {
                 </span>
                 <h2 className="font-display text-xl font-semibold">UseSession connected</h2>
               </div>
-              <p className="text-sm leading-relaxed text-[#6E6A63]">
+              <p className="text-sm leading-relaxed text-muted">
                 Your bookings sync automatically — new sessions, reschedules, and cancellations
                 are handled for you, and reminders schedule themselves.
               </p>
@@ -281,7 +281,7 @@ export default function WelcomePage() {
                 <span className="h-2 w-2 rounded-full bg-accent" />
                 <h2 className="font-display text-xl font-semibold">Connect your UseSession account</h2>
               </div>
-              <p className="text-sm leading-relaxed text-[#6E6A63] mb-5">
+              <p className="text-sm leading-relaxed text-muted mb-5">
                 Connect once and your bookings sync on their own — every client gets a text
                 reminder before their session, automatically.
               </p>
@@ -291,13 +291,13 @@ export default function WelcomePage() {
                   <button onClick={startConnect} disabled={connecting} className={primaryBtn}>
                     {connecting ? 'Starting…' : 'Connect UseSession'}
                   </button>
-                  <p className="mt-3 max-w-md text-xs text-[#6E6A63]">
+                  <p className="mt-3 max-w-md text-xs text-muted">
                     One button to drag, one click on UseSession — about a minute. We grab what we
                     need automatically.
                   </p>
                 </div>
               ) : (
-                <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5">
+                <div className="rounded-xl border border-hairline bg-panel p-5">
                   <p className="font-display text-sm font-semibold mb-4">Almost there — two steps:</p>
                   <ol className="list-decimal list-inside space-y-4 text-sm text-ink/80">
                     <li>
@@ -323,12 +323,12 @@ export default function WelcomePage() {
                             '<a href="' +
                             bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
                             '" draggable="true" title="Drag me to your bookmarks bar" ' +
-                            'style="background:#141414" ' +
-                            'class="inline-flex items-center px-4 py-2 rounded-full text-white text-sm font-medium cursor-grab no-underline">' +
+                            'style="background:#C6F24E;color:#11130A" ' +
+                            'class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold cursor-grab no-underline">' +
                             'Connect to SessionRemind</a>',
                         }}
                       />
-                      <p className="mt-2 text-xs text-[#6E6A63]">
+                      <p className="mt-2 text-xs text-muted">
                         Can&apos;t drag it?{' '}
                         <button onClick={copyBookmarklet} className="text-accent underline">
                           Copy the link
@@ -350,14 +350,14 @@ export default function WelcomePage() {
                       automatically.
                     </li>
                   </ol>
-                  <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[#6E6A63]">
+                  <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                     Waiting for you to click it · code expires in 10 minutes
                   </p>
                 </div>
               )}
 
               {/* Computer-only hint */}
-              <div className="mt-5 flex items-start gap-2.5 rounded-lg border border-hairline bg-[#FAFAF8] p-4 text-xs text-[#6E6A63]">
+              <div className="mt-5 flex items-start gap-2.5 rounded-lg border border-hairline bg-panel p-4 text-xs text-muted">
                 <ComputerDesktopIcon className="mt-0.5 h-4 w-4 flex-shrink-0" />
                 <span className="leading-relaxed">
                   This one-time step needs a <strong className="font-medium text-ink">computer</strong>{' '}
@@ -370,7 +370,7 @@ export default function WelcomePage() {
                 <button onClick={skipConnect} className={secondaryBtn}>
                   Skip for now
                 </button>
-                <span className="text-xs text-[#9A958C]">
+                <span className="text-xs text-faint">
                   You can connect anytime from the Connect page.
                 </span>
               </div>
@@ -398,7 +398,7 @@ export default function WelcomePage() {
                     : `Your number is registered${pretty ? ` · ${pretty}` : ''}`}
                 </h2>
               </div>
-              <p className="text-sm leading-relaxed text-[#6E6A63]">
+              <p className="text-sm leading-relaxed text-muted">
                 {sender.status === 'active'
                   ? 'Reminders send from your own verified texting number. Nothing more to do.'
                   : PENDING_REASSURANCE}
@@ -413,7 +413,7 @@ export default function WelcomePage() {
                 <span className="h-2 w-2 rounded-full bg-accent" />
                 <h2 className="font-display text-xl font-semibold">Your texting number</h2>
               </div>
-              <p className="text-sm leading-relaxed text-[#6E6A63]">
+              <p className="text-sm leading-relaxed text-muted">
                 Your reminders start sending <strong className="font-medium text-ink">immediately</strong>{' '}
                 from SessionRemind&apos;s shared number — nothing to set up. If you&apos;d like, we can
                 also register a dedicated number to your business (included with your plan), so texts
@@ -431,7 +431,7 @@ export default function WelcomePage() {
                 </div>
               ) : (
                 <form onSubmit={getNumber} className="mt-6 space-y-5">
-                  <p className="text-[13px] leading-relaxed text-[#6E6A63]">
+                  <p className="text-[13px] leading-relaxed text-muted">
                     Use your real, legal business information — the carriers verify it against
                     public records.
                   </p>
@@ -512,13 +512,13 @@ export default function WelcomePage() {
             </span>
             <h2 className="font-display text-xl font-semibold">You&apos;re all set.</h2>
           </div>
-          <p className="text-sm text-[#6E6A63]">Here&apos;s where everything stands:</p>
+          <p className="text-sm text-muted">Here&apos;s where everything stands:</p>
 
           <ul className="mt-5 divide-y divide-hairline">
             <li className="flex items-start gap-3 py-3.5">
               <span
                 className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
-                style={{ background: connected ? '#16a34a' : '#9A958C' }}
+                style={{ background: connected ? '#16a34a' : '#6E736C' }}
               />
               <div>
                 <p className="eyebrow mb-0.5">UseSession</p>
@@ -545,7 +545,7 @@ export default function WelcomePage() {
                       ? '#16a34a'
                       : numberDone
                         ? '#d97706'
-                        : '#9A958C',
+                        : '#6E736C',
                 }}
               />
               <div>
@@ -577,7 +577,7 @@ export default function WelcomePage() {
             </button>
             <Link
               href="/help"
-              className="text-sm font-medium text-[#6E6A63] underline-offset-4 transition-colors hover:text-ink hover:underline"
+              className="text-sm font-medium text-muted underline-offset-4 transition-colors hover:text-ink hover:underline"
             >
               Need a hand? Visit help
             </Link>

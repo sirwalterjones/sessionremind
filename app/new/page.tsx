@@ -380,7 +380,7 @@ function NewReminderContent() {
         <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
           New reminder
         </h1>
-        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted">
           Send a confirmation and schedule SMS reminders for a single client.
         </p>
       </div>
@@ -393,19 +393,19 @@ function NewReminderContent() {
 
       {/* Result modal */}
       {showSuccess && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-hairline bg-white p-8 text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-hairline bg-card p-8 text-center shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
             {resultKind === 'success' ? (
-              <CheckCircleIcon className="mx-auto h-10 w-10 text-ink" />
+              <CheckCircleIcon className="mx-auto h-10 w-10 text-accent" />
             ) : (
-              <ExclamationCircleIcon className="mx-auto h-10 w-10 text-accent" />
+              <ExclamationCircleIcon className="mx-auto h-10 w-10 text-amber-200" />
             )}
 
             <h3 className="font-display mt-4 text-2xl font-semibold text-ink">
               {successMessage}
             </h3>
 
-            <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
+            <p className="mt-3 text-[15px] leading-relaxed text-muted">
               {successDetails}
             </p>
 
@@ -417,7 +417,7 @@ function NewReminderContent() {
                     router.push('/dashboard')
                   }
                 }}
-                className="rounded-full bg-ink px-6 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+                className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
               >
                 {resultKind === 'success' ? 'View dashboard' : 'Got it'}
               </button>
@@ -429,7 +429,7 @@ function NewReminderContent() {
                     // Reset form for another reminder
                     window.location.reload()
                   }}
-                  className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                  className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5"
                 >
                   Send another
                 </button>

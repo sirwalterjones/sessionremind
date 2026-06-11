@@ -239,12 +239,12 @@ export default function ConnectPage() {
       </div>
 
       {/* Connection card */}
-      <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8 mb-6">
         {status.connected ? (
           <div>
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-start gap-3">
-                <span className="mt-1.5 w-2 h-2 rounded-full bg-[#16a34a] flex-shrink-0" />
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" />
                 <div>
                   <p className="font-display font-semibold text-ink">
                     Connected{status.businessName ? ` · ${status.businessName}` : ''}
@@ -261,7 +261,7 @@ export default function ConnectPage() {
                     reminders from any device, including your phone.
                   </p>
                   {status.lastSyncStatus === 'error' && (
-                    <p className="text-sm text-accent mt-1">Last sync error: {status.lastSyncError}</p>
+                    <p className="text-sm text-red-300 mt-1">Last sync error: {status.lastSyncError}</p>
                   )}
                 </div>
               </div>
@@ -269,14 +269,14 @@ export default function ConnectPage() {
                 <button
                   onClick={syncNow}
                   disabled={syncing}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow disabled:opacity-50"
                 >
                   <ArrowPathIcon className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
                   Sync now
                 </button>
                 <button
                   onClick={disconnect}
-                  className="rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-[#FAFAF8] transition-colors"
+                  className="rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-white/5 transition-colors"
                 >
                   Disconnect
                 </button>
@@ -299,7 +299,7 @@ export default function ConnectPage() {
                 <button
                   onClick={startConnect}
                   disabled={connecting}
-                  className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow disabled:opacity-50"
                 >
                   {connecting ? 'Starting…' : 'Connect UseSession'}
                 </button>
@@ -309,7 +309,7 @@ export default function ConnectPage() {
                 </p>
               </div>
             ) : (
-              <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5">
+              <div className="rounded-xl border border-hairline bg-card p-5">
                 <p className="font-display text-sm font-semibold text-ink mb-4">Almost there — two steps:</p>
                 <ol className="text-sm text-ink/80 space-y-4 list-decimal list-inside">
                   <li>
@@ -332,8 +332,8 @@ export default function ConnectPage() {
                           '<a href="' +
                           bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
                           '" draggable="true" title="Drag me to your bookmarks bar" ' +
-                          'style="background:#141414" ' +
-                          'class="inline-flex items-center px-4 py-2 rounded-full text-white text-sm font-medium cursor-grab no-underline">' +
+                          'style="background:#C6F24E;color:#11130A" ' +
+                          'class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold cursor-grab no-underline">' +
                           'Connect to SessionRemind</a>',
                       }}
                     />
@@ -351,8 +351,8 @@ export default function ConnectPage() {
                       UseSession
                     </a>{' '}
                     (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
-                    <div className="mt-2 rounded-lg border border-[#f1c9bd] px-3 py-2 text-xs text-ink/80">
-                      <strong className="text-accent font-medium">Important:</strong> Click the bookmark while you&apos;re
+                    <div className="mt-2 rounded-lg border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-ink/80">
+                      <strong className="text-amber-200 font-medium">Important:</strong> Click the bookmark while you&apos;re
                       on the UseSession tab (<span className="font-mono">app.usesession.com</span>) — <strong className="text-ink font-medium">not</strong>{' '}
                       on this SessionRemind tab. It reads your UseSession login, so it only works there.
                     </div>
@@ -363,7 +363,7 @@ export default function ConnectPage() {
             )}
 
             {/* Trust copy */}
-            <div className="mt-6 flex items-start gap-2.5 text-xs text-muted bg-[#FAFAF8] border border-hairline rounded-lg p-4">
+            <div className="mt-6 flex items-start gap-2.5 text-xs text-muted bg-card border border-hairline rounded-lg p-4">
               <ShieldCheckIcon className="w-4 h-4 text-muted mt-0.5 flex-shrink-0" />
               <span className="leading-relaxed">
                 Your UseSession access is <strong className="text-ink font-medium">AES-256 encrypted</strong> and used only to read <em>your</em>{' '}
@@ -381,7 +381,7 @@ export default function ConnectPage() {
 
       {/* Settings */}
       {settings && (
-        <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+        <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8 mb-6">
           <h2 className="font-display text-xl font-semibold text-ink mb-6">Reminder settings</h2>
           <div className="space-y-5">
             <div>
@@ -390,7 +390,7 @@ export default function ConnectPage() {
                 value={settings.studioName}
                 onChange={(e) => setSettings({ ...settings, studioName: e.target.value })}
                 onBlur={() => autoSave({ studioName: settings.studioName })}
-                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+                className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
               />
             </div>
             <div>
@@ -401,7 +401,7 @@ export default function ConnectPage() {
                 value={settings.reminderTemplate}
                 onChange={(e) => setSettings({ ...settings, reminderTemplate: e.target.value })}
                 onBlur={() => autoSave({ reminderTemplate: settings.reminderTemplate })}
-                className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] h-24 focus:border-ink focus:outline-none"
+                className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] h-24 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
               />
               <p className="font-mono text-xs text-muted mt-1.5">
                 Placeholders: {'{name}'} {'{sessionTitle}'} {'{sessionTime}'} {'{studioName}'}
@@ -424,7 +424,7 @@ export default function ConnectPage() {
                           autoSave({ offsetsDays: next })
                         }}
                         className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                          on ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-hairline hover:bg-[#FAFAF8]'
+                          on ? 'bg-accent text-accent-ink border-accent' : 'bg-card text-muted border-hairline hover:bg-white/5'
                         }`}
                       >
                         {d}-day
@@ -443,11 +443,11 @@ export default function ConnectPage() {
                   }}
                   className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     settings.autoSchedule
-                      ? 'border-[#cfe8d4] text-[#16a34a]'
+                      ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
                       : 'border-hairline text-muted'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-[#16a34a]' : 'bg-muted'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-emerald-300' : 'bg-muted'}`} />
                   {settings.autoSchedule ? 'On' : 'Off'}
                 </button>
               </div>
@@ -461,11 +461,11 @@ export default function ConnectPage() {
                   }}
                   className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     settings.emailReminders
-                      ? 'border-[#cfe8d4] text-[#16a34a]'
+                      ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
                       : 'border-hairline text-muted'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${settings.emailReminders ? 'bg-[#16a34a]' : 'bg-muted'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.emailReminders ? 'bg-emerald-300' : 'bg-muted'}`} />
                   {settings.emailReminders ? 'On' : 'Off'}
                 </button>
                 <p className="text-xs text-muted mt-1.5">Also emails clients who have an email on file. Needs a verified sending domain.</p>
@@ -479,14 +479,14 @@ export default function ConnectPage() {
       )}
 
       {/* CSV import (no-connection fallback) */}
-      <div className="rounded-2xl border border-hairline p-6 sm:p-8 mb-6">
+      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8 mb-6">
         <h2 className="font-display text-xl font-semibold text-ink mb-1.5">Import from a CSV</h2>
         <p className="font-mono text-xs text-muted mb-5">Works without connecting — great on mobile, or as a backup.</p>
         <CsvImport onImported={loadAll} />
       </div>
 
       {/* Upcoming auto-scheduled reminders */}
-      <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
         <div className="flex items-baseline gap-3 mb-5">
           <h2 className="font-display text-xl font-semibold text-ink">Upcoming reminders</h2>
           {upcoming.length > 0 && <span className="font-mono text-xs text-muted">{upcoming.length}</span>}
@@ -498,7 +498,7 @@ export default function ConnectPage() {
         ) : (
           <div className="divide-y divide-hairline">
             {upcoming.slice(0, 50).map((m) => (
-              <div key={m.id} className="py-3.5 flex items-start justify-between gap-3 -mx-3 px-3 rounded-lg hover:bg-[#FAFAF8] transition-colors">
+              <div key={m.id} className="py-3.5 flex items-start justify-between gap-3 -mx-3 px-3 rounded-lg hover:bg-card transition-colors">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink truncate">
                     {m.clientName} <span className="text-muted">· {m.sessionTitle}</span>
@@ -510,7 +510,7 @@ export default function ConnectPage() {
                 </div>
                 <button
                   onClick={() => cancelReminder(m.id)}
-                  className="text-muted hover:text-accent transition-colors flex-shrink-0"
+                  className="text-muted hover:text-red-300 transition-colors flex-shrink-0"
                   title="Cancel this reminder"
                 >
                   <TrashIcon className="w-4 h-4" />

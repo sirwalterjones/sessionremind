@@ -2,40 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
 /* ============================================================
-   Design system — sleek Swiss-editorial (white · ink · accent)
+   Design system — Ink & Acid
+   Cool graphite canvas, light text, acid-lime accent, hairline
+   rules, wide Archivo display type, mono metadata. Dark, always.
    ============================================================ */
 
 :root {
-  --ink: #141414;
-  --muted: #6E6A63;
-  --hairline: #ECEAE4;
-  --paper: #f7f6f3;
-  --accent: #dd4d24;
+  --ink: #f4f6f0; /* primary text */
+  --muted: #a3a8a0;
+  --faint: #6e736c;
+  --hairline: #272b31;
+  --canvas: #101113;
+  --panel: #16181c;
+  --card: #1a1d22;
+  --accent: #c6f24e;
+  --accent-ink: #11130a;
 }
 
 html {
@@ -43,19 +25,31 @@ html {
   /* Contain the full-bleed (100vw) marketing bands so they can't create a
      horizontal scrollbar / clip content. `clip` is sticky-nav safe. */
   overflow-x: clip;
+  color-scheme: dark;
 }
 
 body {
+  background: var(--canvas);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
   max-width: 100%;
 }
 
-/* Tight display headings (uses the grotesque, just heavier + tighter) */
+/* Wide, sharp display headings — Archivo stretched toward Expanded */
 .font-display {
   font-family: var(--font-body), system-ui, sans-serif;
-  letter-spacing: -0.025em;
+  font-stretch: 118%;
+  letter-spacing: -0.02em;
+}
+
+/* Extra-wide uppercase display for hero-scale type */
+.font-display-wide {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-stretch: 125%;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 /* Small uppercase monospaced label */
@@ -74,64 +68,57 @@ body {
   margin-right: calc(50% - 50vw);
 }
 
-/* ============================================================
-   Darkroom (homepage) — warm black, safelight accent, film motifs
-   ============================================================ */
-
-/* Editorial serif display face (Fraunces) */
-.font-serif-display {
-  font-family: var(--font-serif), Georgia, 'Times New Roman', serif;
-  letter-spacing: -0.015em;
+/* Subtle cool wash + lime spill for hero backgrounds */
+.hero-glow {
+  background-image: radial-gradient(
+      ellipse 70% 55% at 75% -10%,
+      rgba(198, 242, 78, 0.1) 0%,
+      rgba(198, 242, 78, 0.035) 45%,
+      transparent 70%
+    ),
+    radial-gradient(ellipse 50% 40% at 10% -5%, rgba(244, 246, 240, 0.05), transparent 60%);
 }
 
-/* Photographic grain overlay — parent must be position:relative */
+/* Fine grain so the graphite doesn't read flat — parent must be relative */
 .film-grain::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.4;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
 }
 
-/* Safelight wash for the dark hero */
-.safelight {
-  background:
-    radial-gradient(ellipse 75% 60% at 72% -12%, rgba(221, 77, 36, 0.24), transparent 65%),
-    radial-gradient(ellipse 55% 45% at 12% -5%, rgba(221, 77, 36, 0.1), transparent 60%);
+/* Ruler tick strip — the gear-UI signature divider */
+.tick-rule {
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--hairline) 0 1px,
+    transparent 1px 14px
+  );
 }
 
-/* Row of film sprocket holes (page background punches through the strip) */
-.sprocket-row {
-  height: 16px;
-  background-image: radial-gradient(4.5px 3.5px at center, #0d0b09 97%, transparent 100%);
-  background-size: 21px 16px;
-  background-repeat: repeat-x;
-  background-position: center;
-}
-
-/* Blinking darkroom LED */
+/* Status LED (lime) */
 @keyframes ledPulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px 2px rgba(221, 77, 36, 0.55); }
-  50% { opacity: 0.45; box-shadow: 0 0 2px 0 rgba(221, 77, 36, 0.25); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px 2px rgba(198, 242, 78, 0.5); }
+  50% { opacity: 0.45; box-shadow: 0 0 2px 0 rgba(198, 242, 78, 0.2); }
 }
 .led { animation: ledPulse 1.8s ease-in-out infinite; }
 
-/* Safelight halo text */
+/* Lime halo text */
 .glow-accent {
-  text-shadow: 0 0 28px rgba(221, 77, 36, 0.45), 0 0 90px rgba(221, 77, 36, 0.22);
+  text-shadow: 0 0 26px rgba(198, 242, 78, 0.4), 0 0 80px rgba(198, 242, 78, 0.18);
 }
 
-/* Contact-sheet frame: dim negative that "develops" on hover */
+/* Card that lights up on hover */
 .frame-develop {
-  filter: brightness(0.86);
-  transition: filter 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
 }
 .frame-develop:hover {
-  filter: brightness(1);
-  border-color: rgba(221, 77, 36, 0.45);
-  box-shadow: 0 24px 70px -35px rgba(221, 77, 36, 0.4);
+  border-color: rgba(198, 242, 78, 0.45);
+  box-shadow: 0 24px 70px -35px rgba(198, 242, 78, 0.35);
 }
 
 /* Slow breathing glow behind the final CTA */
@@ -140,16 +127,6 @@ body {
   50% { opacity: 0.85; transform: scale(1.07); }
 }
 .breathe { animation: breathe 7s ease-in-out infinite; }
-
-/* Soft warm accent glow for hero backgrounds */
-.hero-glow {
-  background-image: radial-gradient(
-    ellipse 80% 60% at 50% -10%,
-    rgba(221, 77, 36, 0.07) 0%,
-    rgba(221, 77, 36, 0.03) 45%,
-    transparent 70%
-  );
-}
 
 /* Notification animations (toasts + confirm modal) */
 @keyframes srToastIn {

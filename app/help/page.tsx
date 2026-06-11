@@ -38,7 +38,7 @@ function Section({
     <section id={id} className="scroll-mt-24 border-t border-hairline pt-10">
       <div className="eyebrow mb-3">{eyebrow}</div>
       <h2 className="font-display text-2xl sm:text-3xl font-semibold leading-tight">{title}</h2>
-      <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-[#4F4B44]">{children}</div>
+      <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-muted">{children}</div>
     </section>
   )
 }
@@ -48,13 +48,13 @@ function Steps({ items }: { items: Array<[string, React.ReactNode]> }) {
   return (
     <ol className="overflow-hidden rounded-2xl border border-hairline divide-y divide-hairline">
       {items.map(([title, body], i) => (
-        <li key={i} className="flex gap-4 bg-white p-5 sm:p-6">
+        <li key={i} className="flex gap-4 bg-card p-5 sm:p-6">
           <span className="flex-shrink-0 pt-0.5 font-mono text-sm text-accent">
             {String(i + 1).padStart(2, '0')}
           </span>
           <div className="min-w-0">
             <h3 className="font-display text-[16px] font-semibold text-ink">{title}</h3>
-            <div className="mt-1 text-[14px] leading-relaxed text-[#5F5B54]">{body}</div>
+            <div className="mt-1 text-[14px] leading-relaxed text-muted">{body}</div>
           </div>
         </li>
       ))}
@@ -64,7 +64,7 @@ function Steps({ items }: { items: Array<[string, React.ReactNode]> }) {
 
 function Note({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-hairline bg-[#FAFAF8] p-5 text-[14px] leading-relaxed text-[#4F4B44]">
+    <div className="rounded-xl border border-hairline bg-panel p-5 text-[14px] leading-relaxed text-muted">
       {children}
     </div>
   )
@@ -79,21 +79,21 @@ export default function HelpPage() {
         <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">
           Help &amp; documentation
         </h1>
-        <p className="mt-5 text-lg leading-relaxed text-[#4F4B44]">
+        <p className="mt-5 text-lg leading-relaxed text-muted">
           Everything you need to put session reminders on autopilot — from connecting UseSession to
           getting your own texting number. Most studios are fully set up in about a minute.
         </p>
       </div>
 
       {/* Mobile jump-list */}
-      <div className="mt-8 rounded-2xl border border-hairline bg-[#FAFAF8] p-5 lg:hidden">
+      <div className="mt-8 rounded-2xl border border-hairline bg-panel p-5 lg:hidden">
         <div className="eyebrow mb-3">Jump to</div>
         <div className="flex flex-wrap gap-2">
           {SECTIONS.map((s) => (
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="rounded-full border border-hairline bg-white px-3.5 py-1.5 text-[13px] font-medium text-ink transition-colors hover:border-ink"
+              className="rounded-full border border-hairline bg-card px-3.5 py-1.5 text-[13px] font-medium text-ink transition-colors hover:border-accent/60"
             >
               {s.label}
             </a>
@@ -112,7 +112,7 @@ export default function HelpPage() {
                 <li key={s.id}>
                   <a
                     href={`#${s.id}`}
-                    className="block text-sm leading-snug text-[#6E6A63] transition-colors hover:text-ink"
+                    className="block text-sm leading-snug text-muted transition-colors hover:text-ink"
                   >
                     {s.label}
                   </a>
@@ -171,7 +171,7 @@ export default function HelpPage() {
               ]}
             />
             <div className="overflow-hidden rounded-2xl border border-hairline">
-              <div className="grid grid-cols-3 gap-2 border-b border-hairline bg-[#FAFAF8] px-5 py-3">
+              <div className="grid grid-cols-3 gap-2 border-b border-hairline bg-panel px-5 py-3">
                 <span className="eyebrow">Plan</span>
                 <span className="eyebrow">Price</span>
                 <span className="eyebrow">Texts / month</span>
@@ -182,11 +182,11 @@ export default function HelpPage() {
                     <span className="font-display text-[15px] font-semibold text-ink">
                       {plan.name}
                     </span>
-                    <span className="text-[15px] text-[#4F4B44]">
+                    <span className="text-[15px] text-muted">
                       ${plan.price}
-                      <span className="text-[13px] text-[#8A857C]"> / mo</span>
+                      <span className="text-[13px] text-faint"> / mo</span>
                     </span>
-                    <span className="font-mono text-[13px] text-[#6E6A63]">
+                    <span className="font-mono text-[13px] text-muted">
                       {plan.includedTexts.toLocaleString()} included
                     </span>
                   </div>
@@ -581,25 +581,25 @@ export default function HelpPage() {
           </Section>
 
           {/* Need more help? */}
-          <div className="rounded-2xl bg-ink p-8 sm:p-10 text-white">
-            <div className="eyebrow mb-3" style={{ color: '#8A8273' }}>
+          <div className="rounded-2xl border border-hairline bg-panel p-8 sm:p-10 text-ink">
+            <div className="eyebrow mb-3">
               Still stuck?
             </div>
             <h2 className="font-display text-2xl sm:text-3xl font-semibold">Need more help?</h2>
-            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[#B6AE9E]">
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted">
               We’re photographers’ people — ask us anything and we’ll get you sorted, usually within a
               day.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-[15px] font-medium text-ink transition-colors hover:bg-[#f0eee9]"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
               >
                 Contact support <span aria-hidden>→</span>
               </Link>
               <Link
                 href="/faq"
-                className="inline-flex items-center rounded-full border border-white/25 px-6 py-3 text-[15px] font-medium text-white transition-colors hover:bg-white/10"
+                className="inline-flex items-center rounded-full border border-hairline px-6 py-3 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
               >
                 Browse the FAQ
               </Link>

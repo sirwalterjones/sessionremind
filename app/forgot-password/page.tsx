@@ -6,7 +6,7 @@ import Turnstile from '@/components/Turnstile'
 
 const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
-const A = '#DD4D24' // accent
+const A = '#C6F24E' // accent
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
           Check your inbox
         </div>
         <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">On its way.</h1>
-        <p className="mt-4 text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-4 text-[15px] leading-relaxed text-muted">
           If an account exists for <span className="font-medium text-ink">{email}</span>, a reset
           link is on its way. It expires in 1 hour — check spam if it doesn&apos;t show up in a
           minute or two.
@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             href="/login"
-            className="rounded-full bg-ink px-6 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
           >
             Back to sign in
           </Link>
@@ -76,14 +76,14 @@ export default function ForgotPasswordPage() {
           <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
             Forgot your password?
           </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
+          <p className="mt-3 text-[15px] leading-relaxed text-muted">
             Enter the email you signed up with and we&apos;ll send a link to choose a new one.
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="mt-10 space-y-5 rounded-2xl border border-hairline bg-white p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.3)] sm:p-8"
+          className="mt-10 space-y-5 rounded-2xl border border-hairline bg-card p-6 sm:p-8"
         >
           <div>
             <label htmlFor="email" className="eyebrow mb-2 block">
@@ -97,7 +97,7 @@ export default function ForgotPasswordPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-hairline bg-white px-3.5 py-2.5 text-[15px] placeholder:text-[#B5B0A8] transition-colors focus:border-ink focus:outline-none"
+              className="w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint transition-colors focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
               placeholder="you@yourstudio.com"
             />
           </div>
@@ -105,7 +105,7 @@ export default function ForgotPasswordPage() {
           <Turnstile onVerify={setTurnstileToken} />
 
           {error && (
-            <div className="rounded-lg border border-hairline bg-[#FAFAF8] px-4 py-3 text-sm text-accent">
+            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300">
               {error}
             </div>
           )}
@@ -113,7 +113,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={sending || (TURNSTILE_ENABLED && !turnstileToken)}
-            className="group flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-medium text-white transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
             {sending ? (
               'Sending link…'
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
             )}
           </button>
 
-          <p className="text-center text-sm text-[#6E6A63]">
+          <p className="text-center text-sm text-muted">
             Remembered it?{' '}
             <Link href="/login" className="font-medium text-ink underline-offset-4 hover:underline">
               Sign in

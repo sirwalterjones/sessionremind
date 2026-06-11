@@ -4,10 +4,10 @@ import React from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 
-// Sleek Swiss-editorial "How it works" page — white canvas, ink type, one accent,
-// hairline rules, generous whitespace. Mirrors the homepage design system.
+// Sleek Swiss-editorial "How it works" page — Ink & Acid dark canvas, light ink
+// type, acid-lime accent, hairline rules, generous whitespace.
 
-const A = '#DD4D24' // accent
+const A = '#C6F24E' // accent
 
 function ArrowCta({
   href,
@@ -23,8 +23,8 @@ function ArrowCta({
       href={href}
       className={`group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium transition-all ${
         dark
-          ? 'bg-white text-ink hover:bg-[#f0eee9]'
-          : 'bg-ink text-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)]'
+          ? 'border border-hairline text-ink hover:bg-white/5'
+          : 'bg-accent text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]'
       }`}
     >
       {children}
@@ -43,7 +43,7 @@ export default function Instructions() {
   return (
     <div className="-mt-6 sm:-mt-10 text-ink">
       {/* ───────────── HERO ───────────── */}
-      <section className="full-bleed relative bg-white">
+      <section className="full-bleed relative bg-canvas">
         <div className="hero-glow absolute inset-0 h-[420px]" aria-hidden />
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-20">
           <div className="max-w-3xl">
@@ -58,7 +58,7 @@ export default function Instructions() {
               We do the <span style={{ color: A }}>chasing.</span>
             </h1>
 
-            <p className="mt-7 text-lg leading-relaxed text-[#4F4B44] max-w-xl">
+            <p className="mt-7 text-lg leading-relaxed text-muted max-w-xl">
               Link your UseSession account a single time. From then on, SessionRemind syncs your
               bookings and texts every client a perfectly-timed reminder before their shoot — no
               spreadsheets, no copy-paste, no chasing.
@@ -74,7 +74,7 @@ export default function Instructions() {
               </a>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-5 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
+            <div className="mt-10 flex flex-wrap items-center gap-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
               <span>One-click connect</span>
               <span className="w-px h-3 bg-hairline" />
               <span>No passwords stored</span>
@@ -86,7 +86,7 @@ export default function Instructions() {
       </section>
 
       {/* ───────────── THREE STEPS ───────────── */}
-      <section id="steps" className="full-bleed bg-[#FAFAF8] border-t border-hairline">
+      <section id="steps" className="full-bleed bg-panel border-t border-hairline">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-14">
             <div>
@@ -95,7 +95,7 @@ export default function Instructions() {
                 Three steps. Then it runs itself.
               </h2>
             </div>
-            <p className="text-[#6E6A63] max-w-xs text-[15px] leading-relaxed">
+            <p className="text-muted max-w-xs text-[15px] leading-relaxed">
               The first takes about a minute. The rest happens forever, without you.
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function Instructions() {
                 'A warm, on-brand reminder goes out automatically 3 days and 1 day before every shoot — by text, and email if you turn it on. You never lift a finger.',
               ],
             ].map(([n, t, d]) => (
-              <div key={n} className="group bg-white p-8 hover:bg-[#FCFBF9] transition-colors">
+              <div key={n} className="group bg-card p-8 hover:bg-[#20242A] transition-colors">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="font-mono text-sm" style={{ color: A }}>
                     {n}
@@ -126,12 +126,12 @@ export default function Instructions() {
                   <span className="h-px flex-1 bg-hairline" />
                 </div>
                 <h3 className="font-display text-xl font-semibold mb-3">{t}</h3>
-                <p className="text-[#5F5B54] leading-relaxed text-[15px]">{d}</p>
+                <p className="text-muted leading-relaxed text-[15px]">{d}</p>
               </div>
             ))}
           </div>
 
-          <p className="mt-6 text-[14px] text-[#6E6A63] leading-relaxed max-w-2xl">
+          <p className="mt-6 text-[14px] text-muted leading-relaxed max-w-2xl">
             No UseSession account, or prefer to work from a list?{' '}
             <span className="text-ink font-medium">Import a CSV instead</span> — drop in your
             bookings and the same automatic reminders take over from there.
@@ -140,7 +140,7 @@ export default function Instructions() {
       </section>
 
       {/* ───────────── CONNECTOR DETAIL ───────────── */}
-      <section className="full-bleed bg-white border-t border-hairline">
+      <section className="full-bleed bg-canvas border-t border-hairline">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-12 lg:gap-16 items-center">
             <div>
@@ -150,7 +150,7 @@ export default function Instructions() {
                 <br />
                 <span style={{ color: A }}>not a password.</span>
               </h2>
-              <p className="mt-6 text-[#5F5B54] text-lg leading-relaxed max-w-md">
+              <p className="mt-6 text-muted text-lg leading-relaxed max-w-md">
                 Drag the SessionRemind Connector to your bookmarks bar, open UseSession while
                 you&apos;re logged in, and click it. That&apos;s the whole setup. We never see your
                 login — only an access token we use strictly read-only, encrypted the instant it
@@ -163,14 +163,14 @@ export default function Instructions() {
 
             {/* sleek connect panel */}
             <div className="relative">
-              <div className="relative rounded-2xl border border-hairline bg-white shadow-[0_30px_80px_-50px_rgba(0,0,0,0.3)] overflow-hidden">
+              <div className="relative rounded-2xl border border-hairline bg-card overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-hairline">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full" style={{ background: A }} />
                     <span className="text-sm font-semibold tracking-tight">Connector</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#16a34a] flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" /> Read-only
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Read-only
                   </span>
                 </div>
                 <div className="divide-y divide-hairline">
@@ -182,16 +182,16 @@ export default function Instructions() {
                     <div key={i} className="flex items-center justify-between px-5 py-3.5">
                       <div>
                         <div className="text-sm font-medium">{t}</div>
-                        <div className="text-xs text-[#8A857C]">{s}</div>
+                        <div className="text-xs text-faint">{s}</div>
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8A857C]">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                         {w}
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="px-5 py-3.5 border-t border-hairline bg-[#FAFAF8] flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#9A958C]">
+                <div className="px-5 py-3.5 border-t border-hairline bg-panel flex items-center justify-between">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
                     Synced automatically
                   </span>
                   <span className="text-xs font-medium" style={{ color: A }}>
@@ -205,11 +205,11 @@ export default function Instructions() {
       </section>
 
       {/* ───────────── PRIVACY (sleek dark) ───────────── */}
-      <section className="full-bleed bg-[#0E0D0B] text-[#EFEAE0]">
+      <section className="full-bleed bg-panel text-ink border-t border-hairline">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-32">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16">
             <div>
-              <div className="eyebrow mb-4" style={{ color: '#8A8273' }}>
+              <div className="eyebrow mb-4">
                 Step 02 · your data stays yours
               </div>
               <h2 className="font-display text-4xl sm:text-6xl font-semibold leading-[1.02]">
@@ -217,7 +217,7 @@ export default function Instructions() {
                 <br />
                 <span style={{ color: A }}>We never snoop.</span>
               </h2>
-              <p className="mt-6 text-[#B6AE9E] text-lg leading-relaxed max-w-md">
+              <p className="mt-6 text-muted text-lg leading-relaxed max-w-md">
                 SessionRemind reads only what a reminder needs and nothing more. Your client list is
                 your business — never ours to mine, share, or sell.
               </p>
@@ -247,9 +247,9 @@ export default function Instructions() {
                       <rect x="5" y="11" width="14" height="9" rx="2" />
                       <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                     </svg>
-                    <h3 className="font-display text-lg font-semibold text-white">{t}</h3>
+                    <h3 className="font-display text-lg font-semibold text-ink">{t}</h3>
                   </div>
-                  <p className="text-[#9C9484] text-[14px] leading-relaxed">{d}</p>
+                  <p className="text-muted text-[14px] leading-relaxed">{d}</p>
                 </div>
               ))}
             </div>
@@ -258,7 +258,7 @@ export default function Instructions() {
       </section>
 
       {/* ───────────── AUTOMATIC REMINDERS ───────────── */}
-      <section className="full-bleed bg-white border-t border-hairline">
+      <section className="full-bleed bg-canvas border-t border-hairline">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-16 items-center">
             <div>
@@ -268,7 +268,7 @@ export default function Instructions() {
                 <br />
                 <span style={{ color: A }}>sent for you.</span>
               </h2>
-              <p className="mt-6 text-[#5F5B54] text-lg leading-relaxed max-w-md">
+              <p className="mt-6 text-muted text-lg leading-relaxed max-w-md">
                 As soon as a booking syncs, two reminders are scheduled automatically — one three
                 days out and one the day before. Sent by text (and email, if you turn it on),
                 on-brand and completely hands-off.
@@ -285,7 +285,7 @@ export default function Instructions() {
                       </span>
                       <span className="h-px flex-1 bg-hairline" />
                     </div>
-                    <p className="text-[#5F5B54] text-[14px] leading-relaxed">{d}</p>
+                    <p className="text-muted text-[14px] leading-relaxed">{d}</p>
                   </div>
                 ))}
               </div>
@@ -293,14 +293,14 @@ export default function Instructions() {
 
             {/* reminder schedule panel */}
             <div className="relative">
-              <div className="relative rounded-2xl border border-hairline bg-white shadow-[0_30px_80px_-50px_rgba(0,0,0,0.3)] overflow-hidden">
+              <div className="relative rounded-2xl border border-hairline bg-card overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-hairline">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full" style={{ background: A }} />
                     <span className="text-sm font-semibold tracking-tight">Scheduled</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#16a34a] flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]" /> Synced
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Synced
                   </span>
                 </div>
                 <div className="divide-y divide-hairline">
@@ -312,16 +312,16 @@ export default function Instructions() {
                     <div key={i} className="flex items-center justify-between px-5 py-3.5">
                       <div>
                         <div className="text-sm font-medium">{n}</div>
-                        <div className="text-xs text-[#8A857C]">{s}</div>
+                        <div className="text-xs text-faint">{s}</div>
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8A857C]">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                         Texts {w}
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="px-5 py-3.5 border-t border-hairline bg-[#FAFAF8] flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#9A958C]">
+                <div className="px-5 py-3.5 border-t border-hairline bg-panel flex items-center justify-between">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
                     Sent on your behalf
                   </span>
                   <span className="text-xs font-medium" style={{ color: A }}>
@@ -335,7 +335,7 @@ export default function Instructions() {
       </section>
 
       {/* ───────────── FINAL CTA ───────────── */}
-      <section className="full-bleed bg-[#FAFAF8] border-t border-hairline">
+      <section className="full-bleed bg-panel border-t border-hairline">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center">
           <h2 className="font-display text-5xl sm:text-7xl font-semibold leading-[0.98]">
             Connect once.
@@ -353,7 +353,7 @@ export default function Instructions() {
               </Link>
             )}
           </div>
-          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
+          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
             Built for photographers who&apos;d rather be behind the camera
           </p>
         </div>

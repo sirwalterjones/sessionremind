@@ -173,10 +173,10 @@ function PaymentRequiredContent() {
         <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05] text-ink">
           Thank you.
         </h1>
-        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">
           Confirming your subscription — this only takes a moment&hellip;
         </p>
-        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C] animate-pulse">
+        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-faint animate-pulse">
           Setting things up
         </p>
       </div>
@@ -188,13 +188,13 @@ function PaymentRequiredContent() {
       <div className="w-full max-w-md">
         <div className="text-center">
           <div className="eyebrow flex items-center justify-center gap-2">
-            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#DD4D24' }} />
+            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#C6F24E' }} />
             Access restricted
           </div>
           <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
             Payment required
           </h1>
-          <p className="mt-3 text-[15px] text-[#6E6A63]">
+          <p className="mt-3 text-[15px] text-muted">
             Your account requires payment to access SessionRemind features.
           </p>
         </div>
@@ -202,8 +202,8 @@ function PaymentRequiredContent() {
         <div className="mt-10 space-y-5">
           {user && (
             <div className="flex items-center gap-3 rounded-2xl border border-hairline p-5">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-ink">
-                <span className="text-sm font-medium text-white">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent">
+                <span className="text-sm font-medium text-accent-ink">
                   {user.username?.[0]?.toUpperCase()}
                 </span>
               </div>
@@ -211,21 +211,21 @@ function PaymentRequiredContent() {
                 <p className="text-sm font-medium text-ink">
                   {user.username}
                 </p>
-                <p className="text-sm text-[#6E6A63]">
+                <p className="text-sm text-muted">
                   {user.email}
                 </p>
               </div>
             </div>
           )}
 
-          <div className="rounded-2xl border border-hairline bg-[#FAFAF8] p-5">
+          <div className="rounded-2xl border border-hairline bg-panel p-5">
             <div className="flex items-start gap-3">
               <ExclamationTriangleIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
               <div>
                 <h2 className="text-sm font-semibold text-ink">
                   Access restricted
                 </h2>
-                <p className="mt-1 text-sm leading-relaxed text-[#6E6A63]">
+                <p className="mt-1 text-sm leading-relaxed text-muted">
                   A paid subscription is required to use SessionRemind. Choose a
                   plan below to continue — you can manage or cancel anytime from
                   your profile.
@@ -241,9 +241,9 @@ function PaymentRequiredContent() {
                 <div className="eyebrow mb-2">{plan.name}</div>
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-display text-3xl font-semibold text-ink">${plan.price}</span>
-                  <span className="text-sm text-[#6E6A63]">/ mo</span>
+                  <span className="text-sm text-muted">/ mo</span>
                 </div>
-                <p className="mt-1 text-xs text-[#6E6A63]">
+                <p className="mt-1 text-xs text-muted">
                   {plan.includedTexts.toLocaleString()} texts/mo included · then ${plan.overage.toFixed(2)}/text
                 </p>
                 <ul className="mt-4 flex-1 space-y-2">
@@ -257,7 +257,7 @@ function PaymentRequiredContent() {
                 <button
                   onClick={() => handlePayment(plan.key)}
                   disabled={isLoading}
-                  className="mt-5 w-full rounded-full bg-ink px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-5 w-full rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoading ? 'Processing…' : `Choose ${plan.name}`}
                 </button>
@@ -268,14 +268,14 @@ function PaymentRequiredContent() {
           <div className="text-center">
             <button
               onClick={handleLogout}
-              className="text-sm font-medium text-[#6E6A63] underline-offset-4 transition-colors hover:text-ink hover:underline"
+              className="text-sm font-medium text-muted underline-offset-4 transition-colors hover:text-ink hover:underline"
             >
               Sign out
             </button>
           </div>
         </div>
 
-        <p className="mt-6 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
+        <p className="mt-6 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
           Questions? Email support@sessionremind.com.
         </p>
       </div>

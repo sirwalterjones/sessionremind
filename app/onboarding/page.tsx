@@ -52,25 +52,25 @@ function StatusBanner({ sender }: { sender: Sender }) {
   const map: Record<string, { icon: any; tone: string; title: string; body: string }> = {
     provisioning: {
       icon: ClockIcon,
-      tone: 'border-hairline bg-[#FAFAF8] text-ink',
+      tone: 'border-hairline bg-panel text-ink',
       title: 'Setting up your number…',
       body: 'We are purchasing your dedicated texting number. This usually takes a moment.',
     },
     pending_verification: {
       icon: ClockIcon,
-      tone: 'border-hairline bg-[#FAFAF8] text-ink',
+      tone: 'border-hairline bg-panel text-ink',
       title: `Verification pending${sender.phoneNumber ? ` · ${sender.phoneNumber}` : ''}`,
       body: 'Your number is registered and your verification was submitted to the carriers. Approval typically takes 1–3 weeks. Reminders keep sending in the meantime.',
     },
     active: {
       icon: CheckCircleIcon,
-      tone: 'border-[#BFE3C9] bg-[#F1FAF3] text-ink',
+      tone: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
       title: `Your number is live${sender.phoneNumber ? ` · ${sender.phoneNumber}` : ''}`,
       body: 'Reminders now send from your own verified texting number.',
     },
     failed: {
       icon: ExclamationTriangleIcon,
-      tone: 'border-[#E7C3B8] bg-[#FBF4F1] text-[#B23A1E]',
+      tone: 'border-red-400/30 bg-red-400/10 text-red-300',
       title: 'Setup needs attention',
       body: sender.rejectionReason || sender.error || 'There was a problem. Please review your details below or contact support.',
     },
@@ -217,7 +217,7 @@ export default function OnboardingPage() {
   // out — surface the create button so the user can retry (the server reuses any
   // already-purchased number rather than buying another).
   const showGetNumber = editable || sender.status === 'provisioning'
-  const input = 'w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none'
+  const input = 'w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40'
 
   return (
     <div className="text-ink">
@@ -225,14 +225,14 @@ export default function OnboardingPage() {
         <button
           onClick={() => router.push('/connect')}
           aria-label="Back"
-          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
+          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-white/5"
         >
           <ArrowLeftIcon className="h-4 w-4" />
         </button>
         <div>
           <div className="eyebrow mb-2">Your texting number</div>
           <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.0]">Get your own number</h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[#6E6A63]">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
             Reminders send from a dedicated number registered to your business. We handle the carrier registration and
             consent paperwork for you — just confirm your business details below and create your number.
           </p>
@@ -245,7 +245,7 @@ export default function OnboardingPage() {
         <form onSubmit={save} className="rounded-2xl border border-hairline p-6 sm:p-8 space-y-6">
           <div>
             <h2 className="font-display text-xl font-semibold">Business details</h2>
-            <p className="mt-1.5 text-[14px] text-[#6E6A63]">
+            <p className="mt-1.5 text-[14px] text-muted">
               Use your real, legal business information — the carriers verify it against public records.
             </p>
           </div>
@@ -306,12 +306,12 @@ export default function OnboardingPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-full bg-ink px-6 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
             >
               {saving ? 'Saving…' : hasSaved ? 'Update details' : 'Save business details'}
             </button>
           ) : (
-            <p className="text-[13px] text-[#6E6A63]">
+            <p className="text-[13px] text-muted">
               Your details are locked while verification is in progress. Need a change? Email{' '}
               <a href="mailto:support@sessionremind.com" className="text-accent underline">
                 support@sessionremind.com
@@ -325,26 +325,26 @@ export default function OnboardingPage() {
         {showGetNumber && (
           <div className="rounded-2xl border border-hairline p-6 sm:p-8">
             <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-ink">
-                <DevicePhoneMobileIcon className="h-5 w-5 text-white" />
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-accent">
+                <DevicePhoneMobileIcon className="h-5 w-5 text-accent-ink" />
               </div>
               <div className="min-w-0 flex-1">
                 <h2 className="font-display text-xl font-semibold">Create your texting number</h2>
-                <p className="mt-1 text-[14px] leading-relaxed text-[#6E6A63]">
+                <p className="mt-1 text-[14px] leading-relaxed text-muted">
                   A dedicated number registered to your business — an upgrade from the shared SessionRemind number.
                   Included with your subscription. Here’s exactly what happens:
                 </p>
-                <ol className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-[#4F4B44]">
+                <ol className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-muted">
                   <li><strong>1.</strong> We register a toll-free number to your business and submit it to the carriers.</li>
                   <li><strong>2.</strong> The carriers verify it — this typically takes <strong>1–3 weeks</strong>.</li>
                   <li><strong>3.</strong> <strong>We email you the moment it’s approved</strong> (or if anything needs fixing). Your reminders keep sending on the shared number until then — nothing pauses.</li>
                 </ol>
 
                 {!hasSaved && (
-                  <p className="mt-3 text-[13px] text-[#B23A1E]">Save your business details first.</p>
+                  <p className="mt-3 text-[13px] text-red-300">Save your business details first.</p>
                 )}
                 {hasSaved && !eligible && (
-                  <p className="mt-3 text-[13px] text-[#B23A1E]">
+                  <p className="mt-3 text-[13px] text-red-300">
                     A dedicated number is included with an active subscription.{' '}
                     <button onClick={() => router.push('/payment-required')} className="underline">
                       Subscribe
@@ -356,7 +356,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={provision}
                   disabled={provisioning || !hasSaved || !eligible}
-                  className="mt-4 rounded-full bg-ink px-6 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-4 rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {provisioning ? 'Creating…' : sender.status === 'none' ? 'Create my number' : 'Try again'}
                 </button>
@@ -369,20 +369,20 @@ export default function OnboardingPage() {
         {sender.status === 'pending_verification' && (
           <div className="rounded-2xl border border-hairline p-6 sm:p-8">
             <h2 className="font-display text-xl font-semibold">Check verification status</h2>
-            <p className="mt-1 text-[14px] leading-relaxed text-[#6E6A63]">
+            <p className="mt-1 text-[14px] leading-relaxed text-muted">
               We’ll email you when it’s approved. You can also re-check now.
             </p>
             <button
               onClick={refresh}
               disabled={provisioning}
-              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-50"
+              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
             >
               {provisioning ? 'Checking…' : 'Refresh status'}
             </button>
           </div>
         )}
 
-        <p className="text-[12px] leading-relaxed text-[#9A958C]">
+        <p className="text-[12px] leading-relaxed text-faint">
           Clients consent to reminders when they book and provide their number; messages are appointment reminders only
           and every recipient can reply STOP to opt out. See our{' '}
           <a href="/sms-opt-in" className="underline">

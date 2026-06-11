@@ -146,14 +146,14 @@ export default function CsvImport({ onImported }: { onImported?: () => void }) {
 
   return (
     <div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-muted mb-4">
         No connection needed — export your client list from UseSession (Clients → Export CSV) and upload it here.
         Pick the session day and we&apos;ll schedule reminders for everyone.
       </p>
 
-      <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-gray-300 cursor-pointer hover:bg-gray-50 w-full sm:w-auto sm:inline-flex">
-        <ArrowUpTrayIcon className="w-5 h-5 text-gray-400" />
-        <span className="text-sm text-gray-700">{fileName || 'Choose a CSV file'}</span>
+      <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-hairline cursor-pointer hover:bg-white/5 w-full sm:w-auto sm:inline-flex">
+        <ArrowUpTrayIcon className="w-5 h-5 text-faint" />
+        <span className="text-sm text-ink">{fileName || 'Choose a CSV file'}</span>
         <input
           type="file"
           accept=".csv,text/csv"
@@ -164,41 +164,41 @@ export default function CsvImport({ onImported }: { onImported?: () => void }) {
 
       {rows.length > 0 && (
         <div className="mt-4 space-y-4">
-          <div className="flex items-center gap-2 text-sm text-green-700">
+          <div className="flex items-center gap-2 text-sm text-emerald-300">
             <DocumentTextIcon className="w-4 h-4" />
             {rows.length} client(s) with valid phone numbers found.
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Session title</label>
+              <label className="block text-sm font-medium text-ink mb-1">Session title</label>
               <input
                 value={sessionTitle}
                 onChange={(e) => setSessionTitle(e.target.value)}
                 placeholder="e.g. Summer Greenhouse Mini"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                className="w-full border border-hairline bg-card text-ink placeholder:text-faint rounded-lg px-3 py-2 text-sm focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Session date &amp; time</label>
+              <label className="block text-sm font-medium text-ink mb-1">Session date &amp; time</label>
               <input
                 type="datetime-local"
                 value={dateTime}
                 onChange={(e) => setDateTime(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                className="w-full border border-hairline bg-card text-ink placeholder:text-faint rounded-lg px-3 py-2 text-sm focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
               />
             </div>
           </div>
           <button
             onClick={handleImport}
             disabled={importing || !sessionTitle.trim() || !dateTime}
-            className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="px-5 py-2 rounded-lg bg-accent text-accent-ink text-sm font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow disabled:opacity-50"
           >
             {importing ? 'Importing…' : `Schedule reminders for ${rows.length} client(s)`}
           </button>
         </div>
       )}
 
-      {result && <p className="mt-3 text-sm text-gray-700">{result}</p>}
+      {result && <p className="mt-3 text-sm text-muted">{result}</p>}
     </div>
   )
 }

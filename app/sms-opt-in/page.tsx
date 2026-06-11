@@ -11,19 +11,19 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section className="border-t border-hairline pt-8">
       <h2 className="font-display text-xl font-semibold mb-3">{title}</h2>
-      <div className="space-y-3 text-[15px] leading-relaxed text-[#4F4B44]">{children}</div>
+      <div className="space-y-3 text-[15px] leading-relaxed text-muted">{children}</div>
     </section>
   )
 }
 
 export default function SmsOptInPage() {
   return (
-    <div className="max-w-2xl mx-auto py-6">
+    <div className="max-w-2xl mx-auto py-6 text-ink">
       <div className="eyebrow mb-4">Messaging</div>
       <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">SMS Messaging Terms</h1>
-      <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">Last updated {UPDATED}</p>
+      <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">Last updated {UPDATED}</p>
 
-      <p className="mt-8 text-[15px] leading-relaxed text-[#4F4B44]">
+      <p className="mt-8 text-[15px] leading-relaxed text-muted">
         SessionRemind sends appointment reminder text messages on behalf of the photography studio you booked a session
         with. This page explains the program, how you consent, and how to opt out at any time.
       </p>
@@ -83,7 +83,7 @@ export default function SmsOptInPage() {
       </div>
 
       <div className="mt-12 border-t border-hairline pt-6">
-        <Link href="/" className="text-sm font-medium text-[#6E6A63] hover:text-ink transition-colors">
+        <Link href="/" className="text-sm font-medium text-muted hover:text-ink transition-colors">
           ← Back to SessionRemind
         </Link>
       </div>

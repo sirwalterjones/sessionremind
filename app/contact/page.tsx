@@ -62,27 +62,27 @@ export default function ContactPage() {
   }
 
   const input =
-    'w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none'
+    'w-full rounded-lg bg-card border border-hairline px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40'
 
   if (sent) {
     return (
       <div className="mx-auto max-w-xl py-16 text-center text-ink">
         <CheckCircleIcon className="mx-auto h-12 w-12 text-accent" />
         <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">Got it.</h1>
-        <p className="mt-4 text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-4 text-[15px] leading-relaxed text-muted">
           Thanks{name ? `, ${name.split(' ')[0]}` : ''} — your message is in. We&apos;ll reply to{' '}
           <span className="font-medium text-ink">{email}</span>, usually within one business day.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             href="/"
-            className="rounded-full bg-ink px-6 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
           >
             Back home
           </Link>
           <Link
             href="/help"
-            className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+            className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5"
           >
             Browse help docs
           </Link>
@@ -95,13 +95,13 @@ export default function ContactPage() {
     <div className="mx-auto max-w-xl py-10 text-ink">
       <div className="text-center">
         <div className="eyebrow flex items-center justify-center gap-2">
-          <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#DD4D24' }} />
+          <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#C6F24E' }} />
           We reply within a business day
         </div>
         <h1 className="font-display mt-5 text-4xl sm:text-5xl font-semibold leading-[1.05]">
           Talk to a human.
         </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-3 text-[15px] leading-relaxed text-muted">
           Questions, billing, a bug, an idea — send it over. Quick answers may already be in the{' '}
           <Link href="/faq" className="text-accent underline">
             FAQ
@@ -114,7 +114,7 @@ export default function ContactPage() {
         </p>
       </div>
 
-      <form onSubmit={submit} className="mt-10 space-y-5 rounded-2xl border border-hairline p-6 sm:p-8">
+      <form onSubmit={submit} className="mt-10 space-y-5 rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="eyebrow mb-2 block">Your name</label>
@@ -157,7 +157,7 @@ export default function ContactPage() {
         <Turnstile onVerify={setTurnstileToken} />
 
         {error && (
-          <div className="rounded-lg border border-hairline bg-[#FAFAF8] px-4 py-3 text-sm text-accent">
+          <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -165,7 +165,7 @@ export default function ContactPage() {
         <button
           type="submit"
           disabled={sending || (TURNSTILE_ENABLED && !turnstileToken)}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <EnvelopeIcon className="h-5 w-5" />
           {sending ? 'Sending…' : 'Send message'}

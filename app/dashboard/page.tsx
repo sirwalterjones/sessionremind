@@ -407,9 +407,9 @@ function DashboardContent() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'scheduled': return <ClockIcon className="h-4 w-4 text-muted" />
-      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-[#16a34a]" />
-      case 'failed': return <XMarkIcon className="h-4 w-4 text-accent" />
+      case 'scheduled': return <ClockIcon className="h-4 w-4 text-sky-300" />
+      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-emerald-300" />
+      case 'failed': return <XMarkIcon className="h-4 w-4 text-red-300" />
       case 'cancelled': return <XMarkIcon className="h-4 w-4 text-muted" />
       default: return <ClockIcon className="h-4 w-4 text-muted" />
     }
@@ -417,11 +417,11 @@ function DashboardContent() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'scheduled': return 'text-muted border-hairline'
-      case 'sent': return 'text-[#16a34a] border-[#cfe8d4]'
-      case 'failed': return 'text-accent border-[#f1c9bd]'
-      case 'cancelled': return 'text-muted border-hairline'
-      default: return 'text-muted border-hairline'
+      case 'scheduled': return 'bg-sky-400/10 text-sky-300 border-sky-400/20'
+      case 'sent': return 'bg-emerald-400/10 text-emerald-300 border-emerald-400/20'
+      case 'failed': return 'bg-red-400/10 text-red-300 border-red-400/20'
+      case 'cancelled': return 'bg-white/5 text-muted border-hairline'
+      default: return 'bg-white/5 text-muted border-hairline'
     }
   }
 
@@ -549,7 +549,7 @@ function DashboardContent() {
     return (
       <div className="flex items-center justify-center py-24">
         <div className="max-w-md w-full">
-          <div className="rounded-2xl border border-hairline p-10 bg-white">
+          <div className="rounded-2xl border border-hairline p-10 bg-card">
             <div className="text-center mb-8">
               <p className="eyebrow mb-3">Restricted</p>
               <h2 className="font-display text-3xl font-semibold text-ink mb-2">Authentication required</h2>
@@ -559,13 +559,13 @@ function DashboardContent() {
             <div className="space-y-3">
               <a
                 href="/login"
-                className="block text-center rounded-full bg-ink px-5 py-2.5 text-white font-medium hover:opacity-90 transition-opacity"
+                className="block text-center rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow"
               >
                 Go to login
               </a>
               <a
                 href="/register"
-                className="block text-center rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-[#FAFAF8] transition-colors"
+                className="block text-center rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-white/5 transition-colors"
               >
                 Create account
               </a>
@@ -583,15 +583,15 @@ function DashboardContent() {
     return (
       <div className="animate-pulse space-y-10 py-4">
         <div>
-          <div className="h-3 w-24 bg-[#F1EFE9] rounded mb-4"></div>
-          <div className="h-10 w-1/3 bg-[#F1EFE9] rounded mb-3"></div>
-          <div className="h-4 w-1/2 bg-[#F1EFE9] rounded"></div>
+          <div className="h-3 w-24 bg-white/10 rounded mb-4"></div>
+          <div className="h-10 w-1/3 bg-white/10 rounded mb-3"></div>
+          <div className="h-4 w-1/2 bg-white/10 rounded"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white p-6">
-              <div className="h-3 w-20 bg-[#F1EFE9] rounded mb-3"></div>
-              <div className="h-8 w-16 bg-[#F1EFE9] rounded"></div>
+            <div key={i} className="bg-card p-6">
+              <div className="h-3 w-20 bg-white/10 rounded mb-3"></div>
+              <div className="h-8 w-16 bg-white/10 rounded"></div>
             </div>
           ))}
         </div>
@@ -624,12 +624,12 @@ function DashboardContent() {
                     placeholder={`Search ${activeTab}…`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full rounded-full border border-hairline bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-muted transition-colors focus:border-ink focus:outline-none"
+                    className="w-full rounded-full border border-hairline bg-card py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-faint transition-colors focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                   />
                 </div>
                 <a
                   href="/new"
-                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-ink px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
                 >
                   <PlusIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">New reminder</span>
@@ -651,7 +651,7 @@ function DashboardContent() {
                   <button
                     onClick={() => setActiveTab('active')}
                     className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                      activeTab === 'active' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
+                      activeTab === 'active' ? 'bg-accent text-accent-ink' : 'text-muted hover:text-ink'
                     }`}
                   >
                     Active ({activeClientsCount})
@@ -659,7 +659,7 @@ function DashboardContent() {
                   <button
                     onClick={() => setActiveTab('archived')}
                     className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                      activeTab === 'archived' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
+                      activeTab === 'archived' ? 'bg-accent text-accent-ink' : 'text-muted hover:text-ink'
                     }`}
                   >
                     Archived ({archivedClientsCount})
@@ -667,7 +667,7 @@ function DashboardContent() {
                 </div>
 
                 {filteredClients.length === 0 ? (
-                  <div className="rounded-2xl border border-hairline p-16 text-center">
+                  <div className="rounded-2xl border border-hairline bg-panel p-16 text-center">
                     <div className="mx-auto mb-6 flex items-center justify-center text-muted">
                       {searchTerm ? <MagnifyingGlassIcon className="h-8 w-8" /> : <ClockIcon className="h-8 w-8" />}
                     </div>
@@ -688,7 +688,7 @@ function DashboardContent() {
                     {!searchTerm && (
                       <a
                         href="/new"
-                        className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+                        className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
                       >
                         <PlusIcon className="h-4 w-4" />
                         Create your first reminder
@@ -696,10 +696,10 @@ function DashboardContent() {
                     )}
                   </div>
                 ) : (
-                  <div className="overflow-hidden rounded-2xl border border-hairline">
+                  <div className="overflow-hidden rounded-2xl border border-hairline bg-panel">
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[640px] text-left text-sm">
-                        <thead className="border-b border-hairline bg-[#FAFAF8] font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                        <thead className="border-b border-hairline bg-panel font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                           <tr>
                             <th className="px-5 py-3 font-medium">Client</th>
                             <th className="px-5 py-3 font-medium">Session</th>
@@ -729,13 +729,13 @@ function DashboardContent() {
                   <tr
                     key={`${client.clientName}-${client.phone}`}
                     onClick={() => openClientModal(client)}
-                    className={`group cursor-pointer transition-colors hover:bg-[#FAFAF8] ${
+                    className={`group cursor-pointer transition-colors hover:bg-card ${
                       sessionPassed ? 'opacity-70 hover:opacity-100' : ''
                     }`}
                   >
                     <td className="px-5 py-4 align-top">
                       <div className="font-medium text-ink">{client.clientName}</div>
-                      <div className="font-mono text-xs text-muted">{client.phone}</div>
+                      <div className="font-mono text-xs text-faint">{client.phone}</div>
                     </td>
                     <td className="px-5 py-4 align-top text-muted">
                       {client.sessionTitle || 'Photography Session'}
@@ -746,29 +746,29 @@ function DashboardContent() {
                     <td className="px-5 py-4 align-top">
                       <div className="flex flex-wrap gap-1.5">
                         {sessionPassed && (
-                          <span className="rounded-full border border-hairline px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                          <span className="rounded-full border border-hairline bg-white/5 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
                             Archived
                           </span>
                         )}
                         {sentMessages.length > 0 && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cfe8d4] px-2.5 py-0.5 text-xs font-medium text-[#16a34a]">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-medium text-emerald-300">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
                             {sentMessages.length} sent
                           </span>
                         )}
                         {scheduledMessages.length > 0 && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
-                            <span className="h-1.5 w-1.5 rounded-full bg-muted" />
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/20 bg-sky-400/10 px-2.5 py-0.5 text-xs font-medium text-sky-300">
+                            <span className="h-1.5 w-1.5 rounded-full bg-sky-300" />
                             {scheduledMessages.length} scheduled
                           </span>
                         )}
                         {failedMessages.length > 0 && (
-                          <span className="inline-flex items-center rounded-full border border-[#f1c9bd] px-2.5 py-0.5 text-xs font-medium text-accent">
+                          <span className="inline-flex items-center rounded-full border border-red-400/20 bg-red-400/10 px-2.5 py-0.5 text-xs font-medium text-red-300">
                             {failedMessages.length} failed
                           </span>
                         )}
                         {cancelledMessages.length > 0 && (
-                          <span className="inline-flex items-center rounded-full border border-hairline px-2.5 py-0.5 text-xs font-medium text-muted">
+                          <span className="inline-flex items-center rounded-full border border-hairline bg-white/5 px-2.5 py-0.5 text-xs font-medium text-muted">
                             {cancelledMessages.length} cancelled
                           </span>
                         )}
@@ -791,26 +791,26 @@ function DashboardContent() {
               {/* ── Right: stats rail ── */}
               <aside className="space-y-6">
                 {/* Performance */}
-                <div className="rounded-2xl border border-hairline p-6">
+                <div className="rounded-2xl border border-hairline bg-card p-6">
                   <p className="eyebrow mb-2">Delivery rate</p>
                   <span className="font-display text-4xl font-semibold text-ink">{deliveryRate}%</span>
                   <p className="mt-1 text-sm text-muted">
                     {sentCount} of {totalMessages} delivered
                   </p>
-                  <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-[#F1EFE9]">
-                    <div style={{ width: pct(sentCount) }} className="bg-[#16a34a]" />
-                    <div style={{ width: pct(scheduledCount) }} className="bg-[#C9C4BB]" />
-                    <div style={{ width: pct(failedCount) }} className="bg-accent" />
+                  <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-white/10">
+                    <div style={{ width: pct(sentCount) }} className="bg-accent" />
+                    <div style={{ width: pct(scheduledCount) }} className="bg-sky-300/60" />
+                    <div style={{ width: pct(failedCount) }} className="bg-red-400" />
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#16a34a]" />Sent</span>
-                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#C9C4BB]" />Scheduled</span>
-                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-accent" />Failed</span>
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-accent" />Sent</span>
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-300/60" />Scheduled</span>
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-400" />Failed</span>
                   </div>
                 </div>
 
                 {/* At a glance */}
-                <div className="overflow-hidden rounded-2xl border border-hairline">
+                <div className="overflow-hidden rounded-2xl border border-hairline bg-card">
                   <div className="border-b border-hairline px-6 py-3">
                     <p className="eyebrow">At a glance</p>
                   </div>
@@ -834,8 +834,8 @@ function DashboardContent() {
 
         {/* Client Detail Modal */}
         {showClientModal && selectedClient && (
-          <div className="fixed inset-0 bg-ink/40 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl border border-hairline max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-[0_30px_80px_-40px_rgba(0,0,0,0.3)]">
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+            <div className="bg-card rounded-2xl border border-hairline max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
               <div className="p-6 sm:p-8 border-b border-hairline">
                 <div className="flex items-start justify-between">
                   <div>
@@ -848,7 +848,7 @@ function DashboardContent() {
                       </span>
                       {selectedClient.messages[0]?.email && (
                         <>
-                          <span className="text-hairline">•</span>
+                          <span className="text-faint">•</span>
                           <span>{selectedClient.messages[0].email}</span>
                         </>
                       )}
@@ -856,18 +856,18 @@ function DashboardContent() {
                   </div>
                   <button
                     onClick={() => setShowClientModal(false)}
-                    className="w-9 h-9 rounded-full border border-hairline hover:bg-[#FAFAF8] flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-full border border-hairline hover:bg-white/5 flex items-center justify-center transition-colors"
                   >
                     <XMarkIcon className="h-4 w-4 text-ink" />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-hairline rounded-xl overflow-hidden border border-hairline mt-6">
-                  <div className="bg-white p-4">
+                  <div className="bg-panel p-4">
                     <p className="eyebrow mb-1.5">Session Type</p>
                     <p className="text-ink font-medium">{selectedClient.sessionTitle || 'Photography Session'}</p>
                   </div>
-                  <div className="bg-white p-4">
+                  <div className="bg-panel p-4">
                     <p className="eyebrow mb-1.5">Session Date</p>
                     <p className="text-ink font-medium">{formatDate(selectedClient.sessionTime)}</p>
                   </div>
@@ -920,7 +920,7 @@ function DashboardContent() {
                                 e.stopPropagation()
                                 startEdit(message)
                               }}
-                              className="px-3 py-1 text-xs font-medium rounded-full border border-hairline text-ink transition-colors hover:bg-[#FAFAF8]"
+                              className="px-3 py-1 text-xs font-medium rounded-full border border-hairline text-ink transition-colors hover:bg-white/5"
                             >
                               Edit
                             </button>
@@ -934,10 +934,10 @@ function DashboardContent() {
                               disabled={cancellingMessages.has(message.id.toString())}
                               className={`px-3 py-1 text-xs font-medium rounded-full border transition-colors ${
                                 cancelledMessages.has(message.id.toString())
-                                  ? 'border-[#cfe8d4] text-[#16a34a]'
+                                  ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
                                   : cancellingMessages.has(message.id.toString())
                                   ? 'border-hairline text-muted cursor-not-allowed'
-                                  : 'border-[#f1c9bd] text-accent hover:bg-[#FAFAF8]'
+                                  : 'border-red-400/30 bg-red-500/15 text-red-300 hover:bg-red-500/25'
                               }`}
                             >
                               {cancelledMessages.has(message.id.toString())
@@ -948,7 +948,7 @@ function DashboardContent() {
                             </button>
                           )}
                           {message.status === 'cancelled' && (
-                            <span className="px-3 py-1 border border-hairline text-muted text-xs font-medium rounded-full">
+                            <span className="px-3 py-1 border border-hairline bg-white/5 text-muted text-xs font-medium rounded-full">
                               Cancelled
                             </span>
                           )}
@@ -956,15 +956,15 @@ function DashboardContent() {
                       </div>
 
                       {editingId === message.id.toString() ? (
-                        <div className="rounded-lg border border-hairline p-4">
+                        <div className="rounded-lg border border-hairline bg-panel p-4">
                           <label className="eyebrow mb-2 block">Message</label>
                           <textarea
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
                             rows={4}
-                            className="w-full resize-y rounded-lg border border-hairline bg-white p-3 text-sm text-ink focus:border-ink focus:outline-none"
+                            className="w-full resize-y rounded-lg border border-hairline bg-card p-3 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                           />
-                          <div className="mt-1 text-right font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                          <div className="mt-1 text-right font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                             {editText.length} chars
                           </div>
 
@@ -973,14 +973,14 @@ function DashboardContent() {
                             type="datetime-local"
                             value={editWhen}
                             onChange={(e) => setEditWhen(e.target.value)}
-                            className="w-full rounded-lg border border-hairline bg-white p-2.5 text-sm text-ink focus:border-ink focus:outline-none"
+                            className="w-full rounded-lg border border-hairline bg-card p-2.5 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                           />
-                          <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                          <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                             Nothing sends before 8 AM ET regardless of the exact time.
                           </p>
 
                           {editError && (
-                            <p className="mt-3 text-sm text-accent">{editError}</p>
+                            <p className="mt-3 text-sm text-red-300">{editError}</p>
                           )}
 
                           <div className="mt-4 flex items-center gap-2">
@@ -990,7 +990,7 @@ function DashboardContent() {
                                 saveEdit(message.id.toString())
                               }}
                               disabled={savingEdit}
-                              className="rounded-full bg-ink px-4 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                              className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
                             >
                               {savingEdit ? 'Saving…' : 'Save changes'}
                             </button>
@@ -1000,14 +1000,14 @@ function DashboardContent() {
                                 cancelEdit()
                               }}
                               disabled={savingEdit}
-                              className="rounded-full border border-hairline px-4 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-50"
+                              className="rounded-full border border-hairline px-4 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
                             >
                               Discard
                             </button>
                           </div>
                         </div>
                       ) : (
-                        <div className="rounded-lg bg-[#FAFAF8] border border-hairline p-4">
+                        <div className="rounded-lg bg-panel border border-hairline p-4">
                           <p className="eyebrow mb-2">Message Content</p>
                           <p className="text-ink leading-relaxed text-sm">
                             “{message.message || 'No message content stored'}”
@@ -1015,7 +1015,7 @@ function DashboardContent() {
                         </div>
                       )}
 
-                      <div className="flex justify-between items-center mt-3 font-mono text-xs text-muted">
+                      <div className="flex justify-between items-center mt-3 font-mono text-xs text-faint">
                         <span>Created: {formatDate(message.createdAt || (message as SentMessage).timestamp || message.scheduledFor || '')}</span>
                         <span>ID: {message.id}</span>
                       </div>

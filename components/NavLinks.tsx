@@ -3,12 +3,11 @@
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 
-export default function NavLinks({ dark = false }: { dark?: boolean }) {
+export default function NavLinks() {
   const { user, logout } = useAuth()
 
-  const linkClass = dark
-    ? 'rounded-full border border-white/15 px-3.5 py-1.5 text-sm font-medium text-[#CFC8BC] hover:bg-white/10 hover:text-white transition-colors'
-    : 'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-[#4F4B44] hover:bg-[#F4F2EE] hover:text-ink transition-colors'
+  const linkClass =
+    'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-muted hover:bg-white/5 hover:text-ink transition-colors'
 
   return (
     <div className="hidden md:flex items-center gap-2">
@@ -60,9 +59,7 @@ export default function NavLinks({ dark = false }: { dark?: boolean }) {
       ) : (
         <Link
           href="/login"
-          className={`inline-flex items-center rounded-full px-5 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity ${
-            dark ? 'bg-[#DD4D24]' : 'bg-ink'
-          }`}
+          className="inline-flex items-center rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-ink hover:shadow-[0_0_24px_-4px_rgba(198,242,78,0.6)] transition-shadow"
         >
           Sign in
         </Link>

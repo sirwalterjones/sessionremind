@@ -4,7 +4,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-const A = '#DD4D24' // accent
+const A = '#C6F24E' // accent
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams()
@@ -47,7 +47,7 @@ function ResetPasswordForm() {
   }
 
   const input =
-    'w-full rounded-lg border border-hairline bg-white px-3.5 py-2.5 text-[15px] placeholder:text-[#B5B0A8] transition-colors focus:border-ink focus:outline-none'
+    'w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint transition-colors focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40'
 
   if (!token) {
     return (
@@ -55,14 +55,14 @@ function ResetPasswordForm() {
         <h1 className="font-display text-4xl font-semibold leading-[1.05]">
           That link isn&apos;t right.
         </h1>
-        <p className="mt-4 text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-4 text-[15px] leading-relaxed text-muted">
           This page needs the reset link from your email. If yours expired, request a fresh one —
           it only takes a second.
         </p>
         <div className="mt-8">
           <Link
             href="/forgot-password"
-            className="rounded-full bg-ink px-6 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
           >
             Request a new link
           </Link>
@@ -79,13 +79,13 @@ function ResetPasswordForm() {
           You&apos;re back in
         </div>
         <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">Password updated.</h1>
-        <p className="mt-4 text-[15px] leading-relaxed text-[#6E6A63]">
+        <p className="mt-4 text-[15px] leading-relaxed text-muted">
           Your new password is saved. Sign in and pick up where you left off.
         </p>
         <div className="mt-8">
           <Link
             href="/login"
-            className="rounded-full bg-ink px-6 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
           >
             Sign in
           </Link>
@@ -105,14 +105,14 @@ function ResetPasswordForm() {
           <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
             Choose a new password.
           </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
+          <p className="mt-3 text-[15px] leading-relaxed text-muted">
             Make it at least 8 characters — something you&apos;ll remember this time.
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="mt-10 space-y-5 rounded-2xl border border-hairline bg-white p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.3)] sm:p-8"
+          className="mt-10 space-y-5 rounded-2xl border border-hairline bg-card p-6 sm:p-8"
         >
           <div>
             <label htmlFor="password" className="eyebrow mb-2 block">
@@ -149,7 +149,7 @@ function ResetPasswordForm() {
           </div>
 
           {error && (
-            <div className="rounded-lg border border-hairline bg-[#FAFAF8] px-4 py-3 text-sm text-accent">
+            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300">
               {error}
             </div>
           )}
@@ -157,7 +157,7 @@ function ResetPasswordForm() {
           <button
             type="submit"
             disabled={saving}
-            className="group flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-medium text-white transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.18)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
             {saving ? (
               'Saving…'

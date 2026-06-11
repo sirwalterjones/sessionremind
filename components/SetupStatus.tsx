@@ -26,11 +26,11 @@ export function prettyUsNumber(e164?: string): string {
 }
 
 const DOT: Record<Sender['status'], string> = {
-  none: '#9A958C',
-  provisioning: '#d97706',
-  pending_verification: '#d97706',
-  active: '#16a34a',
-  failed: '#dc2626',
+  none: '#6E736C',
+  provisioning: '#fcd34d',
+  pending_verification: '#fcd34d',
+  active: '#34d399',
+  failed: '#f87171',
 }
 
 const BADGE: Record<Sender['status'], string> = {
@@ -58,7 +58,7 @@ function useSenderStatus() {
 
 function StatusBadge({ sender }: { sender: Sender }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[#6E6A63]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
       <span className="h-1.5 w-1.5 rounded-full" style={{ background: DOT[sender.status] }} />
       {BADGE[sender.status]}
     </span>
@@ -135,19 +135,19 @@ export function TextingNumberCard() {
   return (
     <Link
       href="/onboarding"
-      className="group mb-6 flex items-center gap-4 rounded-2xl border border-hairline p-6 sm:p-8 transition-colors hover:bg-[#FAFAF8]"
+      className="group mb-6 flex items-center gap-4 rounded-2xl border border-hairline bg-panel p-6 sm:p-8 transition-colors hover:bg-card"
     >
-      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-ink">
-        <DevicePhoneMobileIcon className="h-5 w-5 text-white" />
+      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-accent">
+        <DevicePhoneMobileIcon className="h-5 w-5 text-accent-ink" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2.5">
           <h2 className="font-display text-xl font-semibold text-ink">Your texting number</h2>
           {sender.status !== 'none' && <StatusBadge sender={sender} />}
         </div>
-        <p className="mt-1 text-[14px] leading-relaxed text-[#6E6A63]">{body}</p>
+        <p className="mt-1 text-[14px] leading-relaxed text-muted">{body}</p>
       </div>
-      <span className="hidden flex-shrink-0 text-sm font-medium text-[#6E6A63] transition-colors group-hover:text-ink sm:inline">
+      <span className="hidden flex-shrink-0 text-sm font-medium text-muted transition-colors group-hover:text-ink sm:inline">
         {cta}
       </span>
     </Link>
@@ -186,24 +186,24 @@ export function DashboardSetupStatus() {
   })()
 
   return (
-    <div className="mb-10 rounded-2xl border border-hairline">
+    <div className="mb-10 rounded-2xl border border-hairline bg-panel">
       <div className="flex flex-col divide-y divide-hairline sm:flex-row sm:divide-x sm:divide-y-0">
         {/* UseSession connection */}
         <Link
           href="/connect"
-          className="group flex flex-1 items-center justify-between gap-3 p-4 sm:p-5 transition-colors hover:bg-[#FAFAF8]"
+          className="group flex flex-1 items-center justify-between gap-3 p-4 sm:p-5 transition-colors hover:bg-card"
         >
           <div className="min-w-0">
             <p className="eyebrow mb-1">UseSession</p>
             <p className="flex items-center gap-2 truncate text-sm font-medium text-ink">
               <span
                 className="h-2 w-2 flex-shrink-0 rounded-full"
-                style={{ background: connected ? '#16a34a' : '#DD4D24' }}
+                style={{ background: connected ? '#34d399' : '#C6F24E' }}
               />
               {connected ? 'Connected — bookings sync automatically' : 'Not connected'}
             </p>
           </div>
-          <span className="flex-shrink-0 text-xs font-medium text-[#9A958C] transition-colors group-hover:text-ink">
+          <span className="flex-shrink-0 text-xs font-medium text-faint transition-colors group-hover:text-ink">
             {connected ? 'Manage →' : 'Connect →'}
           </span>
         </Link>
@@ -211,7 +211,7 @@ export function DashboardSetupStatus() {
         {/* Texting number */}
         <Link
           href="/onboarding"
-          className="group flex flex-1 items-center justify-between gap-3 p-4 sm:p-5 transition-colors hover:bg-[#FAFAF8]"
+          className="group flex flex-1 items-center justify-between gap-3 p-4 sm:p-5 transition-colors hover:bg-card"
         >
           <div className="min-w-0">
             <p className="eyebrow mb-1">Texting number</p>
@@ -223,7 +223,7 @@ export function DashboardSetupStatus() {
               {numberLine}
             </p>
           </div>
-          <span className="flex-shrink-0 text-xs font-medium text-[#9A958C] transition-colors group-hover:text-ink">
+          <span className="flex-shrink-0 text-xs font-medium text-faint transition-colors group-hover:text-ink">
             {sender.status === 'none' ? 'Get yours →' : 'Status →'}
           </span>
         </Link>

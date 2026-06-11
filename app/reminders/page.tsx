@@ -205,7 +205,7 @@ export default function RemindersPage() {
             key={t.key}
             onClick={() => setStatusFilter(t.key)}
             className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-              statusFilter === t.key ? 'bg-ink text-white' : 'border border-hairline text-ink hover:bg-[#FAFAF8]'
+              statusFilter === t.key ? 'bg-accent text-accent-ink' : 'border border-hairline text-ink hover:bg-white/5'
             }`}
           >
             {t.label}
@@ -216,14 +216,14 @@ export default function RemindersPage() {
           placeholder="Search client / session…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="ml-auto min-w-[180px] flex-1 rounded-md border border-hairline bg-white px-3 py-1.5 text-sm sm:flex-none"
+          className="ml-auto min-w-[180px] flex-1 rounded-md border border-hairline bg-card px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 sm:flex-none"
         />
       </div>
 
       <div className="mt-4 space-y-3">
         {fetching && <p className="text-sm text-muted">Loading…</p>}
         {!fetching && groups.length === 0 && (
-          <p className="rounded-xl border border-hairline bg-[#FAFAF8] px-4 py-8 text-center text-sm text-muted">
+          <p className="rounded-xl border border-hairline bg-panel px-4 py-8 text-center text-sm text-muted">
             No {statusFilter === 'all' ? '' : statusFilter} reminders.
           </p>
         )}
@@ -233,7 +233,7 @@ export default function RemindersPage() {
             <div key={g.key} className="overflow-hidden rounded-xl border border-hairline">
               <button
                 onClick={() => toggleGroup(g.key)}
-                className="flex w-full items-center justify-between gap-3 bg-[#FAFAF8] px-4 py-3 text-left transition-colors hover:bg-[#F4F2EE]"
+                className="flex w-full items-center justify-between gap-3 bg-panel px-4 py-3 text-left transition-colors hover:bg-card"
               >
                 <div className="min-w-0">
                   <div className="truncate font-medium text-ink">{g.title}</div>
@@ -247,9 +247,9 @@ export default function RemindersPage() {
                 <div className="divide-y divide-hairline">
                   {g.items.map((r) => {
                     const isScheduled = r.status === 'scheduled'
-                    const dot = r.status === 'sent' ? '#16a34a' : r.status === 'failed' ? '#dc2626' : '#DD4D24'
+                    const dot = r.status === 'sent' ? '#34d399' : r.status === 'failed' ? '#f87171' : '#C6F24E'
                     return (
-                      <div key={r.id} className="flex flex-wrap items-start justify-between gap-3 bg-white px-4 py-3">
+                      <div key={r.id} className="flex flex-wrap items-start justify-between gap-3 bg-card px-4 py-3">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: dot }} />
@@ -267,14 +267,13 @@ export default function RemindersPage() {
                           <div className="flex flex-shrink-0 items-center gap-2">
                             <button
                               onClick={() => openEdit(r)}
-                              className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                              className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => cancel(r)}
-                              className="rounded-full px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
-                              style={{ background: '#dc2626' }}
+                              className="rounded-full border border-red-400/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/25"
                             >
                               Cancel
                             </button>
@@ -296,9 +295,9 @@ export default function RemindersPage() {
           className="sr-fade-in fixed inset-0 z-[110] flex items-center justify-center p-4"
           onClick={() => !saving && setEditing(null)}
         >
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="sr-pop-in relative w-full max-w-md rounded-2xl border border-hairline bg-white p-6 shadow-2xl"
+            className="sr-pop-in relative w-full max-w-md rounded-2xl border border-hairline bg-card p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="font-display mb-1 text-lg font-semibold text-ink">Edit reminder</h2>
@@ -311,7 +310,7 @@ export default function RemindersPage() {
               type="datetime-local"
               value={editWhen}
               onChange={(e) => setEditWhen(e.target.value)}
-              className="w-full rounded-lg border border-hairline px-3 py-2 text-sm focus:border-ink focus:outline-none"
+              className="w-full rounded-lg border border-hairline bg-card px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
             />
 
             <label className="mt-4 mb-1.5 block text-sm font-medium text-ink">Message</label>
@@ -319,21 +318,21 @@ export default function RemindersPage() {
               value={editMsg}
               onChange={(e) => setEditMsg(e.target.value)}
               rows={4}
-              className="w-full rounded-lg border border-hairline px-3 py-2 text-sm focus:border-ink focus:outline-none"
+              className="w-full rounded-lg border border-hairline bg-card px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
             />
 
             <div className="mt-6 flex justify-end gap-2.5">
               <button
                 onClick={() => setEditing(null)}
                 disabled={saving}
-                className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-[#FAFAF8] disabled:opacity-50"
+                className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={saveEdit}
                 disabled={saving}
-                className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Save changes'}
               </button>

@@ -1,26 +1,24 @@
 import type { Metadata, Viewport } from 'next'
-import { Fraunces, Hanken_Grotesk, IBM_Plex_Mono } from 'next/font/google'
+import { Archivo, IBM_Plex_Mono } from 'next/font/google'
 import { AuthProvider } from '@/lib/auth-context'
 import { NotificationsProvider } from '@/components/Notifications'
 import AppFrame from '@/components/AppFrame'
 import './globals.css'
 
-// Swiss-editorial system: one clean grotesque for everything, with a monospaced
-// face reserved for small uppercase labels/metadata. No generic Inter look.
-const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
+// Ink & Acid system: Archivo (variable width axis — stretched wide for display
+// type via .font-display/.font-display-wide) with a monospaced face for small
+// uppercase labels/metadata. No generic Inter look.
+const body = Archivo({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+  axes: ['wdth'],
+})
 const mono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   variable: '--font-mono',
   display: 'swap',
-})
-// Editorial serif reserved for the darkroom marketing page's display type.
-const serif = Fraunces({
-  subsets: ['latin'],
-  style: ['normal', 'italic'],
-  variable: '--font-serif',
-  display: 'swap',
-  axes: ['opsz', 'SOFT', 'WONK'],
 })
 
 export const metadata: Metadata = {
@@ -79,12 +77,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="msapplication-TileColor" content="#000000" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="theme-color" content="#101113" />
+        <meta name="msapplication-TileColor" content="#101113" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
-      <body className={`${body.variable} ${mono.variable} ${serif.variable} ${body.className}`}>
+      <body className={`${body.variable} ${mono.variable} ${body.className}`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `

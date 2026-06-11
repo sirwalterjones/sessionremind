@@ -436,15 +436,15 @@ export default function AdminPage() {
 
   const getSubscriptionColor = (tier: string) => {
     // All users are on Professional Plan
-    return 'bg-blue-100 text-blue-800'
+    return 'bg-sky-400/10 text-sky-300 border border-sky-400/20'
   }
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'active': return 'bg-green-100 text-green-800'
-      case 'cancelled': return 'bg-red-100 text-red-800'
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'active': return 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20'
+      case 'cancelled': return 'bg-red-400/10 text-red-300 border border-red-400/20'
+      case 'pending': return 'bg-amber-300/10 text-amber-200 border border-amber-300/20'
+      default: return 'bg-white/5 text-muted border border-hairline'
     }
   }
 
@@ -474,16 +474,16 @@ export default function AdminPage() {
     if (loading) {
       return (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600">Loading comprehensive analytics...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          <span className="ml-3 text-muted">Loading comprehensive analytics...</span>
         </div>
       )
     }
 
     if (!analyticsData) {
       return (
-        <div className="bg-red-50 p-4 rounded-lg">
-          <p className="text-red-800">Failed to load comprehensive analytics data</p>
+        <div className="bg-red-400/10 border border-red-400/20 p-4 rounded-lg">
+          <p className="text-red-300">Failed to load comprehensive analytics data</p>
         </div>
       )
     }
@@ -492,65 +492,65 @@ export default function AdminPage() {
 
     return (
       <div className="space-y-6">
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="bg-sky-400/10 border border-sky-400/20 p-4 rounded-lg">
+          <p className="text-sm text-sky-300">
             📊 <strong>Live TextMagic Analytics</strong> - Real-time data from your TextMagic account
           </p>
         </div>
 
         {/* Account Overview */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <UserIcon className="h-5 w-5 mr-2 text-blue-600" />
+        <div className="bg-card border border-hairline p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+            <UserIcon className="h-5 w-5 mr-2 text-accent" />
             Account Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-green-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-emerald-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <CurrencyDollarIcon className="h-8 w-8 text-green-600 flex-shrink-0" />
+                <CurrencyDollarIcon className="h-8 w-8 text-emerald-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Account Balance</p>
-                  <p className="text-xl sm:text-2xl font-bold text-green-700 break-words">
+                  <p className="text-sm text-muted">Account Balance</p>
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-300 break-words">
                     {account?.currency?.htmlSymbol || '$'}{account?.balance || '0'}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-sky-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <UserIcon className="h-8 w-8 text-blue-600 flex-shrink-0" />
+                <UserIcon className="h-8 w-8 text-sky-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Account Owner</p>
-                  <p className="text-base sm:text-lg font-semibold text-gray-900 break-words">
+                  <p className="text-sm text-muted">Account Owner</p>
+                  <p className="text-base sm:text-lg font-semibold text-ink break-words">
                     {account?.firstName} {account?.lastName}
                   </p>
-                  <p className="text-xs text-gray-500 truncate" title={account?.email}>
+                  <p className="text-xs text-muted truncate" title={account?.email}>
                     {account?.email}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-purple-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-white/5 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
                 <div className="h-8 w-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">TZ</span>
                 </div>
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Timezone</p>
-                  <p className="text-base sm:text-lg font-semibold text-gray-900 break-words">
+                  <p className="text-sm text-muted">Timezone</p>
+                  <p className="text-base sm:text-lg font-semibold text-ink break-words">
                     {account?.timezone?.timezone?.replace('_', ' ') || 'N/A'}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-amber-300/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
                 <div className="h-8 w-8 bg-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">CO</span>
                 </div>
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Company</p>
-                  <p className="text-base sm:text-lg font-semibold text-gray-900 break-words" title={account?.company}>
+                  <p className="text-sm text-muted">Company</p>
+                  <p className="text-base sm:text-lg font-semibold text-ink break-words" title={account?.company}>
                     {account?.company || 'N/A'}
                   </p>
                 </div>
@@ -560,63 +560,63 @@ export default function AdminPage() {
         </div>
 
         {/* Messaging Analytics */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2 text-green-600" />
+        <div className="bg-card border border-hairline p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+            <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2 text-accent" />
             SMS Performance Metrics
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-green-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-emerald-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <CheckCircleIcon className="h-8 w-8 text-green-600 flex-shrink-0" />
+                <CheckCircleIcon className="h-8 w-8 text-emerald-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Messages Delivered</p>
-                  <p className="text-xl sm:text-2xl font-bold text-green-700">
+                  <p className="text-sm text-muted">Messages Delivered</p>
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-300">
                     {messaging?.totals?.totalDelivered || 0}
                   </p>
-                  <p className="text-xs text-gray-500 break-words">
+                  <p className="text-xs text-muted break-words">
                     {messaging?.totals?.overallDeliveryRate || 0}% success rate
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-red-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <ExclamationTriangleIcon className="h-8 w-8 text-red-600 flex-shrink-0" />
+                <ExclamationTriangleIcon className="h-8 w-8 text-red-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Failed Messages</p>
-                  <p className="text-xl sm:text-2xl font-bold text-red-700">
+                  <p className="text-sm text-muted">Failed Messages</p>
+                  <p className="text-xl sm:text-2xl font-bold text-red-300">
                     {messaging?.totals?.totalFailed || 0}
                   </p>
-                  <p className="text-xs text-gray-500 break-words">
+                  <p className="text-xs text-muted break-words">
                     {messaging?.totals?.totalRejected || 0} rejected
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-sky-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <ChatBubbleLeftRightIcon className="h-8 w-8 text-blue-600 flex-shrink-0" />
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Message Parts</p>
-                  <p className="text-xl sm:text-2xl font-bold text-blue-700">
+                  <p className="text-sm text-muted">Message Parts</p>
+                  <p className="text-xl sm:text-2xl font-bold text-sky-300">
                     {messaging?.totals?.totalParts || 0}
                   </p>
-                  <p className="text-xs text-gray-500 break-words">
+                  <p className="text-xs text-muted break-words">
                     {messaging?.totals?.averageCostPerMessage ? `$${messaging.totals.averageCostPerMessage.toFixed(3)} avg` : 'N/A'}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-yellow-50 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-amber-300/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <CurrencyDollarIcon className="h-8 w-8 text-yellow-600 flex-shrink-0" />
+                <CurrencyDollarIcon className="h-8 w-8 text-amber-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
-                  <p className="text-sm text-gray-600">Total Costs</p>
-                  <p className="text-xl sm:text-2xl font-bold text-yellow-700">
+                  <p className="text-sm text-muted">Total Costs</p>
+                  <p className="text-xl sm:text-2xl font-bold text-amber-200">
                     ${messaging?.totals?.totalCosts?.toFixed(2) || '0.00'}
                   </p>
-                  <p className="text-xs text-gray-500 break-words">
+                  <p className="text-xs text-muted break-words">
                     {messaging?.totals?.totalSent || 0} messages sent
                   </p>
                 </div>
@@ -626,31 +626,31 @@ export default function AdminPage() {
         </div>
 
         {/* Financial Overview */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <CurrencyDollarIcon className="h-5 w-5 mr-2 text-green-600" />
+        <div className="bg-card border border-hairline p-6 rounded-lg">
+          <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+            <CurrencyDollarIcon className="h-5 w-5 mr-2 text-accent" />
             Financial Overview
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <h4 className="text-md font-medium text-gray-900 mb-3">Spending Summary</h4>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="text-md font-medium text-ink mb-3">Spending Summary</h4>
+              <div className="bg-panel p-4 rounded-lg">
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Spending</span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="text-muted">Total Spending</span>
+                    <span className="font-semibold text-ink">
                       ${spending?.totalSpending?.toFixed(2) || '0.00'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Current Balance</span>
-                    <span className="font-semibold text-green-600">
+                    <span className="text-muted">Current Balance</span>
+                    <span className="font-semibold text-emerald-300">
                       ${account?.balance || '0.00'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Recent Transactions</span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="text-muted">Recent Transactions</span>
+                    <span className="font-semibold text-ink">
                       {spending?.recentTransactions?.length || 0} records
                     </span>
                   </div>
@@ -658,30 +658,30 @@ export default function AdminPage() {
               </div>
             </div>
             <div>
-              <h4 className="text-md font-medium text-gray-900 mb-3">Recent Transactions</h4>
+              <h4 className="text-md font-medium text-ink mb-3">Recent Transactions</h4>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {spending?.recentTransactions?.slice(0, 8).map((transaction: any, index: number) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <div key={index} className="flex justify-between items-center p-3 bg-panel rounded-lg">
                     <div className="min-w-0 flex-1 mr-3">
-                      <p className="text-sm font-medium text-gray-900 capitalize truncate">
+                      <p className="text-sm font-medium text-ink capitalize truncate">
                         {transaction.type}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted">
                         {new Date(transaction.date).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className={`text-sm font-semibold ${
-                        transaction.delta < 0 ? 'text-red-600' : 'text-green-600'
+                        transaction.delta < 0 ? 'text-red-300' : 'text-emerald-300'
                       }`}>
                         {transaction.delta < 0 ? '-' : '+'}${Math.abs(transaction.delta).toFixed(2)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted">
                         Bal: ${transaction.balance}
                       </p>
                     </div>
                   </div>
-                )) || <p className="text-gray-500 text-sm">No transactions available</p>}
+                )) || <p className="text-muted text-sm">No transactions available</p>}
               </div>
             </div>
           </div>
@@ -692,10 +692,10 @@ export default function AdminPage() {
           <button
             onClick={fetchComprehensiveAnalytics}
             disabled={loading}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center"
+            className="bg-accent text-accent-ink font-semibold px-6 py-3 rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center"
           >
             {loading ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-accent-ink mr-2"></div>
             ) : (
               <span className="mr-2">🔄</span>
             )}
@@ -710,8 +710,8 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading admin dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-muted">Loading admin dashboard...</p>
         </div>
       </div>
     )
@@ -722,7 +722,7 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
-          <p className="text-gray-600">{error}</p>
+          <p className="text-muted">{error}</p>
         </div>
       </div>
     )
@@ -733,19 +733,19 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas text-ink">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-panel border-b border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-gray-600">Manage your application and users</p>
+                <h1 className="font-display text-2xl font-bold text-ink">Admin Dashboard</h1>
+                <p className="text-muted">Manage your application and users</p>
               </div>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="whitespace-nowrap text-sm text-gray-500 hover:text-gray-700 lg:hidden"
+                className="whitespace-nowrap text-sm text-muted hover:text-ink lg:hidden"
               >
                 ← Dashboard
               </button>
@@ -753,37 +753,37 @@ export default function AdminPage() {
             <div className="flex flex-wrap items-center gap-2">
               <a
                 href="/admin/support"
-                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
               >
                 Support
               </a>
               <a
                 href="/admin/shared-number"
-                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
               >
                 Shared number
               </a>
               <a
                 href="/admin/numbers"
-                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
               >
                 Numbers
               </a>
               <a
                 href="/admin/subscriptions"
-                className="rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
               >
                 Subscriptions
               </a>
               <a
                 href="/admin/spam"
-                className="rounded-full bg-red-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+                className="rounded-full border border-red-400/30 bg-red-500/15 px-3.5 py-1.5 text-sm font-medium text-red-300 hover:bg-red-500/25"
               >
                 Spam cleanup
               </a>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="hidden whitespace-nowrap text-sm text-gray-500 hover:text-gray-700 lg:inline"
+                className="hidden whitespace-nowrap text-sm text-muted hover:text-ink lg:inline"
               >
                 ← Back to Dashboard
               </button>
@@ -795,7 +795,7 @@ export default function AdminPage() {
       {/* Notification */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-          notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          notification.type === 'success' ? 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20' : 'bg-red-400/10 text-red-300 border border-red-400/20'
         }`}>
           <div className="flex items-center">
             {notification.type === 'success' ? (
@@ -817,8 +817,8 @@ export default function AdminPage() {
               onClick={() => setActiveTab('analytics')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'analytics'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-muted hover:text-ink'
               }`}
             >
               <ChartBarIcon className="h-5 w-5 inline mr-2" />
@@ -828,8 +828,8 @@ export default function AdminPage() {
               onClick={() => setActiveTab('comprehensive')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'comprehensive'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-muted hover:text-ink'
               }`}
             >
               <ChartBarIcon className="h-5 w-5 inline mr-2" />
@@ -839,8 +839,8 @@ export default function AdminPage() {
               onClick={() => setActiveTab('sms')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'sms'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-muted hover:text-ink'
               }`}
             >
               <ChatBubbleLeftRightIcon className="h-5 w-5 inline mr-2" />
@@ -850,8 +850,8 @@ export default function AdminPage() {
               onClick={() => setActiveTab('users')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'users'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-muted hover:text-ink'
               }`}
             >
               <UserIcon className="h-5 w-5 inline mr-2" />
@@ -865,54 +865,54 @@ export default function AdminPage() {
           <div className="space-y-6">
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <CurrencyDollarIcon className="h-8 w-8 text-green-600" />
+                  <CurrencyDollarIcon className="h-8 w-8 text-emerald-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Monthly Revenue</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Monthly Revenue</p>
+                    <p className="text-2xl font-semibold text-ink">
                       ${data.analytics.revenueMetrics.monthlyRecurringRevenue.toLocaleString()}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <UserIcon className="h-8 w-8 text-blue-600" />
+                  <UserIcon className="h-8 w-8 text-sky-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Paid Subscribers</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Paid Subscribers</p>
+                    <p className="text-2xl font-semibold text-ink">
                       {data.stats.paidSubscribers.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted">
                       +{data.stats.overrideUsers} override users
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChartBarIcon className="h-8 w-8 text-purple-600" />
+                  <ChartBarIcon className="h-8 w-8 text-purple-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Growth Rate</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Growth Rate</p>
+                    <p className="text-2xl font-semibold text-ink">
                       +{data.analytics.revenueMetrics.monthlyGrowthRate}%
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <GiftIcon className="h-8 w-8 text-orange-600" />
+                  <GiftIcon className="h-8 w-8 text-amber-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Override Users</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Override Users</p>
+                    <p className="text-2xl font-semibold text-ink">
                       {data.stats.overrideUsers.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted">
                       Admin granted access
                     </p>
                   </div>
@@ -922,40 +922,40 @@ export default function AdminPage() {
 
             {/* Detailed Revenue Metrics */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Breakdown</h3>
+              <div className="bg-card border border-hairline p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-ink mb-4">Revenue Breakdown</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Annual Recurring Revenue</span>
-                    <span className="font-semibold text-gray-900">${data.analytics.revenueMetrics.annualRecurringRevenue.toLocaleString()}</span>
+                    <span className="text-muted">Annual Recurring Revenue</span>
+                    <span className="font-semibold text-ink">${data.analytics.revenueMetrics.annualRecurringRevenue.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Average Revenue Per User</span>
-                    <span className="font-semibold text-gray-900">${data.analytics.revenueMetrics.averageRevenuePerUser.toFixed(2)}</span>
+                    <span className="text-muted">Average Revenue Per User</span>
+                    <span className="font-semibold text-ink">${data.analytics.revenueMetrics.averageRevenuePerUser.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Customer Lifetime Value</span>
-                    <span className="font-semibold text-gray-900">${data.analytics.revenueMetrics.customerLifetimeValue.toFixed(2)}</span>
+                    <span className="text-muted">Customer Lifetime Value</span>
+                    <span className="font-semibold text-ink">${data.analytics.revenueMetrics.customerLifetimeValue.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Monthly Churn Rate</span>
-                    <span className="font-semibold text-gray-900">{data.analytics.revenueMetrics.churnRate}%</span>
+                    <span className="text-muted">Monthly Churn Rate</span>
+                    <span className="font-semibold text-ink">{data.analytics.revenueMetrics.churnRate}%</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Tiers</h3>
+              <div className="bg-card border border-hairline p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-ink mb-4">Subscription Tiers</h3>
                 <div className="space-y-3">
                   {Object.entries(data.analytics.subscriptionBreakdown).map(([tier, count]) => (
                     <div key={tier} className="flex justify-between items-center">
                       <div className="flex items-center">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800`}>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full bg-sky-400/10 text-sky-300 border border-sky-400/20`}>
                           PROFESSIONAL
                         </span>
-                        <span className="ml-2 text-gray-600">{count} users</span>
+                        <span className="ml-2 text-muted">{count} users</span>
                       </div>
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-ink">
                         ${(20 * (count as number)).toLocaleString()}
                       </span>
                     </div>
@@ -976,27 +976,27 @@ export default function AdminPage() {
           <div className="space-y-6">
             {/* SMS Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-blue-600" />
+                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Total SMS Sent</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Total SMS Sent</p>
+                    <p className="text-2xl font-semibold text-ink">
                       {data.analytics.smsMetrics.totalSent.toLocaleString()}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChartBarIcon className="h-8 w-8 text-green-600" />
+                  <ChartBarIcon className="h-8 w-8 text-emerald-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">This Month</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">This Month</p>
+                    <p className="text-2xl font-semibold text-ink">
                       {data.analytics.smsMetrics.thisMonth.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted">
                       {data.analytics.smsMetrics.lastMonth === 0 
                         ? 'No previous data' 
                         : `${Math.round(((data.analytics.smsMetrics.thisMonth - data.analytics.smsMetrics.lastMonth) / data.analytics.smsMetrics.lastMonth) * 100) >= 0 ? '+' : ''}${Math.round(((data.analytics.smsMetrics.thisMonth - data.analytics.smsMetrics.lastMonth) / data.analytics.smsMetrics.lastMonth) * 100)}% vs last month`}
@@ -1005,12 +1005,12 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <CheckCircleIcon className="h-8 w-8 text-green-600" />
+                  <CheckCircleIcon className="h-8 w-8 text-emerald-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Success Rate</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Success Rate</p>
+                    <p className="text-2xl font-semibold text-ink">
                       {data.analytics.smsMetrics.totalSent === 0 
                         ? 'No data' 
                         : `${data.analytics.smsMetrics.successRate}%`}
@@ -1019,12 +1019,12 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
+              <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-600" />
+                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-300" />
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Daily Average</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm text-muted">Daily Average</p>
+                    <p className="text-2xl font-semibold text-ink">
                       {data.analytics.smsMetrics.dailyAverage.toLocaleString()}
                     </p>
                   </div>
@@ -1034,35 +1034,35 @@ export default function AdminPage() {
 
             {/* SMS Usage by Tier and Top Users */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Usage by Subscription Tier</h3>
+              <div className="bg-card border border-hairline p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-ink mb-4">Usage by Subscription Tier</h3>
                 <div className="space-y-3">
                   {Object.entries(data.analytics.smsUsageByTier).map(([tier, usage]) => (
                     <div key={tier} className="flex justify-between items-center">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSubscriptionColor(tier)}`}>
                         PROFESSIONAL
                       </span>
-                      <span className="font-semibold text-gray-900">{(usage as number).toLocaleString()} SMS</span>
+                      <span className="font-semibold text-ink">{(usage as number).toLocaleString()} SMS</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Top 10 SMS Users</h3>
+              <div className="bg-card border border-hairline p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-ink mb-4">Top 10 SMS Users</h3>
                 <div className="space-y-2">
                   {data.analytics.topSmsUsers.map((user, index) => (
                     <div key={user.id} className="flex justify-between items-center py-2">
                       <div className="flex items-center">
-                        <span className="text-sm font-medium text-gray-500 w-6">#{index + 1}</span>
+                        <span className="text-sm font-medium text-muted w-6">#{index + 1}</span>
                         <div className="ml-3">
-                          <p className="text-sm font-medium text-gray-900">{user.username}</p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <p className="text-sm font-medium text-ink">{user.username}</p>
+                          <p className="text-xs text-muted">{user.email}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-semibold text-gray-900">{user.sms_usage.toLocaleString()}</p>
-                        <p className="text-xs text-gray-500">professional</p>
+                        <p className="text-sm font-semibold text-ink">{user.sms_usage.toLocaleString()}</p>
+                        <p className="text-xs text-muted">professional</p>
                       </div>
                     </div>
                   ))}
@@ -1078,8 +1078,8 @@ export default function AdminPage() {
             {/* User Management Header */}
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">User Management</h3>
-                <p className="text-sm text-gray-600">Manage user accounts and subscriptions</p>
+                <h3 className="text-lg font-semibold text-ink">User Management</h3>
+                <p className="text-sm text-muted">Manage user accounts and subscriptions</p>
               </div>
               <div className="flex space-x-3">
                 <button
@@ -1102,14 +1102,14 @@ export default function AdminPage() {
                       showNotification('error', 'Failed to fix user tiers')
                     }
                   }}
-                  className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center"
+                  className="bg-amber-300/10 text-amber-200 border border-amber-300/20 px-4 py-2 rounded-lg hover:bg-amber-300/20 flex items-center"
                 >
                   <span className="text-xs">🔧</span>
                   <span className="ml-2">Fix Tiers</span>
                 </button>
                 <button
                   onClick={openCreateModal}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+                  className="bg-accent text-accent-ink font-semibold px-4 py-2 rounded-lg hover:opacity-90 flex items-center"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
                   Create User
@@ -1118,24 +1118,24 @@ export default function AdminPage() {
             </div>
 
             {/* Search and Filters */}
-            <div className="bg-white p-4 rounded-lg shadow">
+            <div className="bg-card border border-hairline p-4 rounded-lg">
               <div className="flex flex-wrap gap-4 items-center">
                 <div className="flex-1 min-w-64">
                   <div className="relative">
-                    <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-faint" />
                     <input
                       type="text"
                       placeholder="Search users..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2 bg-card text-ink placeholder:text-faint border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                     />
                   </div>
                 </div>
                 <select
                   value={filterTier}
                   onChange={(e) => setFilterTier(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-3 py-2 bg-card text-ink border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                 >
                   <option value="">All Tiers</option>
                   <option value="professional">Professional</option>
@@ -1143,7 +1143,7 @@ export default function AdminPage() {
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-3 py-2 bg-card text-ink border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                 >
                   <option value="">All Status</option>
                   <option value="active">Active</option>
@@ -1154,51 +1154,51 @@ export default function AdminPage() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-card border border-hairline rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-hairline">
+                  <thead className="bg-panel">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
                         User
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
                         Subscription
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
                         SMS Usage
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
                         Access Type
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-right font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="divide-y divide-hairline">
                     {filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
+                      <tr key={user.id} className="hover:bg-white/5">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                <UserIcon className="h-5 w-5 text-gray-500" />
+                              <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                                <UserIcon className="h-5 w-5 text-muted" />
                               </div>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900 flex items-center">
+                              <div className="text-sm font-medium text-ink flex items-center">
                                 {user.username}
                                 {user.is_admin && (
-                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-400/10 text-red-300 border border-red-400/20">
                                     Admin
                                   </span>
                                 )}
                               </div>
-                              <div className="text-sm text-gray-500">{user.email}</div>
+                              <div className="text-sm text-muted">{user.email}</div>
                             </div>
                           </div>
                         </td>
@@ -1207,7 +1207,7 @@ export default function AdminPage() {
                             PROFESSIONAL
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                           {user.sms_usage.toLocaleString()} / {user.sms_limit === 999999 ? '∞' : user.sms_limit.toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -1218,17 +1218,17 @@ export default function AdminPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-1">
                             {user.payment_override ? (
-                              <div className="flex items-center text-orange-600">
+                              <div className="flex items-center text-amber-300">
                                 <GiftIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Override</span>
                               </div>
                             ) : user.require_payment ? (
-                              <div className="flex items-center text-red-600">
+                              <div className="flex items-center text-red-300">
                                 <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Payment Required</span>
                               </div>
                             ) : (
-                              <div className="flex items-center text-green-600">
+                              <div className="flex items-center text-emerald-300">
                                 <CreditCardIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Paid</span>
                               </div>
@@ -1240,7 +1240,7 @@ export default function AdminPage() {
                              {user.stripe_customer_id && !user.payment_override && (
                                <button
                                  onClick={() => window.open(`https://dashboard.stripe.com/customers/${user.stripe_customer_id}`, '_blank')}
-                                 className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg"
+                                 className="p-2 text-purple-300 hover:bg-white/10 rounded-lg"
                                  title="View in Stripe Dashboard"
                                >
                                  <LinkIcon className="h-4 w-4" />
@@ -1250,8 +1250,8 @@ export default function AdminPage() {
                                onClick={() => handleTogglePaymentOverride(user)}
                                className={`p-2 rounded-lg transition-colors ${
                                  user.payment_override
-                                   ? 'bg-orange-100 text-orange-600 hover:bg-orange-200'
-                                   : 'bg-green-100 text-green-600 hover:bg-green-200'
+                                   ? 'bg-amber-300/10 text-amber-300 hover:bg-amber-300/20'
+                                   : 'bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20'
                                }`}
                                title={user.payment_override ? 'Remove payment override' : 'Grant payment override'}
                              >
@@ -1265,8 +1265,8 @@ export default function AdminPage() {
                                onClick={() => handleToggleRequirePayment(user)}
                                className={`p-2 rounded-lg transition-colors ${
                                  user.require_payment
-                                   ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                   ? 'bg-red-400/10 text-red-300 hover:bg-red-400/20'
+                                   : 'bg-white/5 text-muted hover:bg-white/10'
                                }`}
                                title={user.require_payment ? 'Disable payment requirement' : 'Require payment'}
                              >
@@ -1278,21 +1278,21 @@ export default function AdminPage() {
                              </button>
                              <button
                                onClick={() => openPasswordResetModal(user)}
-                               className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg"
+                               className="p-2 text-amber-300 hover:bg-white/10 rounded-lg"
                                title="Reset password"
                              >
                                <KeyIcon className="h-4 w-4" />
                              </button>
                              <button
                                onClick={() => openEditModal(user)}
-                               className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                               className="p-2 text-sky-300 hover:bg-white/10 rounded-lg"
                                title="Edit user"
                              >
                                <PencilIcon className="h-4 w-4" />
                              </button>
                              <button
                                onClick={() => openDeleteModal(user)}
-                               className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                               className="p-2 text-red-300 hover:bg-white/10 rounded-lg"
                                title="Delete user"
                              >
                                <TrashIcon className="h-4 w-4" />
@@ -1308,8 +1308,8 @@ export default function AdminPage() {
 
             {filteredUsers.length === 0 && (
               <div className="text-center py-12">
-                <UserIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No users found matching your criteria.</p>
+                <UserIcon className="h-12 w-12 text-faint mx-auto mb-4" />
+                <p className="text-muted">No users found matching your criteria.</p>
               </div>
             )}
           </div>
@@ -1318,15 +1318,15 @@ export default function AdminPage() {
 
       {/* User Modal */}
       {showUserModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-card rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto border border-hairline text-ink">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-ink">
                 {isCreating ? 'Create New User' : 'Edit User'}
               </h3>
               <button
                 onClick={() => setShowUserModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-faint hover:text-ink"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -1338,41 +1338,41 @@ export default function AdminPage() {
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-ink mb-1">
                     Username
                   </label>
                   <input
                     type="text"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-ink mb-1">
                     Email
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card"
                     required
                   />
                 </div>
 
                 {isCreating && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">
+                    <label className="block text-sm font-medium text-ink mb-1">
                       Password
                     </label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card"
                       required
                       minLength={6}
                     />
@@ -1380,26 +1380,26 @@ export default function AdminPage() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-ink mb-1">
                     Subscription Tier
                   </label>
                   <select
                     value={formData.subscription_tier}
                     onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card"
                   >
                     <option value="professional">Professional</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-ink mb-1">
                     Subscription Status
                   </label>
                   <select
                     value={formData.subscription_status}
                     onChange={(e) => setFormData({ ...formData, subscription_status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card"
                   >
                     <option value="active">Active</option>
                     <option value="cancelled">Cancelled</option>
@@ -1408,20 +1408,20 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-ink mb-1">
                     SMS Limit
                   </label>
                   <input
                     type="number"
                     value={formData.sms_limit}
                     onChange={(e) => setFormData({ ...formData, sms_limit: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card"
                     min="0"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-ink mb-1">
                     Stripe Customer ID
                   </label>
                   <input
@@ -1429,9 +1429,9 @@ export default function AdminPage() {
                     value={formData.stripe_customer_id}
                     onChange={(e) => setFormData({ ...formData, stripe_customer_id: e.target.value })}
                     placeholder="cus_xxxxxxxxx"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-400"
+                    className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card placeholder:text-faint"
                   />
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Link to Stripe customer (for paid users)
                   </p>
                 </div>
@@ -1442,9 +1442,9 @@ export default function AdminPage() {
                       type="checkbox"
                       checked={formData.is_admin}
                       onChange={(e) => setFormData({ ...formData, is_admin: e.target.checked })}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-hairline text-accent focus:ring-accent/40"
                     />
-                    <span className="ml-2 text-sm text-gray-900">Admin User</span>
+                    <span className="ml-2 text-sm text-ink">Admin User</span>
                   </label>
 
                   <label className="flex items-center">
@@ -1452,17 +1452,17 @@ export default function AdminPage() {
                       type="checkbox"
                       checked={formData.payment_override}
                       onChange={(e) => setFormData({ ...formData, payment_override: e.target.checked })}
-                      className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                      className="rounded border-hairline text-accent focus:ring-accent/40"
                     />
-                    <span className="ml-2 text-sm text-gray-900">Payment Override</span>
+                    <span className="ml-2 text-sm text-ink">Payment Override</span>
                   </label>
                 </div>
 
                 {formData.payment_override && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                  <div className="bg-amber-300/10 border border-amber-300/20 rounded-lg p-3">
                     <div className="flex items-center">
-                      <GiftIcon className="h-5 w-5 text-orange-600 mr-2" />
-                      <p className="text-sm text-orange-800">
+                      <GiftIcon className="h-5 w-5 text-amber-300 mr-2" />
+                      <p className="text-sm text-amber-200">
                         This user will have premium access without payment requirements.
                       </p>
                     </div>
@@ -1471,21 +1471,21 @@ export default function AdminPage() {
 
                 {/* Toll-free SMS provisioning (ISV) */}
                 {!isCreating && (
-                  <div className="border-t border-gray-200 pt-4">
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <div className="border-t border-hairline pt-4">
+                    <label className="block text-sm font-medium text-ink mb-2">
                       Dedicated texting number
                     </label>
                     {(() => {
                       const status = smsSender?.status || 'none'
                       const badge: Record<string, string> = {
-                        none: 'bg-gray-100 text-gray-700',
-                        provisioning: 'bg-blue-100 text-blue-800',
-                        pending_verification: 'bg-yellow-100 text-yellow-800',
-                        active: 'bg-green-100 text-green-800',
-                        failed: 'bg-red-100 text-red-800',
+                        none: 'bg-white/5 text-muted border border-hairline',
+                        provisioning: 'bg-sky-400/10 text-sky-300 border border-sky-400/20',
+                        pending_verification: 'bg-amber-300/10 text-amber-200 border border-amber-300/20',
+                        active: 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20',
+                        failed: 'bg-red-400/10 text-red-300 border border-red-400/20',
                       }
                       return (
-                        <div className="rounded-lg bg-gray-50 border border-gray-200 p-3 text-sm">
+                        <div className="rounded-lg bg-panel border border-hairline p-3 text-sm">
                           <div className="flex items-center justify-between">
                             <span
                               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badge[status] || badge.none}`}
@@ -1493,20 +1493,20 @@ export default function AdminPage() {
                               {status.replace('_', ' ')}
                             </span>
                             {smsSender?.phoneNumber && (
-                              <span className="font-mono text-xs text-gray-700">{smsSender.phoneNumber}</span>
+                              <span className="font-mono text-xs text-muted">{smsSender.phoneNumber}</span>
                             )}
                           </div>
                           {smsSender?.verificationStatus && (
-                            <p className="mt-2 text-xs text-gray-600">
+                            <p className="mt-2 text-xs text-muted">
                               Verification: {smsSender.verificationStatus}
                             </p>
                           )}
                           {(smsSender?.rejectionReason || smsSender?.error) && (
-                            <p className="mt-1 text-xs text-red-700">
+                            <p className="mt-1 text-xs text-red-300">
                               {smsSender.rejectionReason || smsSender.error}
                             </p>
                           )}
-                          <p className="mt-2 text-xs text-gray-600">
+                          <p className="mt-2 text-xs text-muted">
                             {smsBusiness
                               ? `Business on file: ${smsBusiness.legalName}`
                               : 'No business details on file — the user must complete onboarding first.'}
@@ -1517,7 +1517,7 @@ export default function AdminPage() {
                                 type="button"
                                 onClick={handleProvisionSms}
                                 disabled={smsBusy || !smsBusiness}
-                                className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-1.5 bg-accent text-accent-ink rounded-lg text-xs font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {smsBusy ? 'Working…' : 'Buy number + verify'}
                               </button>
@@ -1527,7 +1527,7 @@ export default function AdminPage() {
                                 type="button"
                                 onClick={handleRefreshSms}
                                 disabled={smsBusy}
-                                className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-medium hover:bg-gray-800 disabled:opacity-50"
+                                className="px-3 py-1.5 bg-accent text-accent-ink rounded-lg text-xs font-semibold hover:opacity-90 disabled:opacity-50"
                               >
                                 {smsBusy ? 'Checking…' : 'Refresh status'}
                               </button>
@@ -1544,13 +1544,13 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowUserModal(false)}
-                  className="px-4 py-2 text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 border border-gray-300 font-medium"
+                  className="px-4 py-2 text-ink rounded-lg hover:bg-white/5 border border-hairline font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 border border-blue-600 font-medium shadow-sm"
+                  className="px-4 py-2 bg-accent text-accent-ink rounded-lg hover:opacity-90 font-semibold"
                 >
                   {isCreating ? 'Create User' : 'Update User'}
                 </button>
@@ -1562,28 +1562,28 @@ export default function AdminPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && userToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-2xl border border-gray-200">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-card rounded-lg max-w-md w-full p-6 border border-hairline text-ink">
             <div className="flex items-center mb-4">
-              <ExclamationTriangleIcon className="h-8 w-8 text-red-600 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
+              <ExclamationTriangleIcon className="h-8 w-8 text-red-300 mr-3" />
+              <h3 className="text-lg font-semibold text-ink">Confirm Deletion</h3>
             </div>
             
-            <p className="text-gray-900 mb-6">
-              Are you sure you want to delete the user <strong className="text-gray-900">{userToDelete.username}</strong>? 
+            <p className="text-ink mb-6">
+              Are you sure you want to delete the user <strong className="text-ink">{userToDelete.username}</strong>? 
               This action cannot be undone and will permanently remove all user data.
             </p>
 
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 border border-gray-300 font-medium"
+                className="px-4 py-2 text-ink rounded-lg hover:bg-white/5 border border-hairline font-medium"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteUser}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 border border-red-600 font-medium shadow-sm"
+                className="px-4 py-2 bg-red-500/15 text-red-300 rounded-lg hover:bg-red-500/25 border border-red-400/30 font-medium"
               >
                 Delete User
               </button>
@@ -1594,28 +1594,28 @@ export default function AdminPage() {
 
       {/* Password Reset Modal */}
       {showPasswordReset && userToResetPassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-2xl border border-gray-200">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-card rounded-lg max-w-md w-full p-6 border border-hairline text-ink">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <KeyIcon className="h-8 w-8 text-yellow-600 mr-3" />
-                <h3 className="text-lg font-semibold text-gray-900">Reset Password</h3>
+                <KeyIcon className="h-8 w-8 text-amber-300 mr-3" />
+                <h3 className="text-lg font-semibold text-ink">Reset Password</h3>
               </div>
               <button
                 onClick={() => setShowPasswordReset(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-faint hover:text-ink"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
             
             <div className="mb-6">
-              <p className="text-gray-900 mb-4">
-                Reset password for user <strong className="text-gray-900">{userToResetPassword.username}</strong> ({userToResetPassword.email})
+              <p className="text-ink mb-4">
+                Reset password for user <strong className="text-ink">{userToResetPassword.username}</strong> ({userToResetPassword.email})
               </p>
               
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label className="block text-sm font-medium text-ink mb-2">
                   New Password
                 </label>
                 <input
@@ -1623,11 +1623,11 @@ export default function AdminPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter new password..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-hairline rounded-lg focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink bg-card placeholder:text-faint"
                   required
                   minLength={8}
                 />
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-muted mt-1">
                   Password must be at least 8 characters long
                 </p>
               </div>
@@ -1636,14 +1636,14 @@ export default function AdminPage() {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowPasswordReset(false)}
-                className="px-4 py-2 text-gray-900 bg-gray-200 rounded-lg hover:bg-gray-300 border border-gray-300 font-medium"
+                className="px-4 py-2 text-ink rounded-lg hover:bg-white/5 border border-hairline font-medium"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetPassword}
                 disabled={!newPassword || newPassword.length < 8 || isResettingPassword}
-                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed border border-yellow-600 font-medium shadow-sm"
+                className="px-4 py-2 bg-accent text-accent-ink rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
                 {isResettingPassword ? 'Resetting...' : 'Reset Password'}
               </button>

@@ -158,7 +158,7 @@ export default function SpamCleanupPage() {
       </p>
 
       {/* Filters */}
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-xl border border-hairline bg-[#FAFAF8] p-4">
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-xl border border-hairline bg-panel p-4">
         <label className="flex items-center gap-2 text-sm text-ink">
           <input type="checkbox" checked={zeroSms} onChange={(e) => setZeroSms(e.target.checked)} />
           0 SMS sent
@@ -174,7 +174,7 @@ export default function SpamCleanupPage() {
             min={0}
             value={withinDays}
             onChange={(e) => setWithinDays(Math.max(0, Number(e.target.value) || 0))}
-            className="w-16 rounded-md border border-hairline bg-white px-2 py-1 text-sm"
+            className="w-16 rounded-md border border-hairline bg-card px-2 py-1 text-sm text-ink focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
           />
           days <span className="text-muted">(0 = any)</span>
         </label>
@@ -183,7 +183,7 @@ export default function SpamCleanupPage() {
           placeholder="Search email / username…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 min-w-[180px] rounded-md border border-hairline bg-white px-3 py-1.5 text-sm"
+          className="flex-1 min-w-[180px] rounded-md border border-hairline bg-card px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
         />
       </div>
 
@@ -195,8 +195,7 @@ export default function SpamCleanupPage() {
         <button
           onClick={doDelete}
           disabled={deleting || selectedCount === 0}
-          className="rounded-full px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
-          style={{ background: '#dc2626' }}
+          className="rounded-full border border-red-400/30 bg-red-500/15 px-5 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/25 disabled:opacity-40"
         >
           {deleting ? 'Deleting…' : `Delete selected (${selectedCount})`}
         </button>
@@ -205,7 +204,7 @@ export default function SpamCleanupPage() {
       {/* Table */}
       <div className="mt-3 overflow-hidden rounded-xl border border-hairline">
         <table className="w-full text-sm">
-          <thead className="bg-[#FAFAF8] text-left font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+          <thead className="bg-panel text-left font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
             <tr>
               <th className="w-10 px-3 py-2.5">
                 <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Select all" />
@@ -220,7 +219,7 @@ export default function SpamCleanupPage() {
             {candidates.map((u) => {
               const d = daysSince(u.created_at)
               return (
-                <tr key={u.id} className={selected.has(u.id) ? 'bg-[#FFF7F4]' : 'bg-white'}>
+                <tr key={u.id} className={selected.has(u.id) ? 'bg-accent/10' : 'hover:bg-card'}>
                   <td className="px-3 py-2.5">
                     <input type="checkbox" checked={selected.has(u.id)} onChange={() => toggle(u.id)} />
                   </td>
@@ -234,7 +233,7 @@ export default function SpamCleanupPage() {
                   <td className="px-3 py-2.5 text-muted">{Number(u.sms_usage) || 0}</td>
                   <td className="px-3 py-2.5">
                     {u.stripe_customer_id ? (
-                      <span className="text-[#16a34a]">yes</span>
+                      <span className="text-emerald-300">yes</span>
                     ) : (
                       <span className="text-muted">no</span>
                     )}

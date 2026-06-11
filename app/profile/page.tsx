@@ -185,7 +185,7 @@ export default function ProfilePage() {
     if (paymentOverride) {
       return (
         <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
-          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#DD4D24' }} />
+          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#C6F24E' }} />
           Admin Override
         </span>
       )
@@ -193,7 +193,7 @@ export default function ProfilePage() {
 
     return (
       <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-ink" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
         Professional · {status}
       </span>
     )
@@ -210,7 +210,7 @@ export default function ProfilePage() {
   if (!userDetails) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[15px] text-[#B23A1E]">Error loading profile</div>
+        <div className="text-[15px] text-red-300">Error loading profile</div>
       </div>
     )
   }
@@ -222,14 +222,14 @@ export default function ProfilePage() {
         <div
           className={`fixed top-20 right-5 z-50 rounded-lg border px-4 py-3 text-[14px] font-medium ${
             notification.type === 'success'
-              ? 'border-hairline bg-white text-ink'
-              : 'border-[#E7C3B8] bg-white text-[#B23A1E]'
+              ? 'border-hairline bg-card text-ink'
+              : 'border-red-400/30 bg-card text-red-300'
           }`}
         >
           <div className="flex items-center gap-2">
             <span
               className={`inline-block w-1.5 h-1.5 rounded-full ${
-                notification.type === 'success' ? 'bg-[#16a34a]' : 'bg-[#B23A1E]'
+                notification.type === 'success' ? 'bg-emerald-300' : 'bg-red-400'
               }`}
             />
             {notification.message}
@@ -243,14 +243,14 @@ export default function ProfilePage() {
           <button
             onClick={() => router.push('/dashboard')}
             aria-label="Back to dashboard"
-            className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-[#FAFAF8]"
+            className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-white/5"
           >
             <ArrowLeftIcon className="h-4 w-4" />
           </button>
           <div>
             <div className="eyebrow mb-2">Account</div>
             <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.0]">Profile</h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-[#6E6A63]">
+            <p className="mt-3 text-[15px] leading-relaxed text-muted">
               Manage your account settings and preferences.
             </p>
           </div>
@@ -258,7 +258,7 @@ export default function ProfilePage() {
         {userDetails.is_admin && (
           <button
             onClick={() => router.push('/admin')}
-            className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+            className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
           >
             Admin Console
           </button>
@@ -270,13 +270,13 @@ export default function ProfilePage() {
         {/* Profile Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Account Information */}
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+          <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-display text-xl font-semibold">Account information</h2>
               {!editing && (
                 <button
                   onClick={startEdit}
-                  className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                  className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
                 >
                   Edit
                 </button>
@@ -291,7 +291,7 @@ export default function ProfilePage() {
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
                     required
-                    className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+                    className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                   />
                 </div>
                 <div>
@@ -301,7 +301,7 @@ export default function ProfilePage() {
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
                     required
-                    className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none"
+                    className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                   />
                   <p className="mt-1.5 text-xs text-muted">
                     Changing your email requires re-verifying the new address.
@@ -311,14 +311,14 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="rounded-full bg-ink px-5 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                    className="rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
                   >
                     {savingProfile ? 'Saving…' : 'Save changes'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditing(false)}
-                    className="rounded-full border border-hairline px-5 py-2.5 font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                    className="rounded-full border border-hairline px-5 py-2.5 font-medium text-ink transition-colors hover:bg-white/5"
                   >
                     Cancel
                   </button>
@@ -346,13 +346,13 @@ export default function ProfilePage() {
               <div className="py-4 last:pb-0">
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">Texts this month</span>
-                  <span className="font-mono text-[12px] text-[#6E6A63]">
+                  <span className="font-mono text-[12px] text-muted">
                     {userDetails.sms_usage_month ?? userDetails.sms_usage} / {userDetails.sms_limit}
                   </span>
                 </div>
-                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-hairline">
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                   <div
-                    className="h-full rounded-full bg-ink transition-all"
+                    className="h-full rounded-full bg-accent transition-all"
                     style={{ width: `${Math.min(((userDetails.sms_usage_month ?? userDetails.sms_usage) / userDetails.sms_limit) * 100, 100)}%` }}
                   />
                 </div>
@@ -361,12 +361,12 @@ export default function ProfilePage() {
           </div>
 
           {/* Password Reset */}
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+          <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-display text-xl font-semibold">Password &amp; security</h2>
               <button
                 onClick={() => setShowPasswordReset(!showPasswordReset)}
-                className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
               >
                 {showPasswordReset ? 'Cancel' : 'Change Password'}
               </button>
@@ -381,13 +381,13 @@ export default function ProfilePage() {
                       type={showPasswords.current ? 'text' : 'password'}
                       value={passwordData.currentPassword}
                       onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                      className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none pr-10"
+                      className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 pr-10"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords({...showPasswords, current: !showPasswords.current})}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6E6A63]"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted"
                     >
                       {showPasswords.current ? (
                         <EyeSlashIcon className="h-5 w-5" />
@@ -405,14 +405,14 @@ export default function ProfilePage() {
                       type={showPasswords.new ? 'text' : 'password'}
                       value={passwordData.newPassword}
                       onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                      className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none pr-10"
+                      className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 pr-10"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6E6A63]"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted"
                     >
                       {showPasswords.new ? (
                         <EyeSlashIcon className="h-5 w-5" />
@@ -430,14 +430,14 @@ export default function ProfilePage() {
                       type={showPasswords.confirm ? 'text' : 'password'}
                       value={passwordData.confirmPassword}
                       onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                      className="w-full rounded-lg border border-hairline px-3.5 py-2.5 text-[15px] focus:border-ink focus:outline-none pr-10"
+                      className="w-full rounded-lg border border-hairline bg-card text-ink placeholder:text-faint px-3.5 py-2.5 text-[15px] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40 pr-10"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords({...showPasswords, confirm: !showPasswords.confirm})}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6E6A63]"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted"
                     >
                       {showPasswords.confirm ? (
                         <EyeSlashIcon className="h-5 w-5" />
@@ -451,7 +451,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={isResettingPassword}
-                  className="w-full rounded-full bg-ink px-5 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isResettingPassword ? 'Updating…' : 'Update Password'}
                 </button>
@@ -464,17 +464,17 @@ export default function ProfilePage() {
         <div className="space-y-6">
           {/* Stripe Portal */}
           {userDetails.stripe_customer_id && !userDetails.payment_override && (
-            <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+            <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
               <h2 className="font-display text-lg font-semibold">Billing</h2>
 
-              <p className="mt-3 text-[14px] leading-relaxed text-[#6E6A63]">
+              <p className="mt-3 text-[14px] leading-relaxed text-muted">
                 Access your Stripe customer portal to manage your subscription, view invoices, and update payment methods.
               </p>
 
               <button
                 onClick={handleStripePortal}
                 disabled={isGeneratingStripeLink}
-                className="mt-5 w-full rounded-full bg-ink px-5 py-2.5 text-white font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-5 w-full rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGeneratingStripeLink ? 'Generating…' : 'Stripe Portal'}
               </button>
@@ -482,27 +482,27 @@ export default function ProfilePage() {
           )}
 
           {/* Account Actions */}
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
+          <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
             <h2 className="font-display text-lg font-semibold">Account actions</h2>
 
             <div className="mt-5 space-y-3">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
               >
                 Back to Dashboard
               </button>
 
               <button
                 onClick={() => router.push('/new')}
-                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-[#FAFAF8]"
+                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
               >
                 Create New Reminder
               </button>
 
               <button
                 onClick={logout}
-                className="w-full rounded-full border border-[#E7C3B8] px-5 py-2.5 text-left text-[15px] font-medium text-[#B23A1E] transition-colors hover:bg-[#FBF4F1]"
+                className="w-full rounded-full border border-red-400/30 bg-red-500/15 px-5 py-2.5 text-left text-[15px] font-medium text-red-300 transition-colors hover:bg-red-500/25"
               >
                 Logout
               </button>

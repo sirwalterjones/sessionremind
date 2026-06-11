@@ -175,15 +175,19 @@ the confirmed holes were fixed in the same session:
 
 ## Conventions
 
-- Design system: white canvas, ink `#141414`, accent `#DD4D24`, hairline `#ECEAE4`,
-  muted `#6E6A63`, tint `#FAFAF8`; `eyebrow` + `font-display` classes; rounded-2xl
-  hairline cards; pill buttons. Match `/contact` or `/onboarding` for new pages.
-- **Homepage is the "darkroom" theme** (2026-06-11): warm black `#0D0B09`,
-  safelight accent, film-strip/contact-sheet motifs, Fraunces serif display
-  (`--font-serif` / `.font-serif-display`). Utilities in globals.css:
-  `.film-grain .safelight .sprocket-row .led .glow-accent .frame-develop .breathe`.
-  AppFrame flips its nav/footer dark when `pathname === '/'` (NavLinks/MobileNav
-  take a `dark` prop). All other marketing/auth pages stay light. Copy unchanged.
+- **Design system: "Ink & Acid" (2026-06-11, site-wide incl. dashboard/admin)**:
+  dark everywhere. Tailwind tokens (tailwind.config.js): `canvas #101113` (page),
+  `panel #16181C`, `card #1A1D22`, `ink #F4F6F0` (NOTE: ink is the LIGHT TEXT
+  color now), `muted #A3A8A0`, `faint #6E736C`, `hairline #272B31`, `accent
+  #C6F24E` (acid lime), `accent-ink #11130A` (text on lime fills — never white
+  on lime). Font: Archivo (variable wdth; `.font-display` ≈ stretch 118%,
+  `.font-display-wide` = 125% uppercase) + IBM Plex Mono labels (`.eyebrow`).
+  Utilities in globals.css: `.hero-glow .film-grain .tick-rule .led .glow-accent
+  .frame-develop .breathe .rise`. Primary buttons `bg-accent text-accent-ink`;
+  secondary `border-hairline hover:bg-white/5`; status badges = 400-weight
+  tints (`bg-emerald-400/10 text-emerald-300` etc.). Emails stay light but
+  carry lime CTAs (`lib/email.ts`); OG cards use static Archivo TTFs in
+  assets/fonts. Copy/claims unchanged from the honesty audit.
 - Headless-Chrome screenshots clamp to a 500px minimum window width — for real
   mobile rendering use CDP `Emulation.setDeviceMetricsOverride`, or text appears
   falsely clipped at 390px.

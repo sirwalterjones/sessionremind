@@ -38,7 +38,7 @@ function VerifyEmailContent() {
         <p className="mt-3 text-[15px] text-muted">You&apos;re all set.</p>
         <Link
           href="/dashboard"
-          className="mt-8 inline-flex items-center rounded-full bg-ink px-6 py-3 font-medium text-white hover:opacity-90 transition-opacity"
+          className="mt-8 inline-flex items-center rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-all"
         >
           Go to dashboard
         </Link>
@@ -50,7 +50,7 @@ function VerifyEmailContent() {
   return (
     <div className="text-center">
       <div className="eyebrow flex items-center justify-center gap-2">
-        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#DD4D24' }} />
+        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#C6F24E' }} />
         {expired ? 'Link expired' : 'One more step'}
       </div>
       <h1 className="font-display mt-5 text-3xl font-semibold leading-[1.05]">
@@ -66,7 +66,7 @@ function VerifyEmailContent() {
       <button
         onClick={resend}
         disabled={sending}
-        className="mt-8 inline-flex items-center rounded-full bg-ink px-6 py-3 font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+        className="mt-8 inline-flex items-center rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-all disabled:opacity-50"
       >
         {sending ? 'Sending…' : 'Resend verification email'}
       </button>
