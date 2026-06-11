@@ -52,7 +52,7 @@ interface ScheduledMessage {
 }
 
 export default function ConnectPage() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const toast = useToast()
   const confirmDialog = useConfirm()
   const router = useRouter()
@@ -69,13 +69,17 @@ export default function ConnectPage() {
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
 
   useEffect(() => {
+    // Wait for the auth check to settle before deciding — redirecting on the
+    // initial user=null state bounced direct loads of /connect to /login
+    // (which middleware then forwards to /dashboard for signed-in visitors).
+    if (authLoading) return
     if (!user) {
       router.push('/login')
       return
     }
     loadAll()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+  }, [user, authLoading])
 
   const loadAll = useCallback(async () => {
     try {
@@ -228,7 +232,7 @@ export default function ConnectPage() {
         <ArrowLeftIcon className="w-3.5 h-3.5" /> Back to dashboard
       </button>
 
-      <div className="border-b border-hairline pb-10 mb-12">
+      <div className="border-b border-hairline pb-6 mb-8">
         <p className="eyebrow mb-3">Connect</p>
         <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
           Automatic reminders
@@ -238,8 +242,12 @@ export default function ConnectPage() {
         </p>
       </div>
 
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+      {/* ───────── Left column: connect + settings + import ───────── */}
+      <div className="min-w-0 space-y-5">
+
       {/* Connection card */}
-      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8 mb-6">
+      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
         {status.connected ? (
           <div>
             <div className="flex items-center justify-between flex-wrap gap-4">
@@ -375,13 +383,9 @@ export default function ConnectPage() {
         )}
       </div>
 
-      {/* Your texting number — live status (number, verification state, and the
-          "texts keep sending while you wait" reassurance) */}
-      <TextingNumberCard />
-
       {/* Settings */}
       {settings && (
-        <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8 mb-6">
+        <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
           <h2 className="font-display text-xl font-semibold text-ink mb-6">Reminder settings</h2>
           <div className="space-y-5">
             <div>
@@ -479,16 +483,25 @@ export default function ConnectPage() {
       )}
 
       {/* CSV import (no-connection fallback) */}
-      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8 mb-6">
+      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
         <h2 className="font-display text-xl font-semibold text-ink mb-1.5">Import from a CSV</h2>
         <p className="font-mono text-xs text-muted mb-5">Works without connecting — great on mobile, or as a backup.</p>
         <CsvImport onImported={loadAll} />
       </div>
 
+      </div>
+
+      {/* ───────── Right rail: number status + upcoming queue ───────── */}
+      <aside className="space-y-5 lg:sticky lg:top-8">
+
+      {/* Your texting number — live status (number, verification state, and the
+          "texts keep sending while you wait" reassurance) */}
+      <TextingNumberCard />
+
       {/* Upcoming auto-scheduled reminders */}
-      <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
-        <div className="flex items-baseline gap-3 mb-5">
-          <h2 className="font-display text-xl font-semibold text-ink">Upcoming reminders</h2>
+      <div className="rounded-2xl border border-hairline bg-panel p-5 sm:p-6">
+        <div className="flex items-baseline gap-3 mb-4">
+          <h2 className="font-display text-lg font-semibold text-ink">Upcoming reminders</h2>
           {upcoming.length > 0 && <span className="font-mono text-xs text-muted">{upcoming.length}</span>}
         </div>
         {upcoming.length === 0 ? (
@@ -496,7 +509,7 @@ export default function ConnectPage() {
             No reminders scheduled yet. Connect UseSession (or sync) and they&apos;ll appear here automatically.
           </p>
         ) : (
-          <div className="divide-y divide-hairline">
+          <div className="divide-y divide-hairline max-h-[480px] overflow-y-auto pr-1">
             {upcoming.slice(0, 50).map((m) => (
               <div key={m.id} className="py-3.5 flex items-start justify-between gap-3 -mx-3 px-3 rounded-lg hover:bg-card transition-colors">
                 <div className="min-w-0">
@@ -521,9 +534,12 @@ export default function ConnectPage() {
         )}
       </div>
 
-      <div className="mt-8 flex items-center justify-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-        <LockClosedIcon className="w-3.5 h-3.5" />
+      <div className="flex items-center justify-center gap-1.5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+        <LockClosedIcon className="w-3.5 h-3.5 flex-shrink-0" />
         Your UseSession token is encrypted at rest and never shared
+      </div>
+
+      </aside>
       </div>
     </div>
   )

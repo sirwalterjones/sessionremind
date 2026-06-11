@@ -29,7 +29,7 @@ interface Notification {
 }
 
 export default function ProfilePage() {
-  const { user, logout, refreshUser } = useAuth()
+  const { user, loading: authLoading, logout, refreshUser } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [userDetails, setUserDetails] = useState<User | null>(null)
@@ -53,13 +53,17 @@ export default function ProfilePage() {
   const [isGeneratingStripeLink, setIsGeneratingStripeLink] = useState(false)
 
   useEffect(() => {
+    // Wait for the auth check to settle — redirecting on the initial
+    // user=null state bounced direct page loads to /login → /dashboard.
+    if (authLoading) return
     if (!user) {
       router.push('/login')
       return
     }
 
     fetchUserDetails()
-  }, [user, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading, router])
 
   const fetchUserDetails = async () => {
     try {

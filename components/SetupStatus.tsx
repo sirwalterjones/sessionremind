@@ -135,7 +135,7 @@ export function TextingNumberCard() {
   return (
     <Link
       href="/onboarding"
-      className="group mb-6 flex items-center gap-4 rounded-2xl border border-hairline bg-panel p-6 sm:p-8 transition-colors hover:bg-card"
+      className="group flex items-center gap-4 rounded-2xl border border-hairline bg-panel p-6 sm:p-8 transition-colors hover:bg-card"
     >
       <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-accent">
         <DevicePhoneMobileIcon className="h-5 w-5 text-accent-ink" />

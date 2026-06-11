@@ -190,7 +190,7 @@ export default function RemindersPage() {
   ]
 
   return (
-    <div className="max-w-4xl">
+    <div className="mx-auto max-w-5xl">
       <div className="mb-2 flex items-center gap-2 text-xs font-mono uppercase tracking-[0.16em] text-muted">
         <Link href="/dashboard" className="hover:text-ink transition-colors">
           ← Dashboard
