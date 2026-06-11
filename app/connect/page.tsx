@@ -243,8 +243,12 @@ export default function ConnectPage() {
       </div>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-      {/* ───────── Left column: connect + settings + import ───────── */}
+      {/* ───────── Left column: number status + connect + settings + import ───────── */}
       <div className="min-w-0 space-y-5">
+
+      {/* Your texting number — live status (number, verification state, and the
+          "texts keep sending while you wait" reassurance) */}
+      <TextingNumberCard />
 
       {/* Connection card */}
       <div className="rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
@@ -491,12 +495,8 @@ export default function ConnectPage() {
 
       </div>
 
-      {/* ───────── Right rail: number status + upcoming queue ───────── */}
+      {/* ───────── Right rail: upcoming queue ───────── */}
       <aside className="space-y-5 lg:sticky lg:top-8">
-
-      {/* Your texting number — live status (number, verification state, and the
-          "texts keep sending while you wait" reassurance) */}
-      <TextingNumberCard />
 
       {/* Upcoming auto-scheduled reminders */}
       <div className="rounded-2xl border border-hairline bg-panel p-5 sm:p-6">

@@ -14,7 +14,8 @@ import AppShell from '@/components/AppShell'
 // NOTE: /admin has its own console chrome and is intentionally not shelled.
 const APP_SHELL_ROUTES = ['/dashboard', '/usage', '/reminders', '/connect', '/new', '/profile']
 // Never shelled, even when signed in: the marketing front door, the auth
-// flow, the payment wall, and the admin console.
+// flow, and the payment wall. (The admin console DOES load in the shell —
+// its own header renders inside the content column.)
 const NO_SHELL_ROUTES = [
   '/',
   '/login',
@@ -42,8 +43,7 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { user, loading } = useAuth()
   const isAppRoute = APP_SHELL_ROUTES.some((r) => pathname === r || pathname?.startsWith(r + '/'))
-  const neverShell =
-    NO_SHELL_ROUTES.includes(pathname || '') || (pathname || '').startsWith('/admin')
+  const neverShell = NO_SHELL_ROUTES.includes(pathname || '')
   // App routes are always shelled (they're auth-gated by middleware anyway);
   // other pages join the shell once we know the visitor is signed in.
   const isAppShell = isAppRoute || (!neverShell && !loading && !!user)
