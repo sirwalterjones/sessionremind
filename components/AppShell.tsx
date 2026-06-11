@@ -139,7 +139,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex-1 px-5 py-8 sm:px-8">
-          <div className="mx-auto w-full max-w-[1500px]">{children}</div>
+          <div className="shell-scope mx-auto w-full max-w-[1500px]">{children}</div>
         </div>
       </div>
     </div>

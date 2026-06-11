@@ -68,6 +68,19 @@ body {
   margin-right: calc(50% - 50vw);
 }
 
+/* Inside the signed-in app shell there is a sidebar, so full-bleed bands must
+   stay inside the content column (marketing pages render in the shell for
+   signed-in visitors). Also neutralize the marketing pages' negative top
+   margins that exist to tuck the hero under the top-nav chrome. */
+.shell-scope .full-bleed {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.shell-scope > div[class*='-mt-'] {
+  margin-top: 0 !important;
+}
+
 /* Subtle cool wash + lime spill for hero backgrounds */
 .hero-glow {
   background-image: radial-gradient(

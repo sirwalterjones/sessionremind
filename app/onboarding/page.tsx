@@ -239,10 +239,9 @@ export default function OnboardingPage() {
         </div>
       </div>
 
-      <div className="mt-10 max-w-2xl space-y-6">
-        <StatusBanner sender={sender} />
-
-        <form onSubmit={save} className="rounded-2xl border border-hairline p-6 sm:p-8 space-y-6">
+      <div className="mt-8 grid max-w-5xl items-start gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+        {/* ───────── Left: compact business form ───────── */}
+        <form onSubmit={save} className="min-w-0 rounded-2xl border border-hairline bg-panel p-6 sm:p-8">
           <div>
             <h2 className="font-display text-xl font-semibold">Business details</h2>
             <p className="mt-1.5 text-[14px] text-muted">
@@ -250,37 +249,36 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          <div>
-            <label className="eyebrow mb-2 block">Legal business name</label>
-            <input className={input} value={biz.legalName} onChange={set('legalName')} disabled={!editable} required />
-          </div>
-
-          <div>
-            <label className="eyebrow mb-2 block">Website</label>
-            <input className={input} value={biz.website} onChange={set('website')} disabled={!editable} placeholder="https://…" required />
-          </div>
-
-          <div>
-            <label className="eyebrow mb-2 block">Street address</label>
-            <input className={input} value={biz.addressStreet} onChange={set('addressStreet')} disabled={!editable} required />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="eyebrow mb-2 block">City</label>
-              <input className={input} value={biz.addressCity} onChange={set('addressCity')} disabled={!editable} required />
+              <label className="eyebrow mb-2 block">Legal business name</label>
+              <input className={input} value={biz.legalName} onChange={set('legalName')} disabled={!editable} required />
             </div>
             <div>
-              <label className="eyebrow mb-2 block">State</label>
-              <input className={input} value={biz.addressState} onChange={set('addressState')} disabled={!editable} required />
+              <label className="eyebrow mb-2 block">Website</label>
+              <input className={input} value={biz.website} onChange={set('website')} disabled={!editable} placeholder="https://…" required />
             </div>
-            <div>
-              <label className="eyebrow mb-2 block">ZIP</label>
-              <input className={input} value={biz.addressZip} onChange={set('addressZip')} disabled={!editable} required />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
+              <label className="eyebrow mb-2 block">Street address</label>
+              <input className={input} value={biz.addressStreet} onChange={set('addressStreet')} disabled={!editable} required />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 sm:col-span-2">
+              <div>
+                <label className="eyebrow mb-2 block">City</label>
+                <input className={input} value={biz.addressCity} onChange={set('addressCity')} disabled={!editable} required />
+              </div>
+              <div>
+                <label className="eyebrow mb-2 block">State</label>
+                <input className={input} value={biz.addressState} onChange={set('addressState')} disabled={!editable} required />
+              </div>
+              <div>
+                <label className="eyebrow mb-2 block">ZIP</label>
+                <input className={input} value={biz.addressZip} onChange={set('addressZip')} disabled={!editable} required />
+              </div>
+            </div>
+
             <div>
               <label className="eyebrow mb-2 block">Contact first name</label>
               <input className={input} value={biz.contactFirstName} onChange={set('contactFirstName')} disabled={!editable} required />
@@ -289,9 +287,7 @@ export default function OnboardingPage() {
               <label className="eyebrow mb-2 block">Contact last name</label>
               <input className={input} value={biz.contactLastName} onChange={set('contactLastName')} disabled={!editable} required />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="eyebrow mb-2 block">Contact email</label>
               <input type="email" className={input} value={biz.contactEmail} onChange={set('contactEmail')} disabled={!editable} required />
@@ -302,94 +298,99 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          {editable ? (
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
-            >
-              {saving ? 'Saving…' : hasSaved ? 'Update details' : 'Save business details'}
-            </button>
-          ) : (
-            <p className="text-[13px] text-muted">
-              Your details are locked while verification is in progress. Need a change? Email{' '}
-              <a href="mailto:support@sessionremind.com" className="text-accent underline">
-                support@sessionremind.com
-              </a>
-              .
-            </p>
-          )}
+          <div className="mt-6">
+            {editable ? (
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
+              >
+                {saving ? 'Saving…' : hasSaved ? 'Update details' : 'Save business details'}
+              </button>
+            ) : (
+              <p className="text-[13px] text-muted">
+                Your details are locked while verification is in progress. Need a change? Email{' '}
+                <a href="mailto:support@sessionremind.com" className="text-accent underline">
+                  support@sessionremind.com
+                </a>
+                .
+              </p>
+            )}
+          </div>
         </form>
 
-        {/* Step 2 — create the number */}
-        {showGetNumber && (
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
-            <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-accent">
-                <DevicePhoneMobileIcon className="h-5 w-5 text-accent-ink" />
+        {/* ───────── Right rail: status + actions ───────── */}
+        <aside className="space-y-5 lg:sticky lg:top-8">
+          <StatusBanner sender={sender} />
+
+          {/* Step 2 — create the number */}
+          {showGetNumber && (
+            <div className="rounded-2xl border border-hairline bg-panel p-5 sm:p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent">
+                  <DevicePhoneMobileIcon className="h-5 w-5 text-accent-ink" />
+                </div>
+                <h2 className="font-display text-lg font-semibold">Create your texting number</h2>
               </div>
-              <div className="min-w-0 flex-1">
-                <h2 className="font-display text-xl font-semibold">Create your texting number</h2>
-                <p className="mt-1 text-[14px] leading-relaxed text-muted">
-                  A dedicated number registered to your business — an upgrade from the shared SessionRemind number.
-                  Included with your subscription. Here’s exactly what happens:
+              <p className="mt-3 text-[14px] leading-relaxed text-muted">
+                A dedicated number registered to your business — an upgrade from the shared SessionRemind number.
+                Included with your subscription. Here’s exactly what happens:
+              </p>
+              <ol className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-muted">
+                <li><strong>1.</strong> We register a toll-free number to your business and submit it to the carriers.</li>
+                <li><strong>2.</strong> The carriers verify it — this typically takes <strong>1–3 weeks</strong>.</li>
+                <li><strong>3.</strong> <strong>We email you the moment it’s approved</strong> (or if anything needs fixing). Your reminders keep sending on the shared number until then — nothing pauses.</li>
+              </ol>
+
+              {!hasSaved && (
+                <p className="mt-3 text-[13px] text-red-300">Save your business details first.</p>
+              )}
+              {hasSaved && !eligible && (
+                <p className="mt-3 text-[13px] text-red-300">
+                  A dedicated number is included with an active subscription.{' '}
+                  <button onClick={() => router.push('/payment-required')} className="underline">
+                    Subscribe
+                  </button>{' '}
+                  to enable it.
                 </p>
-                <ol className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-muted">
-                  <li><strong>1.</strong> We register a toll-free number to your business and submit it to the carriers.</li>
-                  <li><strong>2.</strong> The carriers verify it — this typically takes <strong>1–3 weeks</strong>.</li>
-                  <li><strong>3.</strong> <strong>We email you the moment it’s approved</strong> (or if anything needs fixing). Your reminders keep sending on the shared number until then — nothing pauses.</li>
-                </ol>
+              )}
 
-                {!hasSaved && (
-                  <p className="mt-3 text-[13px] text-red-300">Save your business details first.</p>
-                )}
-                {hasSaved && !eligible && (
-                  <p className="mt-3 text-[13px] text-red-300">
-                    A dedicated number is included with an active subscription.{' '}
-                    <button onClick={() => router.push('/payment-required')} className="underline">
-                      Subscribe
-                    </button>{' '}
-                    to enable it.
-                  </p>
-                )}
-
-                <button
-                  onClick={provision}
-                  disabled={provisioning || !hasSaved || !eligible}
-                  className="mt-4 rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {provisioning ? 'Creating…' : sender.status === 'none' ? 'Create my number' : 'Try again'}
-                </button>
-              </div>
+              <button
+                onClick={provision}
+                disabled={provisioning || !hasSaved || !eligible}
+                className="mt-4 w-full rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {provisioning ? 'Creating…' : sender.status === 'none' ? 'Create my number' : 'Try again'}
+              </button>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Pending — let them re-check */}
-        {sender.status === 'pending_verification' && (
-          <div className="rounded-2xl border border-hairline p-6 sm:p-8">
-            <h2 className="font-display text-xl font-semibold">Check verification status</h2>
-            <p className="mt-1 text-[14px] leading-relaxed text-muted">
-              We’ll email you when it’s approved. You can also re-check now.
-            </p>
-            <button
-              onClick={refresh}
-              disabled={provisioning}
-              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
-            >
-              {provisioning ? 'Checking…' : 'Refresh status'}
-            </button>
-          </div>
-        )}
+          {/* Pending — let them re-check */}
+          {sender.status === 'pending_verification' && (
+            <div className="rounded-2xl border border-hairline bg-panel p-5 sm:p-6">
+              <h2 className="font-display text-lg font-semibold">Check verification status</h2>
+              <p className="mt-1 text-[14px] leading-relaxed text-muted">
+                We’ll email you when it’s approved. You can also re-check now.
+              </p>
+              <button
+                onClick={refresh}
+                disabled={provisioning}
+                className="mt-4 w-full rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+              >
+                {provisioning ? 'Checking…' : 'Refresh status'}
+              </button>
+            </div>
+          )}
 
-        <p className="text-[12px] leading-relaxed text-faint">
-          Clients consent to reminders when they book and provide their number; messages are appointment reminders only
-          and every recipient can reply STOP to opt out. See our{' '}
-          <a href="/sms-opt-in" className="underline">
-            messaging terms
-          </a>
-          .
-        </p>
+          <p className="text-[12px] leading-relaxed text-faint">
+            Clients consent to reminders when they book and provide their number; messages are appointment reminders only
+            and every recipient can reply STOP to opt out. See our{' '}
+            <a href="/sms-opt-in" className="underline">
+              messaging terms
+            </a>
+            .
+          </p>
+        </aside>
       </div>
     </div>
   )

@@ -2,14 +2,28 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useAuth } from '@/lib/auth-context'
 import MobileNav from '@/components/MobileNav'
 import NavLinks from '@/components/NavLinks'
 import AppShell from '@/components/AppShell'
 
-// Site chrome — Ink & Acid graphite, everywhere. Signed-in app pages render
-// inside the sidebar AppShell; marketing/auth pages keep the top nav + footer.
+// Site chrome — Ink & Acid graphite, everywhere. App pages always render in
+// the sidebar AppShell. Signed-in visitors ALSO get the shell on content pages
+// (instructions, help, faq, contact, …) so following a sidebar link never
+// kicks them out of the app. Signed-out visitors get the top nav + footer.
 // NOTE: /admin has its own console chrome and is intentionally not shelled.
 const APP_SHELL_ROUTES = ['/dashboard', '/usage', '/reminders', '/connect', '/new', '/profile']
+// Never shelled, even when signed in: the marketing front door, the auth
+// flow, the payment wall, and the admin console.
+const NO_SHELL_ROUTES = [
+  '/',
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/verify-email',
+  '/payment-required',
+]
 
 function SrTile({ size = 9 }: { size?: 8 | 9 }) {
   return (
@@ -26,7 +40,13 @@ function SrTile({ size = 9 }: { size?: 8 | 9 }) {
 
 export default function AppFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isAppShell = APP_SHELL_ROUTES.some((r) => pathname === r || pathname?.startsWith(r + '/'))
+  const { user, loading } = useAuth()
+  const isAppRoute = APP_SHELL_ROUTES.some((r) => pathname === r || pathname?.startsWith(r + '/'))
+  const neverShell =
+    NO_SHELL_ROUTES.includes(pathname || '') || (pathname || '').startsWith('/admin')
+  // App routes are always shelled (they're auth-gated by middleware anyway);
+  // other pages join the shell once we know the visitor is signed in.
+  const isAppShell = isAppRoute || (!neverShell && !loading && !!user)
 
   if (isAppShell) {
     // Wrap the page in the sidebar shell so every app page shares one chrome.

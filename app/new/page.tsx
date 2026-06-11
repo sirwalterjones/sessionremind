@@ -374,8 +374,8 @@ function NewReminderContent() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl text-ink">
-      <div className="border-b border-hairline pb-8 mb-10">
+    <div className="mx-auto max-w-5xl text-ink">
+      <div className="border-b border-hairline pb-6 mb-8">
         <p className="eyebrow mb-3">Manual reminder</p>
         <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight">
           New reminder
