@@ -62,9 +62,9 @@ const PENDING_REASSURANCE =
 const input =
   'w-full rounded-lg border border-hairline bg-card px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40'
 const primaryBtn =
-  'rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50'
+  'rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50'
 const secondaryBtn =
-  'rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50'
+  'rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50'
 
 export default function WelcomePage() {
   const router = useRouter()
@@ -323,7 +323,7 @@ export default function WelcomePage() {
                             '<a href="' +
                             bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
                             '" draggable="true" title="Drag me to your bookmarks bar" ' +
-                            'style="background:#C6F24E;color:#11130A" ' +
+                            'style="background:rgb(var(--c-accent));color:rgb(var(--c-accent-ink))" ' +
                             'class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold cursor-grab no-underline">' +
                             'Connect to SessionRemind</a>',
                         }}
@@ -518,7 +518,7 @@ export default function WelcomePage() {
             <li className="flex items-start gap-3 py-3.5">
               <span
                 className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
-                style={{ background: connected ? '#16a34a' : '#6E736C' }}
+                style={{ background: connected ? '#16a34a' : '#9ca3af' }}
               />
               <div>
                 <p className="eyebrow mb-0.5">UseSession</p>
@@ -545,7 +545,7 @@ export default function WelcomePage() {
                       ? '#16a34a'
                       : numberDone
                         ? '#d97706'
-                        : '#6E736C',
+                        : '#9ca3af',
                 }}
               />
               <div>

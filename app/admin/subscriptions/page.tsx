@@ -24,12 +24,12 @@ function StatusBadge({ status }: { status?: string | null }) {
   const s = (status || 'unknown').toLowerCase()
   const color =
     s === 'active'
-      ? '#34D399'
+      ? '#10b981'
       : s === 'past_due'
-      ? '#FBBF24'
+      ? '#f59e0b'
       : s === 'canceled' || s === 'cancelled' || s === 'inactive'
-      ? '#F87171'
-      : '#6E736C'
+      ? '#ef4444'
+      : '#9ca3af'
   return (
     <span className="inline-flex items-center gap-1.5 text-sm">
       <span className="h-2 w-2 rounded-full" style={{ background: color }} />
@@ -201,7 +201,7 @@ export default function SubscriptionsPage() {
                   <td className="px-3 py-2.5 text-muted">{l ? l.stripeStatus || 'none' : '—'}</td>
                   <td className="px-3 py-2.5">
                     {u.stripe_customer_id ? (
-                      <span className="text-emerald-300">yes</span>
+                      <span className="text-emerald-700 dark:text-emerald-300">yes</span>
                     ) : (
                       <span className="text-muted">no</span>
                     )}
@@ -210,7 +210,7 @@ export default function SubscriptionsPage() {
                     <button
                       onClick={() => resyncOne(u.id)}
                       disabled={busy.has(u.id) || !u.stripe_customer_id}
-                      className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-40"
+                      className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-40"
                     >
                       {busy.has(u.id) ? 'Resyncing…' : 'Resync'}
                     </button>

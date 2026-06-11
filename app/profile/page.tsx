@@ -189,7 +189,7 @@ export default function ProfilePage() {
     if (paymentOverride) {
       return (
         <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
-          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#C6F24E' }} />
+          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'rgb(var(--c-accent))' }} />
           Admin Override
         </span>
       )
@@ -214,7 +214,7 @@ export default function ProfilePage() {
   if (!userDetails) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[15px] text-red-300">Error loading profile</div>
+        <div className="text-[15px] text-red-700 dark:text-red-300">Error loading profile</div>
       </div>
     )
   }
@@ -227,13 +227,13 @@ export default function ProfilePage() {
           className={`fixed top-20 right-5 z-50 rounded-lg border px-4 py-3 text-[14px] font-medium ${
             notification.type === 'success'
               ? 'border-hairline bg-card text-ink'
-              : 'border-red-400/30 bg-card text-red-300'
+              : 'border-red-400/30 bg-card text-red-700 dark:text-red-300'
           }`}
         >
           <div className="flex items-center gap-2">
             <span
               className={`inline-block w-1.5 h-1.5 rounded-full ${
-                notification.type === 'success' ? 'bg-emerald-300' : 'bg-red-400'
+                notification.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
               }`}
             />
             {notification.message}
@@ -247,7 +247,7 @@ export default function ProfilePage() {
           <button
             onClick={() => router.push('/dashboard')}
             aria-label="Back to dashboard"
-            className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-white/5"
+            className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-ink/5"
           >
             <ArrowLeftIcon className="h-4 w-4" />
           </button>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
         {userDetails.is_admin && (
           <button
             onClick={() => router.push('/admin')}
-            className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
+            className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-ink/5"
           >
             Admin Console
           </button>
@@ -280,7 +280,7 @@ export default function ProfilePage() {
               {!editing && (
                 <button
                   onClick={startEdit}
-                  className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
+                  className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-ink/5"
                 >
                   Edit
                 </button>
@@ -315,14 +315,14 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
+                    className="rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-glow disabled:opacity-50"
                   >
                     {savingProfile ? 'Saving…' : 'Save changes'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditing(false)}
-                    className="rounded-full border border-hairline px-5 py-2.5 font-medium text-ink transition-colors hover:bg-white/5"
+                    className="rounded-full border border-hairline px-5 py-2.5 font-medium text-ink transition-colors hover:bg-ink/5"
                   >
                     Cancel
                   </button>
@@ -354,7 +354,7 @@ export default function ProfilePage() {
                     {userDetails.sms_usage_month ?? userDetails.sms_usage} / {userDetails.sms_limit}
                   </span>
                 </div>
-                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
                   <div
                     className="h-full rounded-full bg-accent transition-all"
                     style={{ width: `${Math.min(((userDetails.sms_usage_month ?? userDetails.sms_usage) / userDetails.sms_limit) * 100, 100)}%` }}
@@ -370,7 +370,7 @@ export default function ProfilePage() {
               <h2 className="font-display text-xl font-semibold">Password &amp; security</h2>
               <button
                 onClick={() => setShowPasswordReset(!showPasswordReset)}
-                className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
+                className="rounded-full border border-hairline px-5 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-ink/5"
               >
                 {showPasswordReset ? 'Cancel' : 'Change Password'}
               </button>
@@ -455,7 +455,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={isResettingPassword}
-                  className="w-full rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isResettingPassword ? 'Updating…' : 'Update Password'}
                 </button>
@@ -478,7 +478,7 @@ export default function ProfilePage() {
               <button
                 onClick={handleStripePortal}
                 disabled={isGeneratingStripeLink}
-                className="mt-5 w-full rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-5 w-full rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold transition-shadow hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGeneratingStripeLink ? 'Generating…' : 'Stripe Portal'}
               </button>
@@ -492,21 +492,21 @@ export default function ProfilePage() {
             <div className="mt-5 space-y-3">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
+                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-ink/5"
               >
                 Back to Dashboard
               </button>
 
               <button
                 onClick={() => router.push('/new')}
-                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
+                className="w-full rounded-full border border-hairline px-5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors hover:bg-ink/5"
               >
                 Create New Reminder
               </button>
 
               <button
                 onClick={logout}
-                className="w-full rounded-full border border-red-400/30 bg-red-500/15 px-5 py-2.5 text-left text-[15px] font-medium text-red-300 transition-colors hover:bg-red-500/25"
+                className="w-full rounded-full border border-red-400/30 bg-red-500/15 px-5 py-2.5 text-left text-[15px] font-medium text-red-700 dark:text-red-300 transition-colors hover:bg-red-500/25"
               >
                 Logout
               </button>

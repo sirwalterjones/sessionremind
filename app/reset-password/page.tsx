@@ -4,7 +4,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-const A = '#C6F24E' // accent
+const A = 'rgb(var(--c-accent))' // accent
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams()
@@ -62,7 +62,7 @@ function ResetPasswordForm() {
         <div className="mt-8">
           <Link
             href="/forgot-password"
-            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-glow"
           >
             Request a new link
           </Link>
@@ -85,7 +85,7 @@ function ResetPasswordForm() {
         <div className="mt-8">
           <Link
             href="/login"
-            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-glow"
           >
             Sign in
           </Link>
@@ -149,7 +149,7 @@ function ResetPasswordForm() {
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300">
+            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
@@ -157,7 +157,7 @@ function ResetPasswordForm() {
           <button
             type="submit"
             disabled={saving}
-            className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
             {saving ? (
               'Saving…'

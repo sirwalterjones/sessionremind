@@ -33,9 +33,9 @@ const TOPIC_LABELS: Record<string, string> = {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  open: '#C6F24E',
-  replied: '#FBBF24',
-  closed: '#34D399',
+  open: 'rgb(var(--c-accent))',
+  replied: '#f59e0b',
+  closed: '#10b981',
 }
 
 function fmt(iso?: string) {
@@ -150,7 +150,7 @@ export default function AdminSupportPage() {
         </div>
         <Link
           href="/admin"
-          className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5"
+          className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5"
         >
           ← Admin console
         </Link>
@@ -164,7 +164,7 @@ export default function AdminSupportPage() {
             className={`rounded-full border px-4 py-1.5 text-sm font-medium capitalize transition-colors ${
               filter === f
                 ? 'border-accent bg-accent text-accent-ink'
-                : 'border-hairline text-muted hover:bg-white/5'
+                : 'border-hairline text-muted hover:bg-ink/5'
             }`}
           >
             {f} ({counts[f] ?? 0})
@@ -188,7 +188,7 @@ export default function AdminSupportPage() {
                   setExpanded(open ? null : t.id)
                   setReply('')
                 }}
-                className="flex w-full flex-wrap items-center justify-between gap-3 bg-card px-4 py-3.5 text-left transition-colors hover:bg-white/5"
+                className="flex w-full flex-wrap items-center justify-between gap-3 bg-card px-4 py-3.5 text-left transition-colors hover:bg-ink/5"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <span
@@ -202,7 +202,7 @@ export default function AdminSupportPage() {
                         {TOPIC_LABELS[t.topic] || t.topic}
                       </span>
                       {t.username && (
-                        <span className="rounded-full bg-white/5 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+                        <span className="rounded-full bg-ink/5 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
                           {t.username}
                         </span>
                       )}
@@ -260,7 +260,7 @@ export default function AdminSupportPage() {
                       <button
                         onClick={() => setStatus(t, 'closed')}
                         disabled={busy}
-                        className="rounded-full border border-hairline px-5 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+                        className="rounded-full border border-hairline px-5 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50"
                       >
                         Close ticket
                       </button>
@@ -268,7 +268,7 @@ export default function AdminSupportPage() {
                       <button
                         onClick={() => setStatus(t, 'open')}
                         disabled={busy}
-                        className="rounded-full border border-hairline px-5 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+                        className="rounded-full border border-hairline px-5 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50"
                       >
                         Reopen
                       </button>

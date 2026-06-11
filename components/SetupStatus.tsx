@@ -26,11 +26,11 @@ export function prettyUsNumber(e164?: string): string {
 }
 
 const DOT: Record<Sender['status'], string> = {
-  none: '#6E736C',
-  provisioning: '#fcd34d',
-  pending_verification: '#fcd34d',
-  active: '#34d399',
-  failed: '#f87171',
+  none: '#9ca3af',
+  provisioning: '#f59e0b',
+  pending_verification: '#f59e0b',
+  active: '#10b981',
+  failed: '#ef4444',
 }
 
 const BADGE: Record<Sender['status'], string> = {
@@ -198,7 +198,7 @@ export function DashboardSetupStatus() {
             <p className="flex items-center gap-2 truncate text-sm font-medium text-ink">
               <span
                 className="h-2 w-2 flex-shrink-0 rounded-full"
-                style={{ background: connected ? '#34d399' : '#C6F24E' }}
+                style={{ background: connected ? '#10b981' : 'rgb(var(--c-accent))' }}
               />
               {connected ? 'Connected — bookings sync automatically' : 'Not connected'}
             </p>

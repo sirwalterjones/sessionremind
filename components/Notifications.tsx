@@ -114,10 +114,10 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
 function ToastCard({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const accent =
-    toast.type === 'success' ? '#34d399' : toast.type === 'error' ? '#f87171' : '#C6F24E'
+    toast.type === 'success' ? '#10b981' : toast.type === 'error' ? '#ef4444' : 'rgb(var(--c-accent))'
   const glyph = toast.type === 'success' ? '✓' : toast.type === 'error' ? '✕' : 'i'
   return (
-    <div className="sr-toast-in pointer-events-auto flex items-start gap-3 rounded-xl border border-hairline bg-card px-4 py-3.5 text-ink shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
+    <div className="sr-toast-in pointer-events-auto flex items-start gap-3 rounded-xl border border-hairline bg-card px-4 py-3.5 text-ink shadow-2xl">
       <span
         className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-accent-ink"
         style={{ background: accent }}
@@ -151,7 +151,7 @@ function ConfirmModal({ state, onClose }: { state: ConfirmState; onClose: (resul
       <div
         role="dialog"
         aria-modal="true"
-        className="sr-pop-in relative w-full max-w-sm rounded-2xl border border-hairline bg-card p-6 text-ink shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]"
+        className="sr-pop-in relative w-full max-w-sm rounded-2xl border border-hairline bg-card p-6 text-ink shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {state.title && (
@@ -161,7 +161,7 @@ function ConfirmModal({ state, onClose }: { state: ConfirmState; onClose: (resul
         <div className="mt-6 flex justify-end gap-2.5">
           <button
             onClick={() => onClose(false)}
-            className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5"
+            className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5"
           >
             {state.cancelLabel || 'Cancel'}
           </button>
@@ -169,8 +169,8 @@ function ConfirmModal({ state, onClose }: { state: ConfirmState; onClose: (resul
             onClick={() => onClose(true)}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
               danger
-                ? 'border border-red-400/30 bg-red-500/15 text-red-300 hover:bg-red-500/25'
-                : 'bg-accent text-accent-ink hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]'
+                ? 'border border-red-400/30 bg-red-500/15 text-red-700 dark:text-red-300 hover:bg-red-500/25'
+                : 'bg-accent text-accent-ink hover:shadow-glow'
             }`}
           >
             {state.confirmLabel || 'Confirm'}

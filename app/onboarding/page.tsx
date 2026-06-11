@@ -64,13 +64,13 @@ function StatusBanner({ sender }: { sender: Sender }) {
     },
     active: {
       icon: CheckCircleIcon,
-      tone: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
+      tone: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300',
       title: `Your number is live${sender.phoneNumber ? ` · ${sender.phoneNumber}` : ''}`,
       body: 'Reminders now send from your own verified texting number.',
     },
     failed: {
       icon: ExclamationTriangleIcon,
-      tone: 'border-red-400/30 bg-red-400/10 text-red-300',
+      tone: 'border-red-400/30 bg-red-400/10 text-red-700 dark:text-red-300',
       title: 'Setup needs attention',
       body: sender.rejectionReason || sender.error || 'There was a problem. Please review your details below or contact support.',
     },
@@ -225,7 +225,7 @@ export default function OnboardingPage() {
         <button
           onClick={() => router.push('/connect')}
           aria-label="Back"
-          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-white/5"
+          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-ink/5"
         >
           <ArrowLeftIcon className="h-4 w-4" />
         </button>
@@ -303,7 +303,7 @@ export default function OnboardingPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
+                className="rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-glow disabled:opacity-50"
               >
                 {saving ? 'Saving…' : hasSaved ? 'Update details' : 'Save business details'}
               </button>
@@ -343,10 +343,10 @@ export default function OnboardingPage() {
               </ol>
 
               {!hasSaved && (
-                <p className="mt-3 text-[13px] text-red-300">Save your business details first.</p>
+                <p className="mt-3 text-[13px] text-red-700 dark:text-red-300">Save your business details first.</p>
               )}
               {hasSaved && !eligible && (
-                <p className="mt-3 text-[13px] text-red-300">
+                <p className="mt-3 text-[13px] text-red-700 dark:text-red-300">
                   A dedicated number is included with an active subscription.{' '}
                   <button onClick={() => router.push('/payment-required')} className="underline">
                     Subscribe
@@ -358,7 +358,7 @@ export default function OnboardingPage() {
               <button
                 onClick={provision}
                 disabled={provisioning || !hasSaved || !eligible}
-                className="mt-4 w-full rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-4 w-full rounded-full bg-accent px-6 py-2.5 text-accent-ink font-semibold transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {provisioning ? 'Creating…' : sender.status === 'none' ? 'Create my number' : 'Try again'}
               </button>
@@ -375,7 +375,7 @@ export default function OnboardingPage() {
               <button
                 onClick={refresh}
                 disabled={provisioning}
-                className="mt-4 w-full rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+                className="mt-4 w-full rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50"
               >
                 {provisioning ? 'Checking…' : 'Refresh status'}
               </button>

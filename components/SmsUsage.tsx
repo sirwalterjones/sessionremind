@@ -41,8 +41,8 @@ export default function SmsUsage({ userId }: { userId: string }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="bg-card p-6 animate-pulse">
-            <div className="h-3 w-20 bg-white/10 rounded mb-3"></div>
-            <div className="h-8 w-16 bg-white/10 rounded"></div>
+            <div className="h-3 w-20 bg-ink/10 rounded mb-3"></div>
+            <div className="h-8 w-16 bg-ink/10 rounded"></div>
           </div>
         ))}
       </div>
@@ -106,20 +106,20 @@ export default function SmsUsage({ userId }: { userId: string }) {
               <p className="eyebrow mb-3">Message Status</p>
               <div className="divide-y divide-hairline">
                 <div className="flex justify-between text-sm py-2">
-                  <span className="flex items-center gap-2 text-emerald-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" /> Sent
+                  <span className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Sent
                   </span>
                   <span className="font-mono text-ink">{activity.messagesByStatus?.sent || 0}</span>
                 </div>
                 <div className="flex justify-between text-sm py-2">
-                  <span className="flex items-center gap-2 text-sky-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-300" /> Scheduled
+                  <span className="flex items-center gap-2 text-sky-700 dark:text-sky-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-sky-500" /> Scheduled
                   </span>
                   <span className="font-mono text-ink">{activity.messagesByStatus?.scheduled || 0}</span>
                 </div>
                 <div className="flex justify-between text-sm py-2">
-                  <span className="flex items-center gap-2 text-red-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" /> Failed
+                  <span className="flex items-center gap-2 text-red-700 dark:text-red-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Failed
                   </span>
                   <span className="font-mono text-ink">{activity.messagesByStatus?.failed || 0}</span>
                 </div>
@@ -141,9 +141,9 @@ export default function SmsUsage({ userId }: { userId: string }) {
                       </div>
                     </div>
                     <span className={`flex-shrink-0 font-mono text-xs uppercase tracking-[0.12em] ${
-                      msg.status === 'sent' ? 'text-emerald-300' :
-                      msg.status === 'scheduled' ? 'text-sky-300' :
-                      'text-red-300'
+                      msg.status === 'sent' ? 'text-emerald-700 dark:text-emerald-300' :
+                      msg.status === 'scheduled' ? 'text-sky-700 dark:text-sky-300' :
+                      'text-red-700 dark:text-red-300'
                     }`}>
                       {msg.status}
                     </span>

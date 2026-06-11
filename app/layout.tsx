@@ -77,9 +77,15 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#101113" />
-        <meta name="msapplication-TileColor" content="#101113" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#FAFAF8" />
+        <meta name="msapplication-TileColor" content="#FAFAF8" />
+        {/* Apply the saved theme before first paint (light is the default). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{document.documentElement.setAttribute('data-theme',localStorage.getItem('sr-theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}`,
+          }}
+        />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className={`${body.variable} ${mono.variable} ${body.className}`}>

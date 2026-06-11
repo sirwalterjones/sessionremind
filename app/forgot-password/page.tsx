@@ -6,7 +6,7 @@ import Turnstile from '@/components/Turnstile'
 
 const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
-const A = '#C6F24E' // accent
+const A = 'rgb(var(--c-accent))' // accent
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             href="/login"
-            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-glow"
           >
             Back to sign in
           </Link>
@@ -105,7 +105,7 @@ export default function ForgotPasswordPage() {
           <Turnstile onVerify={setTurnstileToken} />
 
           {error && (
-            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300">
+            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
@@ -113,7 +113,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={sending || (TURNSTILE_ENABLED && !turnstileToken)}
-            className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+            className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
             {sending ? (
               'Sending link…'

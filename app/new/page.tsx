@@ -394,11 +394,11 @@ function NewReminderContent() {
       {/* Result modal */}
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-hairline bg-card p-8 text-center shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
+          <div className="w-full max-w-md rounded-2xl border border-hairline bg-card p-8 text-center shadow-2xl">
             {resultKind === 'success' ? (
               <CheckCircleIcon className="mx-auto h-10 w-10 text-accent" />
             ) : (
-              <ExclamationCircleIcon className="mx-auto h-10 w-10 text-amber-200" />
+              <ExclamationCircleIcon className="mx-auto h-10 w-10 text-amber-700 dark:text-amber-200" />
             )}
 
             <h3 className="font-display mt-4 text-2xl font-semibold text-ink">
@@ -417,7 +417,7 @@ function NewReminderContent() {
                     router.push('/dashboard')
                   }
                 }}
-                className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+                className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-glow"
               >
                 {resultKind === 'success' ? 'View dashboard' : 'Got it'}
               </button>
@@ -429,7 +429,7 @@ function NewReminderContent() {
                     // Reset form for another reminder
                     window.location.reload()
                   }}
-                  className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5"
+                  className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-ink/5"
                 >
                   Send another
                 </button>

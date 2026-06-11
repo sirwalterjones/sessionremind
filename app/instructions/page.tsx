@@ -4,10 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 
-// Sleek Swiss-editorial "How it works" page — Ink & Acid dark canvas, light ink
-// type, acid-lime accent, hairline rules, generous whitespace.
-
-const A = '#C6F24E' // accent
+// Sleek Swiss-editorial "How it works" page — Ink & Acid theme tokens, accent
+// highlights, hairline rules, generous whitespace. Theme-aware (light/dark).
 
 function ArrowCta({
   href,
@@ -23,8 +21,8 @@ function ArrowCta({
       href={href}
       className={`group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium transition-all ${
         dark
-          ? 'border border-hairline text-ink hover:bg-white/5'
-          : 'bg-accent text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]'
+          ? 'border border-hairline text-ink hover:bg-ink/5'
+          : 'bg-accent text-accent-ink font-semibold hover:shadow-glow'
       }`}
     >
       {children}
@@ -48,14 +46,14 @@ export default function Instructions() {
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-20">
           <div className="max-w-3xl">
             <div className="eyebrow flex items-center gap-2">
-              <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: A }} />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
               How it works
             </div>
 
             <h1 className="font-display mt-6 text-[3.2rem] sm:text-7xl leading-[0.94] font-semibold">
               Connect once.
               <br />
-              We do the <span style={{ color: A }}>chasing.</span>
+              We do the <span className="text-accent">chasing.</span>
             </h1>
 
             <p className="mt-7 text-lg leading-relaxed text-muted max-w-xl">
@@ -118,9 +116,9 @@ export default function Instructions() {
                 'A warm, on-brand reminder goes out automatically 3 days and 1 day before every shoot — by text, and email if you turn it on. You never lift a finger.',
               ],
             ].map(([n, t, d]) => (
-              <div key={n} className="group bg-card p-8 hover:bg-[#20242A] transition-colors">
+              <div key={n} className="group bg-card p-8 hover:bg-panel transition-colors">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="font-mono text-sm" style={{ color: A }}>
+                  <span className="font-mono text-sm text-accent">
                     {n}
                   </span>
                   <span className="h-px flex-1 bg-hairline" />
@@ -148,7 +146,7 @@ export default function Instructions() {
               <h2 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">
                 A single click,
                 <br />
-                <span style={{ color: A }}>not a password.</span>
+                <span className="text-accent">not a password.</span>
               </h2>
               <p className="mt-6 text-muted text-lg leading-relaxed max-w-md">
                 Drag the SessionRemind Connector to your bookmarks bar, open UseSession while
@@ -166,11 +164,11 @@ export default function Instructions() {
               <div className="relative rounded-2xl border border-hairline bg-card overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-hairline">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full" style={{ background: A }} />
+                    <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="text-sm font-semibold tracking-tight">Connector</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Read-only
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Read-only
                   </span>
                 </div>
                 <div className="divide-y divide-hairline">
@@ -194,7 +192,7 @@ export default function Instructions() {
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
                     Synced automatically
                   </span>
-                  <span className="text-xs font-medium" style={{ color: A }}>
+                  <span className="text-xs font-medium text-accent">
                     ~60 sec
                   </span>
                 </div>
@@ -215,7 +213,7 @@ export default function Instructions() {
               <h2 className="font-display text-4xl sm:text-6xl font-semibold leading-[1.02]">
                 We sync.
                 <br />
-                <span style={{ color: A }}>We never snoop.</span>
+                <span className="text-accent">We never snoop.</span>
               </h2>
               <p className="mt-6 text-muted text-lg leading-relaxed max-w-md">
                 SessionRemind reads only what a reminder needs and nothing more. Your client list is
@@ -243,7 +241,7 @@ export default function Instructions() {
               ].map(([t, d]) => (
                 <div key={t}>
                   <div className="flex items-center gap-2.5 mb-2">
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke={A} strokeWidth="2">
+                    <svg className="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="5" y="11" width="14" height="9" rx="2" />
                       <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                     </svg>
@@ -266,7 +264,7 @@ export default function Instructions() {
               <h2 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">
                 Two reminders per shoot,
                 <br />
-                <span style={{ color: A }}>sent for you.</span>
+                <span className="text-accent">sent for you.</span>
               </h2>
               <p className="mt-6 text-muted text-lg leading-relaxed max-w-md">
                 As soon as a booking syncs, two reminders are scheduled automatically — one three
@@ -280,7 +278,7 @@ export default function Instructions() {
                 ].map(([t, d]) => (
                   <div key={t}>
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: A }}>
+                      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
                         {t}
                       </span>
                       <span className="h-px flex-1 bg-hairline" />
@@ -296,11 +294,11 @@ export default function Instructions() {
               <div className="relative rounded-2xl border border-hairline bg-card overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-hairline">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full" style={{ background: A }} />
+                    <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="text-sm font-semibold tracking-tight">Scheduled</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Synced
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Synced
                   </span>
                 </div>
                 <div className="divide-y divide-hairline">
@@ -324,7 +322,7 @@ export default function Instructions() {
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
                     Sent on your behalf
                   </span>
-                  <span className="text-xs font-medium" style={{ color: A }}>
+                  <span className="text-xs font-medium text-accent">
                     Hands-off
                   </span>
                 </div>
@@ -340,7 +338,7 @@ export default function Instructions() {
           <h2 className="font-display text-5xl sm:text-7xl font-semibold leading-[0.98]">
             Connect once.
             <br />
-            Never chase <span style={{ color: A }}>again.</span>
+            Never chase <span className="text-accent">again.</span>
           </h2>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <ArrowCta href={primaryHref}>{primaryLabel}</ArrowCta>

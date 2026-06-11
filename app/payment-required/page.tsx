@@ -188,7 +188,7 @@ function PaymentRequiredContent() {
       <div className="w-full max-w-md">
         <div className="text-center">
           <div className="eyebrow flex items-center justify-center gap-2">
-            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#C6F24E' }} />
+            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: 'rgb(var(--c-accent))' }} />
             Access restricted
           </div>
           <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">
@@ -257,7 +257,7 @@ function PaymentRequiredContent() {
                 <button
                   onClick={() => handlePayment(plan.key)}
                   disabled={isLoading}
-                  className="mt-5 w-full rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-5 w-full rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoading ? 'Processing…' : `Choose ${plan.name}`}
                 </button>

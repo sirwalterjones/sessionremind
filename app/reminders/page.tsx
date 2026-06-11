@@ -205,7 +205,7 @@ export default function RemindersPage() {
             key={t.key}
             onClick={() => setStatusFilter(t.key)}
             className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-              statusFilter === t.key ? 'bg-accent text-accent-ink' : 'border border-hairline text-ink hover:bg-white/5'
+              statusFilter === t.key ? 'bg-accent text-accent-ink' : 'border border-hairline text-ink hover:bg-ink/5'
             }`}
           >
             {t.label}
@@ -247,7 +247,7 @@ export default function RemindersPage() {
                 <div className="divide-y divide-hairline">
                   {g.items.map((r) => {
                     const isScheduled = r.status === 'scheduled'
-                    const dot = r.status === 'sent' ? '#34d399' : r.status === 'failed' ? '#f87171' : '#C6F24E'
+                    const dot = r.status === 'sent' ? '#10b981' : r.status === 'failed' ? '#ef4444' : 'rgb(var(--c-accent))'
                     return (
                       <div key={r.id} className="flex flex-wrap items-start justify-between gap-3 bg-card px-4 py-3">
                         <div className="min-w-0 flex-1">
@@ -267,13 +267,13 @@ export default function RemindersPage() {
                           <div className="flex flex-shrink-0 items-center gap-2">
                             <button
                               onClick={() => openEdit(r)}
-                              className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5"
+                              className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-ink/5"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => cancel(r)}
-                              className="rounded-full border border-red-400/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/25"
+                              className="rounded-full border border-red-400/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-300 transition-colors hover:bg-red-500/25"
                             >
                               Cancel
                             </button>
@@ -297,7 +297,7 @@ export default function RemindersPage() {
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="sr-pop-in relative w-full max-w-md rounded-2xl border border-hairline bg-card p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]"
+            className="sr-pop-in relative w-full max-w-md rounded-2xl border border-hairline bg-card p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="font-display mb-1 text-lg font-semibold text-ink">Edit reminder</h2>
@@ -325,14 +325,14 @@ export default function RemindersPage() {
               <button
                 onClick={() => setEditing(null)}
                 disabled={saving}
-                className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+                className="rounded-full border border-hairline px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={saveEdit}
                 disabled={saving}
-                className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
+                className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink transition-shadow hover:shadow-glow disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Save changes'}
               </button>

@@ -436,15 +436,15 @@ export default function AdminPage() {
 
   const getSubscriptionColor = (tier: string) => {
     // All users are on Professional Plan
-    return 'bg-sky-400/10 text-sky-300 border border-sky-400/20'
+    return 'bg-sky-400/10 text-sky-700 dark:text-sky-300 border border-sky-400/20'
   }
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'active': return 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20'
-      case 'cancelled': return 'bg-red-400/10 text-red-300 border border-red-400/20'
-      case 'pending': return 'bg-amber-300/10 text-amber-200 border border-amber-300/20'
-      default: return 'bg-white/5 text-muted border border-hairline'
+      case 'active': return 'bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20'
+      case 'cancelled': return 'bg-red-400/10 text-red-700 dark:text-red-300 border border-red-400/20'
+      case 'pending': return 'bg-amber-300/10 text-amber-700 dark:text-amber-200 border border-amber-300/20'
+      default: return 'bg-ink/5 text-muted border border-hairline'
     }
   }
 
@@ -483,7 +483,7 @@ export default function AdminPage() {
     if (!analyticsData) {
       return (
         <div className="bg-red-400/10 border border-red-400/20 p-4 rounded-lg">
-          <p className="text-red-300">Failed to load comprehensive analytics data</p>
+          <p className="text-red-700 dark:text-red-300">Failed to load comprehensive analytics data</p>
         </div>
       )
     }
@@ -493,7 +493,7 @@ export default function AdminPage() {
     return (
       <div className="space-y-6">
         <div className="bg-sky-400/10 border border-sky-400/20 p-4 rounded-lg">
-          <p className="text-sm text-sky-300">
+          <p className="text-sm text-sky-700 dark:text-sky-300">
             📊 <strong>Live TextMagic Analytics</strong> - Real-time data from your TextMagic account
           </p>
         </div>
@@ -507,10 +507,10 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-emerald-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <CurrencyDollarIcon className="h-8 w-8 text-emerald-300 flex-shrink-0" />
+                <CurrencyDollarIcon className="h-8 w-8 text-emerald-700 dark:text-emerald-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-muted">Account Balance</p>
-                  <p className="text-xl sm:text-2xl font-bold text-emerald-300 break-words">
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-700 dark:text-emerald-300 break-words">
                     {account?.currency?.htmlSymbol || '$'}{account?.balance || '0'}
                   </p>
                 </div>
@@ -518,7 +518,7 @@ export default function AdminPage() {
             </div>
             <div className="bg-sky-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <UserIcon className="h-8 w-8 text-sky-300 flex-shrink-0" />
+                <UserIcon className="h-8 w-8 text-sky-700 dark:text-sky-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-muted">Account Owner</p>
                   <p className="text-base sm:text-lg font-semibold text-ink break-words">
@@ -530,7 +530,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-            <div className="bg-white/5 p-4 rounded-lg min-h-[120px]">
+            <div className="bg-ink/5 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
                 <div className="h-8 w-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">TZ</span>
@@ -568,10 +568,10 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-emerald-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <CheckCircleIcon className="h-8 w-8 text-emerald-300 flex-shrink-0" />
+                <CheckCircleIcon className="h-8 w-8 text-emerald-700 dark:text-emerald-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-muted">Messages Delivered</p>
-                  <p className="text-xl sm:text-2xl font-bold text-emerald-300">
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-700 dark:text-emerald-300">
                     {messaging?.totals?.totalDelivered || 0}
                   </p>
                   <p className="text-xs text-muted break-words">
@@ -582,10 +582,10 @@ export default function AdminPage() {
             </div>
             <div className="bg-red-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <ExclamationTriangleIcon className="h-8 w-8 text-red-300 flex-shrink-0" />
+                <ExclamationTriangleIcon className="h-8 w-8 text-red-700 dark:text-red-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-muted">Failed Messages</p>
-                  <p className="text-xl sm:text-2xl font-bold text-red-300">
+                  <p className="text-xl sm:text-2xl font-bold text-red-700 dark:text-red-300">
                     {messaging?.totals?.totalFailed || 0}
                   </p>
                   <p className="text-xs text-muted break-words">
@@ -596,10 +596,10 @@ export default function AdminPage() {
             </div>
             <div className="bg-sky-400/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-300 flex-shrink-0" />
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-700 dark:text-sky-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-muted">Message Parts</p>
-                  <p className="text-xl sm:text-2xl font-bold text-sky-300">
+                  <p className="text-xl sm:text-2xl font-bold text-sky-700 dark:text-sky-300">
                     {messaging?.totals?.totalParts || 0}
                   </p>
                   <p className="text-xs text-muted break-words">
@@ -610,10 +610,10 @@ export default function AdminPage() {
             </div>
             <div className="bg-amber-300/10 p-4 rounded-lg min-h-[120px]">
               <div className="flex items-start">
-                <CurrencyDollarIcon className="h-8 w-8 text-amber-300 flex-shrink-0" />
+                <CurrencyDollarIcon className="h-8 w-8 text-amber-700 dark:text-amber-300 flex-shrink-0" />
                 <div className="ml-3 min-w-0 flex-1">
                   <p className="text-sm text-muted">Total Costs</p>
-                  <p className="text-xl sm:text-2xl font-bold text-amber-200">
+                  <p className="text-xl sm:text-2xl font-bold text-amber-700 dark:text-amber-200">
                     ${messaging?.totals?.totalCosts?.toFixed(2) || '0.00'}
                   </p>
                   <p className="text-xs text-muted break-words">
@@ -644,7 +644,7 @@ export default function AdminPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted">Current Balance</span>
-                    <span className="font-semibold text-emerald-300">
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                       ${account?.balance || '0.00'}
                     </span>
                   </div>
@@ -672,7 +672,7 @@ export default function AdminPage() {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className={`text-sm font-semibold ${
-                        transaction.delta < 0 ? 'text-red-300' : 'text-emerald-300'
+                        transaction.delta < 0 ? 'text-red-700 dark:text-red-300' : 'text-emerald-700 dark:text-emerald-300'
                       }`}>
                         {transaction.delta < 0 ? '-' : '+'}${Math.abs(transaction.delta).toFixed(2)}
                       </p>
@@ -753,31 +753,31 @@ export default function AdminPage() {
             <div className="flex flex-wrap items-center gap-2">
               <a
                 href="/admin/support"
-                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-ink/5"
               >
                 Support
               </a>
               <a
                 href="/admin/shared-number"
-                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-ink/5"
               >
                 Shared number
               </a>
               <a
                 href="/admin/numbers"
-                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-ink/5"
               >
                 Numbers
               </a>
               <a
                 href="/admin/subscriptions"
-                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-white/5"
+                className="rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-ink hover:bg-ink/5"
               >
                 Subscriptions
               </a>
               <a
                 href="/admin/spam"
-                className="rounded-full border border-red-400/30 bg-red-500/15 px-3.5 py-1.5 text-sm font-medium text-red-300 hover:bg-red-500/25"
+                className="rounded-full border border-red-400/30 bg-red-500/15 px-3.5 py-1.5 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-500/25"
               >
                 Spam cleanup
               </a>
@@ -795,7 +795,7 @@ export default function AdminPage() {
       {/* Notification */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-          notification.type === 'success' ? 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20' : 'bg-red-400/10 text-red-300 border border-red-400/20'
+          notification.type === 'success' ? 'bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20' : 'bg-red-400/10 text-red-700 dark:text-red-300 border border-red-400/20'
         }`}>
           <div className="flex items-center">
             {notification.type === 'success' ? (
@@ -867,7 +867,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <CurrencyDollarIcon className="h-8 w-8 text-emerald-300" />
+                  <CurrencyDollarIcon className="h-8 w-8 text-emerald-700 dark:text-emerald-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Monthly Revenue</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -879,7 +879,7 @@ export default function AdminPage() {
 
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <UserIcon className="h-8 w-8 text-sky-300" />
+                  <UserIcon className="h-8 w-8 text-sky-700 dark:text-sky-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Paid Subscribers</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -894,7 +894,7 @@ export default function AdminPage() {
 
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChartBarIcon className="h-8 w-8 text-purple-300" />
+                  <ChartBarIcon className="h-8 w-8 text-purple-700 dark:text-purple-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Growth Rate</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -906,7 +906,7 @@ export default function AdminPage() {
 
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <GiftIcon className="h-8 w-8 text-amber-300" />
+                  <GiftIcon className="h-8 w-8 text-amber-700 dark:text-amber-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Override Users</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -950,7 +950,7 @@ export default function AdminPage() {
                   {Object.entries(data.analytics.subscriptionBreakdown).map(([tier, count]) => (
                     <div key={tier} className="flex justify-between items-center">
                       <div className="flex items-center">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full bg-sky-400/10 text-sky-300 border border-sky-400/20`}>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full bg-sky-400/10 text-sky-700 dark:text-sky-300 border border-sky-400/20`}>
                           PROFESSIONAL
                         </span>
                         <span className="ml-2 text-muted">{count} users</span>
@@ -978,7 +978,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-300" />
+                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-700 dark:text-sky-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Total SMS Sent</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -990,7 +990,7 @@ export default function AdminPage() {
 
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChartBarIcon className="h-8 w-8 text-emerald-300" />
+                  <ChartBarIcon className="h-8 w-8 text-emerald-700 dark:text-emerald-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">This Month</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -1007,7 +1007,7 @@ export default function AdminPage() {
 
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <CheckCircleIcon className="h-8 w-8 text-emerald-300" />
+                  <CheckCircleIcon className="h-8 w-8 text-emerald-700 dark:text-emerald-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Success Rate</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -1021,7 +1021,7 @@ export default function AdminPage() {
 
               <div className="bg-card border border-hairline p-6 rounded-lg">
                 <div className="flex items-center">
-                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-300" />
+                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-700 dark:text-purple-300" />
                   <div className="ml-4">
                     <p className="text-sm text-muted">Daily Average</p>
                     <p className="text-2xl font-semibold text-ink">
@@ -1102,7 +1102,7 @@ export default function AdminPage() {
                       showNotification('error', 'Failed to fix user tiers')
                     }
                   }}
-                  className="bg-amber-300/10 text-amber-200 border border-amber-300/20 px-4 py-2 rounded-lg hover:bg-amber-300/20 flex items-center"
+                  className="bg-amber-300/10 text-amber-700 dark:text-amber-200 border border-amber-300/20 px-4 py-2 rounded-lg hover:bg-amber-300/20 flex items-center"
                 >
                   <span className="text-xs">🔧</span>
                   <span className="ml-2">Fix Tiers</span>
@@ -1181,11 +1181,11 @@ export default function AdminPage() {
                   </thead>
                   <tbody className="divide-y divide-hairline">
                     {filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-white/5">
+                      <tr key={user.id} className="hover:bg-ink/5">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                              <div className="h-10 w-10 rounded-full bg-ink/10 flex items-center justify-center">
                                 <UserIcon className="h-5 w-5 text-muted" />
                               </div>
                             </div>
@@ -1193,7 +1193,7 @@ export default function AdminPage() {
                               <div className="text-sm font-medium text-ink flex items-center">
                                 {user.username}
                                 {user.is_admin && (
-                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-400/10 text-red-300 border border-red-400/20">
+                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-400/10 text-red-700 dark:text-red-300 border border-red-400/20">
                                     Admin
                                   </span>
                                 )}
@@ -1218,17 +1218,17 @@ export default function AdminPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-1">
                             {user.payment_override ? (
-                              <div className="flex items-center text-amber-300">
+                              <div className="flex items-center text-amber-700 dark:text-amber-300">
                                 <GiftIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Override</span>
                               </div>
                             ) : user.require_payment ? (
-                              <div className="flex items-center text-red-300">
+                              <div className="flex items-center text-red-700 dark:text-red-300">
                                 <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Payment Required</span>
                               </div>
                             ) : (
-                              <div className="flex items-center text-emerald-300">
+                              <div className="flex items-center text-emerald-700 dark:text-emerald-300">
                                 <CreditCardIcon className="h-4 w-4 mr-1" />
                                 <span className="text-xs font-medium">Paid</span>
                               </div>
@@ -1240,7 +1240,7 @@ export default function AdminPage() {
                              {user.stripe_customer_id && !user.payment_override && (
                                <button
                                  onClick={() => window.open(`https://dashboard.stripe.com/customers/${user.stripe_customer_id}`, '_blank')}
-                                 className="p-2 text-purple-300 hover:bg-white/10 rounded-lg"
+                                 className="p-2 text-purple-700 dark:text-purple-300 hover:bg-ink/10 rounded-lg"
                                  title="View in Stripe Dashboard"
                                >
                                  <LinkIcon className="h-4 w-4" />
@@ -1250,8 +1250,8 @@ export default function AdminPage() {
                                onClick={() => handleTogglePaymentOverride(user)}
                                className={`p-2 rounded-lg transition-colors ${
                                  user.payment_override
-                                   ? 'bg-amber-300/10 text-amber-300 hover:bg-amber-300/20'
-                                   : 'bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20'
+                                   ? 'bg-amber-300/10 text-amber-700 dark:text-amber-300 hover:bg-amber-300/20'
+                                   : 'bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-400/20'
                                }`}
                                title={user.payment_override ? 'Remove payment override' : 'Grant payment override'}
                              >
@@ -1265,8 +1265,8 @@ export default function AdminPage() {
                                onClick={() => handleToggleRequirePayment(user)}
                                className={`p-2 rounded-lg transition-colors ${
                                  user.require_payment
-                                   ? 'bg-red-400/10 text-red-300 hover:bg-red-400/20'
-                                   : 'bg-white/5 text-muted hover:bg-white/10'
+                                   ? 'bg-red-400/10 text-red-700 dark:text-red-300 hover:bg-red-400/20'
+                                   : 'bg-ink/5 text-muted hover:bg-ink/10'
                                }`}
                                title={user.require_payment ? 'Disable payment requirement' : 'Require payment'}
                              >
@@ -1278,21 +1278,21 @@ export default function AdminPage() {
                              </button>
                              <button
                                onClick={() => openPasswordResetModal(user)}
-                               className="p-2 text-amber-300 hover:bg-white/10 rounded-lg"
+                               className="p-2 text-amber-700 dark:text-amber-300 hover:bg-ink/10 rounded-lg"
                                title="Reset password"
                              >
                                <KeyIcon className="h-4 w-4" />
                              </button>
                              <button
                                onClick={() => openEditModal(user)}
-                               className="p-2 text-sky-300 hover:bg-white/10 rounded-lg"
+                               className="p-2 text-sky-700 dark:text-sky-300 hover:bg-ink/10 rounded-lg"
                                title="Edit user"
                              >
                                <PencilIcon className="h-4 w-4" />
                              </button>
                              <button
                                onClick={() => openDeleteModal(user)}
-                               className="p-2 text-red-300 hover:bg-white/10 rounded-lg"
+                               className="p-2 text-red-700 dark:text-red-300 hover:bg-ink/10 rounded-lg"
                                title="Delete user"
                              >
                                <TrashIcon className="h-4 w-4" />
@@ -1461,8 +1461,8 @@ export default function AdminPage() {
                 {formData.payment_override && (
                   <div className="bg-amber-300/10 border border-amber-300/20 rounded-lg p-3">
                     <div className="flex items-center">
-                      <GiftIcon className="h-5 w-5 text-amber-300 mr-2" />
-                      <p className="text-sm text-amber-200">
+                      <GiftIcon className="h-5 w-5 text-amber-700 dark:text-amber-300 mr-2" />
+                      <p className="text-sm text-amber-700 dark:text-amber-200">
                         This user will have premium access without payment requirements.
                       </p>
                     </div>
@@ -1478,11 +1478,11 @@ export default function AdminPage() {
                     {(() => {
                       const status = smsSender?.status || 'none'
                       const badge: Record<string, string> = {
-                        none: 'bg-white/5 text-muted border border-hairline',
-                        provisioning: 'bg-sky-400/10 text-sky-300 border border-sky-400/20',
-                        pending_verification: 'bg-amber-300/10 text-amber-200 border border-amber-300/20',
-                        active: 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20',
-                        failed: 'bg-red-400/10 text-red-300 border border-red-400/20',
+                        none: 'bg-ink/5 text-muted border border-hairline',
+                        provisioning: 'bg-sky-400/10 text-sky-700 dark:text-sky-300 border border-sky-400/20',
+                        pending_verification: 'bg-amber-300/10 text-amber-700 dark:text-amber-200 border border-amber-300/20',
+                        active: 'bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20',
+                        failed: 'bg-red-400/10 text-red-700 dark:text-red-300 border border-red-400/20',
                       }
                       return (
                         <div className="rounded-lg bg-panel border border-hairline p-3 text-sm">
@@ -1502,7 +1502,7 @@ export default function AdminPage() {
                             </p>
                           )}
                           {(smsSender?.rejectionReason || smsSender?.error) && (
-                            <p className="mt-1 text-xs text-red-300">
+                            <p className="mt-1 text-xs text-red-700 dark:text-red-300">
                               {smsSender.rejectionReason || smsSender.error}
                             </p>
                           )}
@@ -1544,7 +1544,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowUserModal(false)}
-                  className="px-4 py-2 text-ink rounded-lg hover:bg-white/5 border border-hairline font-medium"
+                  className="px-4 py-2 text-ink rounded-lg hover:bg-ink/5 border border-hairline font-medium"
                 >
                   Cancel
                 </button>
@@ -1565,7 +1565,7 @@ export default function AdminPage() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[9999]">
           <div className="bg-card rounded-lg max-w-md w-full p-6 border border-hairline text-ink">
             <div className="flex items-center mb-4">
-              <ExclamationTriangleIcon className="h-8 w-8 text-red-300 mr-3" />
+              <ExclamationTriangleIcon className="h-8 w-8 text-red-700 dark:text-red-300 mr-3" />
               <h3 className="text-lg font-semibold text-ink">Confirm Deletion</h3>
             </div>
             
@@ -1577,13 +1577,13 @@ export default function AdminPage() {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-ink rounded-lg hover:bg-white/5 border border-hairline font-medium"
+                className="px-4 py-2 text-ink rounded-lg hover:bg-ink/5 border border-hairline font-medium"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteUser}
-                className="px-4 py-2 bg-red-500/15 text-red-300 rounded-lg hover:bg-red-500/25 border border-red-400/30 font-medium"
+                className="px-4 py-2 bg-red-500/15 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-500/25 border border-red-400/30 font-medium"
               >
                 Delete User
               </button>
@@ -1598,7 +1598,7 @@ export default function AdminPage() {
           <div className="bg-card rounded-lg max-w-md w-full p-6 border border-hairline text-ink">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <KeyIcon className="h-8 w-8 text-amber-300 mr-3" />
+                <KeyIcon className="h-8 w-8 text-amber-700 dark:text-amber-300 mr-3" />
                 <h3 className="text-lg font-semibold text-ink">Reset Password</h3>
               </div>
               <button
@@ -1636,7 +1636,7 @@ export default function AdminPage() {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowPasswordReset(false)}
-                className="px-4 py-2 text-ink rounded-lg hover:bg-white/5 border border-hairline font-medium"
+                className="px-4 py-2 text-ink rounded-lg hover:bg-ink/5 border border-hairline font-medium"
               >
                 Cancel
               </button>

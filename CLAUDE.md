@@ -175,19 +175,29 @@ the confirmed holes were fixed in the same session:
 
 ## Conventions
 
-- **Design system: "Ink & Acid" (2026-06-11, site-wide incl. dashboard/admin)**:
-  dark everywhere. Tailwind tokens (tailwind.config.js): `canvas #101113` (page),
-  `panel #16181C`, `card #1A1D22`, `ink #F4F6F0` (NOTE: ink is the LIGHT TEXT
-  color now), `muted #A3A8A0`, `faint #6E736C`, `hairline #272B31`, `accent
-  #C6F24E` (acid lime), `accent-ink #11130A` (text on lime fills — never white
-  on lime). Font: Archivo (variable wdth; `.font-display` ≈ stretch 118%,
-  `.font-display-wide` = 125% uppercase) + IBM Plex Mono labels (`.eyebrow`).
-  Utilities in globals.css: `.hero-glow .film-grain .tick-rule .led .glow-accent
-  .frame-develop .breathe .rise`. Primary buttons `bg-accent text-accent-ink`;
-  secondary `border-hairline hover:bg-white/5`; status badges = 400-weight
-  tints (`bg-emerald-400/10 text-emerald-300` etc.). Emails stay light but
-  carry lime CTAs (`lib/email.ts`); OG cards use static Archivo TTFs in
-  assets/fonts. Copy/claims unchanged from the honesty audit.
+- **Design system: "Ink & Aqua", DUAL THEME (2026-06-11, site-wide incl.
+  dashboard/admin)**. Light is the DEFAULT; dark via `data-theme="dark"` on
+  `<html>` (set pre-paint by an inline script in app/layout.tsx; persisted in
+  localStorage `sr-theme`; `components/ThemeToggle.tsx` switches — it lives in
+  the AppFrame nav and AppShell sidebar/mobile bar). Tailwind tokens are CSS
+  vars (RGB triplets `--c-*` in globals.css; config maps them with
+  `<alpha-value>`): canvas/panel/card surfaces, `ink` = ALWAYS the primary text
+  color (dark-on-light or light-on-dark), muted/faint/hairline, `accent` =
+  aqua (#0E7490 light / #40C9DE dark), `accent-ink` = text on accent fills
+  (white light / near-black dark — never hardcode white on accent).
+  `darkMode: ['selector', '[data-theme="dark"]']` — Tailwind palette colors
+  (status badges etc.) use dual classes like `text-emerald-700
+  dark:text-emerald-300`; overlays use `bg-ink/5..15`, NEVER `bg-white/N`.
+  Accent glow = `hover:shadow-glow` (configured boxShadow). Font: Archivo
+  (variable wdth; `.font-display` ≈ 118%, `.font-display-wide` = 125%
+  uppercase) + IBM Plex Mono labels (`.eyebrow`). Utilities: `.hero-glow
+  .film-grain .tick-rule .led .glow-accent .frame-develop .breathe .rise` (all
+  theme-aware). The homepage security band is a permanent dark section that
+  pins local `--c-*` overrides inline. Emails stay light with aqua CTAs
+  (`lib/email.ts`); OG cards render the LIGHT palette with static Archivo TTFs
+  in assets/fonts. **Walter's rule: never drift back to warm-black +
+  coral/terracotta + serif-italic (reads as "Claude"); keep accents subtle.**
+  Copy/claims unchanged from the honesty audit.
 - Headless-Chrome screenshots clamp to a 500px minimum window width — for real
   mobile rendering use CDP `Emulation.setDeviceMetricsOverride`, or text appears
   falsely clipped at 390px.

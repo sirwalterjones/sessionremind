@@ -24,15 +24,15 @@ interface SenderRow {
 }
 
 const STATUS_STYLE: Record<string, { color: string; label: string }> = {
-  active: { color: '#34D399', label: 'Active' },
-  pending_verification: { color: '#FBBF24', label: 'Pending verification' },
-  provisioning: { color: '#7DD3FC', label: 'Provisioning' },
-  failed: { color: '#F87171', label: 'Failed' },
-  none: { color: '#6E736C', label: 'None' },
+  active: { color: '#10b981', label: 'Active' },
+  pending_verification: { color: '#f59e0b', label: 'Pending verification' },
+  provisioning: { color: '#0ea5e9', label: 'Provisioning' },
+  failed: { color: '#ef4444', label: 'Failed' },
+  none: { color: '#9ca3af', label: 'None' },
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const s = STATUS_STYLE[status] || { color: '#6E736C', label: status }
+  const s = STATUS_STYLE[status] || { color: '#9ca3af', label: status }
   return (
     <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-sm">
       <span className="h-2 w-2 rounded-full" style={{ background: s.color }} />
@@ -148,7 +148,7 @@ export default function NumbersPage() {
                     {r.isShared ? (
                       <span className="inline-flex items-center gap-1.5">
                         {r.username}
-                        <span className="rounded-full bg-white/5 border border-hairline px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+                        <span className="rounded-full bg-ink/5 border border-hairline px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
                           Platform
                         </span>
                       </span>
@@ -169,7 +169,7 @@ export default function NumbersPage() {
                     {r.sender.verificationStatus || '—'}
                   </div>
                   {r.sender.rejectionReason && (
-                    <div className="mt-1 max-w-[260px] text-xs text-red-300">{r.sender.rejectionReason}</div>
+                    <div className="mt-1 max-w-[260px] text-xs text-red-700 dark:text-red-300">{r.sender.rejectionReason}</div>
                   )}
                   {r.sender.error && (
                     <div className="mt-1 max-w-[260px] text-xs text-muted">{r.sender.error}</div>
@@ -183,7 +183,7 @@ export default function NumbersPage() {
                     <button
                       onClick={() => refreshOne(r.userId)}
                       disabled={busy.has(r.userId)}
-                      className="whitespace-nowrap rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-40"
+                      className="whitespace-nowrap rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-40"
                     >
                       {busy.has(r.userId) ? 'Checking…' : 'Refresh from Twilio'}
                     </button>

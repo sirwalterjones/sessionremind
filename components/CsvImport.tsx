@@ -151,7 +151,7 @@ export default function CsvImport({ onImported }: { onImported?: () => void }) {
         Pick the session day and we&apos;ll schedule reminders for everyone.
       </p>
 
-      <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-hairline cursor-pointer hover:bg-white/5 w-full sm:w-auto sm:inline-flex">
+      <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-hairline cursor-pointer hover:bg-ink/5 w-full sm:w-auto sm:inline-flex">
         <ArrowUpTrayIcon className="w-5 h-5 text-faint" />
         <span className="text-sm text-ink">{fileName || 'Choose a CSV file'}</span>
         <input
@@ -164,7 +164,7 @@ export default function CsvImport({ onImported }: { onImported?: () => void }) {
 
       {rows.length > 0 && (
         <div className="mt-4 space-y-4">
-          <div className="flex items-center gap-2 text-sm text-emerald-300">
+          <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300">
             <DocumentTextIcon className="w-4 h-4" />
             {rows.length} client(s) with valid phone numbers found.
           </div>
@@ -191,7 +191,7 @@ export default function CsvImport({ onImported }: { onImported?: () => void }) {
           <button
             onClick={handleImport}
             disabled={importing || !sessionTitle.trim() || !dateTime}
-            className="px-5 py-2 rounded-lg bg-accent text-accent-ink text-sm font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow disabled:opacity-50"
+            className="px-5 py-2 rounded-lg bg-accent text-accent-ink text-sm font-semibold hover:shadow-glow transition-shadow disabled:opacity-50"
           >
             {importing ? 'Importing…' : `Schedule reminders for ${rows.length} client(s)`}
           </button>

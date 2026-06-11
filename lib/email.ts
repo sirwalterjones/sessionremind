@@ -5,12 +5,12 @@
 
 const FROM = process.env.RESEND_FROM || 'SessionRemind <onboarding@resend.dev>'
 
-// Emails stay light for client compatibility, but carry the Ink & Acid brand:
-// graphite ink, lime CTA fills (dark text on lime), deep-lime eyebrow text.
+// Emails stay light for client compatibility, but carry the Ink & Aqua brand:
+// graphite ink, aqua CTA fills (white text), aqua eyebrow text.
 const INK = '#101113'
-const ACCENT = '#4D7C0F' // deep lime — readable as TEXT on white
-const LIME = '#C6F24E' // acid lime — FILLS only, with dark text
-const LIME_INK = '#11130A'
+const ACCENT = '#0E7490' // deep aqua — readable as TEXT on white
+const LIME = '#0E7490' // deep aqua — FILLS, with white text
+const LIME_INK = '#FFFFFF'
 const MUTED = '#5F646C'
 const HAIRLINE = '#E4E6E2'
 const PAPER = '#F2F4EF'

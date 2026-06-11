@@ -8,7 +8,7 @@ import Turnstile from '@/components/Turnstile'
 
 const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
-const A = '#C6F24E' // accent
+const A = 'rgb(var(--c-accent))' // accent
 
 const STEPS: Array<[string, string, string]> = [
   ['01', 'Create your account', 'Username, email, password — this page, right now.'],
@@ -236,7 +236,7 @@ export default function RegisterPage() {
                   <Turnstile onVerify={setTurnstileToken} />
 
                   {error && (
-                    <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300">
+                    <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                       {error}
                     </div>
                   )}
@@ -244,7 +244,7 @@ export default function RegisterPage() {
                   <button
                     type="submit"
                     disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
-                    className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                    className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
                   >
                     {loading ? (
                       'Creating account…'

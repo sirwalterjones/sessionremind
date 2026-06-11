@@ -407,9 +407,9 @@ function DashboardContent() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'scheduled': return <ClockIcon className="h-4 w-4 text-sky-300" />
-      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-emerald-300" />
-      case 'failed': return <XMarkIcon className="h-4 w-4 text-red-300" />
+      case 'scheduled': return <ClockIcon className="h-4 w-4 text-sky-700 dark:text-sky-300" />
+      case 'sent': return <CheckCircleIcon className="h-4 w-4 text-emerald-700 dark:text-emerald-300" />
+      case 'failed': return <XMarkIcon className="h-4 w-4 text-red-700 dark:text-red-300" />
       case 'cancelled': return <XMarkIcon className="h-4 w-4 text-muted" />
       default: return <ClockIcon className="h-4 w-4 text-muted" />
     }
@@ -417,11 +417,11 @@ function DashboardContent() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'scheduled': return 'bg-sky-400/10 text-sky-300 border-sky-400/20'
-      case 'sent': return 'bg-emerald-400/10 text-emerald-300 border-emerald-400/20'
-      case 'failed': return 'bg-red-400/10 text-red-300 border-red-400/20'
-      case 'cancelled': return 'bg-white/5 text-muted border-hairline'
-      default: return 'bg-white/5 text-muted border-hairline'
+      case 'scheduled': return 'bg-sky-400/10 text-sky-700 dark:text-sky-300 border-sky-400/20'
+      case 'sent': return 'bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 border-emerald-400/20'
+      case 'failed': return 'bg-red-400/10 text-red-700 dark:text-red-300 border-red-400/20'
+      case 'cancelled': return 'bg-ink/5 text-muted border-hairline'
+      default: return 'bg-ink/5 text-muted border-hairline'
     }
   }
 
@@ -559,13 +559,13 @@ function DashboardContent() {
             <div className="space-y-3">
               <a
                 href="/login"
-                className="block text-center rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow"
+                className="block text-center rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold hover:shadow-glow transition-shadow"
               >
                 Go to login
               </a>
               <a
                 href="/register"
-                className="block text-center rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-white/5 transition-colors"
+                className="block text-center rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-ink/5 transition-colors"
               >
                 Create account
               </a>
@@ -583,15 +583,15 @@ function DashboardContent() {
     return (
       <div className="animate-pulse space-y-10 py-4">
         <div>
-          <div className="h-3 w-24 bg-white/10 rounded mb-4"></div>
-          <div className="h-10 w-1/3 bg-white/10 rounded mb-3"></div>
-          <div className="h-4 w-1/2 bg-white/10 rounded"></div>
+          <div className="h-3 w-24 bg-ink/10 rounded mb-4"></div>
+          <div className="h-10 w-1/3 bg-ink/10 rounded mb-3"></div>
+          <div className="h-4 w-1/2 bg-ink/10 rounded"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-hairline rounded-2xl overflow-hidden border border-hairline">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="bg-card p-6">
-              <div className="h-3 w-20 bg-white/10 rounded mb-3"></div>
-              <div className="h-8 w-16 bg-white/10 rounded"></div>
+              <div className="h-3 w-20 bg-ink/10 rounded mb-3"></div>
+              <div className="h-8 w-16 bg-ink/10 rounded"></div>
             </div>
           ))}
         </div>
@@ -629,7 +629,7 @@ function DashboardContent() {
                 </div>
                 <a
                   href="/new"
-                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-glow"
                 >
                   <PlusIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">New reminder</span>
@@ -688,7 +688,7 @@ function DashboardContent() {
                     {!searchTerm && (
                       <a
                         href="/new"
-                        className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+                        className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink transition-shadow hover:shadow-glow"
                       >
                         <PlusIcon className="h-4 w-4" />
                         Create your first reminder
@@ -746,29 +746,29 @@ function DashboardContent() {
                     <td className="px-5 py-4 align-top">
                       <div className="flex flex-wrap gap-1.5">
                         {sessionPassed && (
-                          <span className="rounded-full border border-hairline bg-white/5 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                          <span className="rounded-full border border-hairline bg-ink/5 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
                             Archived
                           </span>
                         )}
                         {sentMessages.length > 0 && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-medium text-emerald-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                             {sentMessages.length} sent
                           </span>
                         )}
                         {scheduledMessages.length > 0 && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/20 bg-sky-400/10 px-2.5 py-0.5 text-xs font-medium text-sky-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-sky-300" />
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/20 bg-sky-400/10 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:text-sky-300">
+                            <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
                             {scheduledMessages.length} scheduled
                           </span>
                         )}
                         {failedMessages.length > 0 && (
-                          <span className="inline-flex items-center rounded-full border border-red-400/20 bg-red-400/10 px-2.5 py-0.5 text-xs font-medium text-red-300">
+                          <span className="inline-flex items-center rounded-full border border-red-400/20 bg-red-400/10 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:text-red-300">
                             {failedMessages.length} failed
                           </span>
                         )}
                         {cancelledMessages.length > 0 && (
-                          <span className="inline-flex items-center rounded-full border border-hairline bg-white/5 px-2.5 py-0.5 text-xs font-medium text-muted">
+                          <span className="inline-flex items-center rounded-full border border-hairline bg-ink/5 px-2.5 py-0.5 text-xs font-medium text-muted">
                             {cancelledMessages.length} cancelled
                           </span>
                         )}
@@ -797,15 +797,15 @@ function DashboardContent() {
                   <p className="mt-1 text-sm text-muted">
                     {sentCount} of {totalMessages} delivered
                   </p>
-                  <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-ink/10">
                     <div style={{ width: pct(sentCount) }} className="bg-accent" />
-                    <div style={{ width: pct(scheduledCount) }} className="bg-sky-300/60" />
-                    <div style={{ width: pct(failedCount) }} className="bg-red-400" />
+                    <div style={{ width: pct(scheduledCount) }} className="bg-sky-500" />
+                    <div style={{ width: pct(failedCount) }} className="bg-red-500" />
                   </div>
                   <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                     <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-accent" />Sent</span>
-                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-300/60" />Scheduled</span>
-                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-400" />Failed</span>
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-500" />Scheduled</span>
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-500" />Failed</span>
                   </div>
                 </div>
 
@@ -835,7 +835,7 @@ function DashboardContent() {
         {/* Client Detail Modal */}
         {showClientModal && selectedClient && (
           <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-            <div className="bg-card rounded-2xl border border-hairline max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
+            <div className="bg-card rounded-2xl border border-hairline max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
               <div className="p-6 sm:p-8 border-b border-hairline">
                 <div className="flex items-start justify-between">
                   <div>
@@ -856,7 +856,7 @@ function DashboardContent() {
                   </div>
                   <button
                     onClick={() => setShowClientModal(false)}
-                    className="w-9 h-9 rounded-full border border-hairline hover:bg-white/5 flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-full border border-hairline hover:bg-ink/5 flex items-center justify-center transition-colors"
                   >
                     <XMarkIcon className="h-4 w-4 text-ink" />
                   </button>
@@ -920,7 +920,7 @@ function DashboardContent() {
                                 e.stopPropagation()
                                 startEdit(message)
                               }}
-                              className="px-3 py-1 text-xs font-medium rounded-full border border-hairline text-ink transition-colors hover:bg-white/5"
+                              className="px-3 py-1 text-xs font-medium rounded-full border border-hairline text-ink transition-colors hover:bg-ink/5"
                             >
                               Edit
                             </button>
@@ -934,10 +934,10 @@ function DashboardContent() {
                               disabled={cancellingMessages.has(message.id.toString())}
                               className={`px-3 py-1 text-xs font-medium rounded-full border transition-colors ${
                                 cancelledMessages.has(message.id.toString())
-                                  ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
+                                  ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300'
                                   : cancellingMessages.has(message.id.toString())
                                   ? 'border-hairline text-muted cursor-not-allowed'
-                                  : 'border-red-400/30 bg-red-500/15 text-red-300 hover:bg-red-500/25'
+                                  : 'border-red-400/30 bg-red-500/15 text-red-700 dark:text-red-300 hover:bg-red-500/25'
                               }`}
                             >
                               {cancelledMessages.has(message.id.toString())
@@ -948,7 +948,7 @@ function DashboardContent() {
                             </button>
                           )}
                           {message.status === 'cancelled' && (
-                            <span className="px-3 py-1 border border-hairline bg-white/5 text-muted text-xs font-medium rounded-full">
+                            <span className="px-3 py-1 border border-hairline bg-ink/5 text-muted text-xs font-medium rounded-full">
                               Cancelled
                             </span>
                           )}
@@ -980,7 +980,7 @@ function DashboardContent() {
                           </p>
 
                           {editError && (
-                            <p className="mt-3 text-sm text-red-300">{editError}</p>
+                            <p className="mt-3 text-sm text-red-700 dark:text-red-300">{editError}</p>
                           )}
 
                           <div className="mt-4 flex items-center gap-2">
@@ -990,7 +990,7 @@ function DashboardContent() {
                                 saveEdit(message.id.toString())
                               }}
                               disabled={savingEdit}
-                              className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50"
+                              className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-accent-ink transition-shadow hover:shadow-glow disabled:opacity-50"
                             >
                               {savingEdit ? 'Saving…' : 'Save changes'}
                             </button>
@@ -1000,7 +1000,7 @@ function DashboardContent() {
                                 cancelEdit()
                               }}
                               disabled={savingEdit}
-                              className="rounded-full border border-hairline px-4 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+                              className="rounded-full border border-hairline px-4 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50"
                             >
                               Discard
                             </button>

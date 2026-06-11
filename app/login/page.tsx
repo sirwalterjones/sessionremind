@@ -8,7 +8,7 @@ import Turnstile from '@/components/Turnstile'
 
 const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
-const A = '#C6F24E' // accent
+const A = 'rgb(var(--c-accent))' // accent
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -167,7 +167,7 @@ function LoginForm() {
                   <Turnstile onVerify={setTurnstileToken} />
 
                   {error && (
-                    <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300">
+                    <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                       {error}
                     </div>
                   )}
@@ -175,7 +175,7 @@ function LoginForm() {
                   <button
                     type="submit"
                     disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
-                    className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                    className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
                   >
                     {loading ? (
                       'Signing in…'
@@ -213,7 +213,7 @@ export default function LoginPage() {
         <div className="flex min-h-[70vh] items-center justify-center py-12">
           <div className="w-full max-w-sm text-center">
             <div className="eyebrow flex items-center justify-center gap-2">
-              <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#C6F24E' }} />
+              <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: 'rgb(var(--c-accent))' }} />
               Welcome back
             </div>
             <h1 className="font-display mt-5 text-4xl font-semibold leading-[1.05]">Loading…</h1>

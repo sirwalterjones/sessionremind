@@ -149,9 +149,9 @@ export default function SharedNumberAdminPage() {
   const tone: Record<string, string> = {
     none: 'border-hairline bg-panel',
     provisioning: 'border-hairline bg-panel',
-    pending_verification: 'border-amber-300/20 bg-amber-300/10 text-amber-200',
-    active: 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300',
-    failed: 'border-red-400/30 bg-red-500/15 text-red-300',
+    pending_verification: 'border-amber-300/20 bg-amber-300/10 text-amber-700 dark:text-amber-200',
+    active: 'border-emerald-400/20 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300',
+    failed: 'border-red-400/30 bg-red-500/15 text-red-700 dark:text-red-300',
   }
   const StatusIcon = status === 'active' ? CheckCircleIcon : status === 'failed' ? ExclamationTriangleIcon : ClockIcon
   const phone = sender?.phoneNumber || state.phoneNumber
@@ -162,7 +162,7 @@ export default function SharedNumberAdminPage() {
         <button
           onClick={() => router.push('/admin')}
           aria-label="Back to admin"
-          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-white/5"
+          className="mt-1 rounded-full border border-hairline p-2 text-ink transition-colors hover:bg-ink/5"
         >
           <ArrowLeftIcon className="h-4 w-4" />
         </button>
@@ -265,7 +265,7 @@ export default function SharedNumberAdminPage() {
             <button
               onClick={refresh}
               disabled={busy}
-              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5 disabled:opacity-50"
+              className="mt-4 rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-ink/5 disabled:opacity-50"
             >
               {busy ? 'Checking…' : 'Refresh status'}
             </button>

@@ -3,21 +3,21 @@ import { readFile } from 'fs/promises'
 import { join } from 'path'
 
 // Social-share card rendered at build time with the real brand fonts so it
-// matches the homepage hero exactly (Ink & Acid: graphite, lime, wide Archivo).
+// matches the homepage hero exactly (Ink & Aqua, light theme, wide Archivo).
 
 export const alt =
   'SessionRemind — automatic SMS & email reminders for photography sessions'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-const CANVAS = '#101113'
-const CARD = '#1A1D22'
-const INK = '#F4F6F0'
-const ACCENT = '#C6F24E'
-const ACCENT_INK = '#11130A'
-const HAIRLINE = '#272B31'
-const MUTED = '#A3A8A0'
-const FAINT = '#6E736C'
+const CANVAS = '#FAFAF8'
+const CARD = '#FFFFFF'
+const INK = '#16181D'
+const ACCENT = '#0E7490'
+const ACCENT_INK = '#FFFFFF'
+const HAIRLINE = '#E5E6E2'
+const MUTED = '#5B6066'
+const FAINT = '#899097'
 
 export default async function OpenGraphImage() {
   const fontsDir = join(process.cwd(), 'assets', 'fonts')
@@ -51,7 +51,7 @@ export default async function OpenGraphImage() {
             width: '1200px',
             height: '630px',
             background:
-              'radial-gradient(ellipse 60% 55% at 80% -10%, rgba(198,242,78,0.16), transparent 65%)',
+              'radial-gradient(ellipse 60% 55% at 80% -10%, rgba(14,116,144,0.12), transparent 65%)',
           }}
         />
 
@@ -253,7 +253,7 @@ export default async function OpenGraphImage() {
                 color: ACCENT_INK,
                 padding: '18px 20px',
                 transform: 'rotate(-3deg)',
-                boxShadow: '0 24px 60px -20px rgba(198,242,78,0.35)',
+                boxShadow: '0 24px 60px -20px rgba(14,116,144,0.35)',
               }}
             >
               <div style={{ fontSize: '15px', lineHeight: 1.4, fontWeight: 400 }}>
@@ -265,7 +265,7 @@ export default async function OpenGraphImage() {
                   fontFamily: 'IBM Plex Mono',
                   fontSize: '10px',
                   letterSpacing: '2px',
-                  color: 'rgba(17,19,10,0.6)',
+                  color: 'rgba(255,255,255,0.7)',
                 }}
               >
                 SENT AUTOMATICALLY

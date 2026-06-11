@@ -593,13 +593,13 @@ export default function HelpPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-accent-ink transition-all hover:shadow-glow"
               >
                 Contact support <span aria-hidden>→</span>
               </Link>
               <Link
                 href="/faq"
-                className="inline-flex items-center rounded-full border border-hairline px-6 py-3 text-[15px] font-medium text-ink transition-colors hover:bg-white/5"
+                className="inline-flex items-center rounded-full border border-hairline px-6 py-3 text-[15px] font-medium text-ink transition-colors hover:bg-ink/5"
               >
                 Browse the FAQ
               </Link>

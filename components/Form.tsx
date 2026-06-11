@@ -41,7 +41,7 @@ function Toggle({
       checked={checked}
       onChange={onChange}
       className={`${
-        checked ? 'bg-accent' : 'bg-white/15'
+        checked ? 'bg-accent' : 'bg-ink/15'
       } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas`}
     >
       <span className="sr-only">{srLabel}</span>
@@ -341,7 +341,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
           <h3 className="font-display text-base font-semibold">Delivery</h3>
 
           {manual ? (
-            <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-relaxed text-amber-200">
+            <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-relaxed text-amber-700 dark:text-amber-200">
               Sends immediately. The confirmation and scheduled reminders are paused for this send.
             </p>
           ) : (
@@ -369,7 +369,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                     id="threeDayReminder"
                     checked={formData.threeDayReminder}
                     onChange={(e) => handleChange('threeDayReminder', e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#C6F24E]"
+                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[rgb(var(--c-accent))]"
                   />
                   <label htmlFor="threeDayReminder">
                     <span className="text-sm font-medium text-ink">3-day reminder</span>
@@ -383,7 +383,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
                     id="oneDayReminder"
                     checked={formData.oneDayReminder}
                     onChange={(e) => handleChange('oneDayReminder', e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[#C6F24E]"
+                    className="mt-0.5 h-4 w-4 rounded border-hairline accent-[rgb(var(--c-accent))]"
                   />
                   <label htmlFor="oneDayReminder">
                     <span className="text-sm font-medium text-ink">1-day reminder</span>
@@ -431,7 +431,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-8 py-3 font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-8 py-3 font-semibold text-accent-ink transition-shadow hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting && (
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-ink/30 border-t-accent-ink" />

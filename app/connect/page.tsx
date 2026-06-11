@@ -256,7 +256,7 @@ export default function ConnectPage() {
           <div>
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-start gap-3">
-                <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" />
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
                 <div>
                   <p className="font-display font-semibold text-ink">
                     Connected{status.businessName ? ` · ${status.businessName}` : ''}
@@ -273,7 +273,7 @@ export default function ConnectPage() {
                     reminders from any device, including your phone.
                   </p>
                   {status.lastSyncStatus === 'error' && (
-                    <p className="text-sm text-red-300 mt-1">Last sync error: {status.lastSyncError}</p>
+                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">Last sync error: {status.lastSyncError}</p>
                   )}
                 </div>
               </div>
@@ -281,14 +281,14 @@ export default function ConnectPage() {
                 <button
                   onClick={syncNow}
                   disabled={syncing}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-accent-ink font-semibold hover:shadow-glow transition-shadow disabled:opacity-50"
                 >
                   <ArrowPathIcon className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
                   Sync now
                 </button>
                 <button
                   onClick={disconnect}
-                  className="rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-white/5 transition-colors"
+                  className="rounded-full border border-hairline px-5 py-2.5 text-ink font-medium hover:bg-ink/5 transition-colors"
                 >
                   Disconnect
                 </button>
@@ -311,7 +311,7 @@ export default function ConnectPage() {
                 <button
                   onClick={startConnect}
                   disabled={connecting}
-                  className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-accent-ink font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] transition-shadow disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-accent-ink font-semibold hover:shadow-glow transition-shadow disabled:opacity-50"
                 >
                   {connecting ? 'Starting…' : 'Connect UseSession'}
                 </button>
@@ -344,7 +344,7 @@ export default function ConnectPage() {
                           '<a href="' +
                           bookmarklet.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
                           '" draggable="true" title="Drag me to your bookmarks bar" ' +
-                          'style="background:#C6F24E;color:#11130A" ' +
+                          'style="background:rgb(var(--c-accent));color:rgb(var(--c-accent-ink))" ' +
                           'class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold cursor-grab no-underline">' +
                           'Connect to SessionRemind</a>',
                       }}
@@ -364,7 +364,7 @@ export default function ConnectPage() {
                     </a>{' '}
                     (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
                     <div className="mt-2 rounded-lg border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-ink/80">
-                      <strong className="text-amber-200 font-medium">Important:</strong> Click the bookmark while you&apos;re
+                      <strong className="text-amber-700 dark:text-amber-200 font-medium">Important:</strong> Click the bookmark while you&apos;re
                       on the UseSession tab (<span className="font-mono">app.usesession.com</span>) — <strong className="text-ink font-medium">not</strong>{' '}
                       on this SessionRemind tab. It reads your UseSession login, so it only works there.
                     </div>
@@ -432,7 +432,7 @@ export default function ConnectPage() {
                           autoSave({ offsetsDays: next })
                         }}
                         className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                          on ? 'bg-accent text-accent-ink border-accent' : 'bg-card text-muted border-hairline hover:bg-white/5'
+                          on ? 'bg-accent text-accent-ink border-accent' : 'bg-card text-muted border-hairline hover:bg-ink/5'
                         }`}
                       >
                         {d}-day
@@ -451,11 +451,11 @@ export default function ConnectPage() {
                   }}
                   className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     settings.autoSchedule
-                      ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
+                      ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300'
                       : 'border-hairline text-muted'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-emerald-300' : 'bg-muted'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.autoSchedule ? 'bg-emerald-500' : 'bg-muted'}`} />
                   {settings.autoSchedule ? 'On' : 'Off'}
                 </button>
               </div>
@@ -469,11 +469,11 @@ export default function ConnectPage() {
                   }}
                   className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                     settings.emailReminders
-                      ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
+                      ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300'
                       : 'border-hairline text-muted'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${settings.emailReminders ? 'bg-emerald-300' : 'bg-muted'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${settings.emailReminders ? 'bg-emerald-500' : 'bg-muted'}`} />
                   {settings.emailReminders ? 'On' : 'Off'}
                 </button>
                 <p className="text-xs text-muted mt-1.5">Also emails clients who have an email on file. Needs a verified sending domain.</p>
@@ -523,7 +523,7 @@ export default function ConnectPage() {
                 </div>
                 <button
                   onClick={() => cancelReminder(m.id)}
-                  className="text-muted hover:text-red-300 transition-colors flex-shrink-0"
+                  className="text-muted hover:text-red-700 dark:hover:text-red-300 transition-colors flex-shrink-0"
                   title="Cancel this reminder"
                 >
                   <TrashIcon className="w-4 h-4" />

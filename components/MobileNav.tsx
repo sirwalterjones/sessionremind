@@ -14,7 +14,7 @@ export default function MobileNav() {
   }
 
   const item =
-    'block px-5 py-3 text-[15px] font-medium text-muted hover:text-ink hover:bg-white/5 transition-colors'
+    'block px-5 py-3 text-[15px] font-medium text-muted hover:text-ink hover:bg-ink/5 transition-colors'
 
   return (
     <div className="md:hidden">

@@ -76,13 +76,13 @@ export default function ContactPage() {
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             href="/"
-            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]"
+            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-accent-ink transition-all hover:shadow-glow"
           >
             Back home
           </Link>
           <Link
             href="/help"
-            className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white/5"
+            className="rounded-full border border-hairline px-6 py-2.5 font-medium text-ink transition-colors hover:bg-ink/5"
           >
             Browse help docs
           </Link>
@@ -95,7 +95,7 @@ export default function ContactPage() {
     <div className="mx-auto max-w-xl py-10 text-ink">
       <div className="text-center">
         <div className="eyebrow flex items-center justify-center gap-2">
-          <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: '#C6F24E' }} />
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
           We reply within a business day
         </div>
         <h1 className="font-display mt-5 text-4xl sm:text-5xl font-semibold leading-[1.05]">
@@ -157,7 +157,7 @@ export default function ContactPage() {
         <Turnstile onVerify={setTurnstileToken} />
 
         {error && (
-          <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-400">
+          <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
             {error}
           </div>
         )}
@@ -165,7 +165,7 @@ export default function ContactPage() {
         <button
           type="submit"
           disabled={sending || (TURNSTILE_ENABLED && !turnstileToken)}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-accent-ink transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
         >
           <EnvelopeIcon className="h-5 w-5" />
           {sending ? 'Sending…' : 'Send message'}

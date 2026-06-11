@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context'
 import MobileNav from '@/components/MobileNav'
 import NavLinks from '@/components/NavLinks'
 import AppShell from '@/components/AppShell'
+import ThemeToggle from '@/components/ThemeToggle'
 
 // Site chrome — Ink & Acid graphite, everywhere. App pages always render in
 // the sidebar AppShell. Signed-in visitors ALSO get the shell on content pages
@@ -29,10 +30,9 @@ const NO_SHELL_ROUTES = [
 function SrTile({ size = 9 }: { size?: 8 | 9 }) {
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-lg font-bold tracking-tight ${
+      className={`inline-flex items-center justify-center rounded-lg bg-accent font-bold tracking-tight text-accent-ink ${
         size === 9 ? 'w-9 h-9 text-[16px]' : 'w-8 h-8 text-[14px]'
       }`}
-      style={{ background: '#C6F24E', color: '#11130A' }}
     >
       Sr
     </span>
@@ -59,7 +59,7 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-canvas text-ink">
-      <nav className="sticky top-0 z-50 bg-[#101113]/80 backdrop-blur border-b border-hairline">
+      <nav className="sticky top-0 z-50 bg-canvas/80 backdrop-blur border-b border-hairline">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-3 group">
@@ -69,8 +69,11 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
               <span className="text-[21px] font-semibold tracking-tight text-ink">SessionRemind</span>
             </Link>
 
-            <NavLinks />
-            <MobileNav />
+            <div className="flex items-center gap-2">
+              <NavLinks />
+              <ThemeToggle />
+              <MobileNav />
+            </div>
           </div>
         </div>
       </nav>

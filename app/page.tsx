@@ -5,13 +5,13 @@ import { PLANS } from '@/lib/plans'
 // display type, mono spec labels, viewfinder brackets. Gear-UI, not SaaS-soft.
 // Server component; all motion is CSS-only.
 
-const A = '#C6F24E' // acid lime
+const A = 'rgb(var(--c-accent))' // theme accent (aqua)
 
 function ArrowCta({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
       href={href}
-      className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-accent-ink transition-shadow hover:shadow-[0_0_40px_-6px_rgba(198,242,78,0.7)]"
+      className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-accent-ink transition-shadow hover:shadow-glow"
     >
       {children}
       <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -96,7 +96,7 @@ export default function Home() {
             <div className="rise relative" style={{ animationDelay: '0.3s' }}>
               <div
                 className="absolute -inset-10 rounded-[48px] blur-3xl opacity-40"
-                style={{ background: 'radial-gradient(60% 60% at 50% 45%, rgba(198,242,78,0.18), transparent 70%)' }}
+                style={{ background: 'radial-gradient(60% 60% at 50% 45%, rgb(var(--c-accent) / 0.16), transparent 70%)' }}
                 aria-hidden
               />
               <Brackets>
@@ -182,7 +182,23 @@ export default function Home() {
       </section>
 
       {/* ───────────── SECURITY ───────────── */}
-      <section className="full-bleed bg-[#0B0C0E] border-y border-hairline">
+      {/* Always-dark contrast band: pin the token vars to the dark palette so
+          text/accent classes inside stay readable in BOTH themes. */}
+      <section
+        className="full-bleed bg-[#0B0C0E] text-[#F0F3F4] border-y border-hairline"
+        style={
+          {
+            '--c-ink': '240 243 244',
+            '--c-muted': '158 164 170',
+            '--c-faint': '108 114 120',
+            '--c-hairline': '39 43 49',
+            '--c-card': '26 29 34',
+            '--c-panel': '22 24 28',
+            '--c-accent': '64 201 222',
+            '--c-accent-ink': '4 42 49',
+          } as React.CSSProperties
+        }
+      >
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-32">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16">
             <div>
@@ -241,7 +257,7 @@ export default function Home() {
                 key={plan.key}
                 className={`flex flex-col rounded-xl border bg-card p-6 transition-colors ${
                   plan.key === 'studio'
-                    ? 'border-accent/60 shadow-[0_0_60px_-20px_rgba(198,242,78,0.4)]'
+                    ? 'border-accent/60 shadow-[0_0_60px_-20px_rgb(var(--c-accent)/0.35)]'
                     : 'border-hairline hover:border-faint'
                 }`}
               >
@@ -263,7 +279,7 @@ export default function Home() {
                   href={`/register?plan=${plan.key}`}
                   className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
                     plan.key === 'studio'
-                      ? 'bg-accent text-accent-ink hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)]'
+                      ? 'bg-accent text-accent-ink hover:shadow-glow'
                       : 'border border-hairline text-ink hover:bg-white/5'
                   }`}
                 >
@@ -282,7 +298,7 @@ export default function Home() {
       <section className="full-bleed relative bg-canvas overflow-hidden border-t border-hairline">
         <div
           className="breathe absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(50% 50% at 50% 50%, rgba(198,242,78,0.14), transparent 70%)' }}
+          style={{ background: 'radial-gradient(50% 50% at 50% 50%, rgb(var(--c-accent) / 0.13), transparent 70%)' }}
           aria-hidden
         />
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center">

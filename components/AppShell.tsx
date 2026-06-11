@@ -14,6 +14,7 @@ import {
   ArrowRightOnRectangleIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const WORKSPACE = [
   { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: Squares2X2Icon },
@@ -46,8 +47,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden w-60 shrink-0 flex-col border-r border-hairline bg-panel lg:flex">
         <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-hairline">
           <span
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[15px] font-bold tracking-tight"
-            style={{ background: '#C6F24E', color: '#11130A' }}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-[15px] font-bold tracking-tight text-accent-ink"
           >
             Sr
           </span>
@@ -63,7 +63,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href={href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   href === activeHref
-                    ? 'bg-card text-accent border border-accent/30 shadow-[inset_2px_0_0_0_#C6F24E]'
+                    ? 'bg-card text-accent border border-accent/30 shadow-[inset_2px_0_0_0_rgb(var(--c-accent))]'
                     : 'text-muted hover:bg-card hover:text-ink'
                 }`}
               >
@@ -105,13 +105,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 {user?.is_admin ? 'Admin' : 'Professional'}
               </p>
             </div>
-            <button
-              onClick={logout}
-              aria-label="Log out"
-              className="rounded-lg border border-hairline bg-card p-2 text-ink transition-colors hover:border-accent/40 hover:text-accent"
-            >
-              <ArrowRightOnRectangleIcon className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <ThemeToggle />
+              <button
+                onClick={logout}
+                aria-label="Log out"
+                className="rounded-lg border border-hairline bg-card p-2 text-ink transition-colors hover:border-accent/40 hover:text-accent"
+              >
+                <ArrowRightOnRectangleIcon className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       </aside>
@@ -122,8 +125,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex items-center justify-between border-b border-hairline px-5 h-16 lg:hidden">
           <Link href="/" className="flex items-center gap-2.5">
             <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-bold tracking-tight"
-              style={{ background: '#C6F24E', color: '#11130A' }}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-[14px] font-bold tracking-tight text-accent-ink"
             >
               Sr
             </span>
@@ -135,6 +137,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <button onClick={logout} className="rounded-full border border-hairline px-3 py-1 text-ink">
               Logout
             </button>
+            <ThemeToggle />
           </div>
         </div>
 

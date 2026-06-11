@@ -99,7 +99,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
                 />
                 <button
                   onClick={handlePaste}
-                  className="px-3 py-2 border border-hairline text-ink rounded-lg hover:bg-white/5 transition-colors text-sm"
+                  className="px-3 py-2 border border-hairline text-ink rounded-lg hover:bg-ink/5 transition-colors text-sm"
                 >
                   📋 Paste
                 </button>
@@ -110,13 +110,13 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
             <div className="bg-sky-400/10 border border-sky-400/20 rounded-lg p-3">
               <button
                 onClick={() => setShowExample(!showExample)}
-                className="text-sky-300 text-sm font-medium hover:text-sky-200"
+                className="text-sky-700 dark:text-sky-300 text-sm font-medium hover:text-sky-800 dark:hover:text-sky-200"
               >
                 {showExample ? '👆 Hide' : '👀 Show'} example URL format
               </button>
               
               {showExample && (
-                <div className="mt-2 text-sky-300 text-xs">
+                <div className="mt-2 text-sky-700 dark:text-sky-300 text-xs">
                   <p className="font-medium mb-1">✅ Session URLs that work:</p>
                   <ul className="space-y-1 ml-2">
                     <li>• <strong>Individual session pages:</strong> app.session.com/sessions/...</li>
@@ -124,7 +124,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
                     <li>• <strong>Calendar view pages:</strong> with client contact info visible</li>
                     <li>• <strong>Session management pages:</strong> showing client details</li>
                   </ul>
-                  <p className="font-medium mt-2 text-sky-200">🎯 Best results from individual session pages!</p>
+                  <p className="font-medium mt-2 text-sky-700 dark:text-sky-200">🎯 Best results from individual session pages!</p>
                 </div>
               )}
             </div>
@@ -134,7 +134,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
               <button
                 onClick={extractFromURL}
                 disabled={!url.trim() || isExtracting}
-                className="flex-1 px-4 py-3 bg-accent text-accent-ink rounded-lg font-semibold hover:shadow-[0_0_30px_-5px_rgba(198,242,78,0.6)] disabled:opacity-50 disabled:cursor-not-allowed transition-shadow"
+                className="flex-1 px-4 py-3 bg-accent text-accent-ink rounded-lg font-semibold hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-shadow"
               >
                 {isExtracting ? (
                   <span className="flex items-center justify-center">
@@ -151,7 +151,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
               
               <button
                 onClick={() => setUrl('')}
-                className="px-4 py-3 border border-hairline text-ink rounded-lg font-medium hover:bg-white/5 transition-colors"
+                className="px-4 py-3 border border-hairline text-ink rounded-lg font-medium hover:bg-ink/5 transition-colors"
               >
                 Clear
               </button>
@@ -160,8 +160,8 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
           
           {/* Instructions */}
           <div className="mt-4 bg-emerald-400/10 border border-emerald-400/20 rounded-lg p-3">
-            <h5 className="font-medium text-emerald-200 mb-2">📱 Step-by-Step Mobile Instructions:</h5>
-            <ol className="text-emerald-300 text-sm space-y-2">
+            <h5 className="font-medium text-emerald-700 dark:text-emerald-200 mb-2">📱 Step-by-Step Mobile Instructions:</h5>
+            <ol className="text-emerald-700 dark:text-emerald-300 text-sm space-y-2">
               <li><strong>1. Open Session:</strong> Go to app.session.com in your mobile browser</li>
               <li><strong>2. Find your client:</strong> Navigate to the specific session page (app.session.com/sessions/...)</li>
               <li><strong>3. Copy URL:</strong> Tap the address bar, select all, and copy the full URL</li>
@@ -170,7 +170,7 @@ export default function URLExtractor({ onDataExtracted }: URLExtractorProps) {
             </ol>
             
             <div className="mt-3 p-2 bg-amber-300/10 border border-amber-300/20 rounded">
-              <p className="text-amber-200 text-xs font-medium">💡 Pro Tip: Individual session pages (with URLs like app.session.com/sessions/abc123) give the best extraction results!</p>
+              <p className="text-amber-700 dark:text-amber-200 text-xs font-medium">💡 Pro Tip: Individual session pages (with URLs like app.session.com/sessions/abc123) give the best extraction results!</p>
             </div>
           </div>
         </div>

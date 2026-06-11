@@ -7,7 +7,7 @@ export default function NavLinks() {
   const { user, logout } = useAuth()
 
   const linkClass =
-    'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-muted hover:bg-white/5 hover:text-ink transition-colors'
+    'rounded-full border border-hairline px-3.5 py-1.5 text-sm font-medium text-muted hover:bg-ink/5 hover:text-ink transition-colors'
 
   return (
     <div className="hidden md:flex items-center gap-2">
@@ -59,7 +59,7 @@ export default function NavLinks() {
       ) : (
         <Link
           href="/login"
-          className="inline-flex items-center rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-ink hover:shadow-[0_0_24px_-4px_rgba(198,242,78,0.6)] transition-shadow"
+          className="inline-flex items-center rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-ink hover:shadow-glow transition-shadow"
         >
           Sign in
         </Link>
