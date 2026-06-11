@@ -135,6 +135,13 @@ the confirmed holes were fixed in the same session:
 - **NEVER set `ENCRYPTION_KEY`.** Stored UseSession tokens are encrypted with the
   key derived from `CRON_SECRET` (the fallback in `lib/crypto.ts`). Setting
   `ENCRYPTION_KEY` changes the derived key and bricks every stored token.
+- **Toll-free verification compliance** (learned from a real rejection, 2026-06-11):
+  the opt-in proof image (`public/opt-in-proof.svg` → `.png`) must show the consent
+  checkbox UNCHECKED (pre-selected consent = Twilio 30508); submitted business
+  websites must answer 200 directly — `momentsbycandice.com` 307s, only the `www.`
+  form works (30473/30445). Twilio allows ONE verification per number: retries on a
+  REJECTED verification must UPDATE the existing HH record (editable ~7 days after
+  rejection; `updateTollfreeVerification` in `lib/twilio.ts`), never create a second.
 - **Overage billing protocol** (`lib/usage.ts`): billing uses a two-phase claim
   (freeze intent in KV → create invoice item with idempotency key from the claim
   base → settle). Do NOT simplify to read-compute-create: an adversarial review
