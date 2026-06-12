@@ -196,6 +196,13 @@ body {
 }
 .sr-pop-in { animation: srPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
+/* Mobile menu slide-over sheet */
+@keyframes srSheetIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.sr-sheet-in { animation: srSheetIn 0.28s cubic-bezier(0.32, 0.72, 0.33, 1) both; }
+
 /* Staggered page-load reveal */
 @keyframes rise {
   from {
