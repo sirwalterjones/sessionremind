@@ -102,6 +102,19 @@ export default function ConnectDemo() {
           </div>
         </div>
 
+        {/* Callout — you must be ON UseSession BEFORE clicking the bookmark */}
+        {!reduced && navigating && (
+          <div
+            className="absolute right-4 top-[42px] z-30"
+            style={{ animation: 'sr-cd-nudge 1s ease-in-out infinite' }}
+          >
+            <div className="relative whitespace-nowrap rounded-lg bg-accent px-2.5 py-1 text-[10.5px] font-semibold text-accent-ink shadow-lg">
+              Go to UseSession first
+              <span className="absolute -top-1 right-6 h-2 w-2 rotate-45 bg-accent" />
+            </div>
+          </div>
+        )}
+
         {/* ── Bookmarks bar ──────────────────────────────────────────── */}
         <div className="flex items-center gap-2 border-b border-hairline bg-panel/60 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-faint">
           <span>Bookmarks</span>
@@ -301,6 +314,10 @@ export default function ConnectDemo() {
         @keyframes sr-cd-type {
           from { width: 0; }
           to { width: 19ch; }
+        }
+        @keyframes sr-cd-nudge {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
         }
       `}</style>
     </div>
