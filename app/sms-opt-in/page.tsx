@@ -1,7 +1,8 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'SMS Messaging Terms — SessionRemind',
+  title: 'SMS Messaging Terms',
+  alternates: { canonical: '/sms-opt-in' },
   description: 'How appointment reminder text messages work, and how to opt out.',
 }
 

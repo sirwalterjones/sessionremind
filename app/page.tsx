@@ -33,9 +33,55 @@ function Brackets({ children }: { children: React.ReactNode }) {
   )
 }
 
+export const metadata = {
+  alternates: { canonical: '/' },
+}
+
+// Structured data: tells search engines what SessionRemind is, what it costs,
+// and who makes it. Plan offers stay in lockstep with lib/plans.ts.
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://sessionremind.com/#org',
+      name: 'SessionRemind',
+      url: 'https://sessionremind.com',
+      logo: 'https://sessionremind.com/icon.svg',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: 'support@sessionremind.com',
+        url: 'https://sessionremind.com/contact',
+      },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'SessionRemind',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      url: 'https://sessionremind.com',
+      description:
+        'Automatic SMS & email session reminders for photographers. Syncs UseSession bookings and texts every client a perfectly-timed reminder before their shoot.',
+      publisher: { '@id': 'https://sessionremind.com/#org' },
+      offers: PLANS.map((plan) => ({
+        '@type': 'Offer',
+        name: `${plan.name} plan`,
+        price: plan.price,
+        priceCurrency: 'USD',
+        description: `${plan.includedTexts.toLocaleString()} texts per month included`,
+      })),
+    },
+  ],
+}
+
 export default function Home() {
   return (
     <div className="-mt-6 sm:-mt-10 text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
       {/* ───────────── HERO ───────────── */}
       <section className="full-bleed relative bg-canvas film-grain overflow-hidden">
         <div className="hero-glow absolute inset-0 h-[640px]" aria-hidden />

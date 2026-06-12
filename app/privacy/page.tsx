@@ -1,7 +1,8 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Privacy Policy — SessionRemind',
+  title: 'Privacy Policy',
+  alternates: { canonical: '/privacy' },
   description: 'How SessionRemind handles your data and your UseSession connection.',
 }
 

@@ -21,11 +21,38 @@ const mono = IBM_Plex_Mono({
   display: 'swap',
 })
 
+const SITE_TITLE = 'SessionRemind — SMS & Email Reminders for Photography Sessions'
+const SITE_DESCRIPTION =
+  'They book. We remind. You shoot. SessionRemind syncs your UseSession bookings and automatically ' +
+  'texts (and emails) every client a perfectly-timed reminder before their photo session — so your ' +
+  'calendar actually shows up. Plans from $15/mo.'
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://sessionremind.com'),
-  title: 'Session Remind - SMS Reminders for Photography Sessions',
-  description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
+  title: {
+    default: SITE_TITLE,
+    // Child pages export bare titles ("FAQ") and get the brand suffix here.
+    template: '%s — SessionRemind',
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: 'SessionRemind',
+  keywords: [
+    'photography session reminders',
+    'SMS reminders for photographers',
+    'UseSession reminders',
+    'client no-show prevention',
+    'appointment reminder texts',
+    'photography studio software',
+  ],
   manifest: '/manifest.json',
+  // NOTE: no root-level alternates.canonical — Next merges metadata downward,
+  // so a canonical here would make every page claim "/" as canonical. Each
+  // public page sets its own.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
   icons: {
     icon: [
       { url: '/favicon-16x16.svg', type: 'image/svg+xml', sizes: '16x16' },
@@ -39,21 +66,21 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Session Remind'
+    title: 'SessionRemind'
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://sessionremind.com',
-    title: 'Session Remind - SMS Reminders for Photography Sessions',
-    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.',
-    siteName: 'Session Remind',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: 'SessionRemind',
     // og:image / twitter:image come from app/opengraph-image.tsx + app/twitter-image.tsx
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Session Remind - SMS Reminders for Photography Sessions',
-    description: 'Professional SMS reminder app for photography sessions. Works seamlessly with Session to send automatic reminders to clients.'
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION
   },
   other: {
     'mobile-web-app-capable': 'yes'

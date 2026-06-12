@@ -5,7 +5,8 @@ import { PLANS } from '@/lib/plans'
 // Sticky section nav on desktop, jump-list on mobile, anchored sections.
 
 export const metadata = {
-  title: 'Help & Documentation — SessionRemind',
+  title: 'Help & Documentation',
+  alternates: { canonical: '/help' },
   description:
     'Everything you need to set up SessionRemind: connect UseSession, customize reminder texts, get your own texting number, and manage billing.',
 }

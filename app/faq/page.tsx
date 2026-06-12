@@ -1,7 +1,8 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'FAQ — SessionRemind',
+  title: 'FAQ',
+  alternates: { canonical: '/faq' },
   description:
     'Answers to common questions about SessionRemind — connecting UseSession, how reminders work, your texting number, plans, and privacy.',
 }
@@ -35,9 +36,70 @@ function QA({ q, children }: { q: string; children: React.ReactNode }) {
   )
 }
 
+// FAQPage structured data (rich results in search). A representative subset of
+// the on-page answers, in plain text — keep in sync if the answers change.
+const FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What does SessionRemind actually do?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'SessionRemind syncs your UseSession bookings and automatically texts (and optionally emails) every client a reminder before their photo session — by default 3 days and 1 day before, around 10am Eastern — so fewer clients no-show.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I connect my UseSession account?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Once, from a computer: on the Connect page, click Connect UseSession, drag the button to your bookmarks bar, and click it while logged into UseSession. No passwords — it links via a secure access token. After that everything is automatic and manageable from any device.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'When do reminders go out?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'By default 3 days and 1 day before each session, around 10am Eastern. Both the timing offsets and the send hour are configurable, and each reminder can be edited or cancelled individually.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do my clients need to download or install anything?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Clients just receive normal text messages (and optionally email). They can reply STOP anytime to opt out and HELP for help.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much does it cost?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Plans start at $15/month (Starter, 150 texts), with Studio $29/500 texts, Pro $59/1,500, and Volume $119/4,000. Texts beyond your plan bill at a small per-text overage rate, capped at one extra plan’s worth per month. Cancel anytime.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I get my own texting number registered to my studio?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — every paid plan can request a dedicated toll-free number registered to the studio’s business, right inside the app. Carrier verification typically takes a few days to three weeks, and reminders keep sending from the shared number in the meantime.',
+      },
+    },
+  ],
+}
+
 export default function FaqPage() {
   return (
     <div className="max-w-3xl mx-auto py-6 text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
+      />
       <div className="eyebrow mb-4">Help</div>
       <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">
         Questions, <span className="text-accent">answered.</span>
