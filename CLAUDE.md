@@ -3,7 +3,7 @@
 > Maintained by Claude Code sessions. **Update this file when you ship something
 > significant or leave work in flight** — it's how the next machine/session picks
 > up where the last one left off. Never put secrets in here (they live in Vercel
-> env vars). Last updated: **2026-06-10**.
+> env vars). Last updated: **2026-06-11**.
 
 ## What this is
 
@@ -75,11 +75,15 @@ Technologies, LLC** — that disclaimer must stay in the footer and emails.
   status and a per-row "Refresh from Twilio".
 
 ### In flight / waiting
-1. **Shared Twilio toll-free number (844) 455-1042 is IN_REVIEW** (toll-free
-   verification `HHcfdd2049fb97c559ad9d520fd221f29b`, submitted 2026-06-10,
-   typically days–3 weeks). The 5-min cron polls it; on approval it auto-activates
-   (all sending moves off TextMagic automatically) and emails the business contact.
-   State: KV `user:__platform_shared__:sms_sender`; console: `/admin/shared-number`.
+1. **Two toll-free verifications IN_REVIEW** (the 5-min cron polls both; on
+   approval each auto-activates and emails its contact):
+   - Shared platform (844) 455-1042 — `HHcfdd2049fb97c559ad9d520fd221f29b`,
+     submitted 2026-06-09, untouched in review (high-volume tier = slower queue).
+     State: KV `user:__platform_shared__:sms_sender`; console `/admin/shared-number`.
+   - Candice's dedicated (833) 997-7828 — `HH656332bc06a57737f60adb4f16a0195e`,
+     REJECTED 2026-06-11 (pre-checked consent box in our opt-in image + non-www
+     site URL 307s), fixed and RESUBMITTED same day via verification UPDATE; back
+     in review. See the toll-free compliance gotcha below.
 2. **After the 844 number activates**: send a live Twilio test text, then build
    Twilio delivery-status reporting into admin (status-callback webhook stamping
    delivered/undelivered per message). Inbound webhook `/api/twilio/inbound`
