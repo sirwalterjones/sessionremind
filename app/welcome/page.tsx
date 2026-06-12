@@ -347,7 +347,8 @@ export default function WelcomePage() {
                         UseSession
                       </a>{' '}
                       (logged in) and click that bookmark once. We&apos;ll detect it here
-                      automatically.
+                      automatically. Clicked it from the wrong tab? It opens UseSession for you —
+                      sign in and click it again there.
                     </li>
                   </ol>
                   <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">

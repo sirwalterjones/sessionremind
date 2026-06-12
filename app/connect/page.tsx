@@ -363,10 +363,10 @@ export default function ConnectPage() {
                       UseSession
                     </a>{' '}
                     (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
-                    <div className="mt-2 rounded-lg border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-ink/80">
-                      <strong className="text-amber-700 dark:text-amber-200 font-medium">Important:</strong> Click the bookmark while you&apos;re
-                      on the UseSession tab (<span className="font-mono">app.usesession.com</span>) — <strong className="text-ink font-medium">not</strong>{' '}
-                      on this SessionRemind tab. It reads your UseSession login, so it only works there.
+                    <div className="mt-2 rounded-lg border border-hairline bg-panel/60 px-3 py-2 text-xs text-ink/80">
+                      <strong className="text-ink font-medium">Clicked it from the wrong tab?</strong> No problem — the
+                      bookmark opens UseSession for you in a new tab. Sign in there if you need to, then click it
+                      once more from that tab.
                     </div>
                   </li>
                 </ol>

@@ -20,7 +20,16 @@ export function buildConnectorBookmarklet(origin: string, code: string): string 
     `var x=document.createElement('button');x.textContent='\\u00d7';x.style.cssText='background:none;border:none;font-size:20px;color:#9A958C;cursor:pointer;line-height:1;padding:0;margin-left:4px';x.onclick=function(){w.remove()};` +
     `w.appendChild(i);w.appendChild(c);w.appendChild(x);document.body.appendChild(w);if(auto)setTimeout(function(){w.remove()},6000);}` +
     `var t=localStorage.getItem('session-token');` +
-    `if(!t){box('!','#d97706','Not logged in','Open UseSession and log in, then click Connect again.');return;}` +
+    // No token: either we're not on UseSession at all (open it in a new tab and
+    // tell them to sign in + click again there), or we're on UseSession but
+    // signed out (just prompt sign-in).
+    `if(!t){` +
+    `if(location.hostname.indexOf('usesession.com')===-1){` +
+    `window.open('https://app.usesession.com/','_blank');` +
+    `box('\\u2192','#d97706','Opening UseSession\\u2026','We opened UseSession in a new tab. Sign in there if you need to, then click this bookmark again from that tab.');` +
+    `}else{` +
+    `box('!','#d97706','Sign in first','Sign in to UseSession, then click this bookmark again.');` +
+    `}return;}` +
     `box('\\u2026','#8A857C','SessionRemind','Connecting your account\\u2026');` +
     `fetch('${origin}/api/usesession/connect-token',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code:'${code}',token:t})}).then(function(r){return r.json()}).then(function(d){` +
     `if(d.success){box('\\u2713','#16a34a','Connected!',(d.sync&&typeof d.sync.scheduled==='number'?'Scheduled '+d.sync.scheduled+' reminder(s). ':'')+'You can close this tab.',true);}` +
