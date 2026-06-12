@@ -174,42 +174,50 @@ export default function ConnectDemo() {
               onUseSession ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
           >
-            {/* Session app header — light, lowercase "session" wordmark */}
-            <div className="flex items-center justify-between border-b border-hairline px-5 py-2.5">
+            {/* Session app top nav — black "session" mark + center nav pills */}
+            <div className="flex items-center justify-between border-b border-hairline px-4 py-2">
               <div className="flex items-center gap-1.5">
-                <span className="inline-block h-4 w-4 rounded-[5px] bg-ink" />
-                <span className="text-[14px] font-semibold lowercase tracking-tight text-ink">session</span>
+                <span className="flex h-4 w-4 items-center justify-center rounded-[5px] bg-ink">
+                  <span className="h-[7px] w-[7px] rounded-[2px] bg-canvas" />
+                </span>
+                <span className="text-[13px] font-bold lowercase tracking-tight text-ink">session</span>
               </div>
-              <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
-                <span className="text-ink">Sessions</span>
-                <span>Calendar</span>
-                <span>Clients</span>
+              <div className="flex items-center gap-0.5 text-[10px]">
+                <span className="rounded-full bg-panel px-2 py-0.5 font-medium text-ink">Sessions</span>
+                <span className="px-2 py-0.5 text-faint">Calendar</span>
+                <span className="hidden px-2 py-0.5 text-faint sm:inline">Galleries</span>
+                <span className="px-2 py-0.5 text-faint">Clients</span>
               </div>
             </div>
-            <div className="space-y-2 p-4">
-              {[
-                ['AD', 'Ashley D.', 'Summer Greenhouse Mini · Jun 27'],
-                ['MZ', 'Maria Z.', 'Senior Session · Jul 2'],
-                ['KW', 'Kayla W.', 'Watermelon Mini · Jul 9'],
-              ].map(([initials, name, detail]) => (
-                <div
-                  key={name}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-hairline bg-panel/50 px-3 py-2"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-[10.5px] font-bold text-accent">
-                      {initials}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-[12px] font-medium leading-tight text-ink">{name}</p>
-                      <p className="text-[11px] leading-tight text-muted">{detail}</p>
-                    </div>
-                  </div>
-                  <span className="flex-shrink-0 rounded-full bg-[#16a34a]/12 px-2 py-0.5 text-[9.5px] font-semibold uppercase tracking-wide text-[#16a34a]">
-                    Booked
-                  </span>
+
+            {/* Sessions detail — a session with its booked time slots */}
+            <div className="p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[13px] font-semibold leading-tight text-ink">Mini Sessions</p>
+                  <p className="text-[10.5px] leading-tight text-muted">Fri, Jun 27 · 15-minute slots</p>
                 </div>
-              ))}
+                <span className="rounded-full border border-hairline px-2.5 py-0.5 text-[10px] font-medium text-ink">
+                  Actions ▾
+                </span>
+              </div>
+              <div className="divide-y divide-hairline overflow-hidden rounded-lg border border-hairline">
+                {[
+                  ['4:00 PM', 'Ashley D.'],
+                  ['4:15 PM', 'Maria Z.'],
+                  ['4:30 PM', 'Kayla W.'],
+                  ['4:45 PM', 'Jordan P.'],
+                ].map(([time, name]) => (
+                  <div key={time} className="flex items-center gap-2.5 px-3 py-2">
+                    <span className="w-[52px] flex-shrink-0 font-mono text-[11px] text-ink">{time}</span>
+                    <span className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-[#16a34a]/12 px-2 py-0.5 text-[9.5px] font-semibold text-[#16a34a]">
+                      ✓ Booked
+                    </span>
+                    <span className="flex-1 truncate text-[12px] text-ink">{name}</span>
+                    <span className="flex-shrink-0 text-faint">›</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Connected toast — top-center, like the real injected popup */}
