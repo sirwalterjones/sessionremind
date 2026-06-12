@@ -188,7 +188,7 @@ export default function ProfilePage() {
   const getSubscriptionBadge = (tier: string, status: string, paymentOverride: boolean) => {
     if (paymentOverride) {
       return (
-        <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
+        <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[14px] font-medium text-ink">
           <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'rgb(var(--c-accent))' }} />
           Admin Override
         </span>
@@ -196,7 +196,7 @@ export default function ProfilePage() {
     }
 
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[13px] font-medium text-ink">
+      <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-[14px] font-medium text-ink">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
         Professional · {status}
       </span>
@@ -350,7 +350,7 @@ export default function ProfilePage() {
               <div className="py-4 last:pb-0">
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">Texts this month</span>
-                  <span className="font-mono text-[12px] text-muted">
+                  <span className="font-mono text-[13px] text-muted">
                     {userDetails.sms_usage_month ?? userDetails.sms_usage} / {userDetails.sms_limit}
                   </span>
                 </div>

@@ -130,7 +130,7 @@ export default function NumbersPage() {
 
       <div className="mt-2 overflow-x-auto rounded-xl border border-hairline">
         <table className="w-full min-w-[760px] text-sm">
-          <thead className="bg-panel text-left font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+          <thead className="bg-panel text-left font-mono text-[12px] uppercase tracking-[0.14em] text-faint">
             <tr>
               <th className="px-3 py-2.5">Tenant</th>
               <th className="px-3 py-2.5">Number</th>
@@ -148,7 +148,7 @@ export default function NumbersPage() {
                     {r.isShared ? (
                       <span className="inline-flex items-center gap-1.5">
                         {r.username}
-                        <span className="rounded-full bg-ink/5 border border-hairline px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+                        <span className="rounded-full bg-ink/5 border border-hairline px-2 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted">
                           Platform
                         </span>
                       </span>
@@ -165,7 +165,7 @@ export default function NumbersPage() {
                   <StatusBadge status={r.sender.status} />
                 </td>
                 <td className="px-3 py-2.5">
-                  <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink">
+                  <div className="font-mono text-[12px] uppercase tracking-[0.08em] text-ink">
                     {r.sender.verificationStatus || '—'}
                   </div>
                   {r.sender.rejectionReason && (

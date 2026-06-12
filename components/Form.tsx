@@ -64,7 +64,7 @@ function PlaceholderChips({ onInsert }: { onInsert: (placeholder: string) => voi
           key={p}
           type="button"
           onClick={() => onInsert(p)}
-          className="rounded-full border border-hairline px-2.5 py-1 font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
+          className="rounded-full border border-hairline px-2.5 py-1 font-mono text-[12px] text-muted transition-colors hover:border-accent hover:text-accent"
         >
           {p}
         </button>
@@ -319,7 +319,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
 
         {/* Live preview */}
         <section className="rounded-2xl border border-hairline bg-panel p-5">
-          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
+          <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
             <span>Preview · SMS</span>
             <span className="flex items-center gap-2 text-muted">
               <span className="led inline-block h-1.5 w-1.5 rounded-full bg-accent" />
@@ -331,7 +331,7 @@ export default function Form({ initialData = {}, onSubmit, isSubmitting = false 
               {preview || 'Your message will appear here…'}
             </p>
           </div>
-          <p className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+          <p className="mt-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
             {previewLen} chars · ≈{segments} SMS segment{segments === 1 ? '' : 's'}
           </p>
         </section>

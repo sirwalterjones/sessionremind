@@ -90,7 +90,7 @@ export default function Home() {
             {/* Left: message + CTAs */}
             <div>
               <div
-                className="rise flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-muted"
+                className="rise flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.22em] text-muted"
                 style={{ animationDelay: '0.04s' }}
               >
                 <span className="led inline-block w-1.5 h-1.5 rounded-full bg-accent" />
@@ -127,7 +127,7 @@ export default function Home() {
               </div>
 
               <div
-                className="rise mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint"
+                className="rise mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[12px] uppercase tracking-[0.16em] text-faint"
                 style={{ animationDelay: '0.32s' }}
               >
                 <span>AES-256 encrypted</span>
@@ -147,7 +147,7 @@ export default function Home() {
               />
               <Brackets>
                 <figure className="relative overflow-hidden rounded-lg border border-hairline bg-panel shadow-[0_50px_120px_-40px_rgba(0,0,0,0.9)]">
-                  <figcaption className="flex items-center justify-between px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-faint border-b border-hairline">
+                  <figcaption className="flex items-center justify-between px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-faint border-b border-hairline">
                     <span>SR-01 / Walkthrough</span>
                     <span className="flex items-center gap-2 text-muted">
                       <span className="led inline-block w-1.5 h-1.5 rounded-full bg-accent" />
@@ -184,7 +184,7 @@ export default function Home() {
           ].map(([v, l]) => (
             <div key={l} className="py-9 px-4 text-center">
               <div className="font-display text-3xl sm:text-5xl font-bold text-ink">{v}</div>
-              <div className="mt-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-faint">{l}</div>
+              <div className="mt-2.5 font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.18em] text-faint">{l}</div>
             </div>
           ))}
         </div>
@@ -195,7 +195,7 @@ export default function Home() {
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-14">
             <div>
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
+              <div className="mb-4 font-mono text-[12px] uppercase tracking-[0.22em] text-muted">
                 How it works
               </div>
               <h2 className="font-display-wide text-3xl sm:text-5xl font-bold max-w-2xl">
@@ -248,7 +248,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-32">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16">
             <div>
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
+              <div className="mb-4 font-mono text-[12px] uppercase tracking-[0.22em] text-muted">
                 Your data stays yours
               </div>
               <h2 className="font-display-wide text-3xl sm:text-5xl font-bold leading-[1.05]">
@@ -288,7 +288,7 @@ export default function Home() {
       <section className="full-bleed relative bg-canvas film-grain">
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
           <div className="text-center mb-14">
-            <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">Pricing</div>
+            <div className="mb-4 font-mono text-[12px] uppercase tracking-[0.22em] text-muted">Pricing</div>
             <h2 className="font-display-wide text-3xl sm:text-5xl font-bold leading-[1.05]">
               Plans that <span className="text-accent">scale</span> with you.
             </h2>
@@ -308,7 +308,7 @@ export default function Home() {
                 }`}
               >
                 {plan.key === 'studio' && (
-                  <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+                  <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
                     Most popular
                   </div>
                 )}
@@ -320,7 +320,7 @@ export default function Home() {
                 <p className="mt-1 text-xs text-faint">
                   {plan.includedTexts.toLocaleString()} texts/mo · then ${plan.overage.toFixed(2)}/text
                 </p>
-                <p className="mt-3 flex-1 text-[13px] leading-relaxed text-muted">{plan.blurb}</p>
+                <p className="mt-3 flex-1 text-[14px] leading-relaxed text-muted">{plan.blurb}</p>
                 <Link
                   href={`/register?plan=${plan.key}`}
                   className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
@@ -334,7 +334,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+          <p className="mt-8 text-center font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
             Every plan: SMS &amp; email reminders · auto-sync · cancel anytime
           </p>
         </div>
@@ -356,7 +356,7 @@ export default function Home() {
           <div className="mt-10 flex justify-center">
             <ArrowCta href="/register">Get started</ArrowCta>
           </div>
-          <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+          <p className="mt-6 font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
             Built for photographers who&apos;d rather be behind the camera
           </p>
         </div>

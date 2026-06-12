@@ -94,7 +94,7 @@ export default function HelpPage() {
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="rounded-full border border-hairline bg-card px-3.5 py-1.5 text-[13px] font-medium text-ink transition-colors hover:border-accent/60"
+              className="rounded-full border border-hairline bg-card px-3.5 py-1.5 text-[14px] font-medium text-ink transition-colors hover:border-accent/60"
             >
               {s.label}
             </a>
@@ -185,9 +185,9 @@ export default function HelpPage() {
                     </span>
                     <span className="text-[15px] text-muted">
                       ${plan.price}
-                      <span className="text-[13px] text-faint"> / mo</span>
+                      <span className="text-[14px] text-faint"> / mo</span>
                     </span>
-                    <span className="font-mono text-[13px] text-muted">
+                    <span className="font-mono text-[14px] text-muted">
                       {plan.includedTexts.toLocaleString()} included
                     </span>
                   </div>
@@ -234,7 +234,7 @@ export default function HelpPage() {
                   'Switch to your logged-in UseSession tab',
                   <>
                     Open{' '}
-                    <span className="font-mono text-[13px]">app.usesession.com</span> in another tab
+                    <span className="font-mono text-[14px]">app.usesession.com</span> in another tab
                     and make sure you’re logged in. The bookmark reads your UseSession login, so it
                     only works on that tab — not on the SessionRemind tab.
                   </>,
@@ -259,8 +259,8 @@ export default function HelpPage() {
                 </li>
                 <li>
                   <strong className="text-ink">Can’t see your bookmarks bar?</strong> Press{' '}
-                  <span className="font-mono text-[13px]">Cmd+Shift+B</span> on Mac or{' '}
-                  <span className="font-mono text-[13px]">Ctrl+Shift+B</span> on Windows to show it.
+                  <span className="font-mono text-[14px]">Cmd+Shift+B</span> on Mac or{' '}
+                  <span className="font-mono text-[14px]">Ctrl+Shift+B</span> on Windows to show it.
                 </li>
                 <li>
                   <strong className="text-ink">Pairing code expired?</strong> Codes are valid for 10
@@ -331,10 +331,10 @@ export default function HelpPage() {
               <li>
                 <strong className="text-ink">Reminder message template</strong> — write it however you
                 like, using placeholders that fill in automatically per client:{' '}
-                <span className="font-mono text-[13px]">{'{name}'}</span>{' '}
-                <span className="font-mono text-[13px]">{'{sessionTitle}'}</span>{' '}
-                <span className="font-mono text-[13px]">{'{sessionTime}'}</span>{' '}
-                <span className="font-mono text-[13px]">{'{studioName}'}</span>
+                <span className="font-mono text-[14px]">{'{name}'}</span>{' '}
+                <span className="font-mono text-[14px]">{'{sessionTitle}'}</span>{' '}
+                <span className="font-mono text-[14px]">{'{sessionTime}'}</span>{' '}
+                <span className="font-mono text-[14px]">{'{studioName}'}</span>
               </li>
               <li>
                 <strong className="text-ink">Reminder timing</strong> — choose any combination of 7, 3,
@@ -365,7 +365,7 @@ export default function HelpPage() {
               <li>It’s optional and off by default — one toggle turns it on.</li>
               <li>
                 Emails send from{' '}
-                <span className="font-mono text-[13px]">noreply@sessionremind.com</span> and carry your
+                <span className="font-mono text-[14px]">noreply@sessionremind.com</span> and carry your
                 studio name, so clients know exactly who it’s from.
               </li>
               <li>
@@ -482,9 +482,9 @@ export default function HelpPage() {
                   'Prepare your CSV',
                   <>
                     Any export works as long as there’s a{' '}
-                    <span className="font-mono text-[13px]">Phone</span> column. A name column (or
+                    <span className="font-mono text-[14px]">Phone</span> column. A name column (or
                     First/Last columns) and an optional{' '}
-                    <span className="font-mono text-[13px]">Email</span> column are picked up
+                    <span className="font-mono text-[14px]">Email</span> column are picked up
                     automatically.
                   </>,
                 ],

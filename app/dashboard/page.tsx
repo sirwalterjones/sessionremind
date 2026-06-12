@@ -699,7 +699,7 @@ function DashboardContent() {
                   <div className="overflow-hidden rounded-2xl border border-hairline bg-panel">
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[640px] text-left text-sm">
-                        <thead className="border-b border-hairline bg-panel font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+                        <thead className="border-b border-hairline bg-panel font-mono text-[12px] uppercase tracking-[0.14em] text-faint">
                           <tr>
                             <th className="px-5 py-3 font-medium">Client</th>
                             <th className="px-5 py-3 font-medium">Session</th>
@@ -746,7 +746,7 @@ function DashboardContent() {
                     <td className="px-5 py-4 align-top">
                       <div className="flex flex-wrap gap-1.5">
                         {sessionPassed && (
-                          <span className="rounded-full border border-hairline bg-ink/5 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                          <span className="rounded-full border border-hairline bg-ink/5 px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
                             Archived
                           </span>
                         )}
@@ -802,7 +802,7 @@ function DashboardContent() {
                     <div style={{ width: pct(scheduledCount) }} className="bg-sky-500" />
                     <div style={{ width: pct(failedCount) }} className="bg-red-500" />
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                     <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-accent" />Sent</span>
                     <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-500" />Scheduled</span>
                     <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-500" />Failed</span>
@@ -964,7 +964,7 @@ function DashboardContent() {
                             rows={4}
                             className="w-full resize-y rounded-lg border border-hairline bg-card p-3 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                           />
-                          <div className="mt-1 text-right font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                          <div className="mt-1 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                             {editText.length} chars
                           </div>
 
@@ -975,7 +975,7 @@ function DashboardContent() {
                             onChange={(e) => setEditWhen(e.target.value)}
                             className="w-full rounded-lg border border-hairline bg-card p-2.5 text-sm text-ink placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/40"
                           />
-                          <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                          <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                             Nothing sends before 8 AM ET regardless of the exact time.
                           </p>
 

@@ -22,7 +22,7 @@ export default function SmsOptInPage() {
     <div className="max-w-2xl mx-auto py-6 text-ink">
       <div className="eyebrow mb-4">Messaging</div>
       <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">SMS Messaging Terms</h1>
-      <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">Last updated {UPDATED}</p>
+      <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.16em] text-faint">Last updated {UPDATED}</p>
 
       <p className="mt-8 text-[15px] leading-relaxed text-muted">
         SessionRemind sends appointment reminder text messages on behalf of the photography studio you booked a session

@@ -58,7 +58,7 @@ function useSenderStatus() {
 
 function StatusBadge({ sender }: { sender: Sender }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
       <span className="h-1.5 w-1.5 rounded-full" style={{ background: DOT[sender.status] }} />
       {BADGE[sender.status]}
     </span>

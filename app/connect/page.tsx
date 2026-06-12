@@ -227,7 +227,7 @@ export default function ConnectPage() {
     <div className="text-ink">
       <button
         onClick={() => router.push('/dashboard')}
-        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink transition-colors mb-10"
+        className="inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-[0.14em] text-muted hover:text-ink transition-colors mb-10"
       >
         <ArrowLeftIcon className="w-3.5 h-3.5" /> Back to dashboard
       </button>
@@ -364,13 +364,13 @@ export default function ConnectPage() {
                     </a>{' '}
                     (logged in) and click that bookmark once. We&apos;ll detect it here automatically.
                     <div className="mt-2 rounded-lg border border-hairline bg-panel/60 px-3 py-2 text-xs text-ink/80">
-                      <strong className="text-ink font-medium">Clicked it from the wrong tab?</strong> No problem — the
-                      bookmark opens UseSession for you in a new tab. Sign in there if you need to, then click it
-                      once more from that tab.
+                      <strong className="text-ink font-medium">Clicked it from the wrong tab?</strong> No problem — it
+                      shows an &ldquo;Open UseSession&rdquo; button and reminds you to click the bookmark once more
+                      from that tab.
                     </div>
                   </li>
                 </ol>
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-4">Waiting for you to click it · code expires in 10 minutes</p>
+                <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-muted mt-4">Waiting for you to click it · code expires in 10 minutes</p>
               </div>
             )}
 
@@ -479,7 +479,7 @@ export default function ConnectPage() {
                 <p className="text-xs text-muted mt-1.5">Also emails clients who have an email on file. Needs a verified sending domain.</p>
               </div>
             </div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted h-4" aria-live="polite">
+            <p className="font-mono text-[12px] uppercase tracking-[0.16em] text-muted h-4" aria-live="polite">
               {saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved ✓' : 'Changes save automatically'}
             </p>
           </div>
@@ -534,7 +534,7 @@ export default function ConnectPage() {
         )}
       </div>
 
-      <div className="flex items-center justify-center gap-1.5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+      <div className="flex items-center justify-center gap-1.5 text-center font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
         <LockClosedIcon className="w-3.5 h-3.5 flex-shrink-0" />
         Your UseSession token is encrypted at rest and never shared
       </div>

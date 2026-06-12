@@ -16,8 +16,8 @@
   --c-panel: 242 242 239; /* #F2F2EF */
   --c-card: 255 255 255; /* #FFFFFF */
   --c-ink: 22 24 29; /* #16181D */
-  --c-muted: 91 96 102; /* #5B6066 */
-  --c-faint: 137 144 151; /* #899097 */
+  --c-muted: 84 89 95; /* #54595F — darkened for small-text legibility */
+  --c-faint: 110 117 124; /* #6E757C — was #899097 (~3.4:1, failed WCAG for small text) */
   --c-hairline: 229 230 226; /* #E5E6E2 */
   --c-accent: 14 116 144; /* #0E7490 deep aqua */
   --c-accent-ink: 255 255 255; /* white text on aqua fills */
@@ -29,8 +29,8 @@
   --c-panel: 22 24 28; /* #16181C */
   --c-card: 26 29 34; /* #1A1D22 */
   --c-ink: 240 243 244; /* #F0F3F4 */
-  --c-muted: 158 164 170; /* #9EA4AA */
-  --c-faint: 108 114 120; /* #6C7278 */
+  --c-muted: 170 176 182; /* #AAB0B6 — lightened for small-text legibility */
+  --c-faint: 138 145 152; /* #8A9198 — was #6C7278 (too dim on graphite) */
   --c-hairline: 39 43 49; /* #272B31 */
   --c-accent: 64 201 222; /* #40C9DE aqua */
   --c-accent-ink: 4 42 49; /* #042A31 near-black on aqua fills */
@@ -85,8 +85,8 @@ body {
 .eyebrow {
   font-family: var(--font-mono), ui-monospace, monospace;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  font-size: 0.75rem; /* 12px — was 11.2px, too small for tracked uppercase */
   color: var(--muted);
 }
 

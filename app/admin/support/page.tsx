@@ -198,11 +198,11 @@ export default function AdminSupportPage() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{t.name}</span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+                      <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-faint">
                         {TOPIC_LABELS[t.topic] || t.topic}
                       </span>
                       {t.username && (
-                        <span className="rounded-full bg-ink/5 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+                        <span className="rounded-full bg-ink/5 px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-faint">
                           {t.username}
                         </span>
                       )}

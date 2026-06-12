@@ -22,7 +22,7 @@ export default function PrivacyPage() {
     <div className="max-w-2xl mx-auto py-6 text-ink">
       <div className="eyebrow mb-4">Privacy</div>
       <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02]">Privacy Policy</h1>
-      <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+      <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
         Last updated {UPDATED}
       </p>
 

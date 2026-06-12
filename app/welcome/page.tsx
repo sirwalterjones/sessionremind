@@ -236,7 +236,7 @@ export default function WelcomePage() {
           session reminders.
         </p>
         {/* Progress */}
-        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em]">
+        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] uppercase tracking-[0.14em]">
           {STEPS.map((s, i) => (
             <Fragment key={s.n}>
               {i > 0 && <span className="text-hairline select-none">·</span>}
@@ -262,7 +262,7 @@ export default function WelcomePage() {
           {connected ? (
             <div>
               <div className="flex items-center gap-2.5 mb-1.5">
-                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[11px] font-bold text-white">
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[12px] font-bold text-white">
                   ✓
                 </span>
                 <h2 className="font-display text-xl font-semibold">UseSession connected</h2>
@@ -347,11 +347,11 @@ export default function WelcomePage() {
                         UseSession
                       </a>{' '}
                       (logged in) and click that bookmark once. We&apos;ll detect it here
-                      automatically. Clicked it from the wrong tab? It opens UseSession for you —
-                      sign in and click it again there.
+                      automatically. Clicked it from the wrong tab? It walks you through it —
+                      open UseSession, then click the bookmark again there.
                     </li>
                   </ol>
-                  <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                  <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
                     Waiting for you to click it · code expires in 10 minutes
                   </p>
                 </div>
@@ -387,7 +387,7 @@ export default function WelcomePage() {
             <div>
               <div className="flex items-center gap-2.5 mb-1.5">
                 {sender.status === 'active' ? (
-                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[11px] font-bold text-white">
+                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[12px] font-bold text-white">
                     ✓
                   </span>
                 ) : (
@@ -432,7 +432,7 @@ export default function WelcomePage() {
                 </div>
               ) : (
                 <form onSubmit={getNumber} className="mt-6 space-y-5">
-                  <p className="text-[13px] leading-relaxed text-muted">
+                  <p className="text-[14px] leading-relaxed text-muted">
                     Use your real, legal business information — the carriers verify it against
                     public records.
                   </p>
@@ -508,7 +508,7 @@ export default function WelcomePage() {
       {step === 3 && (
         <div className="rounded-2xl border border-hairline p-6 sm:p-8">
           <div className="flex items-center gap-2.5 mb-1.5">
-            <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[11px] font-bold text-white">
+            <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[12px] font-bold text-white">
               ✓
             </span>
             <h2 className="font-display text-xl font-semibold">You&apos;re all set.</h2>

@@ -1159,22 +1159,22 @@ export default function AdminPage() {
                 <table className="min-w-full divide-y divide-hairline">
                   <thead className="bg-panel">
                     <tr>
-                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
+                      <th className="px-6 py-3 text-left font-mono text-[12px] font-medium text-faint uppercase tracking-[0.14em]">
                         User
                       </th>
-                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
+                      <th className="px-6 py-3 text-left font-mono text-[12px] font-medium text-faint uppercase tracking-[0.14em]">
                         Subscription
                       </th>
-                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
+                      <th className="px-6 py-3 text-left font-mono text-[12px] font-medium text-faint uppercase tracking-[0.14em]">
                         SMS Usage
                       </th>
-                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
+                      <th className="px-6 py-3 text-left font-mono text-[12px] font-medium text-faint uppercase tracking-[0.14em]">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
+                      <th className="px-6 py-3 text-left font-mono text-[12px] font-medium text-faint uppercase tracking-[0.14em]">
                         Access Type
                       </th>
-                      <th className="px-6 py-3 text-right font-mono text-[11px] font-medium text-faint uppercase tracking-[0.14em]">
+                      <th className="px-6 py-3 text-right font-mono text-[12px] font-medium text-faint uppercase tracking-[0.14em]">
                         Actions
                       </th>
                     </tr>

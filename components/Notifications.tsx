@@ -119,7 +119,7 @@ function ToastCard({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   return (
     <div className="sr-toast-in pointer-events-auto flex items-start gap-3 rounded-xl border border-hairline bg-card px-4 py-3.5 text-ink shadow-2xl">
       <span
-        className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-accent-ink"
+        className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-accent-ink"
         style={{ background: accent }}
         aria-hidden
       >
@@ -127,7 +127,7 @@ function ToastCard({ toast, onClose }: { toast: Toast; onClose: () => void }) {
       </span>
       <div className="min-w-0 flex-1">
         {toast.title && <div className="text-sm font-semibold text-ink">{toast.title}</div>}
-        <div className="break-words text-[13px] leading-snug text-muted">{toast.message}</div>
+        <div className="break-words text-[14px] leading-snug text-muted">{toast.message}</div>
       </div>
       <button
         onClick={onClose}

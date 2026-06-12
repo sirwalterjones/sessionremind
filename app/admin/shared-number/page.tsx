@@ -186,10 +186,10 @@ export default function SharedNumberAdminPage() {
                 {phone ? ` · ${phone}` : ''}
               </p>
               {status === 'pending_verification' && (
-                <p className="mt-1 text-[13px] opacity-80">Submitted to the carriers — approval typically takes 1–3 weeks.</p>
+                <p className="mt-1 text-[14px] opacity-80">Submitted to the carriers — approval typically takes 1–3 weeks.</p>
               )}
-              {state.verificationStatus && <p className="mt-1 text-[13px] opacity-80">Verification: {state.verificationStatus}</p>}
-              {(state.rejectionReason || state.error) && <p className="mt-1 text-[13px]">{state.rejectionReason || state.error}</p>}
+              {state.verificationStatus && <p className="mt-1 text-[14px] opacity-80">Verification: {state.verificationStatus}</p>}
+              {(state.rejectionReason || state.error) && <p className="mt-1 text-[14px]">{state.rejectionReason || state.error}</p>}
             </div>
           </div>
         )}

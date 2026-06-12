@@ -73,7 +73,7 @@ export default function ConnectDemo() {
             <span className="h-2.5 w-2.5 rounded-full bg-faint/40" />
             <span className="h-2.5 w-2.5 rounded-full bg-faint/40" />
           </div>
-          <div className="flex-1 overflow-hidden rounded-full border border-hairline bg-card px-3.5 py-1.5 font-mono text-[10px] tracking-wide text-muted">
+          <div className="flex-1 overflow-hidden rounded-full border border-hairline bg-card px-3.5 py-1.5 font-mono text-[11px] tracking-wide text-muted">
             {step < 3 ? (
               <span>sessionremind.com/connect</span>
             ) : (
@@ -93,7 +93,7 @@ export default function ConnectDemo() {
         </div>
 
         {/* ── Bookmarks bar ──────────────────────────────────────────── */}
-        <div className="flex items-center gap-2 border-b border-hairline bg-panel/60 px-4 py-1.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-faint">
+        <div className="flex items-center gap-2 border-b border-hairline bg-panel/60 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-faint">
           <span>Bookmarks</span>
           <span className="rounded border border-hairline px-2 py-0.5">News</span>
           {/* Drop target / landed chip */}
@@ -119,22 +119,22 @@ export default function ConnectDemo() {
             }`}
           >
             <div className="flex items-center gap-2">
-              <span className="flex h-5 w-5 items-center justify-center rounded bg-ink text-[9px] font-bold text-canvas">
+              <span className="flex h-5 w-5 items-center justify-center rounded bg-ink text-[10.5px] font-bold text-canvas">
                 Sr
               </span>
-              <span className="text-[12px] font-semibold text-ink">SessionRemind</span>
+              <span className="text-[13px] font-semibold text-ink">SessionRemind</span>
             </div>
             <p className="mt-4 font-display text-[17px] font-semibold leading-snug text-ink">
               Connect your UseSession account
             </p>
-            <p className="mt-1 max-w-[260px] text-[11px] leading-relaxed text-muted">
+            <p className="mt-1 max-w-[260px] text-[12px] leading-relaxed text-muted">
               Drag this button up to your bookmarks bar:
             </p>
 
             {/* The draggable pill (stays put; a ghost flies) */}
             <div className="relative mt-4 inline-block">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-[11px] font-semibold text-accent-ink transition-opacity duration-300 ${
+                className={`inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-[12px] font-semibold text-accent-ink transition-opacity duration-300 ${
                   dragging ? 'opacity-30' : chipVisible ? 'opacity-40' : 'opacity-100'
                 }`}
               >
@@ -145,7 +145,7 @@ export default function ConnectDemo() {
               )}
             </div>
             {chipVisible && (
-              <p className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.14em] text-accent">
+              <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
                 ✓ Added to your bookmarks
               </p>
             )}
@@ -158,10 +158,10 @@ export default function ConnectDemo() {
             }`}
           >
             <div className="flex items-center justify-between bg-ink px-5 py-2.5">
-              <span className="text-[12px] font-semibold tracking-tight text-canvas">
+              <span className="text-[13px] font-semibold tracking-tight text-canvas">
                 ⬡ UseSession
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-canvas/60">
+              <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-canvas/60">
                 Bookings
               </span>
             </div>
@@ -175,12 +175,12 @@ export default function ConnectDemo() {
                   key={name}
                   className="flex items-center gap-3 rounded-lg border border-hairline bg-panel/50 px-3 py-2"
                 >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-[9px] font-bold text-accent">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-[10.5px] font-bold text-accent">
                     {initials}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-medium leading-tight text-ink">{name}</p>
-                    <p className="text-[9.5px] leading-tight text-muted">{detail}</p>
+                    <p className="text-[12px] font-medium leading-tight text-ink">{name}</p>
+                    <p className="text-[11px] leading-tight text-muted">{detail}</p>
                   </div>
                 </div>
               ))}
@@ -193,12 +193,12 @@ export default function ConnectDemo() {
               }`}
             >
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[13px] font-bold text-white">
+                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#16a34a] text-[14px] font-bold text-white">
                   ✓
                 </span>
                 <div>
-                  <p className="text-[13px] font-semibold text-ink">Connected!</p>
-                  <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted">
+                  <p className="text-[14px] font-semibold text-ink">Connected!</p>
+                  <p className="mt-0.5 text-[11.5px] leading-relaxed text-muted">
                     Scheduled 2 reminders. Your bookings now sync automatically — you can close
                     this tab.
                   </p>
@@ -209,7 +209,7 @@ export default function ConnectDemo() {
 
           {/* Flying ghost pill (Act 1) */}
           <span
-            className={`pointer-events-none absolute z-10 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-[11px] font-semibold text-accent-ink shadow-lg transition-all duration-[1400ms] ease-in-out ${
+            className={`pointer-events-none absolute z-10 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-[12px] font-semibold text-accent-ink shadow-lg transition-all duration-[1400ms] ease-in-out ${
               dragging ? 'opacity-95' : 'opacity-0 duration-200'
             }`}
             style={dragging ? { left: AT_BAR.left, top: '-9%' } : { left: AT_PILL.left, top: '40%' }}
@@ -244,7 +244,7 @@ export default function ConnectDemo() {
       </div>
 
       {/* Phase captions */}
-      <div className="mt-4 grid grid-cols-3 gap-2 font-mono text-[9.5px] uppercase tracking-[0.14em] sm:text-[10px]">
+      <div className="mt-4 grid grid-cols-3 gap-2 font-mono text-[11px] uppercase tracking-[0.14em] sm:text-[11px]">
         {[
           ['01', 'Drag to bookmarks', step >= 1 && step < 3],
           ['02', 'Open UseSession', step >= 3 && step < 6],

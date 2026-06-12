@@ -87,7 +87,7 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
               <SrTile size={8} />
               <span className="text-base font-semibold tracking-tight">SessionRemind</span>
             </div>
-            <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[13px] text-muted">
+            <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[14px] text-muted">
               <Link href="/help" className="hover:text-ink transition-colors">Help</Link>
               <Link href="/faq" className="hover:text-ink transition-colors">FAQ</Link>
               <Link href="/contact" className="hover:text-ink transition-colors">Contact</Link>
@@ -96,10 +96,10 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
             </nav>
           </div>
           <div className="text-center sm:text-right">
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+            <p className="font-mono text-[12px] uppercase tracking-[0.18em] text-muted">
               SMS &amp; E-mail Reminders for Sessions
             </p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint mt-1">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint mt-1">
               Not affiliated with Session Technologies, LLC
             </p>
           </div>

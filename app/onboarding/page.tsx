@@ -308,7 +308,7 @@ export default function OnboardingPage() {
                 {saving ? 'Saving…' : hasSaved ? 'Update details' : 'Save business details'}
               </button>
             ) : (
-              <p className="text-[13px] text-muted">
+              <p className="text-[14px] text-muted">
                 Your details are locked while verification is in progress. Need a change? Email{' '}
                 <a href="mailto:support@sessionremind.com" className="text-accent underline">
                   support@sessionremind.com
@@ -336,17 +336,17 @@ export default function OnboardingPage() {
                 A dedicated number registered to your business — an upgrade from the shared SessionRemind number.
                 Included with your subscription. Here’s exactly what happens:
               </p>
-              <ol className="mt-3 space-y-1.5 text-[13px] leading-relaxed text-muted">
+              <ol className="mt-3 space-y-1.5 text-[14px] leading-relaxed text-muted">
                 <li><strong>1.</strong> We register a toll-free number to your business and submit it to the carriers.</li>
                 <li><strong>2.</strong> The carriers verify it — this typically takes <strong>1–3 weeks</strong>.</li>
                 <li><strong>3.</strong> <strong>We email you the moment it’s approved</strong> (or if anything needs fixing). Your reminders keep sending on the shared number until then — nothing pauses.</li>
               </ol>
 
               {!hasSaved && (
-                <p className="mt-3 text-[13px] text-red-700 dark:text-red-300">Save your business details first.</p>
+                <p className="mt-3 text-[14px] text-red-700 dark:text-red-300">Save your business details first.</p>
               )}
               {hasSaved && !eligible && (
-                <p className="mt-3 text-[13px] text-red-700 dark:text-red-300">
+                <p className="mt-3 text-[14px] text-red-700 dark:text-red-300">
                   A dedicated number is included with an active subscription.{' '}
                   <button onClick={() => router.push('/payment-required')} className="underline">
                     Subscribe
@@ -382,7 +382,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          <p className="text-[12px] leading-relaxed text-faint">
+          <p className="text-[13px] leading-relaxed text-faint">
             Clients consent to reminders when they book and provide their number; messages are appointment reminders only
             and every recipient can reply STOP to opt out. See our{' '}
             <a href="/sms-opt-in" className="underline">

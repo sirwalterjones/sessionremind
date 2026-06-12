@@ -49,7 +49,7 @@ export default function UsagePage() {
           <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Your SMS usage</h1>
           <p className="mt-2 text-muted">Track your SMS analytics, delivery, and remaining monthly limit.</p>
         </div>
-        <span className="rounded-full border border-hairline px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+        <span className="rounded-full border border-hairline px-3 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
           Professional Plan
         </span>
       </header>

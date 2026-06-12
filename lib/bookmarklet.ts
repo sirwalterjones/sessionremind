@@ -18,15 +18,21 @@ export function buildConnectorBookmarklet(origin: string, code: string): string 
     `var p=document.createElement('div');p.textContent=msg;p.style.cssText='font-size:13px;color:#5F5B54;line-height:1.45';` +
     `c.appendChild(h);c.appendChild(p);` +
     `var x=document.createElement('button');x.textContent='\\u00d7';x.style.cssText='background:none;border:none;font-size:20px;color:#9A958C;cursor:pointer;line-height:1;padding:0;margin-left:4px';x.onclick=function(){w.remove()};` +
-    `w.appendChild(i);w.appendChild(c);w.appendChild(x);document.body.appendChild(w);if(auto)setTimeout(function(){w.remove()},6000);}` +
+    `w.appendChild(i);w.appendChild(c);w.appendChild(x);document.body.appendChild(w);if(auto)setTimeout(function(){w.remove()},6000);return c;}` +
     `var t=localStorage.getItem('session-token');` +
-    // No token: either we're not on UseSession at all (open it in a new tab and
-    // tell them to sign in + click again there), or we're on UseSession but
-    // signed out (just prompt sign-in).
+    // No token: either we're not on UseSession at all, or we're on UseSession
+    // but signed out. Cross-origin rules mean we can't show anything ON the
+    // UseSession tab, so the instruction must be read BEFORE the tab opens:
+    // show it with an explicit "Open UseSession" button (the button click is a
+    // user gesture, so the popup is never blocked), and the modal stays up in
+    // this tab as a persistent reminder to click the bookmark again over there.
     `if(!t){` +
     `if(location.hostname.indexOf('usesession.com')===-1){` +
-    `window.open('https://app.usesession.com/','_blank');` +
-    `box('\\u2192','#d97706','Opening UseSession\\u2026','We opened UseSession in a new tab. Sign in there if you need to, then click this bookmark again from that tab.');` +
+    `var cc=box('\\u2192','#d97706','Two clicks total','1. Open UseSession below (sign in if asked). 2. Click this same bookmark AGAIN from that tab to finish connecting.');` +
+    `var b=document.createElement('button');b.textContent='Open UseSession \\u2192';` +
+    `b.style.cssText='margin-top:10px;background:#141414;color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer';` +
+    `b.onclick=function(){window.open('https://app.usesession.com/','_blank');b.textContent='Now click the bookmark on that tab \\u2191';b.disabled=true;b.style.opacity='0.7';b.style.cursor='default'};` +
+    `cc.appendChild(b);` +
     `}else{` +
     `box('!','#d97706','Sign in first','Sign in to UseSession, then click this bookmark again.');` +
     `}return;}` +

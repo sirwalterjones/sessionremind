@@ -204,7 +204,7 @@ export default function SpamCleanupPage() {
       {/* Table */}
       <div className="mt-3 overflow-hidden rounded-xl border border-hairline">
         <table className="w-full text-sm">
-          <thead className="bg-panel text-left font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+          <thead className="bg-panel text-left font-mono text-[12px] uppercase tracking-[0.14em] text-faint">
             <tr>
               <th className="w-10 px-3 py-2.5">
                 <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Select all" />

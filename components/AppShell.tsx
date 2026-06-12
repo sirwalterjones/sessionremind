@@ -101,7 +101,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between gap-2 rounded-lg px-3 py-2">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-ink">{user?.username}</p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                 {user?.is_admin ? 'Admin' : 'Professional'}
               </p>
             </div>
@@ -131,7 +131,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </span>
             <span className="text-base font-semibold tracking-tight">SessionRemind</span>
           </Link>
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+          <div className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
             <Link href="/reminders" className="rounded-full border border-hairline px-3 py-1 text-ink">Reminders</Link>
             <Link href="/usage" className="rounded-full border border-hairline px-3 py-1 text-ink">Usage</Link>
             <button onClick={logout} className="rounded-full border border-hairline px-3 py-1 text-ink">

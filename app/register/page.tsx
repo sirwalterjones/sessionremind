@@ -25,12 +25,12 @@ function NextSteps() {
       <div className="divide-y divide-hairline">
         {STEPS.map(([n, title, blurb]) => (
           <div key={n} className="flex gap-4 px-5 py-4">
-            <span className="font-mono text-[11px] leading-6 tracking-[0.14em]" style={{ color: A }}>
+            <span className="font-mono text-[12px] leading-6 tracking-[0.14em]" style={{ color: A }}>
               {n}
             </span>
             <div>
               <div className="text-sm font-semibold tracking-tight">{title}</div>
-              <div className="mt-0.5 text-[13px] leading-relaxed text-faint">{blurb}</div>
+              <div className="mt-0.5 text-[14px] leading-relaxed text-faint">{blurb}</div>
             </div>
           </div>
         ))}
@@ -41,7 +41,7 @@ function NextSteps() {
 
 function TrustRow() {
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
       <span>AES-256 encrypted</span>
       <span className="hidden h-3 w-px bg-hairline sm:inline-block" />
       <span>Your data, never touched</span>
@@ -137,10 +137,10 @@ export default function RegisterPage() {
                 className="rise mt-10 hidden w-64 -rotate-2 rounded-2xl border border-hairline bg-card p-4 text-ink lg:block"
                 style={{ animationDelay: '0.34s' }}
               >
-                <p className="text-[13px] leading-snug">
+                <p className="text-[14px] leading-snug">
                   Hi Maria! Reminder — your Senior Session is tomorrow at 4 PM. See you there! 📸
                 </p>
-                <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.16em] text-faint">
+                <div className="mt-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-faint">
                   Sent automatically
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function RegisterPage() {
                     <span className="h-2 w-2 rounded-full" style={{ background: A }} />
                     <span className="text-sm font-semibold tracking-tight">Create your account</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
                     ~60 sec
                   </span>
                 </div>

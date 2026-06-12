@@ -67,11 +67,11 @@ export default function HeroDemo() {
             <span className="text-sm font-semibold tracking-tight">Connect</span>
           </div>
           {synced ? (
-            <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-[#16a34a]">
+            <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-[#16a34a]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" /> Synced
             </span>
           ) : (
-            <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-[#9A958C]">
+            <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#D9A441]" /> Syncing…
             </span>
           )}
@@ -92,7 +92,7 @@ export default function HeroDemo() {
                 <div className="text-sm font-medium">{n}</div>
                 <div className="text-xs text-[#8A857C]">{s}</div>
               </div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8A857C]">
+              <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8A857C]">
                 Texts {w}
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function HeroDemo() {
         </div>
 
         <div className="flex items-center justify-between border-t border-hairline bg-[#FAFAF8] px-5 py-3.5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#9A958C]">
+          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#9A958C]">
             {rowsShown > 0 ? `${9 + rowsShown} scheduled this week` : 'Checking calendar…'}
           </span>
           <span className="text-xs font-medium" style={{ color: A }}>
@@ -130,11 +130,11 @@ export default function HeroDemo() {
             ))}
           </div>
         ) : (
-          <p className="text-[13px] leading-snug">
+          <p className="text-[14px] leading-snug">
             Hi Ashley! Reminder about your shoot Saturday at 10 AM. Can&apos;t wait! 📸
           </p>
         )}
-        <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.16em]">
+        <div className="mt-2 font-mono text-[10.5px] uppercase tracking-[0.16em]">
           {delivered ? (
             <span className="text-[#4ade80]">Delivered ✓</span>
           ) : (

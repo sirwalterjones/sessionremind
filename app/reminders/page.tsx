@@ -254,7 +254,7 @@ export default function RemindersPage() {
                           <div className="flex items-center gap-2">
                             <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: dot }} />
                             <span className="font-medium text-ink">{r.clientName || '(no name)'}</span>
-                            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
                               {r.reminderType}
                             </span>
                           </div>

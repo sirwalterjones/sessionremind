@@ -88,16 +88,16 @@ function LoginForm() {
                 className="rise mt-12 hidden w-64 -rotate-2 rounded-2xl border border-hairline bg-card p-4 text-ink lg:block"
                 style={{ animationDelay: '0.28s' }}
               >
-                <p className="text-[13px] leading-snug">
+                <p className="text-[14px] leading-snug">
                   Hi Kayla! Reminder about your Watermelon Mini tomorrow at 2 PM. See you then! 📸
                 </p>
-                <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.16em] text-faint">
+                <div className="mt-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-faint">
                   Sent while you were out
                 </div>
               </div>
 
               <div
-                className="rise mt-12 hidden flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-faint lg:flex"
+                className="rise mt-12 hidden flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[12px] uppercase tracking-[0.16em] text-faint lg:flex"
                 style={{ animationDelay: '0.34s' }}
               >
                 <span>AES-256 encrypted</span>
@@ -116,7 +116,7 @@ function LoginForm() {
                     <span className="h-2 w-2 rounded-full" style={{ background: A }} />
                     <span className="text-sm font-semibold tracking-tight">Sign in</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
                     Welcome back
                   </span>
                 </div>

@@ -74,7 +74,7 @@ export default function Instructions() {
                 </a>
               </div>
 
-              <div className="mt-10 flex flex-wrap items-center gap-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+              <div className="mt-10 flex flex-wrap items-center gap-5 font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
                 <span>One-click connect</span>
                 <span className="w-px h-3 bg-hairline" />
                 <span>No passwords stored</span>
@@ -173,7 +173,7 @@ export default function Instructions() {
                     <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="text-sm font-semibold tracking-tight">Connector</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Read-only
                   </span>
                 </div>
@@ -188,14 +188,14 @@ export default function Instructions() {
                         <div className="text-sm font-medium">{t}</div>
                         <div className="text-xs text-faint">{s}</div>
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                         {w}
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="px-5 py-3.5 border-t border-hairline bg-panel flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
                     Synced automatically
                   </span>
                   <span className="text-xs font-medium text-accent">
@@ -284,7 +284,7 @@ export default function Instructions() {
                 ].map(([t, d]) => (
                   <div key={t}>
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
+                      <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent">
                         {t}
                       </span>
                       <span className="h-px flex-1 bg-hairline" />
@@ -303,7 +303,7 @@ export default function Instructions() {
                     <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="text-sm font-semibold tracking-tight">Scheduled</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Synced
                   </span>
                 </div>
@@ -318,14 +318,14 @@ export default function Instructions() {
                         <div className="text-sm font-medium">{n}</div>
                         <div className="text-xs text-faint">{s}</div>
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                         Texts {w}
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="px-5 py-3.5 border-t border-hairline bg-panel flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
                     Sent on your behalf
                   </span>
                   <span className="text-xs font-medium text-accent">
@@ -357,7 +357,7 @@ export default function Instructions() {
               </Link>
             )}
           </div>
-          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+          <p className="mt-5 font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
             Built for photographers who&apos;d rather be behind the camera
           </p>
         </div>

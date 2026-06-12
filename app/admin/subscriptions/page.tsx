@@ -177,7 +177,7 @@ export default function SubscriptionsPage() {
 
       <div className="mt-2 overflow-hidden rounded-xl border border-hairline">
         <table className="w-full text-sm">
-          <thead className="bg-panel text-left font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+          <thead className="bg-panel text-left font-mono text-[12px] uppercase tracking-[0.14em] text-faint">
             <tr>
               <th className="px-3 py-2.5">Email / Username</th>
               <th className="px-3 py-2.5">Stored status</th>

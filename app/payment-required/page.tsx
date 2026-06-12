@@ -176,7 +176,7 @@ function PaymentRequiredContent() {
         <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">
           Confirming your subscription — this only takes a moment&hellip;
         </p>
-        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-faint animate-pulse">
+        <p className="mt-8 font-mono text-[12px] uppercase tracking-[0.16em] text-faint animate-pulse">
           Setting things up
         </p>
       </div>
@@ -248,7 +248,7 @@ function PaymentRequiredContent() {
                 </p>
                 <ul className="mt-4 flex-1 space-y-2">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-[13px] text-ink">
+                    <li key={f} className="flex items-start gap-2 text-[14px] text-ink">
                       <CheckCircleIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent" />
                       <span>{f}</span>
                     </li>
@@ -275,7 +275,7 @@ function PaymentRequiredContent() {
           </div>
         </div>
 
-        <p className="mt-6 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+        <p className="mt-6 text-center font-mono text-[12px] uppercase tracking-[0.16em] text-faint">
           Questions? Email support@sessionremind.com.
         </p>
       </div>

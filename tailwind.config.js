@@ -14,6 +14,14 @@ module.exports = {
         sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
+      // Readability: nearly all body copy on the site is set in text-sm/text-xs,
+      // which at Tailwind's defaults (14px/12px) is hard to read on phones.
+      // Lift the small end of the scale once here instead of editing 400+
+      // call sites.
+      fontSize: {
+        xs: ['0.8125rem', { lineHeight: '1.3rem' }], // 13px (Tailwind default: 12px)
+        sm: ['0.9375rem', { lineHeight: '1.5rem' }], // 15px (Tailwind default: 14px)
+      },
       colors: {
         // Semantic tokens — RGB triplets live in globals.css per theme.
         // `ink` is always the PRIMARY TEXT color (dark on light, light on dark).
