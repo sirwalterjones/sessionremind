@@ -3,7 +3,7 @@
 > Maintained by Claude Code sessions. **Update this file when you ship something
 > significant or leave work in flight** — it's how the next machine/session picks
 > up where the last one left off. Never put secrets in here (they live in Vercel
-> env vars). Last updated: **2026-06-11**.
+> env vars). Last updated: **2026-06-12**.
 
 ## What this is
 
@@ -54,6 +54,22 @@ Technologies, LLC** — that disclaimer must stay in the footer and emails.
   not-yet-connected users there). Setup status surfaces: dashboard card +
   Connect page's texting-number card (`components/SetupStatus.tsx`); the
   connector bookmarklet builder is shared in `lib/bookmarklet.ts`.
+- **SEO is wired** (2026-06-12): `app/robots.ts` (authed routes + /login
+  disallowed), `app/sitemap.ts` (8 public pages), root title template
+  `%s — SessionRemind` (child pages export BARE titles), per-page canonicals
+  (never put a canonical in the root layout — Next merges it into every page),
+  segment `layout.tsx` files carry metadata for client-component pages,
+  Organization+SoftwareApplication JSON-LD on `/` (offers from `lib/plans.ts`),
+  FAQPage JSON-LD on `/faq`. OG/Twitter images render from
+  `app/opengraph-image.tsx`. Walter still owes: Google Search Console
+  verification + sitemap submission.
+- **Bookmarklet UX** (2026-06-12): clicking it on a non-UseSession tab shows a
+  "Two clicks total" modal with an explicit Open-UseSession button (instruction
+  must be read BEFORE the tab switch — focus jumps, and nothing can be injected
+  cross-origin into UseSession). When editing `lib/bookmarklet.ts`, parse-check
+  the generated string: `new Function(bookmarklet.replace(/^javascript:/,''))`.
+- `/instructions` hero has an animated connect-flow demo
+  (`components/ConnectDemo.tsx`, same step-timeline pattern as HeroDemo).
 - **Forgot-password flow** (2026-06-10): `/forgot-password` → Turnstile-gated,
   enumeration-safe `/api/auth/forgot-password` → branded Resend email → 1h
   single-use token (`lib/password-reset.ts`, KV `pwreset:<token>`) →
@@ -139,6 +155,19 @@ the confirmed holes were fixed in the same session:
 - **NEVER set `ENCRYPTION_KEY`.** Stored UseSession tokens are encrypted with the
   key derived from `CRON_SECRET` (the fallback in `lib/crypto.ts`). Setting
   `ENCRYPTION_KEY` changes the derived key and bricks every stored token.
+- **Tailwind `text-xs`/`text-sm` are intentionally NON-STANDARD** (13px/15px,
+  overridden in `tailwind.config.js`): a 2026-06-12 readability pass lifted the
+  whole small end of the scale because the site sets nearly all copy in those
+  classes and 12/14px was unreadable on phones. Do NOT "fix" them back to
+  defaults, and avoid introducing new arbitrary sizes below `text-[11px]`.
+  Muted/faint theme colors were also tuned for WCAG contrast — check both
+  themes before changing them.
+- **Fixed-position overlays must portal to `document.body`** (see MobileNav /
+  AppShell): the nav bars use `backdrop-blur`, and a backdrop-filter (or
+  transform/filter) ancestor becomes the containing block for fixed children —
+  an overlay rendered inline gets trapped inside the 64px bar. Use
+  `createPortal(..., document.body)` + `z-[100]`; slide-over utilities
+  `.sr-sheet-in` / `.sr-fade-in` exist in globals.css.
 - **Proving "encrypted at rest"** (runbook, verified 2026-06-11): mechanism is
   `lib/crypto.ts` — AES-256-GCM, random 12-byte IV per encryption, 16-byte auth
   tag, key = SHA-256 of `ENCRYPTION_KEY||CRON_SECRET` (held in Vercel env,
