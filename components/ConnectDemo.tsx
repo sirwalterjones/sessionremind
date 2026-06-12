@@ -28,7 +28,9 @@ const FINAL_STEP = 7
 
 // Cursor waypoints (% of the frame).
 const AT_PILL = { left: '34%', top: '63%' }
-const AT_BAR = { left: '24%', top: '23.5%' }
+// Lands on the "Connect to SessionRemind" bookmark in the bookmarks bar — NOT
+// the dark UseSession header below it.
+const AT_BAR = { left: '40%', top: '14.5%' }
 const PARKED = { left: '78%', top: '82%' }
 
 export default function ConnectDemo() {
@@ -96,9 +98,9 @@ export default function ConnectDemo() {
         <div className="flex items-center gap-2 border-b border-hairline bg-panel/60 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-faint">
           <span>Bookmarks</span>
           <span className="rounded border border-hairline px-2 py-0.5">News</span>
-          {/* Drop target / landed chip */}
+          {/* Drop target / landed bookmark — favicon + title, like a real one */}
           <span
-            className={`rounded px-2 py-0.5 transition-all duration-300 ${
+            className={`inline-flex items-center gap-1.5 rounded px-2 py-0.5 normal-case tracking-normal transition-all duration-300 ${
               chipVisible
                 ? 'border border-accent/60 bg-accent/10 text-ink'
                 : dragging
@@ -106,7 +108,14 @@ export default function ConnectDemo() {
                   : 'border border-dashed border-transparent text-transparent'
             } ${clicked && !connected ? 'scale-90' : ''}`}
           >
-            ⚡ SR Connect
+            <span
+              className={`flex h-3 w-3 items-center justify-center rounded-[3px] bg-accent text-[7px] font-bold leading-none text-accent-ink ${
+                chipVisible ? '' : 'opacity-0'
+              }`}
+            >
+              Sr
+            </span>
+            Connect to SessionRemind
           </span>
         </div>
 
@@ -138,7 +147,7 @@ export default function ConnectDemo() {
                   dragging ? 'opacity-30' : chipVisible ? 'opacity-40' : 'opacity-100'
                 }`}
               >
-                ⚡ Connect UseSession
+                Connect to SessionRemind
               </span>
               {!chipVisible && !dragging && (
                 <span className="absolute -inset-1 animate-ping rounded-full border border-accent/50" />
@@ -186,10 +195,10 @@ export default function ConnectDemo() {
               ))}
             </div>
 
-            {/* Connected modal */}
+            {/* Connected toast — top-center, like the real injected popup */}
             <div
-              className={`absolute left-1/2 top-1/2 w-[78%] max-w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-hairline bg-card p-4 shadow-[0_18px_50px_rgba(0,0,0,0.3)] transition-all duration-300 ${
-                connected ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
+              className={`absolute left-1/2 top-3 w-[80%] max-w-[320px] -translate-x-1/2 rounded-xl border border-hairline bg-card p-4 shadow-[0_18px_50px_rgba(0,0,0,0.3)] transition-all duration-300 ${
+                connected ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -212,9 +221,9 @@ export default function ConnectDemo() {
             className={`pointer-events-none absolute z-10 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-[12px] font-semibold text-accent-ink shadow-lg transition-all duration-[1400ms] ease-in-out ${
               dragging ? 'opacity-95' : 'opacity-0 duration-200'
             }`}
-            style={dragging ? { left: AT_BAR.left, top: '-9%' } : { left: AT_PILL.left, top: '40%' }}
+            style={dragging ? { left: AT_BAR.left, top: '14%' } : { left: AT_PILL.left, top: '40%' }}
           >
-            ⚡ Connect UseSession
+            Connect to SessionRemind
           </span>
         </div>
 
