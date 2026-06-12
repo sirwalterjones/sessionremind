@@ -62,6 +62,8 @@ export default function ConnectDemo() {
   const chipVisible = step >= 2
   const clicked = step >= 6
   const connected = step >= 7
+  // Highlight the address bar while the URL is typed / the page loads.
+  const navigating = step >= 3 && step < 5
 
   const cursorPos = step === 0 ? AT_PILL : step === 1 || step >= 5 ? AT_BAR : PARKED
 
@@ -75,17 +77,23 @@ export default function ConnectDemo() {
             <span className="h-2.5 w-2.5 rounded-full bg-faint/40" />
             <span className="h-2.5 w-2.5 rounded-full bg-faint/40" />
           </div>
-          <div className="flex-1 overflow-hidden rounded-full border border-hairline bg-card px-3.5 py-1.5 font-mono text-[11px] tracking-wide text-muted">
+          <div
+            className={`flex-1 overflow-hidden rounded-full border bg-card px-3.5 py-1.5 font-mono text-[11px] transition-all duration-300 ${
+              navigating
+                ? 'border-accent ring-2 ring-accent/30'
+                : 'border-hairline'
+            }`}
+          >
             {step < 3 ? (
-              <span>sessionremind.com/connect</span>
+              <span className="tracking-wide text-muted">sessionremind.com/connect</span>
             ) : (
               <span
                 key={`url-${cycle}`}
-                className="inline-block overflow-hidden whitespace-nowrap align-bottom"
+                className="inline-block overflow-hidden whitespace-nowrap align-bottom font-semibold tracking-normal text-accent"
                 style={
                   reduced
                     ? undefined
-                    : { animation: 'sr-cd-type 1.1s steps(18, end) both' }
+                    : { animation: 'sr-cd-type 1.1s steps(19, end) both' }
                 }
               >
                 app.usesession.com
@@ -160,19 +168,23 @@ export default function ConnectDemo() {
             )}
           </div>
 
-          {/* Page B — UseSession bookings */}
+          {/* Page B — the real Session app (app.usesession.com) */}
           <div
-            className={`absolute inset-0 transition-opacity duration-500 ${
+            className={`absolute inset-0 bg-card transition-opacity duration-500 ${
               onUseSession ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
           >
-            <div className="flex items-center justify-between bg-ink px-5 py-2.5">
-              <span className="text-[13px] font-semibold tracking-tight text-canvas">
-                ⬡ UseSession
-              </span>
-              <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-canvas/60">
-                Bookings
-              </span>
+            {/* Session app header — light, lowercase "session" wordmark */}
+            <div className="flex items-center justify-between border-b border-hairline px-5 py-2.5">
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block h-4 w-4 rounded-[5px] bg-ink" />
+                <span className="text-[14px] font-semibold lowercase tracking-tight text-ink">session</span>
+              </div>
+              <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+                <span className="text-ink">Sessions</span>
+                <span>Calendar</span>
+                <span>Clients</span>
+              </div>
             </div>
             <div className="space-y-2 p-4">
               {[
@@ -182,15 +194,20 @@ export default function ConnectDemo() {
               ].map(([initials, name, detail]) => (
                 <div
                   key={name}
-                  className="flex items-center gap-3 rounded-lg border border-hairline bg-panel/50 px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-hairline bg-panel/50 px-3 py-2"
                 >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-[10.5px] font-bold text-accent">
-                    {initials}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[12px] font-medium leading-tight text-ink">{name}</p>
-                    <p className="text-[11px] leading-tight text-muted">{detail}</p>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-[10.5px] font-bold text-accent">
+                      {initials}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[12px] font-medium leading-tight text-ink">{name}</p>
+                      <p className="text-[11px] leading-tight text-muted">{detail}</p>
+                    </div>
                   </div>
+                  <span className="flex-shrink-0 rounded-full bg-[#16a34a]/12 px-2 py-0.5 text-[9.5px] font-semibold uppercase tracking-wide text-[#16a34a]">
+                    Booked
+                  </span>
                 </div>
               ))}
             </div>
@@ -275,7 +292,7 @@ export default function ConnectDemo() {
       <style>{`
         @keyframes sr-cd-type {
           from { width: 0; }
-          to { width: 18ch; }
+          to { width: 19ch; }
         }
       `}</style>
     </div>
