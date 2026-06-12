@@ -139,6 +139,16 @@ the confirmed holes were fixed in the same session:
 - **NEVER set `ENCRYPTION_KEY`.** Stored UseSession tokens are encrypted with the
   key derived from `CRON_SECRET` (the fallback in `lib/crypto.ts`). Setting
   `ENCRYPTION_KEY` changes the derived key and bricks every stored token.
+- **Proving "encrypted at rest"** (runbook, verified 2026-06-11): mechanism is
+  `lib/crypto.ts` — AES-256-GCM, random 12-byte IV per encryption, 16-byte auth
+  tag, key = SHA-256 of `ENCRYPTION_KEY||CRON_SECRET` (held in Vercel env,
+  separate from the Upstash data store). Live proof: fetch
+  `user:<id>:usesession_token` from KV — the stored value is `iv.tag.ciphertext`
+  base64 (NOT an `eyJ…` JWT), with ciphertext byte entropy ≈ random noise.
+  Upstash additionally encrypts the store at infra level, and everything moves
+  over TLS. Honest limits if audited: no KMS/HSM, no key-rotation story (rotating
+  the key re-keys nothing — tokens would need reconnecting), and the key is
+  derivable by anyone with Vercel project access.
 - **Toll-free verification compliance** (learned from a real rejection, 2026-06-11):
   the opt-in proof image (`public/opt-in-proof.svg` → `.png`) must show the consent
   checkbox UNCHECKED (pre-selected consent = Twilio 30508); submitted business
