@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
+import ConnectDemo from '@/components/ConnectDemo'
 
 // Sleek Swiss-editorial "How it works" page — Ink & Acid theme tokens, accent
 // highlights, hairline rules, generous whitespace. Theme-aware (light/dark).
@@ -44,41 +45,46 @@ export default function Instructions() {
       <section className="full-bleed relative bg-canvas">
         <div className="hero-glow absolute inset-0 h-[420px]" aria-hidden />
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-20">
-          <div className="max-w-3xl">
-            <div className="eyebrow flex items-center gap-2">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
-              How it works
+          <div className="grid lg:grid-cols-[1fr_0.95fr] gap-14 lg:gap-12 items-center">
+            <div>
+              <div className="eyebrow flex items-center gap-2">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
+                How it works
+              </div>
+
+              <h1 className="font-display mt-6 text-[3.2rem] sm:text-7xl leading-[0.94] font-semibold">
+                Connect once.
+                <br />
+                We do the <span className="text-accent">chasing.</span>
+              </h1>
+
+              <p className="mt-7 text-lg leading-relaxed text-muted max-w-xl">
+                Link your UseSession account a single time — drag one button to your bookmarks
+                bar, click it on UseSession, done. From then on, SessionRemind syncs your
+                bookings and texts every client a perfectly-timed reminder before their shoot.
+              </p>
+
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                <ArrowCta href={primaryHref}>{primaryLabel}</ArrowCta>
+                <a
+                  href="#steps"
+                  className="inline-flex items-center px-6 py-3.5 text-[15px] font-medium text-ink/70 hover:text-ink transition-colors"
+                >
+                  See the three steps
+                </a>
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
+                <span>One-click connect</span>
+                <span className="w-px h-3 bg-hairline" />
+                <span>No passwords stored</span>
+                <span className="w-px h-3 bg-hairline" />
+                <span>Disconnect anytime</span>
+              </div>
             </div>
 
-            <h1 className="font-display mt-6 text-[3.2rem] sm:text-7xl leading-[0.94] font-semibold">
-              Connect once.
-              <br />
-              We do the <span className="text-accent">chasing.</span>
-            </h1>
-
-            <p className="mt-7 text-lg leading-relaxed text-muted max-w-xl">
-              Link your UseSession account a single time. From then on, SessionRemind syncs your
-              bookings and texts every client a perfectly-timed reminder before their shoot — no
-              spreadsheets, no copy-paste, no chasing.
-            </p>
-
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <ArrowCta href={primaryHref}>{primaryLabel}</ArrowCta>
-              <a
-                href="#steps"
-                className="inline-flex items-center px-6 py-3.5 text-[15px] font-medium text-ink/70 hover:text-ink transition-colors"
-              >
-                See the three steps
-              </a>
-            </div>
-
-            <div className="mt-10 flex flex-wrap items-center gap-5 font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
-              <span>One-click connect</span>
-              <span className="w-px h-3 bg-hairline" />
-              <span>No passwords stored</span>
-              <span className="w-px h-3 bg-hairline" />
-              <span>Disconnect anytime</span>
-            </div>
+            {/* Animated demo: drag → open UseSession → click → connected */}
+            <ConnectDemo />
           </div>
         </div>
       </section>
