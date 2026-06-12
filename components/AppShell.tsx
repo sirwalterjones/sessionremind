@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
@@ -157,9 +158,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        {/* Mobile slide-over menu */}
-        {menuOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden">
+        {/* Mobile slide-over menu — portaled to <body> so no ancestor
+            (sticky/backdrop-blur creates a containing block) can trap the
+            fixed overlay. */}
+        {menuOpen &&
+          createPortal(
+          <div className="fixed inset-0 z-[100] lg:hidden">
             <div
               className="sr-fade-in absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setMenuOpen(false)}
@@ -246,7 +250,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
         <div className="flex-1 px-5 py-8 sm:px-8">

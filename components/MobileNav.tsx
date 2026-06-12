@@ -5,6 +5,7 @@
 // signed-in app pages get the matching sheet in AppShell.
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
@@ -62,8 +63,12 @@ export default function MobileNav() {
         <Bars3Icon className="h-5 w-5" />
       </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50">
+      {/* Portaled to <body>: the nav bar's backdrop-blur creates a containing
+          block that would otherwise trap this fixed overlay inside the 64px
+          bar instead of covering the viewport. */}
+      {isOpen &&
+        createPortal(
+        <div className="fixed inset-0 z-[100]">
           <div
             className="sr-fade-in absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
@@ -149,7 +154,8 @@ export default function MobileNav() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
